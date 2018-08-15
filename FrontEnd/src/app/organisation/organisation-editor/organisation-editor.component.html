@@ -4,102 +4,104 @@
       {{orgType}} details
       <div class="pull-right">
         <button *ngIf="(organisation.isService === 0) && (organisation.uuid) && (allowEdit)" type="button" class="btn btn-sm btn-success" (click)="createServiceFromOrg(false)">Create service</button>
-        <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success" (click)="save(false)">Save</button>
-        <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-warning" (click)="save(true)">Save & close</button>
+        <button *ngIf="allowEdit" [disabled]="!f.valid" type="button" class="btn btn-sm btn-success" (click)="save(false)">Save</button>
+        <button *ngIf="allowEdit" [disabled]="!f.valid" type="button" class="btn btn-sm btn-warning" (click)="save(true)">Save & close</button>
         <button type="button" class="btn btn-sm btn-danger" (click)="close()">Cancel</button>
       </div>
     </div>
     <div class="module-body">
-      <form>
-        <fieldset [disabled]="!allowEdit">
-          <div class="row">
-            <div class="form-group col-md-6">
-              <label class="control-label required-field">{{orgType}} name</label>
-              <input #name="ngModel" id="name" required type="text" class="form-control" placeholder="Organisation name" [(ngModel)]="organisation.name" name="name">
-            </div>
-            <div class="form-group col-md-6">
-              <label class="control-label">Alternative name</label>
-              <input type="text" class="form-control" placeholder="Alternative Name" [(ngModel)]="organisation.alternativeName" name="alternativeName">
-            </div>
-          </div>
-          <div class="row">
-            <div class="form-group col-md-6">
-              <label class="control-label required-field">ODS code</label>
-              <input type="text" class="form-control" placeholder="ODS code" [(ngModel)]="organisation.odsCode" name="odsCode">
-            </div>
-            <div class="form-group col-md-6">
-              <label class="control-label">ICO code</label>
-              <input type="text" class="form-control" placeholder="ICO code" [(ngModel)]="organisation.icoCode" name="icoCode">
-            </div>
-          </div>
-          <div class="row">
-            <div class="form-group col-md-6">
-              <label class="control-label">IG toolkit status</label>
-              <input type="text" class="form-control" placeholder="IG toolkit status" [(ngModel)]="organisation.igToolkitStatus" name="igToolkitStatus">
-            </div>
-            <div class="form-group col-md-6">
-              <label class="control-label">Date of registration</label>
-              <input type="date" class="form-control" placeholder="Date Of registration" [(ngModel)]="organisation.dateOfRegistration" name="dateOfRegistration">
-            </div>
-          </div>
-          <div class="row">
-            <div class="form-group col-md-6">
-              <label class="control-label required-field">Organisation type</label>
-              <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
-                <select class="form-control" [(ngModel)]="organisation.type" name="type">
-                  <option *ngFor="let ot of organisationTypes" [ngValue]="ot.id">{{ot.organisationType}}</option>
-                </select>
+      <form class="form" #f="ngForm" novalidate>
+        <div class="form-group" #fgName="ngModelGroup" ngModelGroup="organisation" [class.has-error]="!fgName.valid">
+          <fieldset [disabled]="!allowEdit">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label required-field">{{orgType}} name</label>
+                <input required type="text" class="form-control" placeholder="Organisation name" [(ngModel)]="organisation.name" name="name">
               </div>
-              <small class="required-field-note"></small>
-            </div>
-            <!--<div class="form-group col-md-6">
-              <label class="control-label">Evidence of registration</label>
-              <input type="text" class="form-control" placeholder="Evidence of registration" [(ngModel)]="organisation.evidenceOfRegistration" name="evidenceOfRegistration">
-            </div>-->
-          </div>
-
-          <button *ngIf="allowEdit && organisation.isService === 0" type="button" class="btn btn-sm btn-info" (click)="addAddress()">Add address</button>
-          <div *ngFor="let orgAddress of addresses;let index = index;">
-            <div class="card">
-              <div class="card-body">
-                <div class="row">
-                    <p><i *ngIf="allowEdit" (click)="deleteAddress(orgAddress)" class="fa fa-trash delete-endeavour-button-top" aria-hidden="true" style="color:red"></i></p>
-                </div>
-
-                <div class="row">
-                  <div class="form-group col-md-4">
-                    <label class="control-label">Building name</label>
-                    <input type="text" class="form-control" placeholder="Building name" [(ngModel)]="orgAddress.buildingName" name="buildingName{{index}}">
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label class="control-label">Number and street</label>
-                    <input type="text" class="form-control" placeholder="Number and street" [(ngModel)]="orgAddress.numberAndStreet" name="numberAndStreet{{index}}">
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label class="control-label">Locality</label>
-                    <input type="text" class="form-control" placeholder="Locality" [(ngModel)]="orgAddress.locality" name="locality{{index}}">
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-4">
-                    <label class="control-label">City</label>
-                    <input type="text" class="form-control" placeholder="City" [(ngModel)]="orgAddress.city" name="city{{index}}">
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label class="control-label">County</label>
-                    <input type="text" class="form-control" placeholder="County" [(ngModel)]="orgAddress.county" name="county{{index}}">
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label class="control-label">Postcode</label>
-                    <input type="text" class="form-control" placeholder="Postcode" [(ngModel)]="orgAddress.postcode" name="postcode{{index}}">
-                  </div>
-                </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">Alternative name</label>
+                <input type="text" class="form-control" placeholder="Alternative Name" [(ngModel)]="organisation.alternativeName" name="alternativeName">
               </div>
             </div>
-          </div>
-          <br>
-        </fieldset>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label required-field">ODS code</label>
+                <input required type="text" class="form-control" placeholder="ODS code" [(ngModel)]="organisation.odsCode" name="odsCode">
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">ICO code</label>
+                <input type="text" class="form-control" placeholder="ICO code" [(ngModel)]="organisation.icoCode" name="icoCode">
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">IG toolkit status</label>
+                <input type="text" class="form-control" placeholder="IG toolkit status" [(ngModel)]="organisation.igToolkitStatus" name="igToolkitStatus">
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">Date of registration</label>
+                <input type="date" class="form-control" placeholder="Date Of registration" [(ngModel)]="organisation.dateOfRegistration" name="dateOfRegistration">
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label required-field">Organisation type</label>
+                <div class="input-group">
+                  <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+                  <select required class="form-control" [(ngModel)]="organisation.type" name="type">
+                    <option *ngFor="let ot of organisationTypes" [ngValue]="ot.id">{{ot.organisationType}}</option>
+                  </select>
+                </div>
+                <small class="required-field-note"></small>
+              </div>
+              <!--<div class="form-group col-md-6">
+                <label class="control-label">Evidence of registration</label>
+                <input type="text" class="form-control" placeholder="Evidence of registration" [(ngModel)]="organisation.evidenceOfRegistration" name="evidenceOfRegistration">
+              </div>-->
+            </div>
+
+            <button *ngIf="allowEdit && organisation.isService === 0" type="button" class="btn btn-sm btn-info" (click)="addAddress()">Add address</button>
+            <div *ngFor="let orgAddress of addresses;let index = index;">
+              <div class="card">
+                <div class="card-body">
+                  <div class="row">
+                      <p><i *ngIf="allowEdit" (click)="deleteAddress(orgAddress)" class="fa fa-trash delete-endeavour-button-top" aria-hidden="true" style="color:red"></i></p>
+                  </div>
+
+                  <div class="row">
+                    <div class="form-group col-md-4">
+                      <label class="control-label">Building name</label>
+                      <input type="text" class="form-control" placeholder="Building name" [(ngModel)]="orgAddress.buildingName" name="buildingName{{index}}">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label class="control-label">Number and street</label>
+                      <input type="text" class="form-control" placeholder="Number and street" [(ngModel)]="orgAddress.numberAndStreet" name="numberAndStreet{{index}}">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label class="control-label">Locality</label>
+                      <input type="text" class="form-control" placeholder="Locality" [(ngModel)]="orgAddress.locality" name="locality{{index}}">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="form-group col-md-4">
+                      <label class="control-label">City</label>
+                      <input type="text" class="form-control" placeholder="City" [(ngModel)]="orgAddress.city" name="city{{index}}">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label class="control-label">County</label>
+                      <input type="text" class="form-control" placeholder="County" [(ngModel)]="orgAddress.county" name="county{{index}}">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label class="control-label">Postcode</label>
+                      <input type="text" class="form-control" placeholder="Postcode" [(ngModel)]="orgAddress.postcode" name="postcode{{index}}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+          </fieldset>
+        </div>
 
         <ngb-accordion>
           <ngb-panel id="regs" *ngIf="organisation.isService === 0">
