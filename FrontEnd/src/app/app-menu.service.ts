@@ -53,6 +53,10 @@ export class AppMenuService implements  AbstractMenuProvider  {
     ];
   }
 
+  useUserManagerForRoles(): boolean {
+    return false;
+  }
+
   getClientId(): string {
     return 'eds-dsa-manager';
   }
