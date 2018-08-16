@@ -87,7 +87,7 @@ export class RegionEditorComponent implements OnInit {
           vm.getOrganisationMarkers();
           vm.getSharingAgreements();
         },
-        error => vm.log.error('Error loading', error, 'Error')
+        error => vm.log.error('The region could not be loaded. Please try again.', error, 'Load region')
       );
   }
 
@@ -125,10 +125,10 @@ export class RegionEditorComponent implements OnInit {
     vm.regionService.saveRegion(vm.region)
       .subscribe(saved => {
           vm.region.uuid = saved;
-          vm.log.success('Item saved', vm.region, 'Saved');
+          vm.log.success('Region saved', vm.region, 'Save region');
           if (close) { this.router.navigate(['/organisationOverview']); }
         },
-        error => vm.log.error('Error saving', error, 'Error')
+        error => vm.log.error('The region could not be saved. Please try again.', error, 'Save region')
       );
   }
 
@@ -141,7 +141,7 @@ export class RegionEditorComponent implements OnInit {
     vm.regionService.getRegionOrganisations(vm.region.uuid)
       .subscribe(
         result => vm.organisations = result,
-        error => vm.log.error('Failed to load region organisations', error, 'Load region organisation')
+        error => vm.log.error('The associated organisations could not be loaded. Please try again.', error, 'Load associated organisations')
       );
   }
 
@@ -150,7 +150,7 @@ export class RegionEditorComponent implements OnInit {
     vm.regionService.getParentRegions(vm.region.uuid)
       .subscribe(
         result => vm.parentRegions = result,
-        error => vm.log.error('Failed to load parent regions', error, 'Load parent regions')
+        error => vm.log.error('The parent regions could not be loaded. Please try again.', error, 'Load parent regions')
       );
   }
 
@@ -159,7 +159,7 @@ export class RegionEditorComponent implements OnInit {
     vm.regionService.getChildRegions(vm.region.uuid)
       .subscribe(
         result => vm.childRegions = result,
-        error => vm.log.error('Failed to load child regions', error, 'Load child regions')
+        error => vm.log.error('The child regions could not be loaded. Please try again.', error, 'Load child regions')
       );
   }
 
@@ -170,7 +170,7 @@ export class RegionEditorComponent implements OnInit {
         result => {
           vm.sharingAgreements = result;
         },
-        error => vm.log.error('Failed to load sharing agreements', error, 'Load sharing agreements')
+        error => vm.log.error('The associated data sharing agreements could not be loaded. Please try again.', error, 'Load sharing agreements')
 
       );
   }
@@ -182,7 +182,7 @@ export class RegionEditorComponent implements OnInit {
         result => {
           vm.markers = result;
         },
-            error => vm.log.error('Failed to load organisation markers', error, 'Load organisation Markers')
+            error => vm.log.error('The map data could not be loaded. Please try again.', error, 'Load map data')
       )
   }
 

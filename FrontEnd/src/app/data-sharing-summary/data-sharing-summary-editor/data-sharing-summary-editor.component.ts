@@ -75,7 +75,7 @@ export class DataSharingSummaryEditorComponent implements OnInit {
       .subscribe(result =>  {
           vm.dataSharingSummary = result;
         },
-        error => vm.log.error('Error loading', error, 'Error')
+        error => vm.log.error('The data sharing summary could not be loaded. Please try again.', error, 'Load data sharing summary')
       );
   }
 
@@ -86,10 +86,10 @@ export class DataSharingSummaryEditorComponent implements OnInit {
     vm.dataSharingSummaryService.saveDataSharingSummary(vm.dataSharingSummary)
       .subscribe(saved => {
           vm.dataSharingSummary.uuid = saved;
-          vm.log.success('Item saved', vm.dataSharingSummary, 'Saved');
+          vm.log.success('Data sharing summary saved', vm.dataSharingSummary, 'Save data sharing summary');
           if (close) { this.router.navigate(['/sharingOverview']); }
         },
-        error => vm.log.error('Error saving', error, 'Error')
+        error => vm.log.error('The data sharing summary could not be saved. Please try again.', error, 'Save data sharing summary')
       );
   }
 

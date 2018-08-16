@@ -48,7 +48,7 @@ export class DataExchangeComponent implements OnInit {
           vm.loadingComplete = true;
         },
             error => {
-          vm.log.error('Failed to load data exchanges', error, 'Load data exchanges');
+          vm.log.error('The data exchanges could not be loaded. Please try again.', error, 'Load data exchanges');
           vm.loadingComplete = true;
         }
       );
@@ -80,7 +80,7 @@ export class DataExchangeComponent implements OnInit {
           vm.exchanges.splice(index, 1);
           vm.log.success('Data exchange deleted', item, 'Delete data exchange');
         },
-        (error) => vm.log.error('Failed to delete data exchange', error, 'Delete data exchange')
+        (error) => vm.log.error('The data exchange could not be deleted. Please try again.', error, 'Delete data exchange')
       );
   }
 

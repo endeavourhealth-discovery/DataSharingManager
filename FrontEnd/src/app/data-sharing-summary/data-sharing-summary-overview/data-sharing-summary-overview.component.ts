@@ -54,7 +54,7 @@ export class DataSharingSummaryOverviewComponent implements OnInit {
       .subscribe(result => {
           vm.summaryStats = result
         },
-        error => vm.log.error('Failed to load data sharing summary statistics', error, 'Load data sharing summary statistics')
+        error => vm.log.error('The data sharing summary statistics could not be loaded. Please try again.', error, 'Load data sharing summary statistics')
       );
   }
 
@@ -67,7 +67,7 @@ export class DataSharingSummaryOverviewComponent implements OnInit {
           vm.dpaLoadingComplete = true;
         },
         error => {
-        vm.log.error('Failed to load data processing agreement statistics', error, 'Load data processing agreement statistics');
+        vm.log.error('The data processing agreement statistics could not be loaded. Please try again.', error, 'Load data processing agreement statistics');
         vm.dpaLoadingComplete = true;
         }
       );
@@ -82,7 +82,7 @@ export class DataSharingSummaryOverviewComponent implements OnInit {
           vm.dsaLoadingComplete = true;
         },
         error => {
-        vm.log.error('Failed to load data sharing agreement statistics', error, 'load data sharing agreement statistics');
+        vm.log.error('The data sharing agreement statistics could not be loaded. Please try again.', error, 'load data sharing agreement statistics');
         vm.dsaLoadingComplete = true;
         }
       );
@@ -97,7 +97,7 @@ export class DataSharingSummaryOverviewComponent implements OnInit {
           vm.dataflowLoadingComplete = true;
         },
         error => {
-        vm.log.error('Failed to load data flow statistics', error, 'Load data flow statistics');
+        vm.log.error('The data flow statistics could not be loaded. Please try again.', error, 'Load data flow statistics');
         vm.dataflowLoadingComplete = true;
         }
       );
@@ -112,7 +112,7 @@ export class DataSharingSummaryOverviewComponent implements OnInit {
           vm.cohortLoadingComplete = true;
         },
         error => {
-        vm.log.error('Failed to load Cohort statistics', error, 'Load Cohort statistics');
+        vm.log.error('The cohort statistics could not be loaded. Please try again.', error, 'Load cohort statistics');
         vm.cohortLoadingComplete = true;
         }
       );
@@ -127,7 +127,7 @@ export class DataSharingSummaryOverviewComponent implements OnInit {
           vm.datasetLoadingComplete = true;
         },
         error => {
-        vm.log.error('Failed to load dataset statistics', error, 'Load dataset statistics');
+        vm.log.error('The data set statistics could not be loaded. Please try again.', error, 'Load data set statistics');
         vm.datasetLoadingComplete = true;
         }
       );
@@ -142,7 +142,7 @@ export class DataSharingSummaryOverviewComponent implements OnInit {
           vm.exchangeLoadingComplete = true;
         },
         error => {
-        vm.log.error('Failed to load data exchange statistics', error, 'Load data exchange statistics');
+        vm.log.error('The data exchange statistics could not be loaded. Please try again.', error, 'Load data exchange statistics');
         vm.exchangeLoadingComplete = true;
         }
       );

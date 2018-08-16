@@ -75,7 +75,7 @@ export class DataSetEditorComponent implements OnInit {
           vm.dataset = result;
           vm.getLinkedDPAs();
         },
-        error => vm.log.error('Error loading', error, 'Error')
+        error => vm.log.error('The data set could not be loaded. Please try again.', error, 'Load data set')
       );
   }
 
@@ -84,7 +84,7 @@ export class DataSetEditorComponent implements OnInit {
     vm.dataSetService.getLinkedDpas(vm.dataset.uuid)
       .subscribe(
         result => vm.dpas = result,
-        error => vm.log.error('Failed to load linked data processing agreements', error, 'Load linked data processing agreements')
+        error => vm.log.error('The associated data processing agreements could not be loaded. Please try again.', error, 'Load associated data processing agreements')
       );
   }
 
@@ -100,13 +100,13 @@ export class DataSetEditorComponent implements OnInit {
     vm.dataSetService.saveDataSet(vm.dataset)
       .subscribe(saved => {
           vm.dataset.uuid = saved;
-          vm.log.success('Data set saved', vm.dataset, 'Saved');
+          vm.log.success('Data set saved', vm.dataset, 'Save data set');
 
           console.log('after');
           console.log(vm.dataset);
           if (close) { vm.close(); }
         },
-        error => vm.log.error('Error saving Data Set', error, 'Error')
+        error => vm.log.error('The data set could not be saved. Please try again.', error, 'Save data set')
       );
   }
 
@@ -115,7 +115,7 @@ export class DataSetEditorComponent implements OnInit {
     DataProcessingAgreementPickerComponent.open(vm.$modal, vm.dpas)
       .result.then(function
       (result: Dpa[]) { vm.dpas = result; },
-      () => vm.log.info('Edit Data Processing Agreements cancelled')
+      () => vm.log.info('Edit data processing agreements cancelled')
     );
   }
 

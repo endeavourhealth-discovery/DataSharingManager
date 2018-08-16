@@ -144,7 +144,7 @@ export class OrganisationOverviewComponent implements OnInit {
     myReader.onloadend = function(e) {
       fileToUpload.fileData = myReader.result;
       fileToUpload.file = null;
-      vm.log.success('Uploading File ' + fileToUpload.name, null, 'Upload');
+      vm.log.success('Uploading File ' + fileToUpload.name, null, 'Upload file');
       vm.sendToServer(fileToUpload);
     }
 
@@ -164,8 +164,8 @@ export class OrganisationOverviewComponent implements OnInit {
     };
 
     if (allUploaded) {
-      vm.log.success('All Uploaded Successfully', null, 'Upload');
-      vm.log.success('Saving mappings now', null, 'Upload');
+      vm.log.success('All files uploaded successfully.', null, 'Upload files');
+      vm.log.success('Saving organisation mappings.', null, 'Upload files');
       vm.saveBulkMappings();
     }
   }
@@ -175,14 +175,14 @@ export class OrganisationOverviewComponent implements OnInit {
     vm.organisationService.endUpload()
       .subscribe(
         result => {
-          vm.log.success('Mappings saved Successfully ' , null, 'Success');
-          vm.log.success('All Organisations Uploaded Successfully ' , null, 'Success');
+          vm.log.success('Organisation mappings saved successfully.' , null, 'Save organisation mappings');
+          vm.log.success('All organisations uploaded successfully.' , null, 'Save organisations');
           vm.getOrganisationStatistics();
           vm.getServiceStatistics();
           vm.getRegionStatistics();
           vm.getConflictingOrganisations();
         },
-        error => vm.log.error('Failed to save mappings', error, 'Upload Bulk Organisations')
+        error => vm.log.error('The organisation mappings could not be saved. Please try again.', error, 'Save organisation mappings')
       )
   }
 
@@ -192,7 +192,7 @@ export class OrganisationOverviewComponent implements OnInit {
       .subscribe(
         (result) => {
           if (result > 0) {
-            vm.log.success(result + ' Mappings to Upload', null, 'Success');
+            vm.log.success(result + ' Mappings to process remaining', null, 'Process mappings');
             vm.saveBulkMappings();
           } else {
             vm.endUpload();
@@ -206,10 +206,10 @@ export class OrganisationOverviewComponent implements OnInit {
     vm.organisationService.uploadCsv(fileToUpload)
       .subscribe(result => {
           fileToUpload.success = 1;
-          vm.log.success(result + ' Organisations Uploaded Successfully ' + fileToUpload.name, null, 'Success');
+          vm.log.success(result + ' Organisations uploaded successfully ' + fileToUpload.name, null, 'Upload organisations');
           vm.getNextFileToUpload();
         },
-        error => vm.log.error('Failed to upload bulk organisations ' + fileToUpload.name, error, 'Upload Bulk Organisations')
+        error => vm.log.error('The organisations could not be uploaded. Please try again. ' + fileToUpload.name, error, 'Upload bulk organisations')
       );
   };
 
@@ -217,7 +217,7 @@ export class OrganisationOverviewComponent implements OnInit {
     const vm = this;
     vm.organisationService.getConflictedOrganisations()
       .subscribe(result => vm.conflictedOrgs = result,
-        error => console.log('Failed to get conflicted Organisations', error, 'Get Conflicting Organisations'))
+        error => vm.log.error('The conflicted organisations could not be loaded. Please try again.', error, 'Get conflicting organisations'))
   }
 
   ok() {
@@ -231,7 +231,7 @@ export class OrganisationOverviewComponent implements OnInit {
         result => {
           vm.getNextFileToUpload();
         },
-        error => vm.log.error('Error starting upload', error, 'Error')
+        error => vm.log.error('The upload could not be started. Please try again.', error, 'Upload file')
       );
 
   }
@@ -247,7 +247,7 @@ export class OrganisationOverviewComponent implements OnInit {
       .subscribe(
         result => {vm.newOrg.addresses = result,
           console.log(result)},
-        error => vm.log.error('Error getting address', error, 'Error')
+        error => vm.log.error('The organisation address could not be loaded. Please try again.', error, 'Load address')
       );
 
     vm.organisationService.getOrganisation(organisation.bulkConflictedWith)
@@ -256,10 +256,10 @@ export class OrganisationOverviewComponent implements OnInit {
           vm.organisationService.getOrganisationAddresses(organisation.bulkConflictedWith)
             .subscribe(
               (result) => vm.existingOrg.addresses = result,
-              (error) => vm.log.error('Error getting address', error, 'Error')
+              (error) => vm.log.error('The organisation address could not be loaded. Please try again.', error, 'Load address')
             );
         },
-        error => vm.log.error('Error getting address', error, 'Error')
+        error => vm.log.error('The organisation could not be loaded. Please try again.', error, 'Load organisation')
 
       );
   }
@@ -270,7 +270,7 @@ export class OrganisationOverviewComponent implements OnInit {
       .subscribe(saved => {
           vm.removeConflict(vm.newOrg);
         },
-        error => vm.log.error('Error saving', error, 'Error')
+        error => vm.log.error('The organisation could not be saved. Please try again.', error, 'Save organisation')
       );
   }
 
@@ -282,8 +282,8 @@ export class OrganisationOverviewComponent implements OnInit {
     const vm = this;
     vm.organisationService.deleteOrganisation(org.uuid)
       .subscribe(
-        result => vm.log.success('Conflict Resolved', vm.existingOrg, 'Saved'),
-        error => vm.log.error('Error deleting conflict', error, 'Error')
+        result => vm.log.success('Conflict resolved', vm.existingOrg, 'Resolve conflict'),
+        error => vm.log.error('The conflict could not be resolved. Please try again.', error, 'Resolve conflict')
       )
 
     const index = vm.conflictedOrgs.indexOf(org, 0);

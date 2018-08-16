@@ -117,7 +117,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           vm.getSubscriberMarkers();
           vm.getAssociatedDocumentation();
         },
-        error => vm.log.error('Error loading', error, 'Error')
+        error => vm.log.error('The data sharing agreement could not be loaded. Please try again.', error, 'Load data sharing agreement')
       );
   }
 
@@ -169,13 +169,13 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     vm.dsaService.saveDsa(vm.dsa)
       .subscribe(saved => {
           vm.dsa.uuid = saved;
-          vm.log.success('Data Sharing Agreement saved', vm.dsa, 'Saved');
+          vm.log.success('Data sharing agreement saved', vm.dsa, 'Save data sharing agreement');
 
           console.log('after');
           console.log(vm.dsa);
           if (close) { vm.close(); }
         },
-        error => vm.log.error('Error saving Data Sharing Agreement', error, 'Error')
+        error => vm.log.error('The data sharing agreement could not be saved. Please try again.', error, 'Save data sharing agreement')
       );
   }
 
@@ -188,7 +188,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     DataflowPickerComponent.open(vm.$modal, vm.dataFlows)
       .result.then(function
       (result: DataFlow[]) { vm.dataFlows = result; },
-      () => vm.log.info('Edit Data Flows cancelled')
+      () => vm.log.info('Edit data flows cancelled')
     );
   }
 
@@ -197,7 +197,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     RegionPickerComponent.open(vm.$modal, vm.regions)
       .result.then(function
       (result: Region[]) { vm.regions = result; },
-      () => vm.log.info('Edit Regions cancelled')
+      () => vm.log.info('Edit regions cancelled')
     );
   }
 
@@ -206,7 +206,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     OrganisationPickerComponent.open(vm.$modal, vm.publishers, 'organisation')
       .result.then(function
       (result: Organisation[]) { vm.publishers = result; },
-      () => vm.log.info('Edit Publishers cancelled')
+      () => vm.log.info('Edit publishers cancelled')
     );
   }
 
@@ -215,7 +215,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     OrganisationPickerComponent.open(vm.$modal, vm.subscribers, 'organisation')
       .result.then(function
       (result: Organisation[]) { vm.subscribers = result; },
-      () => vm.log.info('Edit Subscribers cancelled')
+      () => vm.log.info('Edit subscribers cancelled')
     );
   }
 
@@ -224,7 +224,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     PurposeAddComponent.open(vm.$modal, vm.purposes, 'Purpose', index)
       .result.then(function
       (result: Purpose[]) { vm.purposes = result; },
-      () => vm.log.info('Edit Purposes cancelled')
+      () => vm.log.info('Edit purposes cancelled')
     );
   }
 
@@ -233,7 +233,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     PurposeAddComponent.open(vm.$modal, vm.benefits, 'Benefit', index)
       .result.then(function
       (result: Purpose[]) { vm.benefits = result; },
-      () => vm.log.info('Edit Benefits cancelled')
+      () => vm.log.info('Edit benefits cancelled')
     );
   }
 
@@ -246,7 +246,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     vm.dsaService.getLinkedDataFlows(vm.dsa.uuid)
       .subscribe(
         result => vm.dataFlows = result,
-        error => vm.log.error('Failed to load linked Data Flows', error, 'Load Linked Data Flows')
+        error => vm.log.error('The associated data flows could not be loaded. Please try again.', error, 'Load associated data flows')
       );
   }
 
@@ -255,7 +255,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     vm.dsaService.getLinkedRegions(vm.dsa.uuid)
       .subscribe(
         result => vm.regions = result,
-        error => vm.log.error('Failed to load linked Regions', error, 'Load Linked Regions')
+        error => vm.log.error('The associated regions could not be loaded. Please try again.', error, 'Load associated regions')
       );
   }
 
@@ -264,7 +264,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     vm.dsaService.getPublishers(vm.dsa.uuid)
       .subscribe(
         result => vm.publishers = result,
-        error => vm.log.error('Failed to load publishers', error, 'Load Publishers')
+        error => vm.log.error('The associated publishers could not be loaded. Please try again.', error, 'Load associated publishers')
       );
   }
 
@@ -273,7 +273,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     vm.dsaService.getSubscribers(vm.dsa.uuid)
       .subscribe(
         result => vm.subscribers = result,
-        error => vm.log.error('Failed to load subscribers', error, 'Load Subscribers')
+        error => vm.log.error('The associated subscribers could not be loaded. Please try again.', error, 'Load associated subscribers')
       );
   }
 
@@ -282,7 +282,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     vm.dsaService.getPurposes(vm.dsa.uuid)
       .subscribe(
         result => vm.purposes = result,
-        error => vm.log.error('Failed to load purposes', error, 'Load Purposes')
+        error => vm.log.error('The associated purposes could not be loaded. Please try again.', error, 'Load associated purposes')
       );
   }
 
@@ -291,7 +291,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     vm.dsaService.getBenefits(vm.dsa.uuid)
       .subscribe(
         result => vm.benefits = result,
-        error => vm.log.error('Failed to load benefits', error, 'Load Benefits')
+        error => vm.log.error('The associated benefits could not be loaded. Please try again.', error, 'Load associated benefits')
       );
   }
 
@@ -300,7 +300,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     vm.documentationService.getAllAssociatedDocuments(vm.dsa.uuid, '3')
       .subscribe(
         result => vm.documentations = result,
-        error => vm.log.error('Failed to load associated documentation', error, 'Load associated documentation')
+        error => vm.log.error('The associated documentation could not be loaded. Please try again.', error, 'Load associated documentation')
       );
   }
 
@@ -311,7 +311,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
         result => {
           vm.subscriberMarkers = result;
         },
-        error => vm.log.error('Failed to load subscriber markers', error, 'Load subscriber Markers')
+        error => vm.log.error('The associated subscriber map data could not be loaded. Please try again.', error, 'Load subscriber map data')
       )
   }
 
@@ -324,7 +324,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           vm.publisherMarkers = result;
           console.log(vm.publisherMarkers);
         },
-        error => vm.log.error('Failed to load publisher markers', error, 'Load publisher Markers')
+        error => vm.log.error('The associated publisher map data could not be loaded. Please try again.', error, 'Load publisher map data')
       )
   }
 
@@ -377,7 +377,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
     myReader.onloadend = function(e){
       // you can perform an action with readed data here
-      vm.log.success('Uploading file', null, 'Upload');
+      vm.log.success('Uploading document', null, 'Upload document');
       vm.pdfSrc = myReader.result;
       const newDoc: Documentation = new Documentation();
       newDoc.fileData = myReader.result;

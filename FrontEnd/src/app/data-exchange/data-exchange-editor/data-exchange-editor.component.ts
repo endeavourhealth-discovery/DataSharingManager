@@ -113,7 +113,7 @@ export class DataExchangeEditorComponent implements OnInit {
           vm.exchange = result;
           vm.getLinkedDataFlows();
         },
-        error => vm.log.error('Error loading', error, 'Error')
+        error => vm.log.error('The data exchange could not be loaded. Please try again.', error, 'Load data exchange')
       );
   }
 
@@ -129,10 +129,10 @@ export class DataExchangeEditorComponent implements OnInit {
     vm.dataExchangeService.saveDataExchange(vm.exchange)
       .subscribe(saved => {
           vm.exchange.uuid = saved;
-          vm.log.success('Data exchange saved', vm.exchange, 'Saved');
+          vm.log.success('Data exchange saved', vm.exchange, 'Save data exchange');
           if (close) { vm.close(); }
         },
-        error => vm.log.error('Error saving data exchange', error, 'Error')
+        error => vm.log.error('The data exchange could not be saved. Please try again.', error, 'Save data exchange')
       );
   }
 
@@ -154,7 +154,7 @@ export class DataExchangeEditorComponent implements OnInit {
     vm.dataExchangeService.getLinkedDataFlows(vm.exchange.uuid)
       .subscribe(
         result => vm.dataFlows = result,
-        error => vm.log.error('Failed to load linked data flows', error, 'Load linked data flows')
+        error => vm.log.error('The associated data flows could not be loaded. Please try again.', error, 'Load associated data flows')
       );
   }
 }

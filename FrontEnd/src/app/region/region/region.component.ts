@@ -50,7 +50,7 @@ export class RegionComponent implements OnInit {
           vm.loadingComplete = true;
         },
         error => {
-          vm.log.error('Failed to load regions', error, 'Load regions');
+          vm.log.error('The regions could not be loaded. Please try again.', error, 'Load regions');
           vm.loadingComplete = true;
         }
       );
@@ -80,9 +80,9 @@ export class RegionComponent implements OnInit {
         () => {
           const index = vm.regions.indexOf(item);
           vm.regions.splice(index, 1);
-          vm.log.success('Region deleted', item, 'Delete Region');
+          vm.log.success('Region deleted', item, 'Delete region');
         },
-        (error) => vm.log.error('Failed to delete Region', error, 'Delete Region')
+        (error) => vm.log.error('The region could not be deleted. Please try again.', error, 'Delete region')
       );
   }
 

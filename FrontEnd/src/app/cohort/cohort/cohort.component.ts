@@ -48,7 +48,7 @@ export class CohortComponent implements OnInit {
           vm.loadingComplete = true;
         },
             error => {
-          vm.log.error('Failed to load cohorts', error, 'Load cohorts');
+          vm.log.error('The cohorts could not be loaded. Please try again.', error, 'Load cohorts');
           vm.loadingComplete = true;
         }
       );
@@ -78,9 +78,9 @@ export class CohortComponent implements OnInit {
         () => {
           const index = vm.cohorts.indexOf(item);
           vm.cohorts.splice(index, 1);
-          vm.log.success('Cohort deleted', item, 'Delete Cohort');
+          vm.log.success('Cohort deleted successfully', item, 'Delete cohort');
         },
-        (error) => vm.log.error('Failed to delete Cohort', error, 'Delete Cohort')
+        (error) => vm.log.error('The cohort could not be deleted. Please try again.', error, 'Delete cohort')
       );
   }
 

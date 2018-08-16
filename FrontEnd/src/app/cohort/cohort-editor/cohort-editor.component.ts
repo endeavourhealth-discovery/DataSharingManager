@@ -74,7 +74,7 @@ export class CohortEditorComponent implements OnInit {
           vm.cohort = result;
           vm.getLinkedDpas();
         },
-        error => vm.log.error('Error loading', error, 'Error')
+        error => vm.log.error('The cohort could not be loaded. Please try again.', error, 'Load cohort')
       );
   }
 
@@ -91,10 +91,10 @@ export class CohortEditorComponent implements OnInit {
     vm.cohortService.saveCohort(vm.cohort)
       .subscribe(saved => {
           vm.cohort.uuid = saved;
-          vm.log.success('Cohort saved', vm.cohort, 'Saved');
+          vm.log.success('Cohort saved successfully', vm.cohort, 'Save cohort');
           if (close) { vm.close(); }
         },
-        error => vm.log.error('Error saving Cohort', error, 'Error')
+        error => vm.log.error('The cohort could not be saved. Please try again.', error, 'Save cohort')
       );
   }
 
@@ -107,7 +107,7 @@ export class CohortEditorComponent implements OnInit {
     DataProcessingAgreementPickerComponent.open(vm.$modal, vm.dpas)
       .result.then(function
       (result: Dpa[]) { vm.dpas = result; },
-      () => vm.log.info('Edit Data Processing Agreements cancelled')
+      () => vm.log.info('Edit data processing agreements cancelled')
     );
   }
 
@@ -116,7 +116,7 @@ export class CohortEditorComponent implements OnInit {
     DataProcessingAgreementPickerComponent.open(vm.$modal, vm.dpas)
       .result.then(function
       (result: Dpa[]) { vm.dpas = result; },
-      () => vm.log.info('Edit Data Processing Agreements cancelled')
+      () => vm.log.info('Edit data processing agreements cancelled')
     );
   }
 
@@ -125,7 +125,7 @@ export class CohortEditorComponent implements OnInit {
     vm.cohortService.getLinkedDpas(vm.cohort.uuid)
       .subscribe(
         result => vm.dpas = result,
-        error => vm.log.error('Failed to load linked Data Processing Agreement', error, 'Load Linked Data Processing Agreement')
+        error => vm.log.error('The associated data processing agreements could not be loaded. Please try again.', error, 'Load associated data processing agreements')
       );
   }
 

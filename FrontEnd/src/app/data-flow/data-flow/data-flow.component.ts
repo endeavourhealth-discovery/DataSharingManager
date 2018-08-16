@@ -49,7 +49,7 @@ export class DataFlowComponent implements OnInit {
           vm.loadingComplete = true;
         },
             error => {
-          vm.log.error('Failed to load data flows', error, 'Load data flows');
+          vm.log.error('The data flows could not be loaded. Please try again.', error, 'Load data flows');
           vm.loadingComplete = true;
         }
       );
@@ -79,9 +79,9 @@ export class DataFlowComponent implements OnInit {
         () => {
           const index = vm.dataflows.indexOf(item);
           vm.dataflows.splice(index, 1);
-          vm.log.success('Data flow deleted', item, 'Delete Data flow');
+          vm.log.success('Data flow deleted', item, 'Delete data flow');
         },
-        (error) => vm.log.error('Failed to delete Data flow', error, 'Delete Data flow')
+        (error) => vm.log.error('The data flow could not be deleted. Please try again.', error, 'Delete data flow')
       );
   }
 

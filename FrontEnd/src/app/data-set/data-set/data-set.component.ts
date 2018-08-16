@@ -48,7 +48,7 @@ export class DataSetComponent implements OnInit {
           vm.loadingComplete = true;
         },
           error => {
-          vm.log.error('Failed to load data sets', error, 'Load data sets');
+          vm.log.error('The data sets could not be loaded. Please try again.', error, 'Load data sets');
           vm.loadingComplete = true;
         }
       );
@@ -78,9 +78,9 @@ export class DataSetComponent implements OnInit {
         () => {
           const index = vm.datasets.indexOf(item);
           vm.datasets.splice(index, 1);
-          vm.log.success('Data set deleted', item, 'Delete Data set');
+          vm.log.success('Data set deleted', item, 'Delete data set');
         },
-        (error) => vm.log.error('Failed to delete Data set', error, 'Delete Data flow')
+        (error) => vm.log.error('The data set could not be deleted. Please try again.', error, 'Delete data set')
       );
   }
 

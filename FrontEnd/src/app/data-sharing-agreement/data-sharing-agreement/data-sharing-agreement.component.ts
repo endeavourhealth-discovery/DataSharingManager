@@ -48,7 +48,7 @@ export class DataSharingAgreementComponent implements OnInit {
           vm.loadingComplete = true;
         },
         error => {
-          vm.log.error('Failed to load dsas', error, 'Load dsa');
+          vm.log.error('The data sharing agreements could not be loaded. Please try again.', error, 'Load data sharing agreements');
           vm.loadingComplete = true;
         }
       );
@@ -78,9 +78,9 @@ export class DataSharingAgreementComponent implements OnInit {
         () => {
           const index = vm.dsas.indexOf(item);
           vm.dsas.splice(index, 1);
-          vm.log.success('Data Sharing Agreement deleted', item, 'Delete Data Sharing Agreement');
+          vm.log.success('Data sharing agreement deleted', item, 'Delete data sharing agreement');
         },
-        (error) => vm.log.error('Failed to delete Data Sharing Agreement', error, 'Delete Data Sharing Agreement')
+        (error) => vm.log.error('The data sharing agreement could not be deleted. Please try again.', error, 'Delete data sharing agreement')
       );
   }
 

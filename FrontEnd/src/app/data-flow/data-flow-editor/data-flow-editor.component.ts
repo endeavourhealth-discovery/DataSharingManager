@@ -113,7 +113,7 @@ export class DataFlowEditorComponent implements OnInit {
           vm.getLinkedSubscribers();
           vm.getAssociatedDocumentation();
         },
-        error => vm.log.error('Error loading', error, 'Error')
+        error => vm.log.error('The data flow could not be loaded. Please try again.', error, 'Load data flow')
       );
   }
 
@@ -161,10 +161,10 @@ export class DataFlowEditorComponent implements OnInit {
     vm.dataFlowService.saveDataFlow(vm.dataFlow)
       .subscribe(saved => {
           vm.dataFlow.uuid = saved;
-          vm.log.success('Data Flow saved', vm.dataFlow, 'Saved');
+          vm.log.success('Data flow saved', vm.dataFlow, 'Save data flow');
           if (close) { vm.close(); }
         },
-        error => vm.log.error('Error saving Data Flow', error, 'Error')
+        error => vm.log.error('The data flow could not be saved. Please try again.', error, 'Save data flow')
       );
   }
 
@@ -177,7 +177,7 @@ export class DataFlowEditorComponent implements OnInit {
     DataSharingAgreementPickerComponent.open(vm.$modal, vm.dsas)
       .result.then(function
       (result: Dsa[]) { vm.dsas = result; },
-      () => vm.log.info('Edit Data Sharing Agreements cancelled')
+      () => vm.log.info('Edit data sharing agreements cancelled')
     );
   }
 
@@ -186,7 +186,7 @@ export class DataFlowEditorComponent implements OnInit {
     DataProcessingAgreementPickerComponent.open(vm.$modal, vm.dpas)
       .result.then(function
       (result: Dpa[]) { vm.dpas = result; },
-      () => vm.log.info('Edit Data Processing Agreements cancelled')
+      () => vm.log.info('Edit data processing agreements cancelled')
     );
   }
 
@@ -222,7 +222,7 @@ export class DataFlowEditorComponent implements OnInit {
     vm.dataFlowService.getLinkedDpas(vm.dataFlow.uuid)
       .subscribe(
         result => vm.dpas = result,
-        error => vm.log.error('Failed to load linked Data Processing Agreement', error, 'Load Linked Data Processing Agreement')
+        error => vm.log.error('The associated data processing agreements could not be loaded. Please try again.', error, 'Load associated data processing agreements')
       );
   }
 
@@ -231,7 +231,7 @@ export class DataFlowEditorComponent implements OnInit {
     vm.dataFlowService.getLinkedDsas(vm.dataFlow.uuid)
       .subscribe(
         result => vm.dsas = result,
-        error => vm.log.error('Failed to load linked data sharing agreement', error, 'Load linked data sharing agreement')
+        error => vm.log.error('The associated data sharing agreements could not be loaded. Please try again.', error, 'Load associated data sharing agreements')
       );
   }
 
@@ -240,7 +240,7 @@ export class DataFlowEditorComponent implements OnInit {
     vm.dataFlowService.getLinkedExchanges(vm.dataFlow.uuid)
       .subscribe(
         result => vm.exchanges = result,
-        error => vm.log.error('Failed to load linked data exchanges', error, 'Load linked data exchanges')
+        error => vm.log.error('The associated data exchanges could not be loaded. Please try again.', error, 'Load associated data exchanges')
       );
   }
 
@@ -249,7 +249,7 @@ export class DataFlowEditorComponent implements OnInit {
     vm.dataFlowService.getLinkedPublishers(vm.dataFlow.uuid)
       .subscribe(
         result => vm.publishers = result,
-        error => vm.log.error('Failed to load linked publishers', error, 'Load linked publishers')
+        error => vm.log.error('The associated publishers could not be loaded. Please try again.', error, 'Load associated publishers')
       );
   }
 
@@ -258,7 +258,7 @@ export class DataFlowEditorComponent implements OnInit {
     vm.dataFlowService.getLinkedSubscribers(vm.dataFlow.uuid)
       .subscribe(
         result => vm.subscribers = result,
-        error => vm.log.error('Failed to load linked subscribers', error, 'Load linked subscribers')
+        error => vm.log.error('The associated subscribers could not be loaded. Please try again.', error, 'Load associated subscribers')
       );
   }
 
@@ -267,7 +267,7 @@ export class DataFlowEditorComponent implements OnInit {
     vm.documentationService.getAllAssociatedDocuments(vm.dataFlow.uuid, '4')
       .subscribe(
         result => vm.documentations = result,
-        error => vm.log.error('Failed to load associated documentation', error, 'Load associated documentation')
+        error => vm.log.error('The associated documentation could not be loaded. Please try again.', error, 'Load associated documentation')
       );
   }
 
@@ -301,7 +301,7 @@ export class DataFlowEditorComponent implements OnInit {
 
     myReader.onloadend = function(e){
       // you can perform an action with readed data here
-      vm.log.success('Uploading file', null, 'Upload');
+      vm.log.success('Uploading file', null, 'Upload document');
       vm.pdfSrc = myReader.result;
       const newDoc: Documentation = new Documentation();
       newDoc.fileData = myReader.result;

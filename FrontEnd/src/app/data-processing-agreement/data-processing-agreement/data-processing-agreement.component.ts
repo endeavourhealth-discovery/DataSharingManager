@@ -48,7 +48,7 @@ export class DataProcessingAgreementComponent implements OnInit {
           vm.loadingComplete = true;
         },
             error => {
-          vm.log.error('Failed to load dpas', error, 'Load dpa');
+          vm.log.error('The data processing agreements could not be loaded. Please try again.', error, 'Load data processing agreements');
           vm.loadingComplete = true;
         }
       );
@@ -79,9 +79,9 @@ export class DataProcessingAgreementComponent implements OnInit {
         () => {
           const index = vm.dpas.indexOf(item);
           vm.dpas.splice(index, 1);
-          vm.log.success('Data Sharing Processing deleted', item, 'Delete Data Processing Agreement');
+          vm.log.success('Data processing agreement deleted', item, 'Delete data processing agreement');
         },
-        (error) => vm.log.error('Failed to delete Data Processing Agreement', error, 'Delete Data Processing Agreement')
+        (error) => vm.log.error('The data processing agreement could not be deleted. Please try again.', error, 'Delete data processing agreement')
       );
   }
 

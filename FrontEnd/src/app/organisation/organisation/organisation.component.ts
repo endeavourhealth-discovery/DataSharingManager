@@ -101,7 +101,7 @@ export class OrganisationComponent implements OnInit {
 
           vm.log.success('Organisation saved', original, 'Save organisation');
         },
-        error => vm.log.error('Failed to save organisation', error, 'Save organisation')
+        error => vm.log.error('The organisation could not be saved. Please try again.', error, 'Save organisation')
       );
   }
 
@@ -120,9 +120,9 @@ export class OrganisationComponent implements OnInit {
       .subscribe(
         () => {
           vm.search();
-          vm.log.success('Organisation deleted', item, 'Delete Organisation');
+          vm.log.success('Organisation deleted', item, 'Delete organisation');
         },
-        (error) => vm.log.error('Failed to delete Organisation', error, 'Delete Organisation')
+        (error) => vm.log.error('The organisation could not be deleted. Please try again.', error, 'Delete organisation')
       );
   }
 
@@ -148,7 +148,7 @@ export class OrganisationComponent implements OnInit {
           vm.loadingComplete = true;
         },
         error => {
-          vm.log.error('Failed to load organisations', error, 'Load organisations');
+          vm.log.error('The organisation could not be loaded. Please try again.', error, 'Load organisations');
           vm.loadingComplete = true;
         }
       );

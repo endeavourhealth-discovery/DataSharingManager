@@ -34,7 +34,7 @@ export class DataSharingSummaryComponent implements OnInit {
     vm.dataSharingSummaryService.getAllDataSharingSummaries()
       .subscribe(
         result => vm.dataSharingSummaries = result,
-        error => vm.log.error('Failed to load data sharing summaries', error, 'Load data sharing summaries')
+        error => vm.log.error('The data sharing summaries could not be loaded. Please try again.', error, 'Load data sharing summaries')
       );
   }
 
@@ -62,9 +62,9 @@ export class DataSharingSummaryComponent implements OnInit {
         () => {
           const index = vm.dataSharingSummaries.indexOf(item);
           vm.dataSharingSummaries.splice(index, 1);
-          vm.log.success('Data Sharing Summary deleted', item, 'Delete Data Sharing Summary');
+          vm.log.success('Data sharing summary deleted', item, 'Delete data sharing summary');
         },
-        (error) => vm.log.error('Failed to delete Data Sharing Summary', error, 'Delete Data Sharing Summary')
+        (error) => vm.log.error('The data sharing summary could not be deleted. Please try again.', error, 'Delete data sharing summary')
       );
   }
 

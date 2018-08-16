@@ -137,7 +137,7 @@ export class OrganisationEditorComponent implements OnInit {
           }
           vm.getParentOrganisations();
         },
-        error => vm.log.error('Error loading', error, 'Error')
+        error => vm.log.error('The organisation could not be loaded. Please try again.', error, 'Load organisation')
       );
   }
 
@@ -193,10 +193,10 @@ export class OrganisationEditorComponent implements OnInit {
     vm.organisationService.saveOrganisation(vm.organisation)
       .subscribe(saved => {
           vm.organisation.uuid = saved;
-          vm.log.success('Item saved', vm.organisation, 'Saved');
+          vm.log.success('Organisation saved successfully.', vm.organisation, 'Save organisation');
           if (close) { this.router.navigate(['/organisationOverview']); }
         },
-        error => vm.log.error('Error saving', error, 'Error')
+        error => vm.log.error('The organisation could not be saved. Please try again.', error, 'Save organisation')
       );
   }
 
@@ -283,7 +283,7 @@ export class OrganisationEditorComponent implements OnInit {
     vm.organisationService.getOrganisationRegions(vm.organisation.uuid)
       .subscribe(
         result => vm.regions = result,
-        error => vm.log.error('Failed to load organisation regions', error, 'Load organisation regions')
+        error => vm.log.error('The associated regions could not be loaded. Please try again.', error, 'Load organisation regions')
       );
   }
 
@@ -292,7 +292,7 @@ export class OrganisationEditorComponent implements OnInit {
     vm.organisationService.getOrganisationAddresses(vm.organisation.uuid)
       .subscribe(
         result => vm.addresses = result,
-        error => vm.log.error('Failed to load organisation Addresses', error, 'Load organisation Addresses')
+        error => vm.log.error('The address details could not be loaded. Please try again.', error, 'Load organisation addresses')
       );
   }
 
@@ -301,7 +301,7 @@ export class OrganisationEditorComponent implements OnInit {
     vm.organisationService.getChildOrganisations(vm.organisation.uuid)
       .subscribe(
         result => vm.childOrganisations = result,
-        error => vm.log.error('Failed to load child organisations', error, 'Load child organisation')
+        error => vm.log.error('The child organisations could not be loaded. Please try again.', error, 'Load child organisations')
       );
   }
 
@@ -310,7 +310,7 @@ export class OrganisationEditorComponent implements OnInit {
     vm.organisationService.getParentOrganisations(vm.organisation.uuid, vm.organisation.isService)
       .subscribe(
         result => vm.parentOrganisations = result,
-        error => vm.log.error('Failed to load parent organisations', error, 'Load parent organisation')
+        error => vm.log.error('The parent organisations could not be loaded. Please try again.', error, 'Load parent organisations')
       );
   }
 
@@ -319,7 +319,7 @@ export class OrganisationEditorComponent implements OnInit {
     vm.organisationService.getServices(vm.organisation.uuid)
       .subscribe(
         result => vm.services = result,
-        error => vm.log.error('Failed to load services', error, 'Load services')
+        error => vm.log.error('The associated services could not be loaded. Please try again.', error, 'Load services')
       );
   }
 
@@ -329,7 +329,7 @@ export class OrganisationEditorComponent implements OnInit {
       .subscribe(
         result => {vm.organisationTypes = result;
         },
-        error => vm.log.error('Failed to load organisation types', error, 'Load organisation types')
+        error => vm.log.error('The organisation types could not be loaded. Please try again.', error, 'Load organisation types')
       );
   }
 
@@ -338,7 +338,7 @@ export class OrganisationEditorComponent implements OnInit {
     vm.organisationService.getDPAPublishing(vm.organisation.uuid)
       .subscribe(
         result => vm.dpaPublishing = result,
-        error => vm.log.error('Failed to load DPAs organisation publishing to', error, 'Load organisation DPA Publishers')
+        error => vm.log.error('The associated publishing data processing agreements could not be loaded. Please try again.', error, 'Load publishing data processing agreements')
       );
   }
 
@@ -347,7 +347,7 @@ export class OrganisationEditorComponent implements OnInit {
     vm.organisationService.getDSAPublishing(vm.organisation.uuid)
       .subscribe(
         result => vm.dsaPublishing = result,
-        error => vm.log.error('Failed to load DSAs organisation publishing to', error, 'Load organisation DSA Publishers')
+        error => vm.log.error('The associated publishing data sharing agreements could not be loaded. Please try again.', error, 'Load publishing data sharing agreements')
       );
   }
 
@@ -356,7 +356,7 @@ export class OrganisationEditorComponent implements OnInit {
     vm.organisationService.getDSASubscribing(vm.organisation.uuid)
       .subscribe(
         result => vm.dsaSubscribing = result,
-        error => vm.log.error('Failed to load DSAs organisation subscribing to', error, 'Load organisation DSA Publishers')
+        error => vm.log.error('The associated subscribing data sharing agreements could not be loaded. Please try again.', error, 'Load subscribing data sharing agreements')
       );
   }
 

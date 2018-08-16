@@ -117,7 +117,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
           vm.getPurposes();
           vm.getBenefits();
         },
-        error => vm.log.error('Error loading', error, 'Error')
+        error => vm.log.error('The data processing agreement could not be loaded. Please try again.', error, 'Load data processing agreement')
       );
   }
 
@@ -167,10 +167,10 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     vm.dpaService.saveDpa(vm.dpa)
       .subscribe(saved => {
           vm.dpa.uuid = saved;
-          vm.log.success('Data Processing Agreement saved', vm.dpa, 'Saved');
+          vm.log.success('Data processing agreement saved', vm.dpa, 'Save data processing agreement');
           if (close) { vm.close(); }
         },
-        error => vm.log.error('Error saving Data Processing Agreement', error, 'Error')
+        error => vm.log.error('The data processing agreement could not be saved. Please try again.', error, 'Save data processing agreement')
       );
   }
 
@@ -183,7 +183,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     DataflowPickerComponent.open(vm.$modal, vm.dataFlows)
       .result.then(function
       (result: DataFlow[]) { vm.dataFlows = result; },
-      () => vm.log.info('Edit Data Flows cancelled')
+      () => vm.log.info('Edit data flows cancelled')
     );
   }
 
@@ -192,7 +192,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     CohortPickerComponent.open(vm.$modal, vm.cohorts)
       .result.then(function
       (result: Cohort[]) { vm.cohorts = result; },
-      () => vm.log.info('Edit Cohorts cancelled')
+      () => vm.log.info('Edit cohorts cancelled')
     );
   }
 
@@ -201,7 +201,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     DataSetPickerComponent.open(vm.$modal, vm.dataSets)
       .result.then(function
       (result: DataSet[]) { vm.dataSets = result; },
-      () => vm.log.info('Edit Data Sets cancelled')
+      () => vm.log.info('Edit data sets cancelled')
     );
   }
 
@@ -222,7 +222,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     PurposeAddComponent.open(vm.$modal, vm.purposes, 'Purpose', index)
       .result.then(function
       (result: Purpose[]) { vm.purposes = result; },
-      () => vm.log.info('Edit Purposes cancelled')
+      () => vm.log.info('Edit purposes cancelled')
     );
   }
 
@@ -231,7 +231,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     PurposeAddComponent.open(vm.$modal, vm.benefits, 'Benefit', index)
       .result.then(function
       (result: Purpose[]) { vm.benefits = result; },
-      () => vm.log.info('Edit Benefits cancelled')
+      () => vm.log.info('Edit benefits cancelled')
     );
   }
 
@@ -240,7 +240,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     vm.dpaService.getLinkedCohorts(vm.dpa.uuid)
       .subscribe(
         result => vm.cohorts = result,
-        error => vm.log.error('Failed to load linked Cohorts', error, 'Load Linked Cohorts')
+        error => vm.log.error('The associated cohorts could not be loaded. Please try again.', error, 'Load associated cohorts')
       );
   }
 
@@ -249,7 +249,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     vm.dpaService.getLinkedDataFlows(vm.dpa.uuid)
       .subscribe(
         result => vm.dataFlows = result,
-        error => vm.log.error('Failed to load linked Data Flows', error, 'Load Linked Data Flows')
+        error => vm.log.error('The associated data flows could not be loaded. Please try again.', error, 'Load asscoiated data flows')
       );
   }
 
@@ -258,7 +258,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     vm.dpaService.getLinkedDataSets(vm.dpa.uuid)
       .subscribe(
         result => vm.dataSets = result,
-        error => vm.log.error('Failed to load linked Data Sets', error, 'Load Linked Data Sets')
+        error => vm.log.error('The associated data sets could not be loaded. Please try again.', error, 'Load associated data sets')
       );
   }
 
@@ -267,7 +267,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     vm.dpaService.getPurposes(vm.dpa.uuid)
       .subscribe(
         result => vm.purposes = result,
-        error => vm.log.error('Failed to load purposes', error, 'Load Purposes')
+        error => vm.log.error('The associated purposes could not be loaded. Please try again.', error, 'Load purposes')
       );
   }
 
@@ -276,7 +276,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     vm.dpaService.getBenefits(vm.dpa.uuid)
       .subscribe(
         result => vm.benefits = result,
-        error => vm.log.error('Failed to load benefits', error, 'Load Benefits')
+        error => vm.log.error('The associated benefits could not be loaded. Please try again.', error, 'Load benefits')
       );
   }
 
@@ -285,7 +285,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     vm.documentationService.getAllAssociatedDocuments(vm.dpa.uuid, '5')
       .subscribe(
         result => vm.documentations = result,
-        error => vm.log.error('Failed to load associated documentation', error, 'Load associated documentation')
+        error => vm.log.error('The associated documentation could not be loaded. Please try again.', error, 'Load associated documentation')
       );
   }
 
@@ -304,7 +304,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
     myReader.onloadend = function(e){
       // you can perform an action with readed data here
-      vm.log.success('Uploading file', null, 'Upload');
+      vm.log.success('Uploading file', null, 'Upload document');
       vm.pdfSrc = myReader.result;
       const newDoc: Documentation = new Documentation();
       newDoc.fileData = myReader.result;
@@ -334,7 +334,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     OrganisationPickerComponent.open(vm.$modal, vm.publishers, 'organisation')
       .result.then(function
       (result: Organisation[]) { vm.publishers = result; },
-      () => vm.log.info('Edit Publishers cancelled')
+      () => vm.log.info('Edit publishers cancelled')
     );
   }
 
@@ -343,7 +343,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     vm.dpaService.getPublishers(vm.dpa.uuid)
       .subscribe(
         result => vm.publishers = result,
-        error => vm.log.error('Failed to load publishers', error, 'Load Publishers')
+        error => vm.log.error('The associated publishers could not be loaded. Please try again.', error, 'Load publishers')
       );
   }
 
@@ -354,7 +354,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
         result => {
           vm.subscriberMarkers = result;
         },
-        error => vm.log.error('Failed to load subscriber markers', error, 'Load subscriber Markers')
+        error => vm.log.error('The subscriber map date could not be loaded. Please try again.', error, 'Load subscriber map data')
       )
   }
 
@@ -365,7 +365,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
         result => {
           vm.publisherMarkers = result;
         },
-        error => vm.log.error('Failed to load publisher markers', error, 'Load publisher Markers')
+        error => vm.log.error('The publisher map date could not be loaded. Please try again.', error, 'Load publisher map data')
       )
   }
 

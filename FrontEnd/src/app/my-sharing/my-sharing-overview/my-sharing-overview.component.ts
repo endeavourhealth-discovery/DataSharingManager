@@ -63,7 +63,7 @@ export class MySharingOverviewComponent implements OnInit {
           vm.dpaPubLoadingComplete = true;
           },
         error => {
-          vm.log.error('Failed to load DPAs organisation publishing to', error, 'Load organisation DPA Publishers');
+          vm.log.error('The associated publishing data processing agreements could not be loaded. Please try again.', error, 'Load associated publishing data processing agreements');
           vm.dpaPubLoadingComplete = true;
         }
       );
@@ -79,7 +79,7 @@ export class MySharingOverviewComponent implements OnInit {
           vm.dsaPubLoadingComplete = true;
           },
         error => {
-          vm.log.error('Failed to load DSAs organisation publishing to', error, 'Load organisation DSA Publishers');
+          vm.log.error('The associated publishing data sharing agreements could not be loaded. Please try again.', error, 'Load associated publishing data sharing agreements');
           vm.dsaPubLoadingComplete = true;
         }
       );
@@ -95,7 +95,7 @@ export class MySharingOverviewComponent implements OnInit {
           vm.dsaSubLoadingComplete = true;
           },
         error => {
-          vm.log.error('Failed to load DSAs organisation subscribing to', error, 'Load organisation DSA Publishers');
+          vm.log.error('The associated subscribing data sharing agreements could not be loaded. Please try again.', error, 'Load associated subscribing data sharing agreements');
           vm.dsaSubLoadingComplete = true;
         }
       );
