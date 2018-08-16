@@ -64,8 +64,8 @@ export class DataProcessingAgreementComponent implements OnInit {
 
   delete(item: Dpa) {
     const vm = this;
-    MessageBoxDialog.open(vm.$modal, 'Delete Data Processing Agreement',
-      'Are you sure you want to delete the Data Processing Agreement?', 'Yes', 'No')
+    MessageBoxDialog.open(vm.$modal, 'Delete data processing agreement',
+      'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete data processing agreement', 'Cancel')
       .result.then(
       () => vm.doDelete(item),
       () => vm.log.info('Delete cancelled')

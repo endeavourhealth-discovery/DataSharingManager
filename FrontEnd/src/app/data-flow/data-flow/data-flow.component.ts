@@ -65,7 +65,7 @@ export class DataFlowComponent implements OnInit {
 
   delete(item: DataFlow) {
     const vm = this;
-    MessageBoxDialog.open(vm.$modal, 'Delete Data Flow', 'Are you sure you want to delete the data flow?', 'Yes', 'No')
+    MessageBoxDialog.open(vm.$modal, 'Delete data flow', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete data flow', 'Cancel')
       .result.then(
       () => vm.doDelete(item),
       () => vm.log.info('Delete cancelled')

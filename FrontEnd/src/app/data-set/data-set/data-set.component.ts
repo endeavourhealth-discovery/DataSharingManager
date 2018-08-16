@@ -64,7 +64,7 @@ export class DataSetComponent implements OnInit {
 
   delete(item: DataSet) {
     const vm = this;
-    MessageBoxDialog.open(vm.$modal, 'Delete Data Set', 'Are you sure you want to delete the data set?', 'Yes', 'No')
+    MessageBoxDialog.open(vm.$modal, 'Delete data set', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete data set', 'Cancel')
       .result.then(
       () => vm.doDelete(item),
       () => vm.log.info('Delete cancelled')

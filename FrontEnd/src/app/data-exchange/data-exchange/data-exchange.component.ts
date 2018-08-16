@@ -64,7 +64,7 @@ export class DataExchangeComponent implements OnInit {
 
   delete(item: DataExchange) {
     const vm = this;
-    MessageBoxDialog.open(vm.$modal, 'Delete data exchange', 'Are you sure you want to delete the data exchange?', 'Yes', 'No')
+    MessageBoxDialog.open(vm.$modal, 'Delete data exchange', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete data exchange', 'Cancel')
       .result.then(
       () => vm.doDelete(item),
       () => vm.log.info('Delete cancelled')

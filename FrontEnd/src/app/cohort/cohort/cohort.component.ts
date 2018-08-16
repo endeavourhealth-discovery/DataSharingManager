@@ -64,7 +64,7 @@ export class CohortComponent implements OnInit {
 
   delete(item: Cohort) {
     const vm = this;
-    MessageBoxDialog.open(vm.$modal, 'Delete Cohort', 'Are you sure you want to delete the Cohort?', 'Yes', 'No')
+    MessageBoxDialog.open(vm.$modal, 'Delete cohort', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete cohort', 'Cancel')
       .result.then(
       () => vm.doDelete(item),
       () => vm.log.info('Delete cancelled')

@@ -64,7 +64,7 @@ export class DataSharingAgreementComponent implements OnInit {
 
   delete(item: Dsa) {
     const vm = this;
-    MessageBoxDialog.open(vm.$modal, 'Delete Data Sharing Agreement', 'Are you sure you want to delete the Data Sharing Agreement?', 'Yes', 'No')
+    MessageBoxDialog.open(vm.$modal, 'Delete data sharing agreement', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete data sharing agreement', 'Cancel')
       .result.then(
       () => vm.doDelete(item),
       () => vm.log.info('Delete cancelled')

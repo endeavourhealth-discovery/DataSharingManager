@@ -3,25 +3,28 @@
     <div class="module-heading">
       Region details
       <div class="pull-right">
-        <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success" (click)="save(false)">Save</button>
-        <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-warning" (click)="save(true)">Save & close</button>
+        <button *ngIf="allowEdit" [disabled]="!f.valid" type="button" class="btn btn-sm btn-success" (click)="save(false)">Save</button>
+        <button *ngIf="allowEdit" [disabled]="!f.valid" type="button" class="btn btn-sm btn-warning" (click)="save(true)">Save & close</button>
         <button type="button" class="btn btn-sm btn-danger" (click)="close()">Cancel</button>
       </div>
     </div>
     <div class="module-body">
-      <form>
-        <fieldset [disabled]="!allowEdit">
-          <div class="row">
-            <div class="form-group col-md-6">
-              <label class="control-label">Region name</label>
-              <input type="text" class="form-control" placeholder="Region name" [(ngModel)]="region.name" name="name">
+      <form class="form" #f="ngForm" novalidate>
+        <div class="form-group" #fgName="ngModelGroup" ngModelGroup="region" [class.has-error]="!fgName.valid">
+          <fieldset [disabled]="!allowEdit">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label required-field">Region name</label>
+                <input required type="text" class="form-control" placeholder="Region name" [(ngModel)]="region.name" name="name">
+                <small class="required-field-note"></small>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">Region description</label>
+                <input type="text" class="form-control" placeholder="Region description" [(ngModel)]="region.description" name="description">
+              </div>
             </div>
-            <div class="form-group col-md-6">
-              <label class="control-label">Region description</label>
-              <input type="text" class="form-control" placeholder="Region description" [(ngModel)]="region.description" name="description">
-            </div>
-          </div>
-        </fieldset>
+          </fieldset>
+        </div>
 
         <ngb-accordion>
           <ngb-panel id="sharingAgreement">
@@ -34,7 +37,7 @@
                   <span class="badge badge-pill badge-primary">{{sharingAgreements?.length}}</span>
                 </div>
                 <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-xs btn-success pull-right" (click)="editSharingAgreements()">Edit</button>
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editSharingAgreements()">Edit</button>
                 </div>
               </div>
             </ng-template>
@@ -62,7 +65,7 @@
                   <span class="badge badge-pill badge-primary">{{parentRegions?.length}}</span>
                 </div>
                 <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-xs btn-success pull-right" (click)="editParentRegions()">Edit</button>
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editParentRegions()">Edit</button>
                 </div>
               </div>
             </ng-template>
@@ -90,7 +93,7 @@
                   <span class="badge badge-pill badge-primary">{{childRegions?.length}}</span>
                 </div>
                 <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-xs btn-success pull-right" (click)="editChildRegions()">Edit</button>
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editChildRegions()">Edit</button>
                 </div>
               </div>
             </ng-template>
@@ -118,7 +121,7 @@
                   <span class="badge badge-pill badge-primary">{{organisations?.length}}</span>
                 </div>
                 <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-xs btn-success pull-right" (click)="editOrganisations()">Edit</button>
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editOrganisations()">Edit</button>
                 </div>
               </div>
             </ng-template>

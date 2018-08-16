@@ -3,73 +3,76 @@
     <div class="module-heading">
       Data processing agreement details
       <div class="pull-right">
-        <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success" (click)="save(false)">Save</button>
-        <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-warning" (click)="save(true)">Save & close</button>
+        <button *ngIf="allowEdit" [disabled]="!f.valid" type="button" class="btn btn-sm btn-success" (click)="save(false)">Save</button>
+        <button *ngIf="allowEdit" [disabled]="!f.valid" type="button" class="btn btn-sm btn-warning" (click)="save(true)">Save & close</button>
         <button type="button" class="btn btn-sm btn-danger" (click)="close()">Cancel</button>
       </div>
     </div>
     <div class="module-body">
-      <form>
-        <fieldset [disabled]="!allowEdit">
-          <div class="row">
-            <div class="form-group col-md-6">
-              <label class="control-label">Data processing agreement name</label>
-              <input type="text" class="form-control" placeholder="Data processing agreement name" autofocus [(ngModel)]="dpa.name" name="name">
-            </div>
-            <div class="form-group col-md-6">
-              <label class="control-label">Description</label>
-              <input type="text" class="form-control" placeholder="Description" [(ngModel)]="dpa.description" name="description">
-            </div>
-          </div>
-          <!--<div class="row">
-            <div class="form-group col-md-6">
-              <label class="control-label">Derivation</label>
-              <input type="text" class="form-control" placeholder="Derivation" [(ngModel)]="dpa.derivation" name="derivation">
-            </div>
-          </div>-->
-          <div class="row">
-            <div class="form-group col-md-3">
-              <label class="control-label">Status</label>
-              <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
-                <select [disabled]="disableStatus" class="form-control" [(ngModel)]="dpa.dsaStatusId" name="dsaStatusId">
-                  <option *ngFor="let st of status" [ngValue]="st.num">{{st.name}}</option>
-                </select>
+      <form class="form" #f="ngForm" novalidate>
+        <div class="form-group" #fgName="ngModelGroup" ngModelGroup="dpaForm" [class.has-error]="!fgName.valid">
+          <fieldset [disabled]="!allowEdit">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label required-field">Data processing agreement name</label>
+                <input required type="text" class="form-control" placeholder="Data processing agreement name" autofocus [(ngModel)]="dpa.name" name="name">
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">Description</label>
+                <input type="text" class="form-control" placeholder="Description" [(ngModel)]="dpa.description" name="description">
               </div>
             </div>
-            <div class="form-group col-md-3">
-              <label class="control-label">Data processor</label>
-              <input type="text" class="form-control" placeholder="Data processor" [(ngModel)]="processor" name="processorName">
-            </div>
-            <div class="form-group col-md-3">
-              <label class="control-label">Start date</label>
-              <input type="date" class="form-control" placeholder="Start date" [(ngModel)]="dpa.startDate" name="startDate">
-            </div>
-            <div class="form-group col-md-3">
-              <label class="control-label">End date</label>
-              <input type="date" class="form-control" placeholder="End date" [(ngModel)]="dpa.endDate" name="endDate" (change)="checkEndDate()">
-            </div>
-          </div><!--
-          <div class="row">
-            <div class="form-group col-md-6">
-              <label class="control-label">Return to sender policy</label>
-              <input type="text" class="form-control" placeholder="Return to sender policy" [(ngModel)]="dpa.returnToSenderPolicy" name="returnToSenderPolicy">
-            </div>
-          </div>-->
-        </fieldset>
+            <!--<div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">Derivation</label>
+                <input type="text" class="form-control" placeholder="Derivation" [(ngModel)]="dpa.derivation" name="derivation">
+              </div>
+            </div>-->
+            <div class="row">
+              <div class="form-group col-md-3">
+                <label class="control-label required-field">Status</label>
+                <div class="input-group">
+                  <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+                  <select required [disabled]="disableStatus" class="form-control" [(ngModel)]="dpa.dsaStatusId" name="dsaStatusId">
+                    <option *ngFor="let st of status" [ngValue]="st.num">{{st.name}}</option>
+                  </select>
+                </div>
+                <small class="required-field-note"></small>
+              </div>
+              <div class="form-group col-md-3">
+                <label class="control-label">Data processor</label>
+                <input type="text" class="form-control" placeholder="Data processor" [(ngModel)]="processor" name="processorName">
+              </div>
+              <div class="form-group col-md-3">
+                <label class="control-label">Start date</label>
+                <input type="date" class="form-control" placeholder="Start date" [(ngModel)]="dpa.startDate" name="startDate">
+              </div>
+              <div class="form-group col-md-3">
+                <label class="control-label">End date</label>
+                <input type="date" class="form-control" placeholder="End date" [(ngModel)]="dpa.endDate" name="endDate" (change)="checkEndDate()">
+              </div>
+            </div><!--
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">Return to sender policy</label>
+                <input type="text" class="form-control" placeholder="Return to sender policy" [(ngModel)]="dpa.returnToSenderPolicy" name="returnToSenderPolicy">
+              </div>
+            </div>-->
+          </fieldset>
+        </div>
 
         <ngb-accordion>
           <ngb-panel id="purps">
             <ng-template ngbPanelTitle>
               <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-3">
                   Purposes
                 </div>
                 <div class="col-md-1">
                   <span class="badge badge-pill badge-primary">{{purposes?.length}}</span>
                 </div>
                 <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-xs btn-success pull-right" (click)="editPurposes()">Add</button>
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editPurposes()">Add</button>
                 </div>
               </div>
             </ng-template>
@@ -95,14 +98,14 @@
           <ngb-panel id="bens">
             <ng-template ngbPanelTitle>
               <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-3">
                   Benefits
                 </div>
                 <div class="col-md-1">
                   <span class="badge badge-pill badge-primary">{{benefits?.length}}</span>
                 </div>
                 <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-xs btn-success pull-right" (click)="editBenefits()">Add</button>
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editBenefits()">Add</button>
                 </div>
               </div>
             </ng-template>
@@ -127,14 +130,14 @@
           <ngb-panel id="pubs">
             <ng-template ngbPanelTitle>
               <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-3">
                   Publishers
                 </div>
                 <div class="col-md-1">
                   <span class="badge badge-pill badge-primary">{{publishers?.length}}</span>
                 </div>
                 <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-xs btn-success pull-right" (click)="editPublishers()">Edit</button>
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editPublishers()">Edit</button>
                 </div>
               </div>
             </ng-template>
@@ -162,7 +165,7 @@
                   <span class="badge badge-pill badge-primary">{{dataFlows?.length}}</span>
                 </div>
                 <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-xs btn-success pull-right" (click)="editDataFlows()">Edit</button>
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editDataFlows()">Edit</button>
                 </div>
               </div>
             </ng-template>
@@ -190,7 +193,7 @@
                   <span class="badge badge-pill badge-primary">{{cohorts?.length}}</span>
                 </div>
                 <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-xs btn-success pull-right" (click)="editCohorts()">Edit</button>
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editCohorts()">Edit</button>
                 </div>
               </div>
             </ng-template>
@@ -216,7 +219,7 @@
                   <span class="badge badge-pill badge-primary">{{dataSets?.length}}</span>
                 </div>
                 <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-xs btn-success pull-right" (click)="editDataSets()">Edit</button>
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editDataSets()">Edit</button>
                 </div>
               </div>
             </ng-template>
@@ -235,7 +238,7 @@
           <ngb-panel id="docs">
             <ng-template ngbPanelTitle>
               <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-3">
                   Associated documentation
                 </div>
                 <div class="col-md-1">

@@ -48,7 +48,7 @@ export class DataSharingSummaryComponent implements OnInit {
 
   delete(item: DataSharingSummary) {
     const vm = this;
-    MessageBoxDialog.open(vm.$modal, 'Delete Data Sharing Summary', 'Are you sure you want to delete the Data Sharing Summary?', 'Yes', 'No')
+    MessageBoxDialog.open(vm.$modal, 'Delete data sharing summary', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete data sharing summary', 'Cancel')
       .result.then(
       () => vm.doDelete(item),
       () => vm.log.info('Delete cancelled')

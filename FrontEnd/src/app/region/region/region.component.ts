@@ -66,7 +66,7 @@ export class RegionComponent implements OnInit {
 
   delete(item: Region) {
     const vm = this;
-    MessageBoxDialog.open(vm.$modal, 'Delete Region', 'Are you sure you want to delete the Region?', 'Yes', 'No')
+    MessageBoxDialog.open(vm.$modal, 'Delete region', 'Are you sure that you want to delete the <b>' + item.name + '</b> region?', 'Delete region', 'Cancel')
       .result.then(
       () => vm.doDelete(item),
       () => vm.log.info('Delete cancelled')
