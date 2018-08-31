@@ -95,7 +95,7 @@ export class OrganisationService  {
   getDSASubscribing(uuid: string):  Observable<Dsa[]> {
     const vm = this;
     const params = new URLSearchParams();
-    params.set('uuids', uuid);
+    params.set('uuid', uuid);
     return vm.http.get('api/organisation/dsasSubscribing', { search : params })
       .map((response) => response.json());
   }
