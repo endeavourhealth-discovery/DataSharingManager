@@ -33,7 +33,7 @@ export class DataSetPickerComponent implements OnInit {
     this.searchInput.nativeElement.focus();
   }
 
-  private search() {
+  search() {
     const vm = this;
     if (vm.searchData.length < 3)
       return;

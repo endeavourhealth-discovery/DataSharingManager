@@ -118,6 +118,9 @@ import java.util.*;
         @NamedQuery(name="dss.total",
                 query="select 'Total number of sharing summaries', count(distinct dss.uuid) " +
                         "from DataSharingSummaryEntity dss "),
+        @NamedQuery(name="project.total",
+                query="select 'Total number of projects', count(distinct p.uuid) " +
+                        "from ProjectEntity p "),
 })
 @Entity
 @Table(name = "organisation", schema = "data_sharing_manager")
@@ -701,6 +704,8 @@ public class OrganisationEntity {
                 return getDataExchangeStatisticsQueries();
             case "summary":
                 return getDSSStatisticsQueries();
+            case "project":
+                return getProjectStatisticsQueries();
             default:
                 return getOrganisationStatisticsQueries();
         }
@@ -778,6 +783,12 @@ public class OrganisationEntity {
     private static List<String> getDSSStatisticsQueries() throws Exception {
         List<String> queryNames = new ArrayList<>();
         queryNames.add("dss.total");
+        return queryNames;
+    }
+
+    private static List<String> getProjectStatisticsQueries() throws Exception {
+        List<String> queryNames = new ArrayList<>();
+        queryNames.add("project.total");
         return queryNames;
     }
 

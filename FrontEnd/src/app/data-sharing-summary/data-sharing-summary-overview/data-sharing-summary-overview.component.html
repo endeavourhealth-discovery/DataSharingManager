@@ -49,24 +49,24 @@
         </div>
       </div>
       <br>
-      <!--<div class="row">
+      <div class="row">
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-header  bg-success">Data flows</div>
+            <div class="card-header" [style.backgroundColor]="'#FF6464'">Datasets</div>
             <div class="card-block">
-              <loadingIndicator [done]="dataflowLoadingComplete">
-                <div class="row" *ngFor="let dataflow of dataflowStats">
+              <loadingIndicator [done]="datasetLoadingComplete">
+                <div class="row" *ngFor="let dataset of datasetStats">
                   <div class="col-md-10">
-                    {{dataflow.label}}
+                    {{dataset.label}}
                   </div>
                   <div class="col-md-2">
-                    {{dataflow.value}}
+                    {{dataset.value}}
                   </div>
                 </div>
-               </loadingIndicator>
+              </loadingIndicator>
               <br>
               <div class="pull-right">
-                <button type="button" class="btn btn-sm btn-success" (click)="goToDataFlow()">View data flows</button>
+                <button type="button" class="btn btn-sm btn-secondary" [style.backgroundColor]="'#FF6464'" (click)="goToDataSets()">View datasets</button>
               </div>
             </div>
           </div>
@@ -98,25 +98,27 @@
       <div class="row">
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-header" [style.backgroundColor]="'#FF6464'">Datasets</div>
+            <div class="card-header" [style.backgroundColor]="'#FF6464'">Projects</div>
             <div class="card-block">
-              <loadingIndicator [done]="datasetLoadingComplete">
-                <div class="row" *ngFor="let dataset of datasetStats">
+              <loadingIndicator [done]="projectLoadingComplete">
+                <div class="row" *ngFor="let proj of projectStats">
                   <div class="col-md-10">
-                    {{dataset.label}}
+                    {{proj.label}}
                   </div>
                   <div class="col-md-2">
-                    {{dataset.value}}
+                    {{proj.value}}
                   </div>
                 </div>
               </loadingIndicator>
               <br>
               <div class="pull-right">
-                <button type="button" class="btn btn-sm btn-secondary" [style.backgroundColor]="'#FF6464'" (click)="goToDataSets()">View datasets</button>
+                <button type="button" class="btn btn-sm btn-secondary" [style.backgroundColor]="'#FF6464'" (click)="goToProjects()">View projects</button>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <!--<div class="row">
         <div class="col-md-6">
           <div class="card h-100">
             <div class="card-header" [style.backgroundColor]="'#B2A2C7'">Data exchange configurations</div>
@@ -134,6 +136,28 @@
               <br>
               <div class="pull-right">
                 <button type="button" class="btn btn-sm btn-secondary" [style.backgroundColor]="'#B2A2C7'" (click)="goToDataExchanges()">View data exchange configurations</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-header  bg-success">Data flows</div>
+            <div class="card-block">
+              <loadingIndicator [done]="dataflowLoadingComplete">
+                <div class="row" *ngFor="let dataflow of dataflowStats">
+                  <div class="col-md-10">
+                    {{dataflow.label}}
+                  </div>
+                  <div class="col-md-2">
+                    {{dataflow.value}}
+                  </div>
+                </div>
+              </loadingIndicator>
+              <br>
+              <div class="pull-right">
+                <button type="button" class="btn btn-sm btn-success" (click)="goToDataFlow()">View data flows</button>
               </div>
             </div>
           </div>

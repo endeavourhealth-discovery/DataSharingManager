@@ -26,6 +26,8 @@ export class DataSharingSummaryOverviewComponent implements OnInit {
   datasetLoadingComplete = false;
   dataExchangeStats: OrganisationManagerStatistics[];
   exchangeLoadingComplete = false;
+  projectStats: OrganisationManagerStatistics[];
+  projectLoadingComplete = false;
 
   constructor(private dataSharingSummaryService: DataSharingSummaryService,
               private organisationService: OrganisationService,
@@ -46,6 +48,7 @@ export class DataSharingSummaryOverviewComponent implements OnInit {
     vm.getDataSetStatistics();
     vm.getSummaryStatistics();
     vm.getDataExchangeStatistics();
+    vm.getProjectStatistics();
   }
 
   getSummaryStatistics() {
@@ -118,6 +121,21 @@ export class DataSharingSummaryOverviewComponent implements OnInit {
       );
   }
 
+  getProjectStatistics() {
+    const vm = this;
+    vm.projectLoadingComplete = false;
+    vm.organisationService.getStatistics('project')
+      .subscribe(result => {
+          vm.projectStats = result;
+          vm.projectLoadingComplete = true;
+        },
+        error => {
+          vm.log.error('The project statistics could not be loaded. Please try again.', error, 'Load project statistics');
+          vm.projectLoadingComplete = true;
+        }
+      );
+  }
+
   getDataSetStatistics() {
     const vm = this;
     vm.datasetLoadingComplete = false;
@@ -183,6 +201,10 @@ export class DataSharingSummaryOverviewComponent implements OnInit {
 
   goToDataExchanges() {
     this.router.navigate(['/dataExchanges']);
+  }
+
+  goToProjects() {
+    this.router.navigate(['/projects']);
   }
 
 }

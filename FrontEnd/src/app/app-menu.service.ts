@@ -23,6 +23,8 @@ import {DataSetEditorComponent} from './data-set/data-set-editor/data-set-editor
 import {MySharingOverviewComponent} from "./my-sharing/my-sharing-overview/my-sharing-overview.component";
 import {DataExchangeComponent} from "./data-exchange/data-exchange/data-exchange.component";
 import {DataExchangeEditorComponent} from "./data-exchange/data-exchange-editor/data-exchange-editor.component";
+import {ProjectComponent} from "./project/project/project.component";
+import {ProjectEditorComponent} from "./project/project-editor/project-editor.component";
 
 @Injectable()
 export class AppMenuService implements  AbstractMenuProvider  {
@@ -49,7 +51,9 @@ export class AppMenuService implements  AbstractMenuProvider  {
       { path: 'cohort/:id/:mode', component: CohortEditorComponent},
       { path: 'dataSets', component: DataSetComponent},
       { path: 'dataSet/:id/:mode', component: DataSetEditorComponent},
-      { path: 'mySharingOverview', component: MySharingOverviewComponent}
+      { path: 'mySharingOverview', component: MySharingOverviewComponent},
+      { path: 'projects', component: ProjectComponent},
+      { path: 'project/:id/:mode', component: ProjectEditorComponent}
     ];
   }
 

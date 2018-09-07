@@ -20,6 +20,7 @@ drop table if exists data_sharing_manager.data_sharing_summary;
 drop table if exists data_sharing_manager.purpose;
 drop table if exists data_sharing_manager.documentation;
 drop table if exists data_sharing_manager.data_processing_agreement;
+drop table if exists data_sharing_manager.project;
 
 /*Mapping table linking all the entities together*/
 drop table if exists data_sharing_manager.master_mapping;
@@ -44,6 +45,7 @@ drop table if exists data_sharing_manager.review_cycle;
 drop table if exists data_sharing_manager.map_type;
 drop table if exists data_sharing_manager.organisation_type;
 drop table if exists data_sharing_manager.deidentification_level;
+drop table if exists data_sharing_manager.project_type;
 
 /*
 Look up tables containing enumerations for certain fields.  
@@ -164,6 +166,13 @@ create table data_sharing_manager.deidentification_level (
     constraint data_sharing_manager_consent_model_id_pk primary key (id)  
 ) comment 'Lookup table holding enumerations for the de-identification level used';
 
+create table data_sharing_manager.project_type (
+	id smallint not null comment 'Lookup Id',
+    project_type varchar(100) not null comment 'Lookup Value',   
+    
+    constraint data_sharing_manager_project_type_id_pk primary key (id)  
+) comment 'Lookup table holding enumerations for the project type';
+
 /*Main entity tables containing the core information*/
 create table data_sharing_manager.region (
 	uuid char(36) not null comment 'Unique identifier for the region',
@@ -254,6 +263,33 @@ create table data_sharing_manager.data_flow (
     foreign key data_sharing_manager_data_flow_deidentification_level_fk (deidentification_level) references data_sharing_manager.deidentification_level(id)
     
 ) comment 'Holds details of the data flow configurations that have been defined';
+
+create table data_sharing_manager.project (
+	uuid char(36) not null comment 'Unique identifier for the project',
+    name varchar(100) not null comment 'Name of the project',
+    lead_user char(36) null comment 'A reference to the user manager user who is leading the project',
+    technical_lead_user char(36) null comment 'A reference to the user manager user who is the technical lead for the project',
+    consent_model_id smallint null comment 'Consent model of the project',
+    deidentification_level smallint null comment 'de-Identification level of the project eg PID, Pseudonomised',
+    project_type_id smallint null comment 'Type of project eg extract, query etc',
+    security_infrastructure_id smallint null comment 'Security Infrastructure eg N3, Internet',
+    ip_address varchar(50) null comment 'IP address related to the project',
+    summary varchar(5000) null comment 'Summary of the project',
+    business_case varchar(5000) null comment 'Business case of the project',
+    objectives varchar(5000) null comment 'Objectives of the project',
+    security_architecture_id smallint not null comment 'Security Architecture eg TLS/MA, Secure FTP',
+    storage_protocol_id smallint not null comment 'Storage protocol eg Temporary store and forward, permanent',
+    
+    constraint data_sharing_manager_project_uuid_pk primary key (uuid),
+    index data_sharing_manager_project_name_idx (name),
+    foreign key data_sharing_manager_project_storage_protocolId_fk (storage_protocol_id) references data_sharing_manager.storage_protocol(id),
+    foreign key data_sharing_manager_project_consent_model_id_fk (consent_model_id) references data_sharing_manager.consent_model(id),
+    foreign key data_sharing_manager_project_deidentification_level_fk (deidentification_level) references data_sharing_manager.deidentification_level(id),
+    foreign key data_sharing_manager_project_type_fk (project_type_id) references data_sharing_manager.project_type(id),
+    foreign key data_sharing_manager_project_security_infrastructure_fk (security_infrastructure_id) references data_sharing_manager.security_infrastructure(id),
+    foreign key data_sharing_manager_project_security_architecture_fk (security_architecture_id) references data_sharing_manager.security_architecture(id)
+    
+) comment 'Holds details of the projects that have been defined';
 
 create table data_sharing_manager.data_exchange (
 	uuid char(36) not null comment 'Unique identifier for the data flow configuration',

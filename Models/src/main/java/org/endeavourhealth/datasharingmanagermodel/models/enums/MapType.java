@@ -15,7 +15,8 @@ public enum MapType {
     PURPOSE((short)10),
     BENEFIT((short)11),
     DOCUMENT((short)12),
-    DATAEXCHANGE((short)13);
+    DATAEXCHANGE((short)13),
+    PROJECT((short)14);
 
 
     private Short mapType;

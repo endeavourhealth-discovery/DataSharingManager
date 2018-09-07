@@ -420,6 +420,34 @@ public class MasterMappingEntity {
         }
     }
 
+    public static void saveProjectMappings(JsonProject project) throws Exception {
+
+        if (project.getPublishers() != null) {
+            Map<UUID, String> publishers = project.getPublishers();
+            saveChildMappings(publishers, MapType.PUBLISHER.getMapType(), project.getUuid(), MapType.DATAFLOW.getMapType());
+        }
+
+        if (project.getSubscribers() != null) {
+            Map<UUID, String> subscribers = project.getSubscribers();
+            saveChildMappings(subscribers, MapType.SUBSCRIBER.getMapType(), project.getUuid(), MapType.DATAFLOW.getMapType());
+        }
+
+        if (project.getBasePopulation() != null) {
+            Map<UUID, String> dsas = project.getBasePopulation();
+            saveChildMappings(dsas, MapType.COHORT.getMapType(),  project.getUuid(), MapType.PROJECT.getMapType());
+        }
+
+        if (project.getDataSet() != null) {
+            Map<UUID, String> dpas = project.getDataSet();
+            saveChildMappings(dpas, MapType.DATASET.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
+        }
+
+        if (project.getDsas() != null) {
+            Map<UUID, String> exchanges = project.getDsas();
+            saveParentMappings(exchanges, MapType.DATASHARINGAGREEMENT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
+        }
+    }
+
     public static void saveDataExchangeMappings(JsonDataExchange dataExchange) throws Exception {
 
         if (dataExchange.getDataFlows() != null) {

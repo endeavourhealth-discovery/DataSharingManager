@@ -1,0 +1,262 @@
+<div class="module">
+  <div class="container-fluid">
+    <div class="module-heading">
+      Project details
+      <div class="pull-right">
+        <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success" (click)="save(false)">Save</button>
+        <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-warning" (click)="save(true)">Save & close</button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="close()">Cancel</button>
+      </div>
+    </div>
+    <div class="module-body">
+      <form>
+        <fieldset [disabled]="!allowEdit">
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label class="control-label">Project name</label>
+              <input type="text" class="form-control" placeholder="Project name" [(ngModel)]="project.name" name="name">
+            </div>
+            <div class="form-group col-md-6">
+              <label class="control-label">Summary</label>
+              <input type="text" class="form-control" placeholder="Summary" [(ngModel)]="project.summary" name="summary">
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label class="control-label">Business case</label>
+              <input type="text" class="form-control" placeholder="Business case" [(ngModel)]="project.businessCase" name="businessCase">
+            </div>
+            <div class="form-group col-md-6">
+              <label class="control-label">Objectives</label>
+              <input type="text" class="form-control" placeholder="Objectives" [(ngModel)]="project.objectives" name="objectives">
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label class="control-label">Project lead</label>
+              <input type="text" class="form-control" placeholder="Project lead" [(ngModel)]="project.leadUser" name="leadUser">
+            </div>
+            <div class="form-group col-md-6">
+              <label class="control-label">Project technical lead</label>
+              <input type="text" class="form-control" placeholder="Project technical lead" [(ngModel)]="project.technicalLeadUser" name="technicalLeadUser">
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-4">
+              <label class="control-label">Storage protocol</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+                <select class="form-control" [(ngModel)]="project.storageProtocolId" name="storageProtocolId">
+                  <option *ngFor="let sps of storageProtocols" [ngValue]="sps.num">{{sps.name}}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group col-md-4">
+              <label class="control-label">Consent model</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+                <select class="form-control" [(ngModel)]="project.consentModelId" name="consentModel">
+                  <option *ngFor="let con of consents" [ngValue]="con.num">{{con.name}}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group col-md-4">
+              <label class="control-label">De-identification level</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+                <select class="form-control" [(ngModel)]="project.deidentificationLevel" name="deIdentificationLevel">
+                  <option *ngFor="let did of deidentificationLevel" [ngValue]="did.num">{{did.name}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-4">
+              <label class="control-label">Project type</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+                <select class="form-control" [(ngModel)]="project.projectTypeId" name="projectTypeId">
+                  <option *ngFor="let proj of projectTypes" [ngValue]="proj.num">{{proj.name}}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group col-md-4">
+              <label class="control-label">Security infrastructure Id</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+                <select class="form-control" [(ngModel)]="project.securityInfrastructureId" name="securityInfrastructureId">
+                  <option *ngFor="let sec of securityInfrastructures" [ngValue]="sec.num">{{sec.name}}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group col-md-4">
+              <label class="control-label">Security architecture Id</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+                <select class="form-control" [(ngModel)]="project.securityArchitectureId" name="securityArchitectureId">
+                  <option *ngFor="let arc of securityArchitectures" [ngValue]="arc.num">{{arc.name}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label class="control-label">IP address</label>
+              <input type="text" class="form-control" placeholder="IP address" [(ngModel)]="project.ipAddress" name="ipAddress">
+            </div>
+          </div>
+        </fieldset>
+
+        <ngb-accordion>
+          <ngb-panel id="datashare">
+            <ng-template ngbPanelTitle>
+              <div class="row">
+                <div class="col-md-2">
+                  Data sharing agreements
+                </div>
+                <div class="col-md-1">
+                  <span class="badge badge-pill badge-primary">{{dsas?.length}}</span>
+                </div>
+                <div class="col-md-1">
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editDataSharingAgreements()">Edit</button>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <entity-viewer
+                [items]="dsas"
+                [primary]="'name'"
+                [primaryOrderText]="'Name'"
+                [displayClass]="'region'"
+                [secondary]="'description'"
+                [secondaryOrderText]="'Description'"
+                [typeDescription]="'Data sharing agreement'"
+                [model]="'dsa'"
+                [detailsToShow]="dsaDetailsToShow">
+              </entity-viewer>
+            </ng-template>
+          </ngb-panel>
+          <ngb-panel id="pubs">
+            <ng-template ngbPanelTitle>
+              <div class="row">
+                <div class="col-md-2">
+                  Publishers
+                </div>
+                <div class="col-md-1">
+                  <span class="badge badge-pill badge-primary">{{publishers?.length}}</span>
+                </div>
+                <div class="col-md-1">
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editPublishers()">Edit</button>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <entity-viewer
+                [items]="publishers"
+                [primary]="'name'"
+                [primaryOrderText]="'Name'"
+                [displayClass]="'region'"
+                [secondary]="'odsCode'"
+                [secondaryOrderText]="'ODS Code'"
+                [typeDescription]="'Publisher'"
+                [model]="'organisation'"
+                [detailsToShow]="OrganisationDetailsToShow">
+              </entity-viewer>
+            </ng-template>
+          </ngb-panel>
+          <ngb-panel id="subs">
+            <ng-template ngbPanelTitle>
+              <div class="row">
+                <div class="col-md-2">
+                  Subscribers
+                </div>
+                <div class="col-md-1">
+                  <span class="badge badge-pill badge-primary">{{subscribers?.length}}</span>
+                </div>
+                <div class="col-md-1">
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editSubscribers()">Edit</button>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <entity-viewer
+                [items]="subscribers"
+                [primary]="'name'"
+                [primaryOrderText]="'Name'"
+                [displayClass]="'region'"
+                [secondary]="'odsCode'"
+                [secondaryOrderText]="'ODS Code'"
+                [typeDescription]="'Subscriber'"
+                [model]="'organisation'"
+                [detailsToShow]="OrganisationDetailsToShow">
+              </entity-viewer>
+            </ng-template>
+          </ngb-panel>
+          <ngb-panel id="dataproc">
+            <ng-template ngbPanelTitle>
+              <div class="row">
+                <div class="col-md-2">
+                  Base population
+                </div>
+                <div class="col-md-1">
+                  <span class="badge badge-pill badge-primary">{{basePopulation?.length}}</span>
+                </div>
+                <div class="col-md-1">
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editBasePopulations()">Edit</button>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <entity-viewer
+                [items]="basePopulation"
+                [primary]="'name'"
+                [primaryOrderText]="'Name'"
+                [displayClass]="'region'"
+                [secondary]="'description'"
+                [secondaryOrderText]="'Description'"
+                [typeDescription]="'Base population'"
+                [model]="'cohort'"
+                [detailsToShow]="cohortDetailsToShow">
+              </entity-viewer>
+            </ng-template>
+          </ngb-panel>
+          <ngb-panel id="dataproc">
+            <ng-template ngbPanelTitle>
+              <div class="row">
+                <div class="col-md-2">
+                  Data sets
+                </div>
+                <div class="col-md-1">
+                  <span class="badge badge-pill badge-primary">{{dataSet?.length}}</span>
+                </div>
+                <div class="col-md-1">
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editDataSets()">Edit</button>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <entity-viewer
+                [items]="dataSet"
+                [primary]="'name'"
+                [primaryOrderText]="'Name'"
+                [displayClass]="'region'"
+                [secondary]="'description'"
+                [secondaryOrderText]="'Description'"
+                [typeDescription]="'Data set'"
+                [model]="'dataSet'"
+                [detailsToShow]="dataSetDetailsToShow">
+              </entity-viewer>
+            </ng-template>
+          </ngb-panel>
+
+        </ngb-accordion>
+      </form>
+      <br>
+      <br>
+    </div>
+  </div>
+</div>

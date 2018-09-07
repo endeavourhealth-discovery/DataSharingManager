@@ -21,7 +21,10 @@ import {ControlsModule} from "eds-angular4/dist/controls";
     DialogsModule,
     ControlsModule
   ],
-  declarations: [DataFlowComponent, DataFlowEditorComponent, DataflowPickerComponent],
+  declarations: [
+    DataFlowComponent,
+    DataFlowEditorComponent,
+    DataflowPickerComponent],
   entryComponents : [
     DataflowPickerComponent
   ],
