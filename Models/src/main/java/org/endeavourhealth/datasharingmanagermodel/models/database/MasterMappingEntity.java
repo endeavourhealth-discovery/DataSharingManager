@@ -424,12 +424,12 @@ public class MasterMappingEntity {
 
         if (project.getPublishers() != null) {
             Map<UUID, String> publishers = project.getPublishers();
-            saveChildMappings(publishers, MapType.PUBLISHER.getMapType(), project.getUuid(), MapType.DATAFLOW.getMapType());
+            saveChildMappings(publishers, MapType.PUBLISHER.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
 
         if (project.getSubscribers() != null) {
             Map<UUID, String> subscribers = project.getSubscribers();
-            saveChildMappings(subscribers, MapType.SUBSCRIBER.getMapType(), project.getUuid(), MapType.DATAFLOW.getMapType());
+            saveChildMappings(subscribers, MapType.SUBSCRIBER.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
 
         if (project.getBasePopulation() != null) {

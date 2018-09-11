@@ -1,6 +1,7 @@
 package org.endeavourhealth.datasharingmanagermodel.models.database;
 
 import org.endeavourhealth.datasharingmanagermodel.PersistenceManager;
+import org.endeavourhealth.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.datasharingmanagermodel.models.json.JsonProject;
 
 import javax.persistence.*;
@@ -315,5 +316,26 @@ public class ProjectEntity {
         entityManager.close();
 
         return ret;
+    }
+
+    public static List<DataProcessingAgreementEntity> getProjectsForOrganisation(String odsCode) throws Exception {
+
+        EntityManager entityManager = PersistenceManager.getEntityManager();
+
+        Query query = entityManager.createQuery(
+                "select p from ProjectEntity p " +
+                        "inner join MasterMappingEntity mm on mm.parentUuid = p.uuid and mm.parentMapTypeId = :projectType " +
+                        "inner join OrganisationEntity o on o.uuid = mm.childUuid " +
+                        "where o.uuid = :orgUuid " +
+                        "and mm.childMapTypeId = :subscriberType ");
+        query.setParameter("projectType", MapType.PROJECT.getMapType());
+        query.setParameter("orgUuid", odsCode);
+        query.setParameter("subscriberType", MapType.SUBSCRIBER.getMapType());
+
+        List<DataProcessingAgreementEntity> result = query.getResultList();
+
+        entityManager.close();
+
+        return result;
     }
 }
