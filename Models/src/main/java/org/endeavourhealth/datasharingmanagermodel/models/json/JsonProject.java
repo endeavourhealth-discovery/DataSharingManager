@@ -1,5 +1,7 @@
 package org.endeavourhealth.datasharingmanagermodel.models.json;
 
+import org.endeavourhealth.datasharingmanagermodel.models.database.ProjectEntity;
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,6 +26,26 @@ public class JsonProject {
     private Map<UUID, String> dataSet = null;
     private Map<UUID, String> projectConfiguration = null;
     private Map<UUID, String> dsas = null;
+
+    public JsonProject() {
+    }
+
+    public JsonProject(ProjectEntity projectEntity) {
+        this.uuid = projectEntity.getUuid();
+        this.name = projectEntity.getName();
+        this.leadUser = projectEntity.getLeadUser();
+        this.technicalLeadUser = projectEntity.getTechnicalLeadUser();
+        this.consentModelId = projectEntity.getConsentModelId();
+        this.deidentificationLevel = projectEntity.getDeidentificationLevel();
+        this.projectTypeId = projectEntity.getProjectTypeId();
+        this.securityInfrastructureId = projectEntity.getSecurityInfrastructureId();
+        this.ipAddress = projectEntity.getIpAddress();
+        this.summary = projectEntity.getSummary();
+        this.businessCase = projectEntity.getBusinessCase();
+        this.objectives = projectEntity.getObjectives();
+        this.securityArchitectureId = projectEntity.getSecurityArchitectureId();
+        this.storageProtocolId = projectEntity.getStorageProtocolId();
+    }
 
     public String getUuid() {
         return uuid;

@@ -9,8 +9,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "project", schema = "data_sharing_manager")
@@ -337,5 +336,106 @@ public class ProjectEntity {
         entityManager.close();
 
         return result;
+    }
+
+    public static JsonProject getFullProjectJson(String projectId) throws Exception {
+        JsonProject project = new JsonProject(getProject(projectId));
+
+        List<DataSharingAgreementEntity> dsas = getLinkedDsas(projectId);
+        List<CohortEntity> basePopulations = getBasePopulations(projectId);
+        List<DatasetEntity> dataSets = getDataSets(projectId);
+        List<OrganisationEntity> publishers = getLinkedOrganisations(projectId, MapType.PUBLISHER.getMapType());
+        List<OrganisationEntity> subscribers = getLinkedOrganisations(projectId, MapType.SUBSCRIBER.getMapType());
+
+        if (dsas != null) {
+            Map<UUID, String> sharingAgreements = new HashMap<>();
+
+            for (DataSharingAgreementEntity dsa : dsas) {
+                sharingAgreements.put(UUID.fromString(dsa.getUuid()), dsa.getName());
+            }
+            project.setDsas(sharingAgreements);
+        }
+
+        if (basePopulations != null) {
+            Map<UUID, String> populations = new HashMap<>();
+
+            for (CohortEntity pop : basePopulations) {
+                populations.put(UUID.fromString(pop.getUuid()), pop.getName());
+            }
+            project.setBasePopulation(populations);
+        }
+
+        if (dataSets != null) {
+            Map<UUID, String> data = new HashMap<>();
+
+            for (DatasetEntity ds : dataSets) {
+                data.put(UUID.fromString(ds.getUuid()), ds.getName());
+            }
+            project.setDataSet(data);
+        }
+
+        if (publishers != null) {
+            Map<UUID, String> pubs = new HashMap<>();
+
+            for (OrganisationEntity pub : publishers) {
+                pubs.put(UUID.fromString(pub.getUuid()), pub.getName());
+            }
+            project.setPublishers(pubs);
+        }
+
+        if (subscribers != null) {
+            Map<UUID, String> subs = new HashMap<>();
+
+            for (OrganisationEntity sub : subscribers) {
+                subs.put(UUID.fromString(sub.getUuid()), sub.getName());
+            }
+            project.setSubscribers(subs);
+        }
+
+        return project;
+    }
+
+    public static List<DataSharingAgreementEntity> getLinkedDsas(String projectId) throws Exception {
+
+        List<String> dsaUuids = MasterMappingEntity.getParentMappings(projectId, MapType.PROJECT.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+        List<DataSharingAgreementEntity> ret = new ArrayList<>();
+
+        if (dsaUuids.size() > 0)
+            ret = DataSharingAgreementEntity.getDSAsFromList(dsaUuids);
+
+        return ret;
+    }
+
+    public static List<CohortEntity> getBasePopulations(String projectId) throws Exception {
+
+        List<String> cohortIds = MasterMappingEntity.getChildMappings(projectId, MapType.PROJECT.getMapType(), MapType.COHORT.getMapType());
+        List<CohortEntity> ret = new ArrayList<>();
+
+        if (cohortIds.size() > 0)
+            ret = CohortEntity.getCohortsFromList(cohortIds);
+
+        return ret;
+    }
+
+    public static List<DatasetEntity> getDataSets(String projectId) throws Exception {
+
+        List<String> dataSetIds = MasterMappingEntity.getChildMappings(projectId, MapType.PROJECT.getMapType(), MapType.DATASET.getMapType());
+        List<DatasetEntity> ret = new ArrayList<>();
+
+        if (dataSetIds.size() > 0)
+            ret = DatasetEntity.getDataSetsFromList(dataSetIds);
+
+        return ret;
+    }
+
+    public static List<OrganisationEntity> getLinkedOrganisations(String projectId, Short mapType) throws Exception {
+
+        List<String> orgUUIDs = MasterMappingEntity.getChildMappings(projectId, MapType.PROJECT.getMapType(), mapType);
+        List<OrganisationEntity> ret = new ArrayList<>();
+
+        if (orgUUIDs.size() > 0)
+            ret = OrganisationEntity.getOrganisationsFromList(orgUUIDs);
+
+        return ret;
     }
 }

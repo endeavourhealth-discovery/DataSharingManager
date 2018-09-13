@@ -239,13 +239,9 @@ public class ProjectEndpoint extends AbstractEndpoint {
                 .build();
     }
 
-    private Response getLinkedDsas(String dataFlowUuid) throws Exception {
+    private Response getLinkedDsas(String projectId) throws Exception {
 
-        List<String> dsaUuids = MasterMappingEntity.getParentMappings(dataFlowUuid, MapType.PROJECT.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
-        List<DataSharingAgreementEntity> ret = new ArrayList<>();
-
-        if (dsaUuids.size() > 0)
-            ret = DataSharingAgreementEntity.getDSAsFromList(dsaUuids);
+        List<DataSharingAgreementEntity> ret = ProjectEntity.getLinkedDsas(projectId);
 
         clearLogbackMarkers();
         return Response
@@ -256,11 +252,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
 
     private Response getBasePopulations(String projectId) throws Exception {
 
-        List<String> cohortIds = MasterMappingEntity.getChildMappings(projectId, MapType.PROJECT.getMapType(), MapType.COHORT.getMapType());
-        List<CohortEntity> ret = new ArrayList<>();
-
-        if (cohortIds.size() > 0)
-            ret = CohortEntity.getCohortsFromList(cohortIds);
+        List<CohortEntity> ret = ProjectEntity.getBasePopulations(projectId);
 
         clearLogbackMarkers();
         return Response
@@ -271,11 +263,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
 
     private Response getDataSets(String projectId) throws Exception {
 
-        List<String> dataSetIds = MasterMappingEntity.getChildMappings(projectId, MapType.PROJECT.getMapType(), MapType.DATASET.getMapType());
-        List<DatasetEntity> ret = new ArrayList<>();
-
-        if (dataSetIds.size() > 0)
-            ret = DatasetEntity.getDataSetsFromList(dataSetIds);
+        List<DatasetEntity> ret = ProjectEntity.getDataSets(projectId);
 
         clearLogbackMarkers();
         return Response
@@ -286,11 +274,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
 
     private Response getLinkedOrganisations(String projectId, Short mapType) throws Exception {
 
-        List<String> orgUUIDs = MasterMappingEntity.getChildMappings(projectId, MapType.PROJECT.getMapType(), mapType);
-        List<OrganisationEntity> ret = new ArrayList<>();
-
-        if (orgUUIDs.size() > 0)
-            ret = OrganisationEntity.getOrganisationsFromList(orgUUIDs);
+        List<OrganisationEntity> ret = ProjectEntity.getLinkedOrganisations(projectId, mapType);
 
         clearLogbackMarkers();
         return Response
