@@ -318,7 +318,7 @@ public class ProjectEntity {
         return ret;
     }
 
-    public static List<DataProcessingAgreementEntity> getProjectsForOrganisation(String odsCode) throws Exception {
+    public static List<ProjectEntity> getProjectsForOrganisation(String organisationId) throws Exception {
 
         EntityManager entityManager = PersistenceManager.getEntityManager();
 
@@ -329,10 +329,10 @@ public class ProjectEntity {
                         "where o.uuid = :orgUuid " +
                         "and mm.childMapTypeId = :subscriberType ");
         query.setParameter("projectType", MapType.PROJECT.getMapType());
-        query.setParameter("orgUuid", odsCode);
+        query.setParameter("orgUuid", organisationId);
         query.setParameter("subscriberType", MapType.SUBSCRIBER.getMapType());
 
-        List<DataProcessingAgreementEntity> result = query.getResultList();
+        List<ProjectEntity> result = query.getResultList();
 
         entityManager.close();
 
