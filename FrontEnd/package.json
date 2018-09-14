@@ -22,7 +22,7 @@
     "@angular/platform-browser-dynamic": "4.2.6",
     "@angular/platform-server": "4.3.4",
     "@angular/router": "4.2.6",
-    "bootstrap": "4.1.3",
+    "bootstrap": "4.0.0-alpha.6",
     "core-js": "^2.4.1",
     "eds-angular4": "https://github.com/endeavourhealth-discovery/Angular4/raw/master/eds-angular4-1.0.68.tgz",
     "font-awesome": "^4.7.0",
