@@ -252,6 +252,27 @@
               </entity-viewer>
             </ng-template>
           </ngb-panel>
+          <ngb-panel id="appPol">
+            <ng-template ngbPanelTitle>
+              <div class="row">
+                <div class="col-md-2">
+                  Application policy
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-control-label">Application policy</label>
+                    <select class="form-control" [(ngModel)]="selectedApplicationPolicy" name="selectedApplicationPolicy" (change)="changeUserApplicationPolicy(selectedApplicationPolicy.id)">
+                      <option *ngFor="let pol of availablePolicies" [ngValue]="pol">{{pol.name}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-panel>
 
         </ngb-accordion>
       </form>

@@ -346,6 +346,7 @@ public class ProjectEntity {
         List<DatasetEntity> dataSets = getDataSets(projectId);
         List<OrganisationEntity> publishers = getLinkedOrganisations(projectId, MapType.PUBLISHER.getMapType());
         List<OrganisationEntity> subscribers = getLinkedOrganisations(projectId, MapType.SUBSCRIBER.getMapType());
+        ProjectApplicationPolicyEntity applicationPolicy = ProjectApplicationPolicyEntity.getProjectApplicationPolicyId(projectId);
 
         if (dsas != null) {
             Map<UUID, String> sharingAgreements = new HashMap<>();
@@ -390,6 +391,10 @@ public class ProjectEntity {
                 subs.put(UUID.fromString(sub.getUuid()), sub.getName());
             }
             project.setSubscribers(subs);
+        }
+
+        if (applicationPolicy != null) {
+            project.setApplicationPolicy(applicationPolicy.getApplicationPolicyId());
         }
 
         return project;

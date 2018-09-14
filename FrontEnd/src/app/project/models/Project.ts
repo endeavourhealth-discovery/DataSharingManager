@@ -19,6 +19,7 @@ export class Project {
   dataSet: { [key: string]: string; };
   projectConfiguration: { [key: string]: string; };
   dsas: { [key: string]: string; };
+  applicationPolicy: string;
 
   getDisplayItems(): any[] {
     return [

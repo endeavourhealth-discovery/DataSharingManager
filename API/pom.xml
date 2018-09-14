@@ -29,6 +29,14 @@
             <version>0.0.8-SNAPSHOT</version>
         </dependency>
 
+        <!-- User Manager Models -->
+
+        <dependency>
+            <groupId>org.endeavourhealth.userManager</groupId>
+            <artifactId>UserModels</artifactId>
+            <version>0.0.6-SNAPSHOT</version>
+        </dependency>
+
         <!-- End Common -->
 
         <!-- Driver for config -->

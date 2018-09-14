@@ -6,6 +6,8 @@ import {Dsa} from "../data-sharing-agreement/models/Dsa";
 import {Project} from "./models/Project";
 import {Cohort} from "../cohort/models/Cohort";
 import {DataSet} from "../data-set/models/Dataset";
+import {ProjectApplicationPolicy} from "./models/ProjectApplicationPolicy";
+import {ApplicationPolicy} from "./models/ApplicationPolicy";
 
 @Injectable()
 export class ProjectService {
@@ -85,6 +87,26 @@ export class ProjectService {
     const params = new URLSearchParams();
     params.set('uuid', uuid);
     return vm.http.get('api/project/dataSets', { search : params })
+      .map((response) => response.json());
+  }
+
+  getProjectApplicationPolicy(projectUuid: string): Observable<ProjectApplicationPolicy> {
+    const vm = this;
+    let params = new URLSearchParams();
+    params.set('projectUuid', projectUuid);
+    return vm.http.get('api/project/projectApplicationPolicy', {search: params})
+      .map((response) => response.json());
+  }
+
+  saveProjectApplicationPolicy(projectApplicationPolicy: ProjectApplicationPolicy): Observable<string> {
+    const vm = this;
+    return vm.http.post('api/project/setProjectApplicationPolicy', projectApplicationPolicy)
+      .map((response) => response.text());
+  }
+
+  getAvailableProjectApplicationPolicy(): Observable<ApplicationPolicy[]> {
+    const vm = this;
+    return vm.http.get('api/project/getApplicationPolicies')
       .map((response) => response.json());
   }
 

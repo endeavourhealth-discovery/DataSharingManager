@@ -14,6 +14,8 @@ import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.datasharingmanagermodel.models.json.JsonProject;
+import org.endeavourhealth.datasharingmanagermodel.models.json.JsonProjectApplicationPolicy;
+import org.endeavourhealth.usermanagermodel.models.database.ApplicationPolicyEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +24,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static org.endeavourhealth.common.security.SecurityUtils.getCurrentUserId;
 
 @Path("/project")
 @Metrics(registry = "EdsRegistry")
@@ -206,6 +209,77 @@ public class ProjectEndpoint extends AbstractEndpoint {
                 "Project UUID", uuid);
 
         return getDataSets(uuid);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="UserManager.ProjectEndpoint.getProjectApplicationPolicy")
+    @Path("/projectApplicationPolicy")
+    @ApiOperation(value = "Returns the application policy associated with the project")
+    public Response getProjectApplicationPolicy(@Context SecurityContext sc,
+                                             @ApiParam(value = "Project id to get the application policy for") @QueryParam("projectUuid") String projectUuid) throws Exception {
+        super.setLogbackMarkers(sc);
+
+        userAudit.save(getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "User application policy", "User Id", projectUuid);
+
+        LOG.trace("getUser");
+
+        ProjectApplicationPolicyEntity projectPolicy = ProjectApplicationPolicyEntity.getProjectApplicationPolicyId(projectUuid);
+        if (projectPolicy == null) {
+            projectPolicy = new ProjectApplicationPolicyEntity();
+        }
+
+        AbstractEndpoint.clearLogbackMarkers();
+        return Response
+                .ok()
+                .entity(projectPolicy)
+                .build();
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="UserManager.ProjectEndpoint.setProjectApplicationPolicy")
+    @Path("/setProjectApplicationPolicy")
+    @RequiresAdmin
+    @ApiOperation(value = "Saves application policy associated with a project")
+    public Response setUserApplicationPolicy(@Context SecurityContext sc, JsonProjectApplicationPolicy projectApplicationPolicy) throws Exception {
+        super.setLogbackMarkers(sc);
+
+        userAudit.save(getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "Project application policy", "Project application policy", projectApplicationPolicy);
+
+        LOG.trace("getUser");
+
+        ProjectApplicationPolicyEntity.saveProjectApplicationPolicyId(projectApplicationPolicy);
+
+        AbstractEndpoint.clearLogbackMarkers();
+        return Response
+                .ok()
+                .build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="UserManager.ProjectEndpoint.getApplicationPolicies")
+    @Path("/getApplicationPolicies")
+    @ApiOperation(value = "Returns a list of application policies")
+    public Response getApplicationPolicies(@Context SecurityContext sc) throws Exception {
+
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "application policy(s)");
+
+        List<ApplicationPolicyEntity> applicationPolicies = ApplicationPolicyEntity.getAllApplicationPolicies();
+
+        clearLogbackMarkers();
+        return Response
+                .ok()
+                .entity(applicationPolicies)
+                .build();
     }
 
     private Response getProjectList() throws Exception {

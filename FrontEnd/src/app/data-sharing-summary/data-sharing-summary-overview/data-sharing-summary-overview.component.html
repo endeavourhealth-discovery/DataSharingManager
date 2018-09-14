@@ -7,7 +7,7 @@
       <div class="row">
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-header  bg-info">Data sharing agreements</div>
+            <div class="card-header text-white">Data sharing agreements</div>
             <div class="card-block">
               <loadingIndicator [done]="dsaLoadingComplete">
                 <div class="row" *ngFor="let dsa of dsaStats">
@@ -28,7 +28,7 @@
         </div>
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-header  bg-warning">Data processing agreements</div>
+            <div class="card-header text-white">Data processing agreements</div>
             <div class="card-block">
               <loadingIndicator [done]="dpaLoadingComplete">
                 <div class="row" *ngFor="let dpa of dpaStats">
@@ -42,7 +42,7 @@
               </loadingIndicator>
               <br>
               <div class="pull-right">
-                <button type="button" class="btn btn-sm btn-warning" (click)="goToDpa()">View data processing agreements</button>
+                <button type="button" class="btn btn-sm btn-info" (click)="goToDpa()">View data processing agreements</button>
               </div>
             </div>
           </div>
@@ -52,7 +52,7 @@
       <div class="row">
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-header" [style.backgroundColor]="'#FF6464'">Datasets</div>
+            <div class="card-header text-white">Datasets</div>
             <div class="card-block">
               <loadingIndicator [done]="datasetLoadingComplete">
                 <div class="row" *ngFor="let dataset of datasetStats">
@@ -66,7 +66,7 @@
               </loadingIndicator>
               <br>
               <div class="pull-right">
-                <button type="button" class="btn btn-sm btn-secondary" [style.backgroundColor]="'#FF6464'" (click)="goToDataSets()">View datasets</button>
+                <button type="button" class="btn btn-sm btn-info" (click)="goToDataSets()">View datasets</button>
               </div>
             </div>
           </div>
@@ -74,7 +74,7 @@
 
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-header text-white bg-primary">Cohorts</div>
+            <div class="card-header text-white">Cohorts</div>
             <div class="card-block">
               <loadingIndicator [done]="cohortLoadingComplete">
                 <div class="row" *ngFor="let cohort of cohortStats">
@@ -88,7 +88,7 @@
               </loadingIndicator>
               <br>
               <div class="pull-right">
-                <button type="button" class="btn btn-sm btn-primary" (click)="goToCohorts()">View cohorts</button>
+                <button type="button" class="btn btn-sm btn-info" (click)="goToCohorts()">View cohorts</button>
               </div>
             </div>
           </div>
@@ -98,7 +98,7 @@
       <div class="row">
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-header" [style.backgroundColor]="'#FF6464'">Projects</div>
+            <div class="card-header text-white">Projects</div>
             <div class="card-block">
               <loadingIndicator [done]="projectLoadingComplete">
                 <div class="row" *ngFor="let proj of projectStats">
@@ -112,7 +112,7 @@
               </loadingIndicator>
               <br>
               <div class="pull-right">
-                <button type="button" class="btn btn-sm btn-secondary" [style.backgroundColor]="'#FF6464'" (click)="goToProjects()">View projects</button>
+                <button type="button" class="btn btn-sm btn-info" (click)="goToProjects()">View projects</button>
               </div>
             </div>
           </div>

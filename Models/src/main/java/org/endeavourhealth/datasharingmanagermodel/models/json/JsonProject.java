@@ -1,7 +1,10 @@
 package org.endeavourhealth.datasharingmanagermodel.models.json;
 
 import org.endeavourhealth.datasharingmanagermodel.models.database.ProjectEntity;
+import org.endeavourhealth.usermanagermodel.models.json.JsonApplicationPolicyAttribute;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,6 +29,8 @@ public class JsonProject {
     private Map<UUID, String> dataSet = null;
     private Map<UUID, String> projectConfiguration = null;
     private Map<UUID, String> dsas = null;
+    private String applicationPolicy = null;
+    private List<JsonApplicationPolicyAttribute> applicationPolicyAttributes = new ArrayList<>();
 
     public JsonProject() {
     }
@@ -205,5 +210,21 @@ public class JsonProject {
 
     public void setDsas(Map<UUID, String> dsas) {
         this.dsas = dsas;
+    }
+
+    public String getApplicationPolicy() {
+        return applicationPolicy;
+    }
+
+    public void setApplicationPolicy(String applicationPolicy) {
+        this.applicationPolicy = applicationPolicy;
+    }
+
+    public List<JsonApplicationPolicyAttribute> getApplicationPolicyAttributes() {
+        return applicationPolicyAttributes;
+    }
+
+    public void setApplicationPolicyAttributes(List<JsonApplicationPolicyAttribute> applicationPolicyAttributes) {
+        this.applicationPolicyAttributes = applicationPolicyAttributes;
     }
 }

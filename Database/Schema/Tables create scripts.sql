@@ -46,6 +46,7 @@ drop table if exists data_sharing_manager.map_type;
 drop table if exists data_sharing_manager.organisation_type;
 drop table if exists data_sharing_manager.deidentification_level;
 drop table if exists data_sharing_manager.project_type;
+drop table if exists data_sharing_manager.project_application_policy;
 
 /*
 Look up tables containing enumerations for certain fields.  
@@ -404,4 +405,12 @@ create table data_sharing_manager.master_mapping (
     foreign key data_sharing_manager_master_mapping_parent_map_type_id_pk (parent_map_type_id) references data_sharing_manager.map_type(id),
     primary key data_sharing_manager_master_mapping_pk (child_uuid, child_map_type_id, parent_uuid, parent_map_type_id)
 ) comment 'Single mapping table storing how each item is linked to other items';
+
+CREATE TABLE data_sharing_manager.project_application_policy
+(
+	project_uuid varchar(36) NOT NULL,
+	application_policy_id varchar(36) NOT NULL,
+
+	CONSTRAINT pk_id PRIMARY KEY (project_uuid)
+)comment 'An application policy which is assigned to a project to determine access to applications';
 

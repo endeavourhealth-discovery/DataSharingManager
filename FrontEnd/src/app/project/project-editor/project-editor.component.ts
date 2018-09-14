@@ -13,6 +13,8 @@ import {DataSharingAgreementPickerComponent} from "../../data-sharing-agreement/
 import {OrganisationPickerComponent} from "../../organisation/organisation-picker/organisation-picker.component";
 import {CohortPickerComponent} from "../../cohort/cohort-picker/cohort-picker.component";
 import {DataSetPickerComponent} from "../../data-set/data-set-picker/data-set-picker.component";
+import {ProjectApplicationPolicy} from "../models/ProjectApplicationPolicy";
+import {ApplicationPolicy} from "../models/ApplicationPolicy";
 
 @Component({
   selector: 'app-project-editor',
@@ -29,6 +31,10 @@ export class ProjectEditorComponent implements OnInit {
   basePopulation: Cohort[];
   dataSet: DataSet[];
   allowEdit = false;
+
+  projectApplicationPolicy: ProjectApplicationPolicy;
+  availablePolicies: ApplicationPolicy[];
+  selectedApplicationPolicy: ApplicationPolicy;
 
   storageProtocols = [
     {num: 0, name: 'Audit only'},
@@ -84,12 +90,27 @@ export class ProjectEditorComponent implements OnInit {
       params => {
         this.performAction(params['mode'], params['id']);
       });
+
+    this.getAvailableApplicationPolicies();
   }
 
   checkEditPermission() {
     const vm = this;
     if (vm.securityService.hasPermission('eds-dsa-manager', 'eds-dsa-manager:admin'))
       vm.allowEdit = true;
+  }
+
+  getAvailableApplicationPolicies() {
+    const vm = this;
+    vm.projectService.getAvailableProjectApplicationPolicy()
+      .subscribe(
+        (result) => {
+          vm.availablePolicies = result;
+        },
+        (error) => {
+          vm.log.error('Available application policies could not be loaded. Please try again.', error, 'Load available application policies');
+        }
+      );
   }
 
   protected performAction(action: string, itemUuid: string) {
@@ -119,6 +140,7 @@ export class ProjectEditorComponent implements OnInit {
           vm.getLinkedPublishers();
           vm.getLinkedSubscribers();
           vm.getLinkedDataSets();
+          vm.getProjectApplicationPolicy();
         },
         error => vm.log.error('The project could not be loaded. Please try again.', error, 'Load project')
       );
@@ -165,6 +187,7 @@ export class ProjectEditorComponent implements OnInit {
       .subscribe(saved => {
           vm.project.uuid = saved;
           vm.log.success('Project saved', vm.project, 'Save project');
+          vm.saveApplicationPolicy();
           if (close) { vm.close(); }
         },
         error => vm.log.error('The project could not be saved. Please try again.', error, 'Save project')
@@ -264,6 +287,41 @@ export class ProjectEditorComponent implements OnInit {
       .subscribe(
         result => vm.dataSet = result,
         error => vm.log.error('The associated data sets could not be loaded. Please try again.', error, 'Load associated data sets')
+      );
+  }
+
+  getProjectApplicationPolicy() {
+    const vm = this;
+    vm.projectService.getProjectApplicationPolicy(vm.project.uuid)
+      .subscribe(
+        (result) => {
+          vm.projectApplicationPolicy = result;
+          vm.selectedApplicationPolicy = vm.availablePolicies.find(r => {
+            return r.id === vm.projectApplicationPolicy.applicationPolicyId;
+          });
+        },
+        (error) => {
+          vm.log.error('Project application policy could not be loaded. Please try again.', error, 'Load project application policy');
+        }
+      );
+  }
+
+  changeUserApplicationPolicy(policyId: string) {
+    const vm = this;
+    let changedPolicy = new ProjectApplicationPolicy();
+    changedPolicy.projectUuid = vm.project.uuid;
+    changedPolicy.applicationPolicyId = policyId;
+    vm.projectApplicationPolicy = changedPolicy;
+  }
+
+  saveApplicationPolicy() {
+    const vm = this;
+    vm.projectService.saveProjectApplicationPolicy(vm.projectApplicationPolicy)
+      .subscribe(
+        (response) => {
+
+        },
+        (error) => vm.log.error('Project application policy could not be saved. Please try again.', error, 'Save project application policy')
       );
   }
 
