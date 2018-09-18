@@ -25,7 +25,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">Storage protocol</label>
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
                 <select class="form-control" [(ngModel)]="dataFlow.storageProtocolId" name="storageProtocolId">
                   <option *ngFor="let sps of storageProtocols" [ngValue]="sps.num">{{sps.name}}</option>
                 </select>
@@ -35,7 +35,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">Consent model</label>
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+                <span class="input-group-prepend"><i class="fa fa-th-large fa-lg input-group-text"></i></span>
                 <select class="form-control" [(ngModel)]="dataFlow.consentModelId" name="consentModel">
                   <option *ngFor="let con of consents" [ngValue]="con.num">{{con.name}}</option>
                 </select>
@@ -45,7 +45,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">De-identification level</label>
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
                 <select class="form-control" [(ngModel)]="dataFlow.deidentificationLevel" name="deIdentificationLevel">
                   <option *ngFor="let did of deidentificationLevel" [ngValue]="did.num">{{did.name}}</option>
                 </select>
@@ -221,7 +221,7 @@
                 <div class="col-md-6">
                   <div class="card h-100">
                     <div class="card-header bg-success">Upload associated documentation</div>
-                    <div class="card-block">
+                    <div class="card-body">
                       <form class="container-fluid">
                         <div class="row">
                           <div class="form-group col-md-12">

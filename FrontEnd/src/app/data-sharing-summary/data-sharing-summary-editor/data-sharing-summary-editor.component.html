@@ -34,7 +34,7 @@
           <div class="form-group col-md-3">
             <label class="control-label">Nature of information</label>
             <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+              <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
               <select class="form-control" [(ngModel)]="dataSharingSummary.natureOfInformationId" name="natureOfInformationId">
                 <option *ngFor="let nature of NatureOfInformation" [ngValue]="nature.num">{{nature.name}}</option>
               </select>
@@ -43,7 +43,7 @@
           <div class="form-group col-md-3">
             <label class="control-label">Format type</label>
             <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+              <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
               <select class="form-control" [(ngModel)]="dataSharingSummary.formatTypeId" name="formatTypeId">
                 <option *ngFor="let format of FormatTypes" [ngValue]="format.num">{{format.name}}</option>
               </select>
@@ -52,7 +52,7 @@
           <div class="form-group col-md-3">
             <label class="control-label">Data subject id</label>
             <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+              <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
               <select class="form-control" [(ngModel)]="dataSharingSummary.dataSubjectTypeId" name="dataSubjectTypeId">
                 <option *ngFor="let subject of DataSubjectTypes" [ngValue]="subject.num">{{subject.name}}</option>
               </select>
@@ -61,7 +61,7 @@
           <div class="form-group col-md-3">
             <label class="control-label">Review cycle</label>
             <div class="input-group">
-              <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+              <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
               <select class="form-control" [(ngModel)]="dataSharingSummary.reviewCycleId" name="reviewCycleId">
                 <option *ngFor="let cycle of ReviewCycles" [ngValue]="cycle.num">{{cycle.name}}</option>
               </select>

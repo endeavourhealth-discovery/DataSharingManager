@@ -8,7 +8,7 @@
         <div class="col-md-6">
           <div class="card h-100">
             <div class="card-header bg-info">Regions</div>
-            <div class="card-block">
+            <div class="card-body">
               <loadingIndicator [done]="regionLoadingComplete">
                 <div class="row" *ngFor="let regionStat of regionStats">
                   <div class="col-md-10">
@@ -29,7 +29,7 @@
         <div class="col-md-6">
           <div class="card h-100">
             <div class="card-header  bg-success">Organisations</div>
-            <div class="card-block">
+            <div class="card-body">
               <loadingIndicator [done]="orgLoadingComplete">
                 <div class="row" *ngFor="let stat of orgStats">
                 <div class="col-md-10">
@@ -53,7 +53,7 @@
         <div class="col-md-6">
           <div class="card h-100">
             <div class="card-header bg-warning">Services</div>
-            <div class="card-block">
+            <div class="card-body">
               <loadingIndicator [done]="serviceLoadingComplete">
                 <div class="row" *ngFor="let serviceStat of serviceStats">
                   <div class="col-md-10">
@@ -74,7 +74,7 @@
         <div *ngIf="allowBulk" class="col-md-6">
           <div class="card h-100">
             <div class="card-header bg-primary text-white">Bulk upload</div>
-            <div class="card-block">
+            <div class="card-body">
               <form endUserRole="form" class="container-fluid">
                 <div class="row">
                   <div class="form-group col-md-12">
@@ -102,7 +102,7 @@
         <div class="col-md-6">
           <div class="card" *ngIf="conflictedOrgs?.length > 0">
             <div class="card-header">Conflicting organisations</div>
-            <div class="card-block">
+            <div class="card-body">
               <div class="table">
                 <table class="table table-striped table-condensed">
                   <tbody>
@@ -135,7 +135,7 @@
             </div>
 
           </div>
-          <div class="card-block">
+          <div class="card-body">
             <form>
               <div class="row">
                 <div class="form-group col-md-6">

@@ -19,7 +19,7 @@
             <div class="form-group col-md-6">
               <label class="control-label">Consent model</label>
               <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-th-large fa-lg fa-fw"></i></span>
+                <span class="input-group-prepend"><i class="fa fa-th-large fa-lg input-group-text"></i></span>
                 <select class="form-control" [(ngModel)]="cohort.consentModelId" name="consentModelId">
                   <option *ngFor="let con of consents" [ngValue]="con.num">{{con.name}}</option>
                 </select>

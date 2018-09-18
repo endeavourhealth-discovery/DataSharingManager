@@ -8,7 +8,7 @@
         <div class="col-md-6">
           <div class="card h-100">
             <div class="card-header text-white">Data sharing agreements</div>
-            <div class="card-block">
+            <div class="card-body">
               <loadingIndicator [done]="dsaLoadingComplete">
                 <div class="row" *ngFor="let dsa of dsaStats">
                   <div class="col-md-10">
@@ -29,7 +29,7 @@
         <div class="col-md-6">
           <div class="card h-100">
             <div class="card-header text-white">Data processing agreements</div>
-            <div class="card-block">
+            <div class="card-body">
               <loadingIndicator [done]="dpaLoadingComplete">
                 <div class="row" *ngFor="let dpa of dpaStats">
                   <div class="col-md-10">
@@ -53,7 +53,7 @@
         <div class="col-md-6">
           <div class="card h-100">
             <div class="card-header text-white">Datasets</div>
-            <div class="card-block">
+            <div class="card-body">
               <loadingIndicator [done]="datasetLoadingComplete">
                 <div class="row" *ngFor="let dataset of datasetStats">
                   <div class="col-md-10">
@@ -75,7 +75,7 @@
         <div class="col-md-6">
           <div class="card h-100">
             <div class="card-header text-white">Cohorts</div>
-            <div class="card-block">
+            <div class="card-body">
               <loadingIndicator [done]="cohortLoadingComplete">
                 <div class="row" *ngFor="let cohort of cohortStats">
                   <div class="col-md-10">
@@ -99,7 +99,7 @@
         <div class="col-md-6">
           <div class="card h-100">
             <div class="card-header text-white">Projects</div>
-            <div class="card-block">
+            <div class="card-body">
               <loadingIndicator [done]="projectLoadingComplete">
                 <div class="row" *ngFor="let proj of projectStats">
                   <div class="col-md-10">
@@ -122,7 +122,7 @@
         <div class="col-md-6">
           <div class="card h-100">
             <div class="card-header" [style.backgroundColor]="'#B2A2C7'">Data exchange configurations</div>
-            <div class="card-block">
+            <div class="card-card-body">
               <loadingIndicator [done]="exchangeLoadingComplete">
                 <div class="row" *ngFor="let exchangeStat of dataExchangeStats">
                   <div class="col-md-10">
@@ -144,7 +144,7 @@
         <div class="col-md-6">
           <div class="card h-100">
             <div class="card-header  bg-success">Data flows</div>
-            <div class="card-block">
+            <div class="card-card-body">
               <loadingIndicator [done]="dataflowLoadingComplete">
                 <div class="row" *ngFor="let dataflow of dataflowStats">
                   <div class="col-md-10">
