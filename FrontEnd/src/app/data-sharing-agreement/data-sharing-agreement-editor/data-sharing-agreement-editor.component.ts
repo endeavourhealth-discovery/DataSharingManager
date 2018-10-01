@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {DataSharingAgreementService} from '../data-sharing-agreement.service';
-import {LoggerService, SecurityService} from 'eds-angular4';
+import {LoggerService, SecurityService, UserManagerNotificationService} from 'eds-angular4';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NgbModal, NgbRadioGroup} from '@ng-bootstrap/ng-bootstrap';
 import {Purpose} from '../models/Purpose';
@@ -16,6 +16,7 @@ import {ToastsManager} from 'ng2-toastr';
 import {Marker} from '../../region/models/Marker';
 import {Documentation} from "../../documentation/models/Documentation";
 import {DocumentationService} from "../../documentation/documentation.service";
+import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 
 @Component({
   selector: 'app-data-sharing-agreement-editor',
@@ -42,6 +43,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   pdfSrc: any;
   disableStatus = false;
 
+  public activeProject: UserProject;
+
   status = [
     {num: 0, name : 'Active'},
     {num: 1, name : 'Inactive'}
@@ -65,22 +68,31 @@ export class DataSharingAgreementEditorComponent implements OnInit {
               private documentationService: DocumentationService,
               private router: Router,
               private route: ActivatedRoute,
-              public toastr: ToastsManager, vcr: ViewContainerRef) {
+              public toastr: ToastsManager, vcr: ViewContainerRef,
+              private userManagerNotificationService: UserManagerNotificationService) {
     this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
-    this.checkEditPermission();
     this.paramSubscriber = this.route.params.subscribe(
     params => {
       this.performAction(params['mode'], params['id']);
     });
+
+    this.userManagerNotificationService.activeUserProject.subscribe(active => {
+      this.activeProject = active;
+      this.roleChanged();
+    });
   }
 
-  checkEditPermission() {
+  roleChanged() {
     const vm = this;
-    if (vm.securityService.hasPermission('eds-dsa-manager', 'eds-dsa-manager:admin'))
+
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
       vm.allowEdit = true;
+    } else {
+      vm.allowEdit = false;
+    }
   }
 
   protected performAction(action: string, itemUuid: string) {

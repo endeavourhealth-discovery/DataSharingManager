@@ -58,7 +58,7 @@ export class AppMenuService implements  AbstractMenuProvider  {
   }
 
   useUserManagerForRoles(): boolean {
-    return false;
+    return true;
   }
 
   getClientId(): string {
@@ -69,9 +69,9 @@ export class AppMenuService implements  AbstractMenuProvider  {
   }
   getMenuOptions(): MenuOption[] {
     return [
-      {caption: 'My Sharing', state: 'mySharingOverview', icon: 'fa fa-user', role: 'eds-dsa-manager:viewer'},
-      {caption: 'Organisation', state: 'organisationOverview', icon: 'fa fa-hospital-o', role: 'eds-dsa-manager:viewer'},
-      {caption: 'Sharing', state: 'sharingOverview', icon: 'fa-share-alt', role: 'eds-dsa-manager:viewer'}
+      {caption: 'My Sharing', state: 'mySharingOverview', icon: 'fa fa-user', role: 'Viewer'},
+      {caption: 'Organisation', state: 'organisationOverview', icon: 'fa fa-hospital-o', role: 'Viewer'},
+      {caption: 'Sharing', state: 'sharingOverview', icon: 'fa-share-alt', role: 'Viewer'}
     ];
   }
 }

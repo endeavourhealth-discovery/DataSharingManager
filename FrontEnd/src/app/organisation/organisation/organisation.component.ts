@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Organisation} from '../models/Organisation';
-import {LoggerService, MessageBoxDialog, SecurityService} from 'eds-angular4';
+import {LoggerService, MessageBoxDialog, SecurityService, UserManagerNotificationService} from 'eds-angular4';
 import {OrganisationService} from '../organisation.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 
 @Component({
   selector: 'app-organisation',
@@ -25,18 +26,28 @@ export class OrganisationComponent implements OnInit {
   orgDetailsToShow = new Organisation().getDisplayItems();
   loadingComplete = false;
 
+  public activeProject: UserProject;
+
   ngOnInit() {
-    this.checkEditPermission();
     this.paramSubscriber = this.route.params.subscribe(
       params => {
         this.performAction(params['mode']);
       });
+
+    this.userManagerNotificationService.activeUserProject.subscribe(active => {
+      this.activeProject = active;
+      this.roleChanged();
+    });
   }
 
-  checkEditPermission() {
+  roleChanged() {
     const vm = this;
-    if (vm.securityService.hasPermission('eds-dsa-manager', 'eds-dsa-manager:admin'))
+
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
       vm.allowEdit = true;
+    } else {
+      vm.allowEdit = false;
+    }
   }
 
   constructor(private $modal: NgbModal,
@@ -44,7 +55,8 @@ export class OrganisationComponent implements OnInit {
               private securityService: SecurityService,
               private log: LoggerService,
               private router: Router,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private userManagerNotificationService: UserManagerNotificationService) {
   }
 
   protected performAction(mode: string) {

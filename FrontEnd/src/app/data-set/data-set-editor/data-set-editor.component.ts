@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {DataSetService} from '../data-set.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {LoggerService, SecurityService} from 'eds-angular4';
+import {LoggerService, SecurityService, UserManagerNotificationService} from 'eds-angular4';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ToastsManager} from 'ng2-toastr';
 import {DataSet} from "../models/Dataset";
@@ -10,6 +10,7 @@ import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {Region} from "../../region/models/Region";
 import {DataFlow} from "../../data-flow/models/DataFlow";
 import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
+import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 
 @Component({
   selector: 'app-data-set-editor',
@@ -24,6 +25,8 @@ export class DataSetEditorComponent implements OnInit {
   dpas: Dpa[];
   allowEdit = false;
 
+  public activeProject: UserProject;
+
   datasetDetailsToShow = new DataSet().getDisplayItems();
   dpaDetailsToShow = new Dpa().getDisplayItems();
 
@@ -33,22 +36,31 @@ export class DataSetEditorComponent implements OnInit {
               private securityService: SecurityService,
               private router: Router,
               private route: ActivatedRoute,
-              public toastr: ToastsManager, vcr: ViewContainerRef) {
+              public toastr: ToastsManager, vcr: ViewContainerRef,
+              private userManagerNotificationService: UserManagerNotificationService) {
     this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
-    this.checkEditPermission();
     this.paramSubscriber = this.route.params.subscribe(
       params => {
         this.performAction(params['mode'], params['id']);
       });
+
+    this.userManagerNotificationService.activeUserProject.subscribe(active => {
+      this.activeProject = active;
+      this.roleChanged();
+    });
   }
 
-  checkEditPermission() {
+  roleChanged() {
     const vm = this;
-    if (vm.securityService.hasPermission('eds-dsa-manager', 'eds-dsa-manager:admin'))
+
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
       vm.allowEdit = true;
+    } else {
+      vm.allowEdit = false;
+    }
   }
 
   protected performAction(action: string, itemUuid: string) {

@@ -7,7 +7,7 @@
       <div class="row">
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-header bg-info">Regions</div>
+            <div class="card-header text-white">Regions</div>
             <div class="card-body">
               <loadingIndicator [done]="regionLoadingComplete">
                 <div class="row" *ngFor="let regionStat of regionStats">
@@ -28,7 +28,7 @@
         </div>
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-header  bg-success">Organisations</div>
+            <div class="card-header text-white">Organisations</div>
             <div class="card-body">
               <loadingIndicator [done]="orgLoadingComplete">
                 <div class="row" *ngFor="let stat of orgStats">
@@ -42,7 +42,7 @@
               </loadingIndicator>
               <br>
               <div class="pull-right">
-                <button type="button" class="btn btn-sm btn-success" (click)="goToOrganisations()">View organisations</button>
+                <button type="button" class="btn btn-sm btn-info" (click)="goToOrganisations()">View organisations</button>
               </div>
             </div>
           </div>
@@ -52,7 +52,7 @@
       <div class="row">
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-header bg-warning">Services</div>
+            <div class="card-header text-white">Services</div>
             <div class="card-body">
               <loadingIndicator [done]="serviceLoadingComplete">
                 <div class="row" *ngFor="let serviceStat of serviceStats">
@@ -66,14 +66,14 @@
               </loadingIndicator>
               <br>
               <div class="pull-right">
-                <button type="button" class="btn btn-sm btn-warning" (click)="goToServices()">View services</button>
+                <button type="button" class="btn btn-sm btn-info" (click)="goToServices()">View services</button>
               </div>
             </div>
           </div>
         </div>
         <div *ngIf="allowBulk" class="col-md-6">
           <div class="card h-100">
-            <div class="card-header bg-primary text-white">Bulk upload</div>
+            <div class="card-header text-white">Bulk upload</div>
             <div class="card-body">
               <form endUserRole="form" class="container-fluid">
                 <div class="row">

@@ -3,7 +3,7 @@ import {Region} from '../models/Region';
 import {Organisation} from '../../organisation/models/Organisation';
 import {Marker} from '../models/Marker';
 import {RegionService} from '../region.service';
-import {LoggerService, SecurityService} from 'eds-angular4';
+import {LoggerService, SecurityService, UserManagerNotificationService} from 'eds-angular4';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ActivatedRoute, Router} from '@angular/router';
 import {OrganisationPickerComponent} from '../../organisation/organisation-picker/organisation-picker.component';
@@ -11,6 +11,7 @@ import {RegionPickerComponent} from '../region-picker/region-picker.component';
 import {Dsa} from '../../data-sharing-agreement/models/Dsa';
 import {DataSharingAgreementPickerComponent} from '../../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component';
 import {ToastsManager} from 'ng2-toastr';
+import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 
 @Component({
   selector: 'app-region-editor',
@@ -32,6 +33,8 @@ export class RegionEditorComponent implements OnInit {
   zoom: number = 12;
   allowEdit = false;
 
+  public activeProject: UserProject;
+
   orgDetailsToShow = new Organisation().getDisplayItems();
   regionDetailsToShow = new Region().getDisplayItems();
   sharingAgreementsDetailsToShow = new Dsa().getDisplayItems();
@@ -42,21 +45,30 @@ export class RegionEditorComponent implements OnInit {
               private securityService: SecurityService,
               private router: Router,
               private route: ActivatedRoute,
-              public toastr: ToastsManager, vcr: ViewContainerRef) {
+              public toastr: ToastsManager, vcr: ViewContainerRef,
+              private userManagerNotificationService: UserManagerNotificationService) {
   this.toastr.setRootViewContainerRef(vcr); }
 
   ngOnInit() {
-    this.checkEditPermission();
     this.paramSubscriber = this.route.params.subscribe(
       params => {
         this.performAction(params['mode'], params['id']);
       });
+
+    this.userManagerNotificationService.activeUserProject.subscribe(active => {
+      this.activeProject = active;
+      this.roleChanged();
+    });
   }
 
-  checkEditPermission() {
+  roleChanged() {
     const vm = this;
-    if (vm.securityService.hasPermission('eds-dsa-manager', 'eds-dsa-manager:admin'))
+
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
       vm.allowEdit = true;
+    } else {
+      vm.allowEdit = false;
+    }
   }
 
   protected performAction(action: string, itemUuid: string) {

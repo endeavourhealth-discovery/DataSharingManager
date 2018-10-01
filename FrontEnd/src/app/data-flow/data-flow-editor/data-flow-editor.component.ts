@@ -6,7 +6,7 @@ import {DataSharingAgreementPickerComponent} from '../../data-sharing-agreement/
 import {DataProcessingAgreementPickerComponent} from '../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component';
 import {Dsa} from '../../data-sharing-agreement/models/Dsa';
 import {Dpa} from '../../data-processing-agreement/models/Dpa';
-import {LoggerService, SecurityService} from 'eds-angular4';
+import {LoggerService, SecurityService, UserManagerNotificationService} from 'eds-angular4';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ToastsManager} from "ng2-toastr";
 import {Documentation} from "../../documentation/models/Documentation";
@@ -15,6 +15,7 @@ import {DataExchange} from "../../data-exchange/models/DataExchange";
 import {Organisation} from "../../organisation/models/Organisation";
 import {DataExchangePickerComponent} from "../../data-exchange/data-exchange-picker/data-exchange-picker.component";
 import {OrganisationPickerComponent} from "../../organisation/organisation-picker/organisation-picker.component";
+import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 
 @Component({
   selector: 'app-data-flow-editor',
@@ -35,6 +36,8 @@ export class DataFlowEditorComponent implements OnInit {
   allowEdit = false;
   file: File;
   pdfSrc: any;
+
+  public activeProject: UserProject;
 
   storageProtocols = [
     {num: 0, name: 'Audit only'},
@@ -66,22 +69,31 @@ export class DataFlowEditorComponent implements OnInit {
               private documentationService: DocumentationService,
               private router: Router,
               private route: ActivatedRoute,
-              public toastr: ToastsManager, vcr: ViewContainerRef) {
+              public toastr: ToastsManager, vcr: ViewContainerRef,
+              private userManagerNotificationService: UserManagerNotificationService) {
     this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
-    this.checkEditPermission();
     this.paramSubscriber = this.route.params.subscribe(
       params => {
         this.performAction(params['mode'], params['id']);
       });
+
+    this.userManagerNotificationService.activeUserProject.subscribe(active => {
+      this.activeProject = active;
+      this.roleChanged();
+    });
   }
 
-  checkEditPermission() {
+  roleChanged() {
     const vm = this;
-    if (vm.securityService.hasPermission('eds-dsa-manager', 'eds-dsa-manager:admin'))
+
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
       vm.allowEdit = true;
+    } else {
+      vm.allowEdit = false;
+    }
   }
 
   protected performAction(action: string, itemUuid: string) {

@@ -1,12 +1,13 @@
 import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {CohortService} from '../cohort.service';
-import {LoggerService, SecurityService} from 'eds-angular4';
+import {LoggerService, SecurityService, UserManagerNotificationService} from 'eds-angular4';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Dpa} from '../../data-processing-agreement/models/Dpa';
 import {DataProcessingAgreementPickerComponent} from '../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component';
 import {Cohort} from "../models/Cohort";
 import {ToastsManager} from "ng2-toastr";
+import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 
 @Component({
   selector: 'app-cohort-editor',
@@ -18,6 +19,8 @@ export class CohortEditorComponent implements OnInit {
   cohort: Cohort = <Cohort>{};
   dpas: Dpa[];
   allowEdit = false;
+
+  public activeProject: UserProject;
 
   dpaDetailsToShow = new Dpa().getDisplayItems();
 
@@ -32,22 +35,31 @@ export class CohortEditorComponent implements OnInit {
               private securityService: SecurityService,
               private router: Router,
               private route: ActivatedRoute,
-              public toastr: ToastsManager, vcr: ViewContainerRef) {
+              public toastr: ToastsManager, vcr: ViewContainerRef,
+              private userManagerNotificationService: UserManagerNotificationService) {
     this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
-    this.checkEditPermission();
     this.paramSubscriber = this.route.params.subscribe(
       params => {
         this.performAction(params['mode'], params['id']);
       });
+
+    this.userManagerNotificationService.activeUserProject.subscribe(active => {
+      this.activeProject = active;
+      this.roleChanged();
+    });
   }
 
-  checkEditPermission() {
+  roleChanged() {
     const vm = this;
-    if (vm.securityService.hasPermission('eds-dsa-manager', 'eds-dsa-manager:admin'))
+
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
       vm.allowEdit = true;
+    } else {
+      vm.allowEdit = false;
+    }
   }
 
   protected performAction(action: string, itemUuid: string) {

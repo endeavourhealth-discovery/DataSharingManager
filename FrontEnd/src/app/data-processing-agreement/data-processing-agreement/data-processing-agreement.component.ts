@@ -1,10 +1,11 @@
 import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {DataProcessingAgreementService} from '../data-processing-agreement.service';
-import {LoggerService, MessageBoxDialog, SecurityService} from 'eds-angular4';
+import {LoggerService, MessageBoxDialog, SecurityService, UserManagerNotificationService} from 'eds-angular4';
 import {Router} from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Dpa} from '../models/Dpa';
 import {ToastsManager} from 'ng2-toastr';
+import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 
 @Component({
   selector: 'app-data-processing-agreement',
@@ -16,6 +17,8 @@ export class DataProcessingAgreementComponent implements OnInit {
   allowEdit = false;
   loadingComplete = false;
 
+  public activeProject: UserProject;
+
   dpaDetailsToShow = new Dpa().getDisplayItems();
 
   constructor(private $modal: NgbModal,
@@ -23,19 +26,27 @@ export class DataProcessingAgreementComponent implements OnInit {
               private securityService: SecurityService,
               private log: LoggerService,
               private router: Router,
-              public toastr: ToastsManager, vcr: ViewContainerRef) {
+              public toastr: ToastsManager, vcr: ViewContainerRef,
+              private userManagerNotificationService: UserManagerNotificationService) {
     this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
-    this.checkEditPermission();
+    this.userManagerNotificationService.activeUserProject.subscribe(active => {
+      this.activeProject = active;
+      this.roleChanged();
+    });
     this.getDsas();
   }
 
-  checkEditPermission() {
+  roleChanged() {
     const vm = this;
-    if (vm.securityService.hasPermission('eds-dsa-manager', 'eds-dsa-manager:admin'))
+
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
       vm.allowEdit = true;
+    } else {
+      vm.allowEdit = false;
+    }
   }
 
   getDsas() {

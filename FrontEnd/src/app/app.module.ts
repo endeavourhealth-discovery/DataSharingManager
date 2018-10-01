@@ -6,7 +6,7 @@ import {KeycloakService} from 'eds-angular4/dist/keycloak/keycloak.service';
 import {keycloakHttpFactory} from 'eds-angular4/dist/keycloak/keycloak.http';
 import {Http, HttpModule, RequestOptions, XHRBackend} from '@angular/http';
 import {LayoutComponent} from 'eds-angular4/dist/layout/layout.component';
-import {LayoutModule, AbstractMenuProvider } from 'eds-angular4';
+import {LayoutModule, AbstractMenuProvider, UserManagerNotificationService} from 'eds-angular4';
 import {AppMenuService} from './app-menu.service';
 import {OrganisationModule} from './organisation/organisation.module';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
@@ -47,7 +47,7 @@ import {ProjectModule} from "./project/project.module";
   ],
   providers: [
     KeycloakService,
-    { provide: Http, useFactory: keycloakHttpFactory, deps: [XHRBackend, RequestOptions, KeycloakService] },
+    { provide: Http, useFactory: keycloakHttpFactory, deps: [XHRBackend, RequestOptions, KeycloakService, AbstractMenuProvider, UserManagerNotificationService] },
     { provide: AbstractMenuProvider, useClass : AppMenuService }
   ],
   bootstrap: [LayoutComponent]

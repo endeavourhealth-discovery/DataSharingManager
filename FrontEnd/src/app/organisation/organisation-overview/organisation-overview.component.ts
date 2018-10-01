@@ -3,12 +3,12 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {Router} from '@angular/router';
 import {Organisation} from '../models/Organisation';
 import {OrganisationService} from '../organisation.service';
-import {Region} from '../../region/models/Region';
 import {OrganisationManagerStatistics} from '../models/OrganisationManagerStatistics';
 import {FileUpload} from '../models/FileUpload';
-import {LoggerService, SecurityService} from 'eds-angular4';
+import {LoggerService, SecurityService, UserManagerNotificationService} from 'eds-angular4';
 import { ToastsManager } from 'ng2-toastr/ng2-toastr';
 import {User} from 'eds-angular4/dist/security/models/User';
+import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 
 @Component({
   selector: 'app-organisation-overview',
@@ -26,6 +26,8 @@ export class OrganisationOverviewComponent implements OnInit {
   allowEdit = false;
   allowBulk = false;
 
+  public activeProject: UserProject;
+
   conflictedOrgs: Organisation[];
   orgStats: OrganisationManagerStatistics[];
   orgLoadingComplete = false;
@@ -39,27 +41,34 @@ export class OrganisationOverviewComponent implements OnInit {
               private log: LoggerService,
               private securityService: SecurityService,
               private router: Router,
-              public toastr: ToastsManager, vcr: ViewContainerRef) {
+              public toastr: ToastsManager, vcr: ViewContainerRef,
+              private userManagerNotificationService: UserManagerNotificationService) {
     this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
+    this.userManagerNotificationService.activeUserProject.subscribe(active => {
+      this.activeProject = active;
+      this.roleChanged();
+    });
+
     this.getOverview();
     this.currentUser = this.securityService.getCurrentUser();
-    this.checkEditPermission();
-    this.checkBulkPermission();
   }
 
-  checkEditPermission() {
+  roleChanged() {
     const vm = this;
-    if (vm.securityService.hasPermission('eds-dsa-manager', 'eds-dsa-manager:admin'))
+
+    vm.allowEdit = false;
+    vm.allowBulk = false;
+
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
       vm.allowEdit = true;
-  }
+    }
 
-  checkBulkPermission() {
-    const vm = this;
-    if (vm.securityService.hasPermission('eds-dsa-manager', 'eds-dsa-manager:bulk'))
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Bulk') != null) {
       vm.allowBulk = true;
+    }
   }
 
   getOverview() {

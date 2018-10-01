@@ -5,7 +5,7 @@ import {Project} from "../models/Project";
 import {DataSet} from "../../data-set/models/Dataset";
 import {Cohort} from "../../cohort/models/Cohort";
 import {ToastsManager} from "ng2-toastr";
-import {LoggerService, SecurityService} from "eds-angular4";
+import {LoggerService, SecurityService, UserManagerNotificationService, UserManagerService} from "eds-angular4";
 import {ActivatedRoute, Router} from "@angular/router";
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ProjectService} from "../project.service";
@@ -15,6 +15,7 @@ import {CohortPickerComponent} from "../../cohort/cohort-picker/cohort-picker.co
 import {DataSetPickerComponent} from "../../data-set/data-set-picker/data-set-picker.component";
 import {ProjectApplicationPolicy} from "../models/ProjectApplicationPolicy";
 import {ApplicationPolicy} from "../models/ApplicationPolicy";
+import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 
 @Component({
   selector: 'app-project-editor',
@@ -31,6 +32,8 @@ export class ProjectEditorComponent implements OnInit {
   basePopulation: Cohort[];
   dataSet: DataSet[];
   allowEdit = false;
+
+  public activeProject: UserProject;
 
   projectApplicationPolicy: ProjectApplicationPolicy;
   availablePolicies: ApplicationPolicy[];
@@ -80,24 +83,33 @@ export class ProjectEditorComponent implements OnInit {
               private securityService: SecurityService,
               private router: Router,
               private route: ActivatedRoute,
-              public toastr: ToastsManager, vcr: ViewContainerRef) {
+              public toastr: ToastsManager, vcr: ViewContainerRef,
+              private userManagerNotificationService: UserManagerNotificationService) {
     this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
-    this.checkEditPermission();
     this.paramSubscriber = this.route.params.subscribe(
       params => {
         this.performAction(params['mode'], params['id']);
       });
 
+    this.userManagerNotificationService.activeUserProject.subscribe(active => {
+      this.activeProject = active;
+      this.roleChanged();
+    });
+
     this.getAvailableApplicationPolicies();
   }
 
-  checkEditPermission() {
+  roleChanged() {
     const vm = this;
-    if (vm.securityService.hasPermission('eds-dsa-manager', 'eds-dsa-manager:admin'))
+
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
       vm.allowEdit = true;
+    } else {
+      vm.allowEdit = false;
+    }
   }
 
   getAvailableApplicationPolicies() {

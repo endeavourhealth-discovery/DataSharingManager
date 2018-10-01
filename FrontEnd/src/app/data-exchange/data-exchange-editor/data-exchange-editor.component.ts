@@ -2,11 +2,12 @@ import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {DataExchangeService} from '../data-exchange.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {DataExchange} from '../models/DataExchange';
-import {LoggerService, SecurityService} from 'eds-angular4';
+import {LoggerService, SecurityService, UserManagerNotificationService} from 'eds-angular4';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ToastsManager} from "ng2-toastr";
 import {DataFlow} from "../../data-flow/models/DataFlow";
 import {DataflowPickerComponent} from "../../data-flow/dataflow-picker/dataflow-picker.component";
+import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 
 @Component({
   selector: 'app-data-exchange-editor',
@@ -20,6 +21,8 @@ export class DataExchangeEditorComponent implements OnInit {
   exchange: DataExchange = <DataExchange>{};
   dataFlows: DataFlow[];
   allowEdit = false;
+
+  public activeProject: UserProject;
 
   flowDirections = [
     {num: 0, name : 'Inbound'},
@@ -71,22 +74,31 @@ export class DataExchangeEditorComponent implements OnInit {
               private securityService: SecurityService,
               private router: Router,
               private route: ActivatedRoute,
-              public toastr: ToastsManager, vcr: ViewContainerRef) {
+              public toastr: ToastsManager, vcr: ViewContainerRef,
+              private userManagerNotificationService: UserManagerNotificationService) {
     this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
-    this.checkEditPermission();
     this.paramSubscriber = this.route.params.subscribe(
       params => {
         this.performAction(params['mode'], params['id']);
       });
+
+    this.userManagerNotificationService.activeUserProject.subscribe(active => {
+      this.activeProject = active;
+      this.roleChanged();
+    });
   }
 
-  checkEditPermission() {
+  roleChanged() {
     const vm = this;
-    if (vm.securityService.hasPermission('eds-dsa-manager', 'eds-dsa-manager:admin'))
+
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
       vm.allowEdit = true;
+    } else {
+      vm.allowEdit = false;
+    }
   }
 
   protected performAction(action: string, itemUuid: string) {
