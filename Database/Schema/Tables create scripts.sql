@@ -47,6 +47,7 @@ drop table if exists data_sharing_manager.organisation_type;
 drop table if exists data_sharing_manager.deidentification_level;
 drop table if exists data_sharing_manager.project_type;
 drop table if exists data_sharing_manager.project_application_policy;
+drop table if exists data_sharing_manager.business_case_status;
 
 /*
 Look up tables containing enumerations for certain fields.  
@@ -174,6 +175,15 @@ create table data_sharing_manager.project_type (
     constraint data_sharing_manager_project_type_id_pk primary key (id)  
 ) comment 'Lookup table holding enumerations for the project type';
 
+create table data_sharing_manager.business_case_status (
+	id smallint not null comment 'Lookup Id',
+    business_case_status varchar(100) not null comment 'Lookup Value',   
+    
+    constraint data_sharing_manager_business_case_status_pk primary key (id)  
+) comment 'Lookup table holding enumerations for the business case status';
+
+
+
 /*Main entity tables containing the core information*/
 create table data_sharing_manager.region (
 	uuid char(36) not null comment 'Unique identifier for the region',
@@ -277,9 +287,11 @@ create table data_sharing_manager.project (
     ip_address varchar(50) null comment 'IP address related to the project',
     summary varchar(5000) null comment 'Summary of the project',
     business_case varchar(5000) null comment 'Business case of the project',
+    business_case_status smallint null comment 'Whether the business case has been submitted or approved',
     objectives varchar(5000) null comment 'Objectives of the project',
     security_architecture_id smallint not null comment 'Security Architecture eg TLS/MA, Secure FTP',
     storage_protocol_id smallint not null comment 'Storage protocol eg Temporary store and forward, permanent',
+    flow_schedule_id smallint null comment 'Flow schedule eg on demand, daily, weekly etc',
     
     constraint data_sharing_manager_project_uuid_pk primary key (uuid),
     index data_sharing_manager_project_name_idx (name),
@@ -288,9 +300,18 @@ create table data_sharing_manager.project (
     foreign key data_sharing_manager_project_deidentification_level_fk (deidentification_level) references data_sharing_manager.deidentification_level(id),
     foreign key data_sharing_manager_project_type_fk (project_type_id) references data_sharing_manager.project_type(id),
     foreign key data_sharing_manager_project_security_infrastructure_fk (security_infrastructure_id) references data_sharing_manager.security_infrastructure(id),
-    foreign key data_sharing_manager_project_security_architecture_fk (security_architecture_id) references data_sharing_manager.security_architecture(id)
+    foreign key data_sharing_manager_project_security_architecture_fk (security_architecture_id) references data_sharing_manager.security_architecture(id),
+    foreign key data_sharing_manager_project_business_case_fk (business_case_status) references data_sharing_manager.business_case_status(id),
+    foreign key data_sharing_manager_flow_schedule_fk (flow_schedule_id) references data_sharing_manager.flow_schedule(id)
     
 ) comment 'Holds details of the projects that have been defined';
+
+-- alter table data_sharing_manager.project add column business_case_status smallint null comment 'Whether the business case has been submitted or approved';
+
+-- alter table data_sharing_manager.project add column flow_schedule_id smallint null comment 'Flow schedule eg on demand, daily, weekly etc';
+
+-- alter table data_sharing_manager.project add foreign key data_sharing_manager_project_business_case_fk (business_case_status) references data_sharing_manager.business_case_status(id);
+-- alter table data_sharing_manager.project add foreign key data_sharing_manager_flow_schedule_fk (flow_schedule_id) references data_sharing_manager.flow_schedule(id);
 
 create table data_sharing_manager.data_exchange (
 	uuid char(36) not null comment 'Unique identifier for the data flow configuration',

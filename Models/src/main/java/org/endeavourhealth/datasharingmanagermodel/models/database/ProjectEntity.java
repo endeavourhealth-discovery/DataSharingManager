@@ -28,6 +28,8 @@ public class ProjectEntity {
     private String objectives;
     private short securityArchitectureId;
     private short storageProtocolId;
+    private Short businessCaseStatus;
+    private Short flowScheduleId;
 
     @Id
     @Column(name = "uuid")
@@ -196,6 +198,27 @@ public class ProjectEntity {
         return Objects.hash(uuid, name, leadUser, technicalLeadUser, consentModelId, deidentificationLevel, projectTypeId, securityInfrastructureId, ipAddress, summary, businessCase, objectives, securityArchitectureId, storageProtocolId);
     }
 
+    @Basic
+    @Column(name = "business_case_status")
+    public Short getBusinessCaseStatus() {
+        return businessCaseStatus;
+    }
+
+    public void setBusinessCaseStatus(Short businessCaseStatus) {
+        this.businessCaseStatus = businessCaseStatus;
+    }
+
+    @Basic
+    @Column(name = "flow_schedule_id")
+    public Short getFlowScheduleId() {
+        return flowScheduleId;
+    }
+
+    public void setFlowScheduleId(Short flowScheduleId) {
+        this.flowScheduleId = flowScheduleId;
+    }
+
+
     public static List<ProjectEntity> getAllProjects() throws Exception {
         EntityManager entityManager = PersistenceManager.getEntityManager();
 
@@ -239,6 +262,8 @@ public class ProjectEntity {
         projectEntity.setObjectives(project.getObjectives());
         projectEntity.setSecurityArchitectureId(project.getSecurityArchitectureId());
         projectEntity.setStorageProtocolId(project.getStorageProtocolId());
+        projectEntity.setBusinessCaseStatus(project.getBusinessCaseStatus());
+        projectEntity.setFlowScheduleId(project.getFlowScheduleId());
         entityManager.getTransaction().commit();
 
         entityManager.close();
@@ -263,6 +288,8 @@ public class ProjectEntity {
         projectEntity.setObjectives(project.getObjectives());
         projectEntity.setSecurityArchitectureId(project.getSecurityArchitectureId());
         projectEntity.setStorageProtocolId(project.getStorageProtocolId());
+        projectEntity.setBusinessCaseStatus(project.getBusinessCaseStatus());
+        projectEntity.setFlowScheduleId(project.getFlowScheduleId());
         entityManager.persist(projectEntity);
         entityManager.getTransaction().commit();
 

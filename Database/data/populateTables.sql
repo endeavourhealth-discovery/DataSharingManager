@@ -8,10 +8,29 @@ values (1, "Outbound");
 
 /*data_sharing_manager.flow_schedule*/
 insert into data_sharing_manager.flow_schedule (id, flow_schedule)
+values (1, "On Demand");
+
+insert into data_sharing_manager.flow_schedule (id, flow_schedule)
 values (0, "Daily");
 
 insert into data_sharing_manager.flow_schedule (id, flow_schedule)
-values (1, "On Demand");
+values (2, "Weekly");
+
+insert into data_sharing_manager.flow_schedule (id, flow_schedule)
+values (3, "Monthly");
+
+insert into data_sharing_manager.flow_schedule (id, flow_schedule)
+values (4, "Annually");
+
+insert into data_sharing_manager.flow_schedule (id, flow_schedule)
+values (5, "One off");
+
+/*data_sharing_manager.flow_schedule*/
+insert into data_sharing_manager.business_case_status (id, business_case_status)
+values (0, "Submitted");
+
+insert into data_sharing_manager.business_case_status (id, business_case_status)
+values (1, "Approved");
 
 /*data_sharing_manager.data_exchange_method*/
 insert into data_sharing_manager.data_exchange_method (id, data_exchange_method)

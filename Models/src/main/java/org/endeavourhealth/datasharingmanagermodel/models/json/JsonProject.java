@@ -23,6 +23,8 @@ public class JsonProject {
     private String objectives;
     private short securityArchitectureId;
     private short storageProtocolId;
+    private short businessCaseStatus;
+    private short flowScheduleId;
     private Map<UUID, String> publishers = null;
     private Map<UUID, String> subscribers = null;
     private Map<UUID, String> basePopulation = null;
@@ -226,5 +228,21 @@ public class JsonProject {
 
     public void setApplicationPolicyAttributes(List<JsonApplicationPolicyAttribute> applicationPolicyAttributes) {
         this.applicationPolicyAttributes = applicationPolicyAttributes;
+    }
+
+    public short getBusinessCaseStatus() {
+        return businessCaseStatus;
+    }
+
+    public void setBusinessCaseStatus(short businessCaseStatus) {
+        this.businessCaseStatus = businessCaseStatus;
+    }
+
+    public short getFlowScheduleId() {
+        return flowScheduleId;
+    }
+
+    public void setFlowScheduleId(short flowScheduleId) {
+        this.flowScheduleId = flowScheduleId;
     }
 }

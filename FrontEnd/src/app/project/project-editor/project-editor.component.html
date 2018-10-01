@@ -17,28 +17,40 @@
               <input type="text" class="form-control" placeholder="Project name" [(ngModel)]="project.name" name="name">
             </div>
             <div class="form-group col-md-6">
-              <label class="control-label">Summary</label>
-              <input type="text" class="form-control" placeholder="Summary" [(ngModel)]="project.summary" name="summary">
+              <label class="control-label">Business case</label>
+              <select class="form-control" [(ngModel)]="project.businessCaseStatus" name="businessCaseStatus">
+                <option *ngFor="let bs of businessCaseStatuses" [ngValue]="bs.num">{{bs.name}}</option>
+              </select>
             </div>
           </div>
           <div class="row">
             <div class="form-group col-md-6">
-              <label class="control-label">Business case</label>
-              <input type="text" class="form-control" placeholder="Business case" [(ngModel)]="project.businessCase" name="businessCase">
+              <label class="control-label">Summary</label>
+              <textarea rows="6" class="form-control" placeholder="Summary" [(ngModel)]="project.summary" name="summary"></textarea>
             </div>
             <div class="form-group col-md-6">
               <label class="control-label">Objectives</label>
-              <input type="text" class="form-control" placeholder="Objectives" [(ngModel)]="project.objectives" name="objectives">
+              <textarea rows="6" class="form-control" placeholder="Objectives" [(ngModel)]="project.objectives" name="objectives"></textarea>
             </div>
           </div>
           <div class="row">
             <div class="form-group col-md-6">
               <label class="control-label">Project lead</label>
-              <input type="text" class="form-control" placeholder="Project lead" [(ngModel)]="project.leadUser" name="leadUser">
+              <div class="input-group">
+                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <select class="form-control" [(ngModel)]="project.leadUser" name="leadUser">
+                  <option *ngFor="let leadUser of userList" [ngValue]="leadUser.uuid">{{leadUser.forename}} {{leadUser.surname}}</option>
+                </select>
+              </div>
             </div>
             <div class="form-group col-md-6">
               <label class="control-label">Project technical lead</label>
-              <input type="text" class="form-control" placeholder="Project technical lead" [(ngModel)]="project.technicalLeadUser" name="technicalLeadUser">
+              <div class="input-group">
+                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <select class="form-control" [(ngModel)]="project.technicalLeadUser" name="technicalLeadUser">
+                  <option *ngFor="let techUser of userList" [ngValue]="techUser.uuid">{{techUser.forename}} {{techUser.surname}}</option>
+                </select>
+              </div>
             </div>
           </div>
           <div class="row">
@@ -84,6 +96,22 @@
             </div>
 
             <div class="form-group col-md-4">
+              <label class="control-label">Frequency</label>
+              <div class="input-group">
+                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <select class="form-control" [(ngModel)]="project.flowScheduleId" name="flowScheduleId">
+                  <option *ngFor="let fs of flowScheduleIds" [ngValue]="fs.num">{{fs.name}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-4">
+              <label class="control-label">IP address</label>
+              <input type="text" class="form-control" placeholder="IP address" [(ngModel)]="project.ipAddress" name="ipAddress">
+            </div>
+
+            <div class="form-group col-md-4">
               <label class="control-label">Security infrastructure Id</label>
               <div class="input-group">
                 <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
@@ -101,12 +129,6 @@
                   <option *ngFor="let arc of securityArchitectures" [ngValue]="arc.num">{{arc.name}}</option>
                 </select>
               </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="form-group col-md-6">
-              <label class="control-label">IP address</label>
-              <input type="text" class="form-control" placeholder="IP address" [(ngModel)]="project.ipAddress" name="ipAddress">
             </div>
           </div>
         </fieldset>
@@ -196,7 +218,7 @@
               </entity-viewer>
             </ng-template>
           </ngb-panel>
-          <ngb-panel id="dataproc">
+          <ngb-panel id="basepop">
             <ng-template ngbPanelTitle>
               <div class="row">
                 <div class="col-md-3">
@@ -224,7 +246,7 @@
               </entity-viewer>
             </ng-template>
           </ngb-panel>
-          <ngb-panel id="dataproc">
+          <ngb-panel id="datasets">
             <ng-template ngbPanelTitle>
               <div class="row">
                 <div class="col-md-3">

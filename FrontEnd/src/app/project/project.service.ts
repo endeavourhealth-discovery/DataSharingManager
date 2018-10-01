@@ -8,6 +8,7 @@ import {Cohort} from "../cohort/models/Cohort";
 import {DataSet} from "../data-set/models/Dataset";
 import {ProjectApplicationPolicy} from "./models/ProjectApplicationPolicy";
 import {ApplicationPolicy} from "./models/ApplicationPolicy";
+import {User} from "eds-angular4/dist/security/models/User";
 
 @Injectable()
 export class ProjectService {
@@ -107,6 +108,12 @@ export class ProjectService {
   getAvailableProjectApplicationPolicy(): Observable<ApplicationPolicy[]> {
     const vm = this;
     return vm.http.get('api/project/getApplicationPolicies')
+      .map((response) => response.json());
+  }
+
+  getUsers(): Observable<User[]> {
+    const vm = this;
+    return vm.http.get('api/project/getUsers')
       .map((response) => response.json());
   }
 

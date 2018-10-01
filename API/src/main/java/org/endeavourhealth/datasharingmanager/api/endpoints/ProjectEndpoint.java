@@ -15,7 +15,9 @@ import org.endeavourhealth.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.datasharingmanagermodel.models.json.JsonProject;
 import org.endeavourhealth.datasharingmanagermodel.models.json.JsonProjectApplicationPolicy;
+import org.endeavourhealth.usermanagermodel.models.caching.UserCache;
 import org.endeavourhealth.usermanagermodel.models.database.ApplicationPolicyEntity;
+import org.endeavourhealth.usermanagermodel.models.json.JsonUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -279,6 +281,32 @@ public class ProjectEndpoint extends AbstractEndpoint {
         return Response
                 .ok()
                 .entity(applicationPolicies)
+                .build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.ProjectEndpoint.getUsers")
+    @Path("/getUsers")
+    @ApiOperation(value = "Returns a list of Json representations of subscribers that are linked " +
+            "to the project.  Accepts a UUID of a project.")
+    public Response getUsers(@Context SecurityContext sc) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "Users");
+
+        return getUsers();
+    }
+
+    private Response getUsers() throws Exception {
+
+        List<JsonUser> users = UserCache.getAllUsers();
+
+        clearLogbackMarkers();
+        return Response
+                .ok()
+                .entity(users)
                 .build();
     }
 

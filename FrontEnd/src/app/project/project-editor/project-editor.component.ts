@@ -16,6 +16,7 @@ import {DataSetPickerComponent} from "../../data-set/data-set-picker/data-set-pi
 import {ProjectApplicationPolicy} from "../models/ProjectApplicationPolicy";
 import {ApplicationPolicy} from "../models/ApplicationPolicy";
 import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
+import {User} from "eds-angular4/dist/security/models/User";
 
 @Component({
   selector: 'app-project-editor',
@@ -32,6 +33,7 @@ export class ProjectEditorComponent implements OnInit {
   basePopulation: Cohort[];
   dataSet: DataSet[];
   allowEdit = false;
+  userList: User[];
 
   public activeProject: UserProject;
 
@@ -71,6 +73,20 @@ export class ProjectEditorComponent implements OnInit {
     {num: 1, name: 'Internet'}
   ];
 
+  businessCaseStatuses = [
+    {num: 0, name: 'Submitted'},
+    {num: 1, name: 'Approved'}
+  ];
+
+  flowScheduleIds = [
+    {num: 0, name: 'Daily'},
+    {num: 1, name: 'On Demand'},
+    {num: 2, name: 'Weekly'},
+    {num: 3, name: 'Monthly'},
+    {num: 4, name: 'Annually'},
+    {num: 5, name: 'One off'}
+  ];
+
   dsaDetailsToShow = new Dsa().getDisplayItems();
   dataSetDetailsToShow = new DataSet().getDisplayItems();
   cohortDetailsToShow = new Cohort().getDisplayItems();
@@ -100,6 +116,7 @@ export class ProjectEditorComponent implements OnInit {
     });
 
     this.getAvailableApplicationPolicies();
+    this.getUserList();
   }
 
   roleChanged() {
@@ -121,6 +138,20 @@ export class ProjectEditorComponent implements OnInit {
         },
         (error) => {
           vm.log.error('Available application policies could not be loaded. Please try again.', error, 'Load available application policies');
+        }
+      );
+  }
+
+  getUserList() {
+    const vm = this;
+    vm.projectService.getUsers()
+      .subscribe(
+        (result) => {
+          vm.userList = result;
+          console.log(vm.userList);
+        },
+        (error) => {
+          vm.log.error('User list could not be loaded. Please try again.', error, 'Load user list');
         }
       );
   }
