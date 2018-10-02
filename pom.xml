@@ -20,7 +20,7 @@
         <node.version>v6.10.1</node.version>
         <swagger.version>1.5.13</swagger.version>
 
-        <eds-api.version>1.24-SNAPSHOT</eds-api.version>
+        <eds-api.version>1.25-SNAPSHOT</eds-api.version>
         <user-manager-models.version>0.0.12-SNAPSHOT</user-manager-models.version>
         <data-sharing-manager-models.version>0.0.9-SNAPSHOT</data-sharing-manager-models.version>
 
