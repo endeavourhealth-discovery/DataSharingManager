@@ -2,11 +2,12 @@ import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {User} from "eds-angular4/dist/security/models/User";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {OrganisationService} from "../../organisation/organisation.service";
-import {LoggerService, SecurityService} from "eds-angular4";
+import {LoggerService, SecurityService, UserManagerNotificationService} from "eds-angular4";
 import {Router} from "@angular/router";
 import {ToastsManager} from "ng2-toastr";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {Dsa} from "../../data-sharing-agreement/models/Dsa";
+import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 
 @Component({
   selector: 'app-my-sharing-overview',
@@ -16,13 +17,14 @@ import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 export class MySharingOverviewComponent implements OnInit {
   currentUser: User;
   userOrgs : string[] = [];
-  currentOrg = 'c45ccafd-f86a-4778-845a-96269cad6c3d';  // d79f403b-963d-4817-b4a5-0fbf6a516cb0
   dpaPublishing: Dpa[];
   dsaPublishing: Dsa[];
   dsaSubscribing: Dsa[];
   dsaPubLoadingComplete = false;
   dsaSubLoadingComplete = false;
   dpaPubLoadingComplete = false;
+
+  public activeProject: UserProject;
 
   dpaDetailsToShow = new Dpa().getDisplayItems();
   dsaDetailsToShow = new Dsa().getDisplayItems();
@@ -32,25 +34,29 @@ export class MySharingOverviewComponent implements OnInit {
               private log: LoggerService,
               private securityService: SecurityService,
               private router: Router,
-              public toastr: ToastsManager, vcr: ViewContainerRef) {
+              public toastr: ToastsManager, vcr: ViewContainerRef,
+              private userManagerNotificationService: UserManagerNotificationService) {
     this.toastr.setRootViewContainerRef(vcr);
   }
 
   ngOnInit() {
     const vm = this;
     vm.currentUser = vm.securityService.getCurrentUser();
-    console.log(vm.currentUser);
-    vm.getOrganisationsForUser(vm.currentUser);
-    // vm.currentOrg = vm.currentUser.organisation;
+
+    this.userManagerNotificationService.activeUserProject.subscribe(active => {
+      this.activeProject = active;
+      this.roleChanged();
+    });
   }
 
-  private getOrganisationsForUser(user: User) {
+  roleChanged() {
     const vm = this;
-    vm.userOrgs = user.organisationGroups.map(a => a.organisationId);
-    console.log(vm.userOrgs);
+    vm.userOrgs = [];
+    vm.userOrgs.push(vm.activeProject.organisationId);
     vm.getDPAsPublishingTo(vm.userOrgs);
     vm.getDSAsPublishingTo(vm.userOrgs);
     vm.getDSAsSubscribingTo(vm.userOrgs);
+
   }
 
   private getDPAsPublishingTo(orgs: string[]) {
