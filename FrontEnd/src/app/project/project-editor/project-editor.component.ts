@@ -17,6 +17,7 @@ import {ProjectApplicationPolicy} from "../models/ProjectApplicationPolicy";
 import {ApplicationPolicy} from "../models/ApplicationPolicy";
 import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 import {User} from "eds-angular4/dist/security/models/User";
+import {AuthorityToShare} from "../models/AuthorityToShare";
 
 @Component({
   selector: 'app-project-editor',
@@ -34,6 +35,7 @@ export class ProjectEditorComponent implements OnInit {
   dataSet: DataSet[];
   allowEdit = false;
   userList: User[];
+  authToShare: AuthorityToShare[];
 
   public activeProject: UserProject;
 
@@ -156,6 +158,20 @@ export class ProjectEditorComponent implements OnInit {
       );
   }
 
+  getUsersAssignedToProject() {
+    const vm = this;
+    vm.projectService.getUsersAssignedToProject(vm.project.uuid)
+      .subscribe(
+        (result) => {
+          vm.authToShare = result;
+          console.log('Authority', vm.authToShare);
+        },
+        (error) => {
+          vm.log.error('Authority to share could not be loaded. Please try again.', error, 'Load authority to share');
+        }
+      );
+  }
+
   protected performAction(action: string, itemUuid: string) {
     switch (action) {
       case 'add':
@@ -184,6 +200,7 @@ export class ProjectEditorComponent implements OnInit {
           vm.getLinkedSubscribers();
           vm.getLinkedDataSets();
           vm.getProjectApplicationPolicy();
+          vm.getUsersAssignedToProject();
         },
         error => vm.log.error('The project could not be loaded. Please try again.', error, 'Load project')
       );

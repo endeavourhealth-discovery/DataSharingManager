@@ -25,7 +25,7 @@ values (4, "Annually");
 insert into data_sharing_manager.flow_schedule (id, flow_schedule)
 values (5, "One off");
 
-/*data_sharing_manager.flow_schedule*/
+/*data_sharing_manager.business_case_status*/
 insert into data_sharing_manager.business_case_status (id, business_case_status)
 values (0, "Submitted");
 

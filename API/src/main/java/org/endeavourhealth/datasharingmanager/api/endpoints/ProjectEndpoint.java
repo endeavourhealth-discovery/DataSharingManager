@@ -10,14 +10,19 @@ import org.endeavourhealth.common.security.annotations.RequiresAdmin;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
+import org.endeavourhealth.core.database.dal.admin.models.Organisation;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.datasharingmanagermodel.models.enums.MapType;
+import org.endeavourhealth.datasharingmanagermodel.models.json.JsonAuthorityToShare;
 import org.endeavourhealth.datasharingmanagermodel.models.json.JsonProject;
 import org.endeavourhealth.datasharingmanagermodel.models.json.JsonProjectApplicationPolicy;
+import org.endeavourhealth.usermanagermodel.models.caching.OrganisationCache;
 import org.endeavourhealth.usermanagermodel.models.caching.UserCache;
 import org.endeavourhealth.usermanagermodel.models.database.ApplicationPolicyEntity;
+import org.endeavourhealth.usermanagermodel.models.database.UserProjectEntity;
 import org.endeavourhealth.usermanagermodel.models.json.JsonUser;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +31,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -289,14 +295,58 @@ public class ProjectEndpoint extends AbstractEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.ProjectEndpoint.getUsers")
     @Path("/getUsers")
-    @ApiOperation(value = "Returns a list of Json representations of subscribers that are linked " +
-            "to the project.  Accepts a UUID of a project.")
+    @ApiOperation(value = "Returns a list of available users to assign to the project lead or technical lead")
     public Response getUsers(@Context SecurityContext sc) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
                 "Users");
 
         return getUsers();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.ProjectEndpoint.getUsersAssignedToProject")
+    @Path("/getUsersAssignedToProject")
+    @ApiOperation(value = "Returns a list of Json representations of subscribers that are linked " +
+            "to the project.  Accepts a UUID of a project.")
+    public Response getUsersAssignedToProject(@Context SecurityContext sc,
+                                              @ApiParam(value = "Project id to get the application policy for") @QueryParam("projectUuid") String projectUuid) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "Users assigned to project");
+
+        return getUsersAssignedToProject(projectUuid);
+    }
+
+    private Response getUsersAssignedToProject(String projectUuid) throws Exception {
+
+        List<UserProjectEntity> userProjects = UserProjectEntity.getUserProjectEntitiesForProject(projectUuid);
+
+        List<JsonAuthorityToShare> authorities = new ArrayList<>();
+
+        for (UserProjectEntity userProject : userProjects) {
+            JsonAuthorityToShare auth = authorities.stream().filter(a -> a.getOrganisationId().equals(userProject.getOrganisationId())).findFirst().orElse(new JsonAuthorityToShare());
+            if (auth.getOrganisationId() == null) {
+                OrganisationEntity org = OrganisationCache.getOrganisationDetails(userProject.getOrganisationId());
+                auth.setOrganisationId(org.getUuid());
+                auth.setOrganisationName(org.getName());
+                auth.setOrganisationOdsCode(org.getOdsCode());
+
+                authorities.add(auth);
+            }
+            UserRepresentation u = UserCache.getUserDetails(userProject.getUserId());
+            JsonUser jsonUser = new JsonUser(u);
+            auth.addUser(jsonUser);
+
+        }
+
+        clearLogbackMarkers();
+        return Response
+                .ok()
+                .entity(authorities)
+                .build();
     }
 
     private Response getUsers() throws Exception {

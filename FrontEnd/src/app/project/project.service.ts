@@ -9,6 +9,7 @@ import {DataSet} from "../data-set/models/Dataset";
 import {ProjectApplicationPolicy} from "./models/ProjectApplicationPolicy";
 import {ApplicationPolicy} from "./models/ApplicationPolicy";
 import {User} from "eds-angular4/dist/security/models/User";
+import {AuthorityToShare} from "./models/AuthorityToShare";
 
 @Injectable()
 export class ProjectService {
@@ -114,6 +115,14 @@ export class ProjectService {
   getUsers(): Observable<User[]> {
     const vm = this;
     return vm.http.get('api/project/getUsers')
+      .map((response) => response.json());
+  }
+
+  getUsersAssignedToProject(projectUuid: string): Observable<AuthorityToShare[]> {
+    const vm = this;
+    let params = new URLSearchParams();
+    params.set('projectUuid', projectUuid);
+    return vm.http.get('api/project/getUsersAssignedToProject', {search: params})
       .map((response) => response.json());
   }
 

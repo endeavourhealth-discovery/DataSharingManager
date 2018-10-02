@@ -278,6 +278,36 @@
             <ng-template ngbPanelTitle>
               <div class="row">
                 <div class="col-md-3">
+                  Authority to share
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <div class="row">
+                <div class="col-md-12">
+                  <ngb-tabset>
+                    <ngb-tab *ngFor="let org of authToShare" title="{{org.organisationName}}">
+                      <ng-template ngbTabContent>
+                        <div class="card">
+                          <div class="card-body">
+                            <div *ngFor="let user of org.users" class="row">
+                              <div class="col-md-12">
+                                {{user.forename}} {{user.surname}} ({{user.username}})
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-template>
+                    </ngb-tab>
+                  </ngb-tabset>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-panel>
+          <ngb-panel id="appPol">
+            <ng-template ngbPanelTitle>
+              <div class="row">
+                <div class="col-md-3">
                   Application policy
                 </div>
               </div>
