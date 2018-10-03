@@ -292,12 +292,27 @@
         <br>
         <br>
 
-        <div>
-          <div class="radio-group" [(ngModel)]="showPub" ngbRadioGroup name="isDeductible">
+        <div class="row">
+          <div class="form-group col-md-2">
+            <div class="form-control-plaintext custom-control custom-radio">
+              <input type="radio" class="custom-control-input" (change)="swapMarkers()" [(ngModel)]="showPub" [value]="true" id="showPub" name="showPub">
+              <label class="custom-control-label" for="showPub">Show publishers</label>
+            </div>
+          </div>
+          <div class="form-group col-md-2">
+            <div class="form-control-plaintext custom-control custom-radio">
+              <input type="radio" class="custom-control-input" (change)="swapMarkers()" [(ngModel)]="showPub" [value]="false" id="showSub" name="showSub">
+              <label class="custom-control-label" for="showSub">Show subscribers</label>
+            </div>
+          </div>
+        </div>
+
+        <!--<div class="form-group col-md-2">
+          <div class="form-control-plaintext custom-control custom-radio">
             <label class="btn btn-secondary"><input type="radio" (change)="swapMarkers()" [value]="true">Show Publishers</label>
             <label class="btn btn-secondary"><input type="radio" (change)="swapMarkers()" [value]="false">Show Subscribers</label>
           </div>
-        </div>
+        </div>-->
         <hr>
         <eds-google-maps
           [markers]="mapMarkers">
