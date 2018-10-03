@@ -284,6 +284,23 @@ public final class DsaEndpoint extends AbstractEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.DsaEndpoint.projects")
+    @Path("/projects")
+    @ApiOperation(value = "Returns a list of Json representations of projects that are linked " +
+            "to the corresponding DSA.  Accepts a UUID of an DSA.")
+    public Response projects(@Context SecurityContext sc,
+                                                @ApiParam(value = "UUID of DSA") @QueryParam("uuid") String uuid) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "Marker(s)",
+                "DSA Id", uuid);
+
+        return getProjects(uuid);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.DpaEndpoint.checkOrganisationIsPartOfAgreement")
     @Path("/checkOrganisationIsPartOfAgreement")
     @ApiOperation(value = "Checks whether an organisation and system is part of a data processing agreement. " +
@@ -417,6 +434,22 @@ public final class DsaEndpoint extends AbstractEndpoint {
 
         if (benefitUuids.size() > 0)
             ret = PurposeEntity.getPurposesFromList(benefitUuids);
+
+        clearLogbackMarkers();
+        return Response
+                .ok()
+                .entity(ret)
+                .build();
+    }
+
+    private Response getProjects(String dsaUuid) throws Exception {
+
+        List<String> projectUuids = MasterMappingEntity.getChildMappings(dsaUuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PROJECT.getMapType());
+
+        List<ProjectEntity> ret = new ArrayList<>();
+
+        if (projectUuids.size() > 0)
+            ret = ProjectEntity.getProjectsFromList(projectUuids);
 
         clearLogbackMarkers();
         return Response

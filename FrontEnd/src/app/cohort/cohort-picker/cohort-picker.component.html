@@ -1,6 +1,8 @@
 <div class="modal-header">
+  <div class="pull-right">
+    <h4 class="modal-title">Edit base populations</h4>
+  </div>
   <button type="button" class="close" (click)="cancel()" aria-hidden="true">&times;</button>
-  <h4 class="modal-title">Cohort picker</h4>
 </div>
 <div class="modal-body">
   <form cohortPicker="form" class="container-fluid">
@@ -47,8 +49,8 @@
   </form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn"
-          (click)="cancel()">Cancel</button>
-  <button type="button" class="btn btn-primary"
+  <button type="button" class="btn btn-success"
           (click)="ok();">OK</button>
+  <button type="button" class="btn btn-danger"
+          (click)="cancel()">Cancel</button>
 </div>

@@ -7,6 +7,7 @@ import {Region} from '../region/models/Region';
 import {DataFlow} from '../data-flow/models/DataFlow';
 import {Dsa} from './models/Dsa';
 import {Marker} from '../region/models/Marker';
+import {Project} from "../project/models/Project";
 
 @Injectable()
 export class DataSharingAgreementService {
@@ -111,6 +112,14 @@ export class DataSharingAgreementService {
     const params = new URLSearchParams();
     params.set('uuid', uuid);
     return vm.http.get('api/dsa/publisherMarkers', { search : params })
+      .map((response) => response.json());
+  }
+
+  getProjects(uuid: string): Observable<Project[]> {
+    const vm = this;
+    const params = new URLSearchParams();
+    params.set('uuid', uuid);
+    return vm.http.get('api/dsa/projects', { search : params })
       .map((response) => response.json());
   }
 

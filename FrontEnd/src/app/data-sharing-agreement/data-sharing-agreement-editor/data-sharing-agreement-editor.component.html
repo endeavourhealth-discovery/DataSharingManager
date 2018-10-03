@@ -154,34 +154,34 @@
               </entity-viewer>
             </ng-template>
           </ngb-panel>
-          <!--<ngb-panel id="dfs">
+          <ngb-panel id="projs">
             <ng-template ngbPanelTitle>
               <div class="row">
-                <div class="col-md-2">
-                  Data flow agreements
+                <div class="col-md-3">
+                  Projects
                 </div>
                 <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{dataFlows?.length}}</span>
+                  <span class="badge badge-pill badge-primary">{{projects?.length}}</span>
                 </div>
                 <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editDataFlows()">Edit</button>
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editProjects()">Edit</button>
                 </div>
               </div>
             </ng-template>
             <ng-template ngbPanelContent>
               <entity-viewer
-                [items]="dataFlows"
+                [items]="projects"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
                 [displayClass]="'region'"
-                [secondary]="'approximateVolume'"
-                [secondaryOrderText]="'Approximate Volume'"
-                [typeDescription]="'Data flow'"
-                [model]="'dataflow'"
+                [secondary]="'summary'"
+                [secondaryOrderText]="'Summary'"
+                [typeDescription]="'Project'"
+                [model]="'project'"
                 [detailsToShow]="dataflowDetailsToShow">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>-->
+          </ngb-panel>
           <ngb-panel id="pubs">
             <ng-template ngbPanelTitle>
               <div class="row">
@@ -268,7 +268,7 @@
                       <form class="container-fluid">
                         <div class="row">
                           <div class="form-group col-md-12">
-                            <button for="fileUpload" id="fileUpload" class="btn btn-primary" (click)="fileUploader.click()">Select files</button>
+                            <button for="fileUpload" id="fileUpload" class="btn btn-success" (click)="fileUploader.click()">Select files</button>
                             <input #fileUploader type="file" (change)="fileChange($event)" accept=".pdf">
                             <label class="control-label" for="fileUpload" *ngIf="!file">No files selected</label>
                             <label class="control-label" for="fileUpload" *ngIf="file">{{file.name}}</label>
@@ -277,8 +277,8 @@
 
                         <div class="row">
                           <div class="col-md-12">
-                            <button type="button" class="btn bnt-default" (click)="cancel()">Cancel</button>
-                            <button type="button" class="btn btn-primary" (click)="ok()" [disabled]="!file">OK</button>
+                            <button type="button" class="btn btn-success" (click)="ok()" [disabled]="!file">OK</button>
+                            <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
                           </div>
                         </div>
                       </form>
@@ -291,6 +291,7 @@
         </ngb-accordion>
         <br>
         <br>
+
         <div>
           <div class="radio-group" [(ngModel)]="showPub" ngbRadioGroup name="isDeductible">
             <label class="btn btn-secondary"><input type="radio" (change)="swapMarkers()" [value]="true">Show Publishers</label>

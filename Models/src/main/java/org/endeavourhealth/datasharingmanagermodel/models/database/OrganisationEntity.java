@@ -79,7 +79,7 @@ import java.util.*;
                         "where s.isService = 1 " +
                         "and mm.childUuid is null"),
         @NamedQuery(name="cohort.total",
-                query="select 'Total number of cohorts', count(distinct c.uuid) " +
+                query="select 'Total number of base populations', count(distinct c.uuid) " +
                         "from CohortEntity c "),
         @NamedQuery(name="dataFlow.total",
                 query="select 'Total number of data flows', count(distinct df.uuid) " +

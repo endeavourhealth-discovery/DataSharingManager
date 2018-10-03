@@ -17,6 +17,8 @@ import {Marker} from '../../region/models/Marker';
 import {Documentation} from "../../documentation/models/Documentation";
 import {DocumentationService} from "../../documentation/documentation.service";
 import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
+import {Project} from "../../project/models/Project";
+import {ProjectPickerComponent} from "../../project/project-picker/project-picker.component";
 
 @Component({
   selector: 'app-data-sharing-agreement-editor',
@@ -29,6 +31,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   dsa: Dsa = <Dsa>{};
   dataFlows: DataFlow[];
   regions: Region[];
+  projects: Project[];
   publishers: Organisation[];
   subscribers: Organisation[];
   documentations: Documentation[];
@@ -42,6 +45,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   file: File;
   pdfSrc: any;
   disableStatus = false;
+
+  model = 1;
 
   public activeProject: UserProject;
 
@@ -60,6 +65,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   orgDetailsToShow = new Organisation().getDisplayItems();
   purposeDetailsToShow = new Purpose().getDisplayItems();
   documentDetailsToShow = new Documentation().getDisplayItems();
+  projectDetailsToShow = new Project().getDisplayItems();
 
   constructor(private $modal: NgbModal,
               private log: LoggerService,
@@ -122,6 +128,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           vm.getLinkedDataFlows();
           vm.getLinkedRegions();
           vm.getPublishers();
+          vm.getProjects();
           vm.getSubscribers();
           vm.getPurposes();
           vm.getBenefits();
@@ -213,6 +220,16 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     );
   }
 
+  private editProjects() {
+    const vm = this;
+    ProjectPickerComponent.open(vm.$modal, vm.projects)
+      .result.then(function
+      (result: Project[]) { vm.projects = result; },
+      () => vm.log.info('Edit projects cancelled')
+    );
+  }
+
+
   private editPublishers() {
     const vm = this;
     OrganisationPickerComponent.open(vm.$modal, vm.publishers, 'organisation')
@@ -277,6 +294,16 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       .subscribe(
         result => vm.publishers = result,
         error => vm.log.error('The associated publishers could not be loaded. Please try again.', error, 'Load associated publishers')
+      );
+  }
+
+  private getProjects() {
+    const vm = this;
+    vm.dsaService.getProjects(vm.dsa.uuid)
+      .subscribe(
+        result => { vm.projects = result;
+        console.log('projects', result); },
+        error => vm.log.error('The associated projects could not be loaded. Please try again.', error, 'Load associated projects')
       );
   }
 

@@ -60,7 +60,7 @@
               </div>-->
             </div>
 
-            <button *ngIf="allowEdit && organisation.isService === 0" type="button" class="btn btn-sm btn-info" (click)="addAddress()">Add address</button>
+            <button *ngIf="allowEdit && organisation.isService === 0" type="button" class="btn btn-sm btn-success" (click)="addAddress()">Add address</button>
             <div *ngFor="let orgAddress of addresses;let index = index;">
               <div class="card">
                 <div class="card-body">
@@ -126,7 +126,7 @@
                 [displayClass]="'region'"
                 [secondary]="'description'"
                 [secondaryOrderText]="'Description'"
-                [typeDescription]="'Regions'"
+                [typeDescription]="'Region'"
                 [model]="'region'"
                 [detailsToShow]="regionDetailsToShow">
               </entity-viewer>
@@ -154,7 +154,7 @@
                 [displayClass]="'region'"
                 [secondary]="'description'"
                 [secondaryOrderText]="'Description'"
-                [typeDescription]="'Data processing agreements'"
+                [typeDescription]="'Data processing agreement'"
                 [model]="'dpa'"
                 [detailsToShow]="dpaDetailsToShow">
               </entity-viewer>
@@ -182,7 +182,7 @@
                 [displayClass]="'region'"
                 [secondary]="'description'"
                 [secondaryOrderText]="'Description'"
-                [typeDescription]="'Data sharing agreements'"
+                [typeDescription]="'Data sharing agreement'"
                 [model]="'dsa'"
                 [detailsToShow]="dsaDetailsToShow">
               </entity-viewer>
@@ -210,7 +210,7 @@
                 [displayClass]="'region'"
                 [secondary]="'description'"
                 [secondaryOrderText]="'Description'"
-                [typeDescription]="'Data sharing agreements'"
+                [typeDescription]="'Data sharing agreement'"
                 [model]="'dsa'"
                 [detailsToShow]="dsaDetailsToShow">
               </entity-viewer>

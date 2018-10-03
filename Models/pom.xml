@@ -15,7 +15,7 @@
 
         <eds-api.version>1.25-SNAPSHOT</eds-api.version>
 
-        <user-manager-models.version>0.0.12-SNAPSHOT</user-manager-models.version>
+        <user-manager-models.version>0.0.13-SNAPSHOT</user-manager-models.version>
 
         <gson.version>2.3</gson.version>
         <hibernate.version>5.2.5.Final</hibernate.version>
