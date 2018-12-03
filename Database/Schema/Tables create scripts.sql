@@ -291,7 +291,10 @@ create table data_sharing_manager.project (
     objectives varchar(5000) null comment 'Objectives of the project',
     security_architecture_id smallint not null comment 'Security Architecture eg TLS/MA, Secure FTP',
     storage_protocol_id smallint not null comment 'Storage protocol eg Temporary store and forward, permanent',
-    flow_schedule_id smallint null comment 'Flow schedule eg on demand, daily, weekly etc',
+    flow_schedule_id smallint null comment 'Flow schedule eg on demand, daily, weekly etc',    
+    project_status_id smallint not null comment 'Status of the project',
+    start_date date null comment 'Date the project starts',
+    end_date date null comment 'Date the project ends',
     
     constraint data_sharing_manager_project_uuid_pk primary key (uuid),
     index data_sharing_manager_project_name_idx (name),
@@ -302,7 +305,8 @@ create table data_sharing_manager.project (
     foreign key data_sharing_manager_project_security_infrastructure_fk (security_infrastructure_id) references data_sharing_manager.security_infrastructure(id),
     foreign key data_sharing_manager_project_security_architecture_fk (security_architecture_id) references data_sharing_manager.security_architecture(id),
     foreign key data_sharing_manager_project_business_case_fk (business_case_status) references data_sharing_manager.business_case_status(id),
-    foreign key data_sharing_manager_flow_schedule_fk (flow_schedule_id) references data_sharing_manager.flow_schedule(id)
+    foreign key data_sharing_manager_flow_schedule_fk (flow_schedule_id) references data_sharing_manager.flow_schedule(id),    
+    foreign key data_sharing_manager_data_processing_agreement_project_status_id_fk (project_status_id) references data_sharing_manager.dsa_status(id)
     
 ) comment 'Holds details of the projects that have been defined';
 
@@ -310,6 +314,12 @@ create table data_sharing_manager.project (
 
 -- alter table data_sharing_manager.project add column flow_schedule_id smallint null comment 'Flow schedule eg on demand, daily, weekly etc';
 
+-- alter table data_sharing_manager.project add column project_status_id smallint null comment 'Status of the project';
+-- alter table data_sharing_manager.project add column start_date date null comment 'Date the project starts';
+-- alter table data_sharing_manager.project add column end_date date null comment 'Date the project ends';
+-- alter table data_sharing_manager.project add foreign key dsm_dpa_project_status_id_fk (project_status_id) references data_sharing_manager.dsa_status(id);
+
+-- alter table data_sharing_manager.project add foreign key data_sharing_manager_flow_schedule_fk (flow_schedule_id) references data_sharing_manager.flow_schedule(id);
 -- alter table data_sharing_manager.project add foreign key data_sharing_manager_project_business_case_fk (business_case_status) references data_sharing_manager.business_case_status(id);
 -- alter table data_sharing_manager.project add foreign key data_sharing_manager_flow_schedule_fk (flow_schedule_id) references data_sharing_manager.flow_schedule(id);
 

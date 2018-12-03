@@ -25,6 +25,9 @@ public class JsonProject {
     private short storageProtocolId;
     private short businessCaseStatus;
     private short flowScheduleId;
+    private Short projectStatusId = null;
+    private String startDate = null;
+    private String endDate = null;
     private Map<UUID, String> publishers = null;
     private Map<UUID, String> subscribers = null;
     private Map<UUID, String> basePopulation = null;
@@ -52,6 +55,13 @@ public class JsonProject {
         this.objectives = projectEntity.getObjectives();
         this.securityArchitectureId = projectEntity.getSecurityArchitectureId();
         this.storageProtocolId = projectEntity.getStorageProtocolId();
+        this.projectStatusId = projectEntity.getProjectStatusId();
+        if (projectEntity.getStartDate() != null) {
+            this.startDate = projectEntity.getStartDate().toString();
+        }
+        if (projectEntity.getEndDate() != null) {
+            this.endDate = projectEntity.getEndDate().toString();
+        }
     }
 
     public String getUuid() {
@@ -164,6 +174,30 @@ public class JsonProject {
 
     public void setStorageProtocolId(short storageProtocolId) {
         this.storageProtocolId = storageProtocolId;
+    }
+
+    public Short getProjectStatusId() {
+        return projectStatusId;
+    }
+
+    public void setProjectStatusId(Short projectStatusId) {
+        this.projectStatusId = projectStatusId;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
     public Map<UUID, String> getPublishers() {

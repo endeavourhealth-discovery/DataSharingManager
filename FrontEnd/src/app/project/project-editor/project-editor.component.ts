@@ -36,6 +36,7 @@ export class ProjectEditorComponent implements OnInit {
   allowEdit = false;
   userList: User[];
   authToShare: AuthorityToShare[];
+  disableStatus = false;
 
   public activeProject: UserProject;
 
@@ -87,6 +88,11 @@ export class ProjectEditorComponent implements OnInit {
     {num: 3, name: 'Monthly'},
     {num: 4, name: 'Annually'},
     {num: 5, name: 'One off'}
+  ];
+
+  status = [
+    {num: 0, name : 'Active'},
+    {num: 1, name : 'Inactive'}
   ];
 
   dsaDetailsToShow = new Dsa().getDisplayItems();
@@ -383,6 +389,26 @@ export class ProjectEditorComponent implements OnInit {
         },
         (error) => vm.log.error('Project application policy could not be saved. Please try again.', error, 'Save project application policy')
       );
+  }
+
+  checkEndDate() {
+    const vm = this;
+
+    if (vm.project.endDate === null) {
+      vm.disableStatus = false;
+      return;
+    }
+
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    var endDate = new Date(vm.project.endDate)
+
+    if (endDate < today) {
+      vm.project.projectStatusId = 1;
+      vm.disableStatus = true;
+    } else {
+      vm.disableStatus = false;
+    }
   }
 
 }

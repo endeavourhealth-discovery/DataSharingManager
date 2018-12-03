@@ -131,6 +131,26 @@
               </div>
             </div>
           </div>
+          <div class="row">
+            <div class="form-group col-md-4">
+              <label class="control-label required-field">Status</label>
+              <div class="input-group">
+                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <select required [disabled]="disableStatus" class="form-control" [(ngModel)]="project.projectStatusId" name="projectStatusId">
+                  <option *ngFor="let st of status" [ngValue]="st.num">{{st.name}}</option>
+                </select>
+              </div>
+              <small class="required-field-note"></small>
+            </div>
+            <div class="form-group col-md-4">
+              <label class="control-label">Start date</label>
+              <input type="date" class="form-control" placeholder="Start date" [(ngModel)]="project.startDate" name="startDate">
+            </div>
+            <div class="form-group col-md-4">
+              <label class="control-label">End date</label>
+              <input type="date" class="form-control" placeholder="End date" [(ngModel)]="project.endDate" name="endDate" (change)="checkEndDate()">
+            </div>
+          </div>
         </fieldset>
 
         <ngb-accordion>

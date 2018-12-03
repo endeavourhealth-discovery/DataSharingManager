@@ -9,6 +9,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.sql.Date;
 import java.util.*;
 
 @Entity
@@ -30,6 +31,9 @@ public class ProjectEntity {
     private short storageProtocolId;
     private Short businessCaseStatus;
     private Short flowScheduleId;
+    private Short projectStatusId;
+    private Date startDate;
+    private Date endDate;
 
     @Id
     @Column(name = "uuid")
@@ -218,6 +222,35 @@ public class ProjectEntity {
         this.flowScheduleId = flowScheduleId;
     }
 
+    @Basic
+    @Column(name = "project_status_id")
+    public Short getProjectStatusId() {
+        return projectStatusId;
+    }
+
+    public void setProjectStatusId(Short projectStatusId) {
+        this.projectStatusId = projectStatusId;
+    }
+
+    @Basic
+    @Column(name = "start_date")
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    @Basic
+    @Column(name = "end_date")
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
     public static List<ProjectEntity> getAllProjects() throws Exception {
         EntityManager entityManager = PersistenceManager.getEntityManager();
@@ -264,6 +297,13 @@ public class ProjectEntity {
         projectEntity.setStorageProtocolId(project.getStorageProtocolId());
         projectEntity.setBusinessCaseStatus(project.getBusinessCaseStatus());
         projectEntity.setFlowScheduleId(project.getFlowScheduleId());
+        projectEntity.setProjectStatusId(project.getProjectStatusId());
+        if (project.getStartDate() != null) {
+            projectEntity.setStartDate(Date.valueOf(project.getStartDate()));
+        }
+        if (project.getEndDate() != null) {
+            projectEntity.setEndDate(Date.valueOf(project.getEndDate()));
+        }
         entityManager.getTransaction().commit();
 
         entityManager.close();
@@ -290,6 +330,13 @@ public class ProjectEntity {
         projectEntity.setStorageProtocolId(project.getStorageProtocolId());
         projectEntity.setBusinessCaseStatus(project.getBusinessCaseStatus());
         projectEntity.setFlowScheduleId(project.getFlowScheduleId());
+        projectEntity.setProjectStatusId(project.getProjectStatusId());
+        if (project.getStartDate() != null) {
+            projectEntity.setStartDate(Date.valueOf(project.getStartDate()));
+        }
+        if (project.getEndDate() != null) {
+            projectEntity.setEndDate(Date.valueOf(project.getEndDate()));
+        }
         entityManager.persist(projectEntity);
         entityManager.getTransaction().commit();
 
@@ -469,5 +516,19 @@ public class ProjectEntity {
             ret = OrganisationEntity.getOrganisationsFromList(orgUUIDs);
 
         return ret;
+    }
+
+    public static boolean checkProjectIsActive(String projectId) throws Exception {
+        boolean projectActive = false;
+
+        ProjectEntity project = getProject(projectId);
+
+        if (project != null) {
+            if (project.getProjectStatusId() != null && project.getProjectStatusId() == 0) {
+                projectActive = true;
+            }
+        }
+
+        return projectActive;
     }
 }
