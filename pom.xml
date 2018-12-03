@@ -22,7 +22,7 @@
 
         <eds-api.version>1.25-SNAPSHOT</eds-api.version>
         <user-manager-models.version>0.0.14-SNAPSHOT</user-manager-models.version>
-        <data-sharing-manager-models.version>0.0.9-SNAPSHOT</data-sharing-manager-models.version>
+        <data-sharing-manager-models.version>0.0.10-SNAPSHOT</data-sharing-manager-models.version>
 
         <aspectj.version>1.8.9</aspectj.version>
         <aspectj-metrics.version>1.2.0</aspectj-metrics.version>
