@@ -847,8 +847,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
                 || filename.contains("scotmem")
                 || filename.contains("succ")
                 || filename.contains("wconcur")
-                || filename.contains("egparc")
-                || filename.contains("egpcur"))
+                || filename.contains("egparc"))
             return false;
 
 
@@ -878,41 +877,42 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         }
 
         String csvData = file.getFileData();
-        Scanner scanner = new Scanner(csvData);
+        try (Scanner scanner = new Scanner(csvData)) {
 
-        while (scanner.hasNext()) {
-            List<String> org = CsvHelper.parseLine(scanner.nextLine());
+            while (scanner.hasNext()) {
+                List<String> org = CsvHelper.parseLine(scanner.nextLine());
 
-            OrganisationEntity importedOrg = createOrganisationEntity(org, file.getName());
+                OrganisationEntity importedOrg = createOrganisationEntity(org, file.getName());
 
-            for (OrganisationEntity oe : updatedBulkOrganisations) {
-                if (oe.getUuid().equals(importedOrg.getUuid())) {
-                    found = true;
+                for (OrganisationEntity oe : updatedBulkOrganisations) {
+                    if (oe.getUuid().equals(importedOrg.getUuid())) {
+                        found = true;
+                    }
                 }
+
+                if (found) {
+                    //already have this org and it has been updated so set the conflicted UUID to the UUID of the original org and generate a new UUID
+                    importedOrg.setBulkConflictedWith(importedOrg.getUuid());
+                    importedOrg.setUuid(UUID.nameUUIDFromBytes((importedOrg.getName() + importedOrg.getOdsCode() + "conflict").getBytes()).toString());
+                }
+
+                if (bulkOrgMap.get(importedOrg.getOdsCode()) == null) {
+                    organisationEntities.add(importedOrg);
+                    addressEntities.add(createAddressEntity(org, importedOrg.getUuid()));
+                    bulkOrgMap.put(importedOrg.getOdsCode(), importedOrg.getUuid());
+                }
+
+                if (!org.get(14).equals("") && childParentMap.get(importedOrg.getOdsCode()) == null) {
+                    childParentMap.put(importedOrg.getOdsCode(), org.get(14));
+                }
+
+
+                found = false;
             }
 
-            if (found) {
-                //already have this org and it has been updated so set the conflicted UUID to the UUID of the original org and generate a new UUID
-                importedOrg.setBulkConflictedWith(importedOrg.getUuid());
-                importedOrg.setUuid(UUID.nameUUIDFromBytes((importedOrg.getName() + importedOrg.getOdsCode() + "conflict").getBytes()).toString());
-            }
-
-            if (bulkOrgMap.get(importedOrg.getOdsCode()) == null) {
-                organisationEntities.add(importedOrg);
-                addressEntities.add(createAddressEntity(org, importedOrg.getUuid()));
-                bulkOrgMap.put(importedOrg.getOdsCode(), importedOrg.getUuid());
-            }
-
-            if (!org.get(14).equals("") && childParentMap.get(importedOrg.getOdsCode()) == null) {
-                childParentMap.put(importedOrg.getOdsCode(), org.get(14));
-            }
-
-
-            found = false;
+            OrganisationEntity.bulkSaveOrganisation(organisationEntities);
+            AddressEntity.bulkSaveAddresses(addressEntities);
         }
-
-        OrganisationEntity.bulkSaveOrganisation(organisationEntities);
-        AddressEntity.bulkSaveAddresses(addressEntities);
 
         return Response
                 .ok(organisationEntities.size())

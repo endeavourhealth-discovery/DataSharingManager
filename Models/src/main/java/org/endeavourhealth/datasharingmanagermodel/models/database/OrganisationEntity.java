@@ -454,7 +454,7 @@ public class OrganisationEntity {
         }
 
         List<OrganisationEntity> cachedOrgs = cachedOrganisations.get(userId);
-        System.out.println("found " + cachedOrgs != null ? cachedOrgs.size() : 0 + " orgs");
+        System.out.println("found " + cachedOrgs.size() + " orgs");
 
         if (cachedOrgs != null) {
             sortOrganisationCache(cachedOrganisations.get(userId), orderColumn, descending);

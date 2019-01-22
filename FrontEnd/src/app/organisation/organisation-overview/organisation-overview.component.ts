@@ -254,8 +254,7 @@ export class OrganisationOverviewComponent implements OnInit {
     vm.newOrg = organisation;
     vm.organisationService.getOrganisationAddresses(organisation.uuid)
       .subscribe(
-        result => {vm.newOrg.addresses = result,
-          console.log(result)},
+        result => {vm.newOrg.addresses = result},
         error => vm.log.error('The organisation address could not be loaded. Please try again.', error, 'Load address')
       );
 
