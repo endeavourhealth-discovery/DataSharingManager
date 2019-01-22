@@ -12,7 +12,7 @@
     </parent>
 
     <properties>
-      <sonar.projectKey>endeavourhealth-discovery_DataSharingManager::frontend</sonar.projectKey>
+      <sonar.projectKey>endeavourhealth-discovery_DataSharingManager::FrontEnd</sonar.projectKey>
       <sonar.sources>src</sonar.sources>
       <sonar.typescript.tsconfigPath>tsconfig.json</sonar.typescript.tsconfigPath>
       <sonar.ts.tslint.configPath>tslint.json</sonar.ts.tslint.configPath>
