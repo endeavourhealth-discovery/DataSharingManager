@@ -12,6 +12,8 @@
     </parent>
 
     <properties>
+      <maven.deploy.skip>true</maven.deploy.skip>
+
       <sonar.projectKey>endeavourhealth-discovery_DataSharingManager::FrontEnd</sonar.projectKey>
       <sonar.sources>src</sonar.sources>
       <sonar.typescript.tsconfigPath>tsconfig.json</sonar.typescript.tsconfigPath>
