@@ -11,6 +11,7 @@
     <div class="module-body">
       <form>
         <fieldset [disabled]="!allowEdit">
+          <legend>Project</legend>
           <div class="row">
             <div class="form-group col-md-6">
               <label class="control-label">Project name</label>
@@ -37,7 +38,7 @@
             <div class="form-group col-md-6">
               <label class="control-label">Project lead</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="project.leadUser" name="leadUser">
                   <option *ngFor="let leadUser of userList" [ngValue]="leadUser.uuid">{{leadUser.forename}} {{leadUser.surname}}</option>
                 </select>
@@ -46,7 +47,7 @@
             <div class="form-group col-md-6">
               <label class="control-label">Project technical lead</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="project.technicalLeadUser" name="technicalLeadUser">
                   <option *ngFor="let techUser of userList" [ngValue]="techUser.uuid">{{techUser.forename}} {{techUser.surname}}</option>
                 </select>
@@ -57,7 +58,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">Storage protocol</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="project.storageProtocolId" name="storageProtocolId">
                   <option *ngFor="let sps of storageProtocols" [ngValue]="sps.num">{{sps.name}}</option>
                 </select>
@@ -67,7 +68,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">Patient consent model</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="project.consentModelId" name="consentModel">
                   <option *ngFor="let con of consents" [ngValue]="con.num">{{con.name}}</option>
                 </select>
@@ -77,7 +78,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">De-identification level</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="project.deidentificationLevel" name="deIdentificationLevel">
                   <option *ngFor="let did of deidentificationLevel" [ngValue]="did.num">{{did.name}}</option>
                 </select>
@@ -88,7 +89,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">Project type</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="project.projectTypeId" name="projectTypeId">
                   <option *ngFor="let proj of projectTypes" [ngValue]="proj.num">{{proj.name}}</option>
                 </select>
@@ -98,7 +99,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">Frequency</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="project.flowScheduleId" name="flowScheduleId">
                   <option *ngFor="let fs of flowScheduleIds" [ngValue]="fs.num">{{fs.name}}</option>
                 </select>
@@ -114,7 +115,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">Security infrastructure Id</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="project.securityInfrastructureId" name="securityInfrastructureId">
                   <option *ngFor="let sec of securityInfrastructures" [ngValue]="sec.num">{{sec.name}}</option>
                 </select>
@@ -124,7 +125,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">Security architecture Id</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="project.securityArchitectureId" name="securityArchitectureId">
                   <option *ngFor="let arc of securityArchitectures" [ngValue]="arc.num">{{arc.name}}</option>
                 </select>
@@ -135,7 +136,7 @@
             <div class="form-group col-md-4">
               <label class="control-label required-field">Status</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select required [disabled]="disableStatus" class="form-control" [(ngModel)]="project.projectStatusId" name="projectStatusId">
                   <option *ngFor="let st of status" [ngValue]="st.num">{{st.name}}</option>
                 </select>

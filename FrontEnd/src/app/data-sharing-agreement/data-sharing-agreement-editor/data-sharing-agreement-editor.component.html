@@ -12,6 +12,7 @@
       <form class="form" #f="ngForm" novalidate>
         <div class="form-group" #fgName="ngModelGroup" ngModelGroup="dsaForm" [class.has-error]="!fgName.valid">
           <fieldset [disabled]="!allowEdit">
+            <legend>Data sharing agreement</legend>
             <div class="row">
               <div class="form-group col-md-6">
                 <label class="control-label required-field">Data sharing agreement name</label>
@@ -32,7 +33,7 @@
               <div class="form-group col-md-3">
                 <label class="control-label required-field">Status</label>
                 <div class="input-group">
-                  <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                  <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                   <select required [disabled]="disableStatus" class="form-control" [(ngModel)]="dsa.dsaStatusId" name="dsaStatusId">
                     <option *ngFor="let st of status" [ngValue]="st.num">{{st.name}}</option>
                   </select>
@@ -42,7 +43,7 @@
               <div class="form-group col-md-3">
                 <label class="control-label required-field">Consent model</label>
                 <div class="input-group">
-                  <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                  <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                   <select required class="form-control" [(ngModel)]="dsa.consentModelId" name="consentModelId">
                     <option *ngFor="let con of consents" [ngValue]="con.num">{{con.name}}</option>
                   </select>

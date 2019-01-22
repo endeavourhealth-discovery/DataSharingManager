@@ -11,6 +11,7 @@
     <div class="module-body">
       <form>
         <fieldset [disabled]="!allowEdit">
+          <legend>Data exchange</legend>
           <div class="row">
             <div class="form-group col-md-6">
               <label class="control-label">Data exchange name</label>
@@ -19,7 +20,7 @@
             <div class="form-group col-md-6">
               <label class="control-label">Publisher or subscriber</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="exchange.publisher" name="publisher">
                   <option *ngFor="let pub of publisherSubscriber" [ngValue]="pub.num">{{pub.name}}</option>
                 </select>
@@ -38,7 +39,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">Direction</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="exchange.directionId" name="directionId">
                   <option *ngFor="let direction of flowDirections" [ngValue]="direction.num">{{direction.name}}</option>
                 </select>
@@ -49,7 +50,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">Flow schedule</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="exchange.flowScheduleId" name="flowScheduleId">
                   <option *ngFor="let schedule of flowSchedules" [ngValue]="schedule.num">{{schedule.name}}</option>
                 </select>
@@ -58,7 +59,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">Data exchange method</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="exchange.dataExchangeMethodId" name="dataExchangeMethodId">
                   <option *ngFor="let method of exchangeMethod" [ngValue]="method.num">{{method.name}}</option>
                 </select>
@@ -67,7 +68,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">Flow status</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="exchange.flowStatusId" name="flowStatusId">
                   <option *ngFor="let status of flowStatus" [ngValue]="status.num">{{status.name}}</option>
                 </select>
@@ -78,7 +79,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">Security infrastructure</label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="exchange.securityInfrastructureId" name="securityInfrastructureId">
                   <option *ngFor="let sis of securityInfrastructures" [ngValue]="sis.num">{{sis.name}}</option>
                 </select>
@@ -87,7 +88,7 @@
             <div class="form-group col-md-4">
               <label class="control-label">Security Architecture </label>
               <div class="input-group">
-                <span class="input-group-prepend"><i class="fa fa-th-large input-group-text"></i></span>
+                <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                 <select class="form-control" [(ngModel)]="exchange.securityArchitectureId" name="securityArchitectureId">
                   <option *ngFor="let sas of securityArchitectures" [ngValue]="sas.num">{{sas.name}}</option>
                 </select>

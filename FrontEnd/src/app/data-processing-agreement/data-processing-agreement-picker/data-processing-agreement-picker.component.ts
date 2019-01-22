@@ -16,7 +16,7 @@ export class DataProcessingAgreementPickerComponent implements OnInit {
 
   public static open(modalService: NgbModal, dpas: Dpa[]) {
     const modalRef = modalService.open(DataProcessingAgreementPickerComponent, { backdrop : 'static'});
-    modalRef.componentInstance.resultData = Object.assign([], dpas);;
+    modalRef.componentInstance.resultData = Object.assign([], dpas);
 
     return modalRef;
   }

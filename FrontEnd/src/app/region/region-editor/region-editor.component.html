@@ -12,6 +12,7 @@
       <form class="form" #f="ngForm" novalidate>
         <div class="form-group" #fgName="ngModelGroup" ngModelGroup="region" [class.has-error]="!fgName.valid">
           <fieldset [disabled]="!allowEdit">
+            <legend>Region</legend>
             <div class="row">
               <div class="form-group col-md-6">
                 <label class="control-label required-field">Region name</label>
