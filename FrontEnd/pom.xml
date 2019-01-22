@@ -11,7 +11,17 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>FrontEnd</artifactId>
+    <properties>
+      <sonar.projectKey>endeavourhealth-discovery_DataSharingManager::frontend</sonar.projectKey>
+      <sonar.sources>src</sonar.sources>
+      <sonar.typescript.tsconfigPath>tsconfig.json</sonar.typescript.tsconfigPath>
+      <sonar.ts.tslint.configPath>tslint.json</sonar.ts.tslint.configPath>
+      <sonar.exclusions>**/node_modules/**, **/*.spec.ts, **/environments/**/*</sonar.exclusions>
+      <sonar.typescript.lcov.reportPaths>coverage/lcov.info</sonar.typescript.lcov.reportPaths>
+    </properties>
+
+
+  <artifactId>FrontEnd</artifactId>
     <packaging>jar</packaging>
 
   <build>

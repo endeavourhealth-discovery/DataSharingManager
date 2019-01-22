@@ -12,6 +12,9 @@ phases:
       - aws_scripts/build.sh mvn -f Models/pom.xml -B deploy
       - echo Main build started on `date`
       - aws_scripts/build.sh mvn -B package
+      - echo Analysis started on `date`
+      - mvn sonar:sonar
+
   post_build:
     commands:
       - IP=$(curl http://checkip.amazonaws.com)/32
