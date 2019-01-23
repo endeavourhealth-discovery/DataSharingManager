@@ -55,65 +55,57 @@ export class DataProcessingAgreementService {
 
   getLinkedDataFlows(uuid: string):  Observable<DataFlow[]> {
     const vm = this;
-    const params = new URLSearchParams();
-    params.set('uuid', uuid);
-    return vm.http.get('api/dpa/dataflows', { search : params })
-      .map((response) => response.json());
+
+    return vm.makeAPICall(uuid, 'api/dpa/dataflows');
   }
 
   getLinkedCohorts(uuid: string):  Observable<Cohort[]> {
     const vm = this;
-    const params = new URLSearchParams();
-    params.set('uuid', uuid);
-    return vm.http.get('api/dpa/cohorts', { search : params })
-      .map((response) => response.json());
+
+    return vm.makeAPICall(uuid, 'api/dpa/cohorts');
   }
 
   getLinkedDataSets(uuid: string):  Observable<DataSet[]> {
     const vm = this;
-    const params = new URLSearchParams();
-    params.set('uuid', uuid);
-    return vm.http.get('api/dpa/datasets', { search : params })
-      .map((response) => response.json());
+
+    return vm.makeAPICall(uuid, 'api/dpa/datasets');
   }
 
   getPublishers(uuid: string):  Observable<Organisation[]> {
     const vm = this;
-    const params = new URLSearchParams();
-    params.set('uuid', uuid);
-    return vm.http.get('api/dpa/publishers', { search : params })
-      .map((response) => response.json());
+
+    return vm.makeAPICall(uuid, 'api/dpa/publishers');
   }
 
   getSubscriberMarkers(uuid: string): Observable<Marker[]> {
     const vm = this;
-    const params = new URLSearchParams();
-    params.set('uuid', uuid);
-    return vm.http.get('api/dpa/subscriberMarkers', { search : params })
-      .map((response) => response.json());
+
+    return vm.makeAPICall(uuid, 'api/dpa/subscriberMarkers');
   }
 
   getPublisherMarkers(uuid: string): Observable<Marker[]> {
     const vm = this;
-    const params = new URLSearchParams();
-    params.set('uuid', uuid);
-    return vm.http.get('api/dpa/publisherMarkers', { search : params })
-      .map((response) => response.json());
+
+    return vm.makeAPICall(uuid, 'api/dpa/publisherMarkers');
   }
 
   getPurposes(uuid: string):  Observable<Purpose[]> {
     const vm = this;
-    const params = new URLSearchParams();
-    params.set('uuid', uuid);
-    return vm.http.get('api/dpa/purposes', { search : params })
-      .map((response) => response.json());
+
+    return vm.makeAPICall(uuid, 'api/dpa/purposes');
   }
 
   getBenefits(uuid: string):  Observable<Purpose[]> {
     const vm = this;
+
+    return vm.makeAPICall(uuid, 'api/dpa/benefits');
+  }
+
+  makeAPICall(uuid: string, path: string):  Observable<any[]> {
+    const vm = this;
     const params = new URLSearchParams();
     params.set('uuid', uuid);
-    return vm.http.get('api/dpa/benefits', { search : params })
+    return vm.http.get(path, { search : params })
       .map((response) => response.json());
   }
 
