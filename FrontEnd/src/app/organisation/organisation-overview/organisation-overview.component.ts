@@ -170,7 +170,7 @@ export class OrganisationOverviewComponent implements OnInit {
         allUploaded = false;
         break;
       }
-    };
+    }
 
     if (allUploaded) {
       vm.log.success('All files uploaded successfully.', null, 'Upload files');

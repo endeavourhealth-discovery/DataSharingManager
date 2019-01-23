@@ -401,7 +401,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   swapMarkers() {
     const vm = this;
     console.log(vm.showPub);
-    if (vm.showPub == true) {
+    if (vm.showPub) {
       console.log('showing pubs');
       vm.mapMarkers = vm.publisherMarkers;
     } else {

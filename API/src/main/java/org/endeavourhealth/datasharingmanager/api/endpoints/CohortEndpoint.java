@@ -33,6 +33,7 @@ import java.util.UUID;
 @Api(description = "API endpoint related to the Cohorts")
 public final class CohortEndpoint extends AbstractEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(CohortEndpoint.class);
+    private static final String COHORT_ID = "Cohort Id";
 
     private static final UserAuditRepository userAudit = new UserAuditRepository(AuditModule.EdsUiModule.Organisation);
 
@@ -52,7 +53,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
                 "Cohort(s)",
-                "Cohort Id", uuid,
+                COHORT_ID, uuid,
                 "SearchData", searchData);
 
 
@@ -61,10 +62,10 @@ public final class CohortEndpoint extends AbstractEndpoint {
 
             return getCohortList();
         } else if (uuid != null){
-            LOG.trace("getCohort - single - {0}", uuid);
+            LOG.trace(String.format("getCohort - single - %s", uuid));
             return getSingleCohort(uuid);
         } else {
-            LOG.trace("Search Cohort - {0}", searchData);
+            LOG.trace(String.format("Search Cohort - %s", searchData));
             return search(searchData);
         }
     }
@@ -115,7 +116,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "Cohort",
-                "Cohort Id", uuid);
+                COHORT_ID, uuid);
 
         CohortEntity.deleteCohort(uuid);
 
@@ -138,7 +139,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
                 "DPA(s)",
-                "Cohort Id", uuid);
+                COHORT_ID, uuid);
 
         return getLinkedDpas(uuid);
     }
@@ -180,7 +181,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
 
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
-        if (dpaUuids.size() > 0)
+        if (!dpaUuids.isEmpty())
             ret = DataProcessingAgreementEntity.getDPAsFromList(dpaUuids);
 
         clearLogbackMarkers();
