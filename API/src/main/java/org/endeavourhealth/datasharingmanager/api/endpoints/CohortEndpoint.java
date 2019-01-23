@@ -34,6 +34,7 @@ import java.util.UUID;
 public final class CohortEndpoint extends AbstractEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(CohortEndpoint.class);
     private static final String COHORT_ID = "Cohort Id";
+    private static final String COHORT = "Cohort";
 
     private static final UserAuditRepository userAudit = new UserAuditRepository(AuditModule.EdsUiModule.Organisation);
 
@@ -83,7 +84,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
-                "Cohort",
+                COHORT,
                 "Cohort", cohort);
 
         if (cohort.getUuid() != null) {
@@ -115,7 +116,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
-                "Cohort",
+                COHORT,
                 COHORT_ID, uuid);
 
         CohortEntity.deleteCohort(uuid);
