@@ -253,7 +253,7 @@ public final class RegionEndpoint extends AbstractEndpoint {
         List<String> organisationUuids = MasterMappingEntity.getChildMappings(regionUUID, MapType.REGION.getMapType(), MapType.ORGANISATION.getMapType());
         List<OrganisationEntity> ret = new ArrayList<>();
 
-        if (organisationUuids.size() > 0)
+        if (!organisationUuids.isEmpty())
             ret = OrganisationEntity.getOrganisationsFromList(organisationUuids);
 
         clearLogbackMarkers();
@@ -278,7 +278,7 @@ public final class RegionEndpoint extends AbstractEndpoint {
         List<String> regionUuids = MasterMappingEntity.getParentMappings(regionUuid, MapType.REGION.getMapType(), MapType.REGION.getMapType());
         List<RegionEntity> ret = new ArrayList<>();
 
-        if (regionUuids.size() > 0)
+        if (!regionUuids.isEmpty())
             ret = RegionEntity.getRegionsFromList(regionUuids);
 
         clearLogbackMarkers();
@@ -293,7 +293,7 @@ public final class RegionEndpoint extends AbstractEndpoint {
         List<String> regionUuids = MasterMappingEntity.getChildMappings(regionUuid, MapType.REGION.getMapType(), MapType.REGION.getMapType());
         List<RegionEntity> ret = new ArrayList<>();
 
-        if (regionUuids.size() > 0)
+        if (!regionUuids.isEmpty())
             ret = RegionEntity.getRegionsFromList(regionUuids);
 
         clearLogbackMarkers();
@@ -308,7 +308,7 @@ public final class RegionEndpoint extends AbstractEndpoint {
         List<String> sharingAgreementUuids = MasterMappingEntity.getChildMappings(regionUuid, MapType.REGION.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
-        if (sharingAgreementUuids.size() > 0)
+        if (!sharingAgreementUuids.isEmpty())
             ret = DataSharingAgreementEntity.getDSAsFromList(sharingAgreementUuids);
 
         clearLogbackMarkers();

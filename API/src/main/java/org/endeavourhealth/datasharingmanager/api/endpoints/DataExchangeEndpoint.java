@@ -177,7 +177,7 @@ public class DataExchangeEndpoint extends AbstractEndpoint {
         List<String> dataFlowUuids = MasterMappingEntity.getParentMappings(dateExchangeId, MapType.DATAEXCHANGE.getMapType(), MapType.DATAFLOW.getMapType());
         List<DataFlowEntity> ret = new ArrayList<>();
 
-        if (dataFlowUuids.size() > 0)
+        if (!dataFlowUuids.isEmpty())
             ret = DataFlowEntity.getDataFlowsFromList(dataFlowUuids);
 
         clearLogbackMarkers();

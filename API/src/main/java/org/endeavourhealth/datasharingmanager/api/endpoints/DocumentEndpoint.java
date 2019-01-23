@@ -109,7 +109,7 @@ public final class DocumentEndpoint extends AbstractEndpoint {
         List<String> documentUuids = MasterMappingEntity.getChildMappings(parentUuid, parentType, MapType.DOCUMENT.getMapType());
         List<DocumentationEntity> ret = new ArrayList<>();
 
-        if (documentUuids.size() > 0)
+        if (!documentUuids.isEmpty())
             ret = DocumentationEntity.getDocumentsFromList(documentUuids);
 
         return Response

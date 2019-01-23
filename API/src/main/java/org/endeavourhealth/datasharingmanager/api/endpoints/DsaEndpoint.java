@@ -353,7 +353,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
 
         List<DataFlowEntity> ret = new ArrayList<>();
 
-        if (dataFlowUuids.size() > 0)
+        if (!dataFlowUuids.isEmpty())
             ret = DataFlowEntity.getDataFlowsFromList(dataFlowUuids);
 
         clearLogbackMarkers();
@@ -369,7 +369,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
 
         List<RegionEntity> ret = new ArrayList<>();
 
-        if (regionUuids.size() > 0)
+        if (!regionUuids.isEmpty())
             ret = RegionEntity.getRegionsFromList(regionUuids);
 
         clearLogbackMarkers();
@@ -385,7 +385,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
 
         List<OrganisationEntity> ret = new ArrayList<>();
 
-        if (publisherUuids.size() > 0)
+        if (!publisherUuids.isEmpty())
             ret = OrganisationEntity.getOrganisationsFromList(publisherUuids);
 
         clearLogbackMarkers();
@@ -401,7 +401,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
 
         List<OrganisationEntity> ret = new ArrayList<>();
 
-        if (subscriberUuids.size() > 0)
+        if (!subscriberUuids.isEmpty())
             ret = OrganisationEntity.getOrganisationsFromList(subscriberUuids);
 
         clearLogbackMarkers();
@@ -416,7 +416,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
 
         List<PurposeEntity> ret = new ArrayList<>();
 
-        if (purposeUuids.size() > 0)
+        if (!purposeUuids.isEmpty())
             ret = PurposeEntity.getPurposesFromList(purposeUuids);
 
         clearLogbackMarkers();
@@ -432,7 +432,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
 
         List<PurposeEntity> ret = new ArrayList<>();
 
-        if (benefitUuids.size() > 0)
+        if (!benefitUuids.isEmpty())
             ret = PurposeEntity.getPurposesFromList(benefitUuids);
 
         clearLogbackMarkers();
@@ -448,7 +448,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
 
         List<ProjectEntity> ret = new ArrayList<>();
 
-        if (projectUuids.size() > 0)
+        if (!projectUuids.isEmpty())
             ret = ProjectEntity.getProjectsFromList(projectUuids);
 
         clearLogbackMarkers();

@@ -479,7 +479,7 @@ public class ProjectEntity {
         List<String> dsaUuids = MasterMappingEntity.getParentMappings(projectId, MapType.PROJECT.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
-        if (dsaUuids.size() > 0)
+        if (!dsaUuids.isEmpty())
             ret = DataSharingAgreementEntity.getDSAsFromList(dsaUuids);
 
         return ret;
@@ -490,7 +490,7 @@ public class ProjectEntity {
         List<String> cohortIds = MasterMappingEntity.getChildMappings(projectId, MapType.PROJECT.getMapType(), MapType.COHORT.getMapType());
         List<CohortEntity> ret = new ArrayList<>();
 
-        if (cohortIds.size() > 0)
+        if (!cohortIds.isEmpty())
             ret = CohortEntity.getCohortsFromList(cohortIds);
 
         return ret;
@@ -501,7 +501,7 @@ public class ProjectEntity {
         List<String> dataSetIds = MasterMappingEntity.getChildMappings(projectId, MapType.PROJECT.getMapType(), MapType.DATASET.getMapType());
         List<DatasetEntity> ret = new ArrayList<>();
 
-        if (dataSetIds.size() > 0)
+        if (!dataSetIds.isEmpty())
             ret = DatasetEntity.getDataSetsFromList(dataSetIds);
 
         return ret;
@@ -512,7 +512,7 @@ public class ProjectEntity {
         List<String> orgUUIDs = MasterMappingEntity.getChildMappings(projectId, MapType.PROJECT.getMapType(), mapType);
         List<OrganisationEntity> ret = new ArrayList<>();
 
-        if (orgUUIDs.size() > 0)
+        if (!orgUUIDs.isEmpty())
             ret = OrganisationEntity.getOrganisationsFromList(orgUUIDs);
 
         return ret;

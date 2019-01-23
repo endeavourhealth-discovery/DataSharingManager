@@ -254,7 +254,7 @@ public final class DataFlowEndpoint extends AbstractEndpoint {
         List<String> dpaUuids = MasterMappingEntity.getChildMappings(dataFlowUuid, MapType.DATAFLOW.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
-        if (dpaUuids.size() > 0)
+        if (!dpaUuids.isEmpty())
             ret = DataProcessingAgreementEntity.getDPAsFromList(dpaUuids);
 
         clearLogbackMarkers();
@@ -269,7 +269,7 @@ public final class DataFlowEndpoint extends AbstractEndpoint {
         List<String> dsaUuids = MasterMappingEntity.getParentMappings(dataFlowUuid, MapType.DATAFLOW.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
-        if (dsaUuids.size() > 0)
+        if (!dsaUuids.isEmpty())
             ret = DataSharingAgreementEntity.getDSAsFromList(dsaUuids);
 
         clearLogbackMarkers();
@@ -284,7 +284,7 @@ public final class DataFlowEndpoint extends AbstractEndpoint {
         List<String> exchangeUuids = MasterMappingEntity.getChildMappings(dataFlowUuid, MapType.DATAFLOW.getMapType(), MapType.DATAEXCHANGE.getMapType());
         List<DataExchangeEntity> ret = new ArrayList<>();
 
-        if (exchangeUuids.size() > 0)
+        if (!exchangeUuids.isEmpty())
             ret = DataExchangeEntity.getDataExchangesFromList(exchangeUuids);
 
         clearLogbackMarkers();
@@ -299,7 +299,7 @@ public final class DataFlowEndpoint extends AbstractEndpoint {
         List<String> orgUUIDs = MasterMappingEntity.getChildMappings(dataFlowUuid, MapType.DATAFLOW.getMapType(), mapType);
         List<OrganisationEntity> ret = new ArrayList<>();
 
-        if (orgUUIDs.size() > 0)
+        if (!orgUUIDs.isEmpty())
             ret = OrganisationEntity.getOrganisationsFromList(orgUUIDs);
 
         clearLogbackMarkers();

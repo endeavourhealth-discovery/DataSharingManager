@@ -140,7 +140,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
 
         AddressEntity.deleteAddressForOrganisations(organisation.getUuid());
         List<JsonAddress> addresses = organisation.getAddresses();
-        if (addresses.size() > 0) {
+        if (!addresses.isEmpty()) {
             for (JsonAddress address : addresses) {
                 if (address.getOrganisationUuid() == null)
                     address.setOrganisationUuid(organisation.getUuid());
@@ -650,7 +650,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         List<String> regionUuids = MasterMappingEntity.getParentMappings(organisationUuid, MapType.ORGANISATION.getMapType(), MapType.REGION.getMapType());
         List<RegionEntity> ret = new ArrayList<>();
 
-        if (regionUuids.size() > 0)
+        if (!regionUuids.isEmpty())
             ret = RegionEntity.getRegionsFromList(regionUuids);
 
         clearLogbackMarkers();
@@ -665,7 +665,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         List<String> dpaUUIDs = MasterMappingEntity.getParentMappings(organisationUuid, MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
-        if (dpaUUIDs.size() > 0)
+        if (!dpaUUIDs.isEmpty())
             ret = DataProcessingAgreementEntity.getDPAsFromList(dpaUUIDs);
 
         clearLogbackMarkers();
@@ -680,7 +680,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         List<String> dpaUUIDs = MasterMappingEntity.getParentMappingsFromList(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
-        if (dpaUUIDs.size() > 0)
+        if (!dpaUUIDs.isEmpty())
             ret = DataProcessingAgreementEntity.getDPAsFromList(dpaUUIDs);
 
         clearLogbackMarkers();
@@ -695,7 +695,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         List<String> dsaUuids = MasterMappingEntity.getParentMappings(organisationUuid, MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
-        if (dsaUuids.size() > 0)
+        if (!dsaUuids.isEmpty())
             ret = DataSharingAgreementEntity.getDSAsFromList(dsaUuids);
 
         clearLogbackMarkers();
@@ -710,7 +710,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         List<String> dsaUuids = MasterMappingEntity.getParentMappingsFromList(organisationUuids, MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
-        if (dsaUuids.size() > 0)
+        if (!dsaUuids.isEmpty())
             ret = DataSharingAgreementEntity.getDSAsFromList(dsaUuids);
 
         clearLogbackMarkers();
@@ -725,7 +725,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         List<String> dsaUUIds = MasterMappingEntity.getParentMappings(organisationUuid, MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
-        if (dsaUUIds.size() > 0)
+        if (!dsaUUIds.isEmpty())
             ret = DataSharingAgreementEntity.getDSAsFromList(dsaUUIds);
 
         clearLogbackMarkers();
@@ -740,7 +740,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         List<String> dsaUUIds = MasterMappingEntity.getParentMappingsFromList(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
-        if (dsaUUIds.size() > 0)
+        if (!dsaUUIds.isEmpty())
             ret = DataSharingAgreementEntity.getDSAsFromList(dsaUUIds);
 
         clearLogbackMarkers();
@@ -775,7 +775,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         List<String> organisationUuids = MasterMappingEntity.getChildMappings(organisationUuid, MapType.ORGANISATION.getMapType(), organisationType);
         List<OrganisationEntity> ret = new ArrayList<>();
 
-        if (organisationUuids.size() > 0)
+        if (!organisationUuids.isEmpty())
             ret = OrganisationEntity.getOrganisationsFromList(organisationUuids);
 
         clearLogbackMarkers();
@@ -790,7 +790,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         List<String> organisationUuids = MasterMappingEntity.getParentMappings(organisationUuid, orgType, MapType.ORGANISATION.getMapType());
         List<OrganisationEntity> ret = new ArrayList<>();
 
-        if (organisationUuids.size() > 0)
+        if (!organisationUuids.isEmpty())
             ret = OrganisationEntity.getOrganisationsFromList(organisationUuids);
 
         clearLogbackMarkers();
@@ -951,7 +951,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
                 bulkUploadMappings.add(map);
         });*/
 
-        if (bulkUploadMappings.size() > 0)
+        if (!bulkUploadMappings.isEmpty())
             MasterMappingEntity.bulkSaveMappings(bulkUploadMappings);
 
         return Response

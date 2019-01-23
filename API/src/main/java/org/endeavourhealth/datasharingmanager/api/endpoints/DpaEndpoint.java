@@ -369,7 +369,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
         List<String> dataFlowUuids = MasterMappingEntity.getChildMappings(dpaUuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.DATAFLOW.getMapType());
         List<DataFlowEntity> ret = new ArrayList<>();
 
-        if (dataFlowUuids.size() > 0)
+        if (!dataFlowUuids.isEmpty())
             ret = DataFlowEntity.getDataFlowsFromList(dataFlowUuids);
 
         clearLogbackMarkers();
@@ -384,7 +384,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
 
         List<CohortEntity> ret = new ArrayList<>();
 
-        if (cohorts.size() > 0)
+        if (!cohorts.isEmpty())
             ret = CohortEntity.getCohortsFromList(cohorts);
 
         clearLogbackMarkers();
@@ -399,7 +399,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
 
         List<DatasetEntity> ret = new ArrayList<>();
 
-        if (datasets.size() > 0)
+        if (!datasets.isEmpty())
             ret = DatasetEntity.getDataSetsFromList(datasets);
 
         clearLogbackMarkers();
@@ -415,7 +415,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
 
         List<OrganisationEntity> ret = new ArrayList<>();
 
-        if (publisherUuids.size() > 0)
+        if (!publisherUuids.isEmpty())
             ret = OrganisationEntity.getOrganisationsFromList(publisherUuids);
 
         clearLogbackMarkers();
@@ -430,7 +430,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
 
         List<PurposeEntity> ret = new ArrayList<>();
 
-        if (purposeUuids.size() > 0)
+        if (!purposeUuids.isEmpty())
             ret = PurposeEntity.getPurposesFromList(purposeUuids);
 
         clearLogbackMarkers();
@@ -446,7 +446,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
 
         List<PurposeEntity> ret = new ArrayList<>();
 
-        if (benefitUuids.size() > 0)
+        if (!benefitUuids.isEmpty())
             ret = PurposeEntity.getPurposesFromList(benefitUuids);
 
         clearLogbackMarkers();

@@ -181,7 +181,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
 
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
-        if (dpaUuids.size() > 0)
+        if (!dpaUuids.isEmpty())
             ret = DataProcessingAgreementEntity.getDPAsFromList(dpaUuids);
 
         clearLogbackMarkers();
