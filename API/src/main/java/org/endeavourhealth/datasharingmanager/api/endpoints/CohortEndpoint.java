@@ -62,10 +62,10 @@ public final class CohortEndpoint extends AbstractEndpoint {
 
             return getCohortList();
         } else if (uuid != null){
-            LOG.trace(String.format("getCohort - single - %s", uuid));
+            LOG.trace("getCohort - single - {}", uuid);
             return getSingleCohort(uuid);
         } else {
-            LOG.trace(String.format("Search Cohort - %s", searchData));
+            LOG.trace("Search Cohort - {}", searchData);
             return search(searchData);
         }
     }

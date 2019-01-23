@@ -17,7 +17,7 @@ export class DataSetPickerComponent implements OnInit {
 
   public static open(modalService: NgbModal, dataSets: DataSet[]) {
     const modalRef = modalService.open(DataSetPickerComponent, { backdrop : 'static'});
-    modalRef.componentInstance.resultData = Object.assign([], dataSets);;
+    modalRef.componentInstance.resultData = Object.assign([], dataSets);
 
     return modalRef;
   }
