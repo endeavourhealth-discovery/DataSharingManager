@@ -24,7 +24,7 @@
         <div class="scroll-box-150 form-control">
           <div *ngFor="let match of searchResults"
                class="hover-box show-child-on-hover striped">
-            {{ match.name }}
+            {{ match.name }} ({{match.odsCode}})
             <button type="button" class="btn btn-xs btn-success pull-right child-to-show" (click)="addToSelection(match)">
               <span class="fa fa-sm fa-plus"></span>
             </button>
@@ -38,7 +38,7 @@
         <div class="scroll-box-150 form-control">
           <div *ngFor="let item of resultData"
                class="hover-box show-child-on-hover striped">
-            {{ item.name }}
+            {{ item.name }} ({{item.odsCode}})
             <button type="button" class="btn btn-xs btn-danger pull-right child-to-show" (click)="removeFromSelection(item)">
               <span class="fa fa-sm fa-remove"></span>
             </button>
