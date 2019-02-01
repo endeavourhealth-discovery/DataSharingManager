@@ -3,3 +3,8 @@ os: linux
 files:
   - source: /dist
     destination: //var/www/html/data-sharing-manager
+hooks:
+  BeforeInstall:
+    - location: cleanup
+      timeout: 300
+      runas: root

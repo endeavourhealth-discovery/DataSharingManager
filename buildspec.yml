@@ -19,7 +19,7 @@ phases:
       - echo $IP of CodeBuild Instance
       - echo Packaging application
       - cd FrontEnd
-      - zip -r frontend.zip appspec.yml dist/
+      - zip -r frontend.zip appspec.yml cleanup dist/
       - mv frontend.zip frontend
       - echo Packaging core
       - cd ../API
