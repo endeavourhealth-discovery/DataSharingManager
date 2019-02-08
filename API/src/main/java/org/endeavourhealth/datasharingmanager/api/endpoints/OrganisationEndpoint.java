@@ -354,8 +354,6 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         return getDSAsOrganisationSubscribingTo(uuid);
     }
 
-
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -582,6 +580,24 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         return getOrganisationsByType(type);
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.OrganisationEndpoint.getMultipleOrganisationsFromODSList")
+    @Path("/getMultipleOrganisationsFromODSList")
+    @ApiOperation(value = "Returns a list of Json representations of Organisations based on" +
+            "a list of ODS codes.  Accepts a list of ODS codes.")
+    public Response getMultipleOrganisationsFromODSList(@Context SecurityContext sc,
+                                                           @ApiParam(value = "ODS Codes") @QueryParam("odsCodes") List<String> odsCodes
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "ODS Codes",
+                "ODS Code", odsCodes);
+
+        return getMultipleOrganisationsFromODSList(odsCodes);
+    }
+
     private Response getOrganisationsByType(byte type) throws Exception {
         List<OrganisationEntity> organisations = OrganisationEntity.getOrganisationByType(type);
 
@@ -797,6 +813,16 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         return Response
                 .ok()
                 .entity(ret)
+                .build();
+    }
+
+    private Response getMultipleOrganisationsFromODSList(List<String> odsCodes) throws Exception {
+
+        List<OrganisationEntity> matchingOrganisations = OrganisationEntity.searchOrganisationsFromOdsList(odsCodes);
+
+        return Response
+                .ok()
+                .entity(matchingOrganisations)
                 .build();
     }
 

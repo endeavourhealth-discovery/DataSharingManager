@@ -13,8 +13,13 @@ export class OrganisationPickerComponent implements OnInit {
   @Input() resultData: Organisation[];
   searchData: string;
   searchResults: Organisation[];
+  multipleSearchResults: Organisation[];
+  multipleSearchMissing: string[];
+  multipleAddedCount = 0;
+  showMultipleMessage = false;
   searchType: string;
   uuid: string;
+  odsCodes: string;
 
   public static open(modalService: NgbModal, organisations: Organisation[], searchType: string, uuid: string = '') {
     const modalRef = modalService.open(OrganisationPickerComponent, { backdrop : 'static'});
@@ -44,6 +49,22 @@ export class OrganisationPickerComponent implements OnInit {
       );
   }
 
+  searchMultiple() {
+    const vm = this;
+    vm.showMultipleMessage = false;
+    var odsList = vm.odsCodes.replace(/\n/g, ',').split(',');
+    console.log(odsList);
+
+    vm.organisationService.getMultipleOrganisationsFromODSList(odsList)
+      .subscribe(
+        (result) => {
+          vm.multipleSearchResults = result,
+          vm.multipleSearchMissing = odsList.filter((x) => !result.filter(y => y.odsCode === x).length);
+        },
+        (error) => vm.log.error(error)
+      );
+  }
+
   private addToSelection(match: Organisation) {
     if (!this.resultData.some(x => x.uuid === match.uuid)) {
       this.resultData.push(match);
@@ -55,6 +76,19 @@ export class OrganisationPickerComponent implements OnInit {
     if (index > -1) {
       this.resultData.splice(index, 1);
     }
+  }
+
+  addMultiple() {
+    const vm = this;
+    vm.showMultipleMessage = false;
+    vm.multipleAddedCount = 0;
+    for (let match of this.multipleSearchResults) {
+      if (!this.resultData.some(x => x.uuid === match.uuid)) {
+        this.resultData.push(match);
+        vm.multipleAddedCount++;
+      }
+    }
+    vm.showMultipleMessage = true;
   }
 
   ok() {

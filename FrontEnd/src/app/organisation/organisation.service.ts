@@ -214,4 +214,14 @@ export class OrganisationService  {
       .map((response) => response.json());
   }
 
+  getMultipleOrganisationsFromODSList(odsCodes: string[]):  Observable<Organisation[]> {
+    const vm = this;
+    let params = new URLSearchParams();
+    for (let ix in odsCodes) {
+      params.append('odsCodes', odsCodes[ix]);
+    }
+    return vm.http.get('api/organisation/getMultipleOrganisationsFromODSList', { search : params })
+      .map((response) => response.json());
+  }
+
 }

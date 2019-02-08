@@ -415,8 +415,6 @@ public class OrganisationEntity {
         return ret;
     }
 
-
-
     public static List<OrganisationEntity> searchOrganisations(String expression, boolean searchServices,
                                                             byte organisationType,
                                                             Integer pageNumber, Integer pageSize,
@@ -462,6 +460,25 @@ public class OrganisationEntity {
         }
 
         return Collections.emptyList();
+    }
+
+    public static List<OrganisationEntity> searchOrganisationsFromOdsList(List<String> odsCodes) throws Exception {
+        EntityManager entityManager = PersistenceManager.getEntityManager();
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<OrganisationEntity> cq = cb.createQuery(OrganisationEntity.class);
+        Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
+
+        Predicate predicate = rootEntry.get("odsCode").in(odsCodes);
+
+        cq.where(predicate);
+        TypedQuery<OrganisationEntity> query = entityManager.createQuery(cq);
+
+        List<OrganisationEntity> ret = query.getResultList();
+
+        entityManager.close();
+
+        return ret;
     }
 
     private static void sortOrganisationCache(List<OrganisationEntity> orgs, String orderColumn, boolean descending) throws Exception {

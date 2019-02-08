@@ -6,46 +6,91 @@
 </div>
 <div class="modal-body">
   <form endUserRole="form" class="container-fluid">
-    <div class="row">
-      <div class="form-group col-md-12">
-        <label class="control-label">Search criteria</label>
-        <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search term" aria-describedby="searchTerm"
-                 [(ngModel)]="searchData" (keyup.enter)="search()" autofocus name="searchData">
-          <span class="input-group-append" (click)="search()" style="cursor: pointer">
-						<em class="fa fa-search input-group-text" id="searchTerm" aria-hidden="true"></em>
-					</span>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="form-group col-md-12">
-        <label class="control-label">Matches</label> <small class="text-muted"></small>
-        <div class="scroll-box-150 form-control">
-          <div *ngFor="let match of searchResults"
-               class="hover-box show-child-on-hover striped">
-            {{ match.name }} ({{match.odsCode}})
-            <button type="button" class="btn btn-xs btn-success pull-right child-to-show" (click)="addToSelection(match)">
-              <span class="fa fa-sm fa-plus"></span>
-            </button>
+    <ngb-tabset>
+      <ngb-tab title="Add individual">
+        <ng-template ngbTabContent>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label class="control-label">Search criteria</label>
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search term" aria-describedby="searchTerm"
+                       [(ngModel)]="searchData" (keyup.enter)="search()" autofocus name="searchData">
+                <span class="input-group-append" (click)="search()" style="cursor: pointer">
+                  <em class="fa fa-search input-group-text" id="searchTerm" aria-hidden="true"></em>
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="form-group col-md-12">
-        <label class="control-label">Selection</label> <small class="text-muted"></small>
-        <div class="scroll-box-150 form-control">
-          <div *ngFor="let item of resultData"
-               class="hover-box show-child-on-hover striped">
-            {{ item.name }} ({{item.odsCode}})
-            <button type="button" class="btn btn-xs btn-danger pull-right child-to-show" (click)="removeFromSelection(item)">
-              <span class="fa fa-sm fa-remove"></span>
-            </button>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label class="control-label">Matches</label> <small class="text-muted"></small>
+              <div class="scroll-box-150 form-control">
+                <div *ngFor="let match of searchResults"
+                     class="hover-box show-child-on-hover striped">
+                  {{ match.name }} ({{match.odsCode}})
+                  <button type="button" class="btn btn-xs btn-success pull-right child-to-show" (click)="addToSelection(match)">
+                    <span class="fa fa-sm fa-plus"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label class="control-label">Selection</label> <small class="text-muted"></small>
+              <div class="scroll-box-150 form-control">
+                <div *ngFor="let item of resultData"
+                     class="hover-box show-child-on-hover striped">
+                  {{ item.name }} ({{item.odsCode}})
+                  <button type="button" class="btn btn-xs btn-danger pull-right child-to-show" (click)="removeFromSelection(item)">
+                    <span class="fa fa-sm fa-remove"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="Add multiple">
+        <ng-template ngbTabContent>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <div class="input-group">
+                <textarea rows="6" class="form-control" placeholder="Add ODS codes here on separate lines or separated by a comma" [(ngModel)]="odsCodes" name="odsCodes"></textarea>
+              </div>
+              <button type="button" class="btn btn-success"
+                      (click)="searchMultiple();">Search</button>
+            </div>
+          </div>
+          <br/>
+          <div *ngIf="multipleSearchResults">
+            <div class="row">
+              <div class="form-group col-md-8">
+                <label class="control-label">Found</label> <small class="text-muted"></small>
+                <div class="scroll-box-150 form-control">
+                  <div *ngFor="let match of multipleSearchResults"
+                       class="hover-box show-child-on-hover striped">
+                    {{ match.name }} ({{match.odsCode}})
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-md-4">
+                <label class="control-label">Not found</label> <small class="text-muted"></small>
+                <div class="scroll-box-150 form-control">
+                  <div *ngFor="let match of multipleSearchMissing"
+                       class="hover-box show-child-on-hover striped">
+                    {{ match }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-success"
+                    (click)="addMultiple();">Add</button>
+            <label *ngIf="showMultipleMessage" class="control-label">{{multipleAddedCount}} organisations added</label>
+          </div>
+        </ng-template>
+      </ngb-tab>
+    </ngb-tabset>
   </form>
 </div>
 <div class="modal-footer">
