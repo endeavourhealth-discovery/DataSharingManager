@@ -26,10 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -44,7 +41,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
 
     private static List<MasterMappingEntity> bulkUploadMappings = new ArrayList<>();
     private static HashMap<String, String> bulkOrgMap = new HashMap<>();
-    private static HashMap<String, String> childParentMap = new HashMap<>();
+    private static HashMap<String, List<String>> childParentMap = new HashMap<>();
     private static boolean uploadInProgress = false;
 
     private static final UserAuditRepository userAudit = new UserAuditRepository(AuditModule.EdsUiModule.Organisation);
@@ -903,9 +900,12 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         }
 
         String csvData = file.getFileData();
+
         try (Scanner scanner = new Scanner(csvData)) {
 
+            int i = 0;
             while (scanner.hasNext()) {
+                i++;
                 List<String> org = CsvHelper.parseLine(scanner.nextLine());
 
                 OrganisationEntity importedOrg = createOrganisationEntity(org, file.getName());
@@ -928,8 +928,30 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
                     bulkOrgMap.put(importedOrg.getOdsCode(), importedOrg.getUuid());
                 }
 
-                if (!org.get(14).equals("") && childParentMap.get(importedOrg.getOdsCode()) == null) {
-                    childParentMap.put(importedOrg.getOdsCode(), org.get(14));
+                List<String> parents;
+                if (!org.get(14).equals("")) {
+                    parents = childParentMap.getOrDefault(importedOrg.getOdsCode(), new ArrayList<>());
+                    parents.add(org.get(14));
+                    childParentMap.put(importedOrg.getOdsCode(), parents);
+                }
+
+                if (!org.get(2).equals("")) {
+                    parents = childParentMap.getOrDefault(importedOrg.getOdsCode(), new ArrayList<>());
+                    parents.add(org.get(2));
+                    childParentMap.put(importedOrg.getOdsCode(), parents);
+                }
+
+                if (!org.get(3).equals("") ) {
+                    parents = childParentMap.getOrDefault(importedOrg.getOdsCode(), new ArrayList<>());
+                    parents.add(org.get(3));
+                    childParentMap.put(importedOrg.getOdsCode(), parents);
+                }
+
+                if (i % 200 == 0 ) {
+                    OrganisationEntity.bulkSaveOrganisation(organisationEntities);
+                    organisationEntities.clear();
+                    AddressEntity.bulkSaveAddresses(addressEntities);
+                    addressEntities.clear();
                 }
 
 
@@ -937,7 +959,9 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
             }
 
             OrganisationEntity.bulkSaveOrganisation(organisationEntities);
+            organisationEntities.clear();
             AddressEntity.bulkSaveAddresses(addressEntities);
+            addressEntities.clear();
         }
 
         return Response
@@ -948,18 +972,26 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
     private Response saveBulkMappings(Integer limit) throws Exception {
 
         Integer i = 0;
-        for (Iterator<Map.Entry<String, String>> it = childParentMap.entrySet().iterator(); it.hasNext();) {
+        for (Iterator<Map.Entry<String, List<String>>> it = childParentMap.entrySet().iterator(); it.hasNext();) {
             i++;
-            Map.Entry<String, String> map = it.next();
+            Map.Entry<String, List<String>> map = it.next();
 
-            MasterMappingEntity mappingEntity = new MasterMappingEntity();
-            mappingEntity.setChildUuid(bulkOrgMap.get(map.getKey()));
-            mappingEntity.setChildMapTypeId(MapType.ORGANISATION.getMapType());
-            mappingEntity.setParentUuid(bulkOrgMap.get(map.getValue()));
-            mappingEntity.setParentMapTypeId(MapType.ORGANISATION.getMapType());
+            for (String parent : map.getValue()) {
 
-            if (mappingEntity.getParentUuid() != null && mappingEntity.getChildUuid() != null)
-                bulkUploadMappings.add(mappingEntity);
+                MasterMappingEntity mappingEntity = new MasterMappingEntity();
+                mappingEntity.setChildUuid(bulkOrgMap.get(map.getKey()));
+                mappingEntity.setChildMapTypeId(MapType.ORGANISATION.getMapType());
+                mappingEntity.setParentUuid(bulkOrgMap.get(parent));
+                mappingEntity.setParentMapTypeId(MapType.ORGANISATION.getMapType());
+
+                if (mappingEntity.getParentUuid() != null && mappingEntity.getChildUuid() != null)
+                    bulkUploadMappings.add(mappingEntity);
+            }
+
+            if (i % 200 == 0 ) {
+                MasterMappingEntity.bulkSaveMappings(bulkUploadMappings);
+                bulkUploadMappings.clear();
+            }
 
             it.remove();
             if (i > limit)
@@ -977,8 +1009,10 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
                 bulkUploadMappings.add(map);
         });*/
 
-        if (!bulkUploadMappings.isEmpty())
+        if (!bulkUploadMappings.isEmpty()) {
             MasterMappingEntity.bulkSaveMappings(bulkUploadMappings);
+            bulkUploadMappings.clear();
+        }
 
         return Response
                 .ok(childParentMap.size())

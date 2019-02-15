@@ -20,8 +20,8 @@
         <node.version>v6.10.1</node.version>
         <swagger.version>1.5.13</swagger.version>
 
-        <eds-api.version>1.25-SNAPSHOT</eds-api.version>
-        <user-manager-models.version>0.0.15-SNAPSHOT</user-manager-models.version>
+        <eds-api.version>1.27-SNAPSHOT</eds-api.version>
+        <user-manager-models.version>0.0.16-SNAPSHOT</user-manager-models.version>
         <data-sharing-manager-models.version>0.0.10-SNAPSHOT</data-sharing-manager-models.version>
 
         <aspectj.version>1.8.9</aspectj.version>
