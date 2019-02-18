@@ -931,20 +931,26 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
                 List<String> parents;
                 if (!org.get(14).equals("")) {
                     parents = childParentMap.getOrDefault(importedOrg.getOdsCode(), new ArrayList<>());
-                    parents.add(org.get(14));
-                    childParentMap.put(importedOrg.getOdsCode(), parents);
+                    if (!parents.contains(org.get(14))) {
+                        parents.add(org.get(14));
+                        childParentMap.put(importedOrg.getOdsCode(), parents);
+                    }
                 }
 
                 if (!org.get(2).equals("")) {
                     parents = childParentMap.getOrDefault(importedOrg.getOdsCode(), new ArrayList<>());
-                    parents.add(org.get(2));
-                    childParentMap.put(importedOrg.getOdsCode(), parents);
+                    if (!parents.contains(org.get(2))) {
+                        parents.add(org.get(2));
+                        childParentMap.put(importedOrg.getOdsCode(), parents);
+                    }
                 }
 
                 if (!org.get(3).equals("") ) {
                     parents = childParentMap.getOrDefault(importedOrg.getOdsCode(), new ArrayList<>());
-                    parents.add(org.get(3));
-                    childParentMap.put(importedOrg.getOdsCode(), parents);
+                    if (!parents.contains(org.get(3))) {
+                        parents.add(org.get(3));
+                        childParentMap.put(importedOrg.getOdsCode(), parents);
+                    }
                 }
 
                 if (i % 200 == 0 ) {
