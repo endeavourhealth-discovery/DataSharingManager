@@ -13,6 +13,7 @@ export class Dpa {
   startDate: string;
   endDate: string;
   dataFlows: { [key: string]: string; };
+  regions: { [key: string]: string; };
   cohorts: { [key: string]: string; };
   dataSets: { [key: string]: string; };
   publishers: { [key: string]: string; };

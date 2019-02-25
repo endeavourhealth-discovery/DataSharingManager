@@ -24,6 +24,7 @@ public class JsonDPA {
     private Map<UUID, String> dataFlows = null;
     private Map<UUID, String> cohorts = null;
     private Map<UUID, String> dataSets = null;
+    private Map<UUID, String> regions = null;
     private List<JsonDocumentation> documentations = new ArrayList<>();
     private Map<UUID, String> publishers = null;
     private List<JsonPurpose> purposes = new ArrayList<>();
@@ -179,5 +180,13 @@ public class JsonDPA {
 
     public void setBenefits(List<JsonPurpose> benefits) {
         this.benefits = benefits;
+    }
+
+    public Map<UUID, String> getRegions() {
+        return regions;
+    }
+
+    public void setRegions(Map<UUID, String> regions) {
+        this.regions = regions;
     }
 }

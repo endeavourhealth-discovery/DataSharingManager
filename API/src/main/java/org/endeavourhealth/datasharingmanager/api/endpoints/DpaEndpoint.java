@@ -211,6 +211,24 @@ public final class DpaEndpoint extends AbstractEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.DpaEndpoint.GetRegions")
+    @Path("/regions")
+    @ApiOperation(value = "Returns a list of Json representations of regions that are linked " +
+            "to the data processing agreement.  Accepts a UUID of a data processing agreement.")
+    public Response getLinkedRegionsForDPA(@Context SecurityContext sc,
+                                           @ApiParam(value = "UUID of DPA") @QueryParam("uuid") String uuid
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "dataflow(s)",
+                "DSA Id", uuid);
+
+        return getLinkedRegions(uuid);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.DpaEndpoint.GetPurposes")
     @Path("/purposes")
     @ApiOperation(value = "Returns a list of Json representations of purposes that are linked " +
@@ -401,6 +419,22 @@ public final class DpaEndpoint extends AbstractEndpoint {
 
         if (!datasets.isEmpty())
             ret = DatasetEntity.getDataSetsFromList(datasets);
+
+        clearLogbackMarkers();
+        return Response
+                .ok()
+                .entity(ret)
+                .build();
+    }
+
+    private Response getLinkedRegions(String dsaUuid) throws Exception {
+
+        List<String> regionUuids = MasterMappingEntity.getParentMappings(dsaUuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.REGION.getMapType());
+
+        List<RegionEntity> ret = new ArrayList<>();
+
+        if (!regionUuids.isEmpty())
+            ret = RegionEntity.getRegionsFromList(regionUuids);
 
         clearLogbackMarkers();
         return Response

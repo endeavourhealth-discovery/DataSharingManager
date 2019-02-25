@@ -468,6 +468,11 @@ public class MasterMappingEntity {
             saveChildMappings(cohorts, MapType.COHORT.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
         }
 
+        if (dpa.getRegions() != null) {
+            Map<UUID, String> regions = dpa.getRegions();
+            saveParentMappings(regions, MapType.REGION.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        }
+
         if (dpa.getDataSets() != null) {
             Map<UUID, String> datasets = dpa.getDataSets();
             saveChildMappings(datasets, MapType.DATASET.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());

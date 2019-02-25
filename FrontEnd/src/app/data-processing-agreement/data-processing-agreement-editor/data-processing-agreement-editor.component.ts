@@ -19,6 +19,8 @@ import {Marker} from '../../region/models/Marker';
 import {Purpose} from '../../data-sharing-agreement/models/Purpose';
 import {PurposeAddComponent} from '../../data-sharing-agreement/purpose-add/purpose-add.component';
 import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
+import {Region} from "../../region/models/Region";
+import {RegionPickerComponent} from "../../region/region-picker/region-picker.component";
 
 @Component({
   selector: 'app-data-processing-agreement-editor',
@@ -33,6 +35,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   dataFlows: DataFlow[];
   cohorts: Cohort[];
   dataSets: DataSet[];
+  regions: Region[];
   documentations: Documentation[];
   publishers: Organisation[];
   allowEdit = false;
@@ -60,6 +63,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   documentDetailsToShow = new Documentation().getDisplayItems();
   orgDetailsToShow = new Organisation().getDisplayItems();
   purposeDetailsToShow = new Purpose().getDisplayItems();
+  regionDetailsToShow = new Region().getDisplayItems();
 
   constructor(private $modal: NgbModal,
               private log: LoggerService,
@@ -121,6 +125,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
           vm.checkEndDate();
           vm.getPublishers();
           vm.getLinkedDataFlows();
+          vm.getLinkedRegions();
           vm.getLinkedCohorts();
           vm.getLinkedDataSets();
           vm.getAssociatedDocumentation();
@@ -162,6 +167,13 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     for (const idx in this.dataSets) {
       const dataset: DataSet = this.dataSets[idx];
       this.dpa.dataSets[dataset.uuid] = dataset.name;
+    }
+
+    // Populate regions before save
+    vm.dpa.regions = {};
+    for (const idx in this.regions) {
+      const region: Region = this.regions[idx];
+      this.dpa.regions[region.uuid] = region.name;
     }
 
     // Populate purposes before save
@@ -247,12 +259,30 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     );
   }
 
+  private editRegions() {
+    const vm = this;
+    RegionPickerComponent.open(vm.$modal, vm.regions)
+      .result.then(function
+      (result: Region[]) { vm.regions = result; },
+      () => vm.log.info('Edit regions cancelled')
+    );
+  }
+
   private getLinkedCohorts() {
     const vm = this;
     vm.dpaService.getLinkedCohorts(vm.dpa.uuid)
       .subscribe(
         result => vm.cohorts = result,
         error => vm.log.error('The associated cohorts could not be loaded. Please try again.', error, 'Load associated cohorts')
+      );
+  }
+
+  private getLinkedRegions() {
+    const vm = this;
+    vm.dpaService.getLinkedRegions(vm.dpa.uuid)
+      .subscribe(
+        result => vm.regions = result,
+        error => vm.log.error('The associated regions could not be loaded. Please try again.', error, 'Load associated regions')
       );
   }
 

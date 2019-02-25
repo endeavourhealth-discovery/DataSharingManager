@@ -8,6 +8,7 @@ import {Cohort} from '../cohort/models/Cohort';
 import {Organisation} from '../organisation/models/Organisation';
 import {Marker} from '../region/models/Marker';
 import {Purpose} from "../data-sharing-agreement/models/Purpose";
+import {Region} from "../region/models/Region";
 
 @Injectable()
 export class DataProcessingAgreementService {
@@ -57,6 +58,14 @@ export class DataProcessingAgreementService {
     const vm = this;
 
     return vm.makeAPICall(uuid, 'api/dpa/dataflows');
+  }
+
+  getLinkedRegions(uuid: string):  Observable<Region[]> {
+    const vm = this;
+    const params = new URLSearchParams();
+    params.set('uuid', uuid);
+    return vm.http.get('api/dpa/regions', { search : params })
+      .map((response) => response.json());
   }
 
   getLinkedCohorts(uuid: string):  Observable<Cohort[]> {
