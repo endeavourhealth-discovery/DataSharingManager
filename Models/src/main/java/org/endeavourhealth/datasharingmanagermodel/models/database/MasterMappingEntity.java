@@ -315,6 +315,11 @@ public class MasterMappingEntity {
             Map<UUID, String> sharingAgreements = region.getSharingAgreements();
             saveChildMappings(sharingAgreements, MapType.DATASHARINGAGREEMENT.getMapType(), region.getUuid(), MapType.REGION.getMapType());
         }
+
+        if (region.getProcessingAgreements() != null) {
+            Map<UUID, String> processingAgreements = region.getProcessingAgreements();
+            saveChildMappings(processingAgreements, MapType.DATAPROCESSINGAGREEMENT.getMapType(), region.getUuid(), MapType.REGION.getMapType());
+        }
     }
 
     public static void saveDataSharingAgreementMappings(JsonDSA dsa) throws Exception {

@@ -12,6 +12,8 @@ import {Dsa} from '../../data-sharing-agreement/models/Dsa';
 import {DataSharingAgreementPickerComponent} from '../../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component';
 import {ToastsManager} from 'ng2-toastr';
 import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
+import {Dpa} from "../../data-processing-agreement/models/Dpa";
+import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
 
 @Component({
   selector: 'app-region-editor',
@@ -26,6 +28,7 @@ export class RegionEditorComponent implements OnInit {
   parentRegions: Region[];
   childRegions: Region[];
   sharingAgreements: Dsa[];
+  processingAgreements: Dpa[];
   markers: Marker[];
   editDisabled = false;
   latitude: number = 33.8121;
@@ -38,6 +41,7 @@ export class RegionEditorComponent implements OnInit {
   orgDetailsToShow = new Organisation().getDisplayItems();
   regionDetailsToShow = new Region().getDisplayItems();
   sharingAgreementsDetailsToShow = new Dsa().getDisplayItems();
+  processingAgreementsDetailsToShow = new Dpa().getDisplayItems();
 
   constructor(private $modal: NgbModal,
               private log: LoggerService,
@@ -98,6 +102,7 @@ export class RegionEditorComponent implements OnInit {
           vm.getChildRegions();
           vm.getOrganisationMarkers();
           vm.getSharingAgreements();
+          vm.getProcessingAgreements();
         },
         error => vm.log.error('The region could not be loaded. Please try again.', error, 'Load region')
       );
@@ -132,6 +137,13 @@ export class RegionEditorComponent implements OnInit {
     for (const idx in this.sharingAgreements) {
       const dsa: Dsa = this.sharingAgreements[idx];
       this.region.sharingAgreements[dsa.uuid] = dsa.name;
+    }
+
+    // populate processing agreements
+    vm.region.processingAgreements = {};
+    for (const idx in this.processingAgreements) {
+      const dpa: Dpa = this.processingAgreements[idx];
+      this.region.processingAgreements[dpa.uuid] = dpa.name;
     }
 
     vm.regionService.saveRegion(vm.region)
@@ -187,6 +199,18 @@ export class RegionEditorComponent implements OnInit {
       );
   }
 
+  private getProcessingAgreements() {
+    const vm = this;
+    vm.regionService.getProcessingAgreements(vm.region.uuid)
+      .subscribe(
+        result => {
+          vm.processingAgreements = result;
+        },
+        error => vm.log.error('The associated data processing agreements could not be loaded. Please try again.', error, 'Load sharing agreements')
+
+      );
+  }
+
   private getOrganisationMarkers() {
     const vm = this;
     vm.regionService.getOrganisationMarkers(vm.region.uuid)
@@ -227,6 +251,14 @@ export class RegionEditorComponent implements OnInit {
     DataSharingAgreementPickerComponent.open(vm.$modal, vm.sharingAgreements)
       .result.then(function (result: Dsa[]) {
       vm.sharingAgreements = result;
+    });
+  }
+
+  private editProcessingAgreements() {
+    const vm = this;
+    DataProcessingAgreementPickerComponent.open(vm.$modal, vm.processingAgreements)
+      .result.then(function (result: Dpa[]) {
+      vm.processingAgreements = result;
     });
   }
 

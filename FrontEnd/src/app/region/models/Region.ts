@@ -7,6 +7,7 @@ export class Region {
     parentRegions: { [key: string]: string; };
     childRegions: { [key: string]: string; };
     sharingAgreements: { [key: string]: string; };
+    processingAgreements: { [key: string]: string; };
 
     getDisplayItems(): any[] {
         return [

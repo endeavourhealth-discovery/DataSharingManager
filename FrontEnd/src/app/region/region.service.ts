@@ -5,6 +5,7 @@ import {Region} from './models/Region';
 import {Dsa} from '../data-sharing-agreement/models/Dsa';
 import {URLSearchParams, Http} from '@angular/http';
 import {Marker} from "./models/Marker";
+import {Dpa} from "../data-processing-agreement/models/Dpa";
 
 @Injectable()
 export class RegionService {
@@ -54,6 +55,14 @@ export class RegionService {
     const params = new URLSearchParams();
     params.set('uuid', uuid);
     return vm.http.get('api/region/sharingAgreements', { search : params })
+      .map((response) => response.json());
+  }
+
+  getProcessingAgreements(uuid: string):  Observable<Dpa[]> {
+    const vm = this;
+    const params = new URLSearchParams();
+    params.set('uuid', uuid);
+    return vm.http.get('api/region/processingAgreements', { search : params })
       .map((response) => response.json());
   }
 

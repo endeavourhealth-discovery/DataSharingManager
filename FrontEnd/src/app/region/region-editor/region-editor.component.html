@@ -56,6 +56,34 @@
               </entity-viewer>
             </ng-template>
           </ngb-panel>
+          <ngb-panel id="processingAgreement">
+            <ng-template ngbPanelTitle>
+              <div class="row">
+                <div class="col-md-2">
+                  Processing agreements
+                </div>
+                <div class="col-md-1">
+                  <span class="badge badge-pill badge-primary">{{processingAgreements?.length}}</span>
+                </div>
+                <div class="col-md-1">
+                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editSharingAgreements()">Edit</button>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template ngbPanelContent>
+              <entity-viewer
+                [items]="processingAgreements"
+                [primary]="'name'"
+                [primaryOrderText]="'Name'"
+                [displayClass]="'region'"
+                [secondary]="'description'"
+                [secondaryOrderText]="'Description'"
+                [typeDescription]="'Processing agreement'"
+                [model]="'dpa'"
+                [detailsToShow]="processingAgreementsDetailsToShow">
+              </entity-viewer>
+            </ng-template>
+          </ngb-panel>
           <ngb-panel id="parentRegion">
             <ng-template ngbPanelTitle>
               <div class="row">

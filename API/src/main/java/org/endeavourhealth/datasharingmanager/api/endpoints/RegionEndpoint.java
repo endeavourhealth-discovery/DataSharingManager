@@ -194,6 +194,23 @@ public final class RegionEndpoint extends AbstractEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.RegionEndpoint.GetSharingAgreements")
+    @Path("/processingAgreements")
+    @ApiOperation(value = "Returns a list of Json representations of data processing agreements that are linked " +
+            "to the region.  Accepts a UUID of a region.")
+    public Response getProcessingAgreementsForRegion(@Context SecurityContext sc,
+                                                  @ApiParam(value = "UUID of the region") @QueryParam("uuid") String uuid) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "Processing Agreement(s)",
+                "Region Id", uuid);
+
+        return getProcessingAgreements(uuid);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.RegionEndpoint.getApiKey")
     @Path("/getApiKey")
     @ApiOperation(value = "Get the Google Maps API Key from the config database.")
@@ -310,6 +327,21 @@ public final class RegionEndpoint extends AbstractEndpoint {
 
         if (!sharingAgreementUuids.isEmpty())
             ret = DataSharingAgreementEntity.getDSAsFromList(sharingAgreementUuids);
+
+        clearLogbackMarkers();
+        return Response
+                .ok()
+                .entity(ret)
+                .build();
+    }
+
+    private Response getProcessingAgreements(String regionUuid) throws Exception {
+
+        List<String> processingAgreementUuids = MasterMappingEntity.getChildMappings(regionUuid, MapType.REGION.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        List<DataProcessingAgreementEntity> ret = new ArrayList<>();
+
+        if (!processingAgreementUuids.isEmpty())
+            ret = DataProcessingAgreementEntity.getDPAsFromList(processingAgreementUuids);
 
         clearLogbackMarkers();
         return Response

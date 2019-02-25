@@ -16,6 +16,7 @@ public final class JsonRegion {
     private Map<UUID, String> parentRegions = null;
     private Map<UUID, String> childRegions = null;
     private Map<UUID, String> sharingAgreements = null;
+    private Map<UUID, String> processingAgreements = null;
 
     public Map<UUID, String> getOrganisations() {
         return organisations;
@@ -88,5 +89,13 @@ public final class JsonRegion {
 
     public void setSharingAgreements(Map<UUID, String> sharingAgreements) {
         this.sharingAgreements = sharingAgreements;
+    }
+
+    public Map<UUID, String> getProcessingAgreements() {
+        return processingAgreements;
+    }
+
+    public void setProcessingAgreements(Map<UUID, String> processingAgreements) {
+        this.processingAgreements = processingAgreements;
     }
 }
