@@ -373,7 +373,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
   private editPublishers() {
     const vm = this;
-    OrganisationPickerComponent.open(vm.$modal, vm.publishers, 'organisation', '', vm.regions[0].uuid)
+    OrganisationPickerComponent.open(vm.$modal, vm.publishers, 'organisation')
       .result.then(function
       (result: Organisation[]) { vm.publishers = result; },
       () => vm.log.info('Edit publishers cancelled')
