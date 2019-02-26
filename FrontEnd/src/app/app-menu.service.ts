@@ -70,7 +70,7 @@ export class AppMenuService implements  AbstractMenuProvider  {
   getMenuOptions(): MenuOption[] {
     return [
       {caption: 'My Sharing', state: 'mySharingOverview', icon: 'fa fa-user', role: 'Viewer'},
-      {caption: 'Organisation', state: 'organisationOverview', icon: 'fa fa-hospital-o', role: 'Viewer'},
+      {caption: 'Overview', state: 'organisationOverview', icon: 'fa fa-hospital-o', role: 'Viewer'},
       {caption: 'Sharing', state: 'sharingOverview', icon: 'fa-share-alt', role: 'Viewer'}
     ];
   }
