@@ -33,7 +33,6 @@
               <div class="form-group col-md-3">
                 <label class="control-label required-field">Status</label>
                 <div class="input-group">
-                  <span class="input-group-prepend"><em class="fa fa-th-large input-group-text"></em></span>
                   <select required [disabled]="disableStatus" class="form-control" [(ngModel)]="dpa.dsaStatusId" name="dsaStatusId">
                     <option *ngFor="let st of status" [ngValue]="st.num">{{st.name}}</option>
                   </select>
