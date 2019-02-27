@@ -139,7 +139,7 @@ export class OrganisationComponent implements OnInit {
   }
 
   close() {
-    this.router.navigate(['/organisationOverview']);
+    this.router.navigate(['/overview']);
   }
 
   onSearch($event) {

@@ -61,23 +61,12 @@
           </fieldset>
         </div>
 
-        <ngb-accordion>
-          <ngb-panel id="purps">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-3">
-                  Purposes
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{purposes?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editPurposes()">Add</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+        <ngb-tabset>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Purposes </span><span class="badge badge-pill badge-primary">{{purposes?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editPurposes()"
                 (deleted)="removeFromPurposes($event)"
                 (clicked)="clickOnPurpose($event)"
                 [items]="purposes"
@@ -90,27 +79,17 @@
                 [model]="'purpose'"
                 [detailsToShow]="purposeDetailsToShow"
                 [allowDelete]="allowEdit"
-                [noLink]="true">
+                [noLink]="true"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-
-          <ngb-panel id="bens">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-3">
-                  Benefits
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{benefits?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editBenefits()">Add</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+          </ngb-tab>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Benefits </span><span class="badge badge-pill badge-primary">{{benefits?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editBenefits()"
                 (deleted)="removeFromBenefits($event)"
                 (clicked)="clickOnBenefit($event)"
                 [items]="benefits"
@@ -123,26 +102,17 @@
                 [model]="'benefit'"
                 [detailsToShow]="purposeDetailsToShow"
                 [allowDelete]="allowEdit"
-                [noLink]="true">
+                [noLink]="true"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-          <ngb-panel id="regs">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-3">
-                  Regions
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{regions?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editRegions()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+          </ngb-tab>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Regions </span><span class="badge badge-pill badge-primary">{{regions?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editRegions()"
                 [items]="regions"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -151,26 +121,17 @@
                 [secondaryOrderText]="'Description'"
                 [typeDescription]="'Region'"
                 [model]="'region'"
-                [detailsToShow]="regionDetailsToShow">
+                [detailsToShow]="regionDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-          <ngb-panel id="pubs">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-3">
-                  Publishers
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{publishers?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editPublishers()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+          </ngb-tab>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Publishers </span><span class="badge badge-pill badge-primary">{{publishers?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editPublishers()"
                 [items]="publishers"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -179,102 +140,15 @@
                 [secondaryOrderText]="'ODS Code'"
                 [typeDescription]="'Publisher'"
                 [model]="'organisation'"
-                [detailsToShow]="orgDetailsToShow">
+                [detailsToShow]="orgDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-          <!--<ngb-panel id="dflows">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-2">
-                  Data flow agreements
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{dataFlows?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editDataFlows()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
-              <entity-viewer
-                [items]="dataFlows"
-                [primary]="'name'"
-                [primaryOrderText]="'Name'"
-                [displayClass]="'region'"
-                [secondary]="'approximateVolume'"
-                [secondaryOrderText]="'Approximate Volume'"
-                [typeDescription]="'Data flow'"
-                [model]="'dataflow'"
-                [detailsToShow]="dataFlowDetailsToShow">
-              </entity-viewer>
-            </ng-template>
-          </ngb-panel>
-          <ngb-panel id="coh">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-2">
-                  Cohorts
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{cohorts?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editCohorts()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
-              <entity-viewer
-                [items]="cohorts"
-                [primary]="'name'"
-                [primaryOrderText]="'Name'"
-                [displayClass]="'region'"
-                [typeDescription]="'Cohort'"
-                [model]="'cohort'"
-                [detailsToShow]="cohortDetailsToShow">
-              </entity-viewer>
-            </ng-template>
-          </ngb-panel>
-          <ngb-panel id="dsets">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-2">
-                  Data sets
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{dataSets?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editDataSets()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
-              <entity-viewer
-                [items]="dataSets"
-                [primary]="'name'"
-                [primaryOrderText]="'Name'"
-                [displayClass]="'region'"
-                [typeDescription]="'Data set'"
-                [model]="'dataset'"
-                [detailsToShow]="datasetDetailsToShow">
-              </entity-viewer>
-            </ng-template>
-          </ngb-panel>-->
-          <ngb-panel id="docs">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-3">
-                  Associated documentation
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{documentations?.length}}</span>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+          </ngb-tab>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Associated documentation </span><span class="badge badge-pill badge-primary">{{documentations?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer (deleted)="removeFromDocumentation($event)"
                              [items]="documentations"
                              [primary]="'title'"
@@ -283,7 +157,9 @@
                              [typeDescription]="'Associated Documentation'"
                              [model]="'documentation'"
                              [detailsToShow]="documentDetailsToShow"
-                             [allowDelete]="allowEdit">
+                             [allowDelete]="allowEdit"
+                             [allowEdit]="false"
+                             [showEditButton]="false">
               </entity-viewer>
               <div *ngIf="allowEdit" class="row">
                 <div class="col-md-6">
@@ -312,8 +188,8 @@
                 </div>
               </div>
             </ng-template>
-          </ngb-panel>
-        </ngb-accordion>
+          </ngb-tab>
+        </ngb-tabset>
         <br>
         <br>
         <eds-google-maps

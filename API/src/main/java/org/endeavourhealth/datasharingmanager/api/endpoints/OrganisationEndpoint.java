@@ -879,6 +879,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
 
     private Response processCSVFile(JsonFileUpload file) throws Exception {
         boolean found = false;
+        int orgsUploaded = 0;
         //OrganisationEntity.deleteUneditedBulkOrganisations();
 
         List<OrganisationEntity> updatedBulkOrganisations = new ArrayList<>(); // OrganisationEntity.getUpdatedBulkOrganisations();
@@ -954,6 +955,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
                 }
 
                 if (i % 200 == 0 ) {
+                    orgsUploaded += organisationEntities.size();
                     OrganisationEntity.bulkSaveOrganisation(organisationEntities);
                     organisationEntities.clear();
                     AddressEntity.bulkSaveAddresses(addressEntities);
@@ -964,6 +966,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
                 found = false;
             }
 
+            orgsUploaded += organisationEntities.size();
             OrganisationEntity.bulkSaveOrganisation(organisationEntities);
             organisationEntities.clear();
             AddressEntity.bulkSaveAddresses(addressEntities);
@@ -971,7 +974,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         }
 
         return Response
-                .ok(organisationEntities.size())
+                .ok(orgsUploaded)
                 .build();
     }
 

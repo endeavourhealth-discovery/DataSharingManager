@@ -23,6 +23,7 @@ export class MySharingOverviewComponent implements OnInit {
   dsaPubLoadingComplete = false;
   dsaSubLoadingComplete = false;
   dpaPubLoadingComplete = false;
+  allowEdit = false;
 
   public activeProject: UserProject;
 
@@ -52,6 +53,11 @@ export class MySharingOverviewComponent implements OnInit {
   roleChanged() {
     const vm = this;
     vm.userOrgs = [];
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+      vm.allowEdit = true;
+    } else {
+      vm.allowEdit = false;
+    }
     vm.userOrgs.push(vm.activeProject.organisationId);
     vm.getDPAsPublishingTo(vm.userOrgs);
     vm.getDSAsPublishingTo(vm.userOrgs);

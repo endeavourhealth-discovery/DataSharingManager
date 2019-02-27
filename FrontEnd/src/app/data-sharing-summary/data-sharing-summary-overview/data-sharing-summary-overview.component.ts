@@ -166,15 +166,6 @@ export class DataSharingSummaryOverviewComponent implements OnInit {
       );
   }
 
-  fileChange(event) {
-    const fileList: FileList = event.target.files;
-    if (fileList.length > 0) {
-      this.file = fileList[0];
-    } else {
-      this.file = null;
-    }
-  }
-
   goToSummary() {
     this.router.navigate(['/dataSharingSummaries']);
   }

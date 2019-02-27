@@ -21,9 +21,9 @@
   </form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn" (click)="cancel()">Cancel</button>
-  <button *ngIf="!editMode" type="button" class="btn btn-primary" (click)="Add();">Add {{type | lowercase}}</button>
-  <button *ngIf="!editMode" type="button" class="btn btn-primary" (click)="AddAnother();">Add another {{type | lowercase}}</button>
-  <button *ngIf="editMode" type="button" class="btn btn-primary" (click)="save();">Save</button>
-  <button *ngIf="editMode" type="button" class="btn btn-primary" (click)="saveAndAddAnother();">Save and add another {{type | lowercase}}</button>
+  <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+  <button *ngIf="!editMode" type="button" class="btn btn-success" (click)="Add();">Add {{type | lowercase}}</button>
+  <button *ngIf="!editMode" type="button" class="btn btn-success" (click)="AddAnother();">Add another {{type | lowercase}}</button>
+  <button *ngIf="editMode" type="button" class="btn btn-success" (click)="save();">Save</button>
+  <button *ngIf="editMode" type="button" class="btn btn-success" (click)="saveAndAddAnother();">Save and add another {{type | lowercase}}</button>
 </div>

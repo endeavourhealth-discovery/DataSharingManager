@@ -98,7 +98,7 @@ export class RegionComponent implements OnInit {
   }
 
   close() {
-    this.router.navigate(['organisationOverview']);
+    this.router.navigate(['overview']);
   }
 
 }

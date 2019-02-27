@@ -103,23 +103,12 @@
           </fieldset>
         </div>
 
-        <ngb-accordion>
-          <ngb-panel id="regs" *ngIf="organisation.isService === 0">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-4">
-                  Regions
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{regions?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editRegions()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+        <ngb-tabset>
+          <ngb-tab *ngIf="organisation.isService === 0">
+            <ng-template ngbTabTitle><span class="tab-title">Regions </span><span class="badge badge-pill badge-primary">{{regions?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editRegions()"
                 [items]="regions"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -128,26 +117,17 @@
                 [secondaryOrderText]="'Description'"
                 [typeDescription]="'Region'"
                 [model]="'region'"
-                [detailsToShow]="regionDetailsToShow">
+                [detailsToShow]="regionDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-          <ngb-panel id="dpapub" *ngIf="organisation.isService === 0">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-4">
-                  Data processing agreements publishing to
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{dpaPublishing?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editDPAPublishing()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+          </ngb-tab>
+          <ngb-tab *ngIf="organisation.isService === 0">
+            <ng-template ngbTabTitle><span class="tab-title">DPA publishing to </span><span class="badge badge-pill badge-primary">{{dpaPublishing?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editDPAPublishing()"
                 [items]="dpaPublishing"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -156,26 +136,17 @@
                 [secondaryOrderText]="'Description'"
                 [typeDescription]="'Data processing agreement'"
                 [model]="'dpa'"
-                [detailsToShow]="dpaDetailsToShow">
+                [detailsToShow]="dpaDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-          <ngb-panel id="dsapub" *ngIf="organisation.isService === 0">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-4">
-                  Data sharing agreements publishing to
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{dsaPublishing?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editDSAPublishing()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+          </ngb-tab>
+          <ngb-tab *ngIf="organisation.isService === 0">
+            <ng-template ngbTabTitle><span class="tab-title">DSA Publishing to </span><span class="badge badge-pill badge-primary">{{dsaPublishing?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editDSASubscribing()"
                 [items]="dsaPublishing"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -184,26 +155,17 @@
                 [secondaryOrderText]="'Description'"
                 [typeDescription]="'Data sharing agreement'"
                 [model]="'dsa'"
-                [detailsToShow]="dsaDetailsToShow">
+                [detailsToShow]="dsaDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-          <ngb-panel id="dsasub" *ngIf="organisation.isService === 0">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-4">
-                  Data sharing agreements subscribing to
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{dsaSubscribing?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editDSASubscribing()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+          </ngb-tab>
+          <ngb-tab *ngIf="organisation.isService === 0">
+            <ng-template ngbTabTitle><span class="tab-title">DSA subscribing to </span><span class="badge badge-pill badge-primary">{{dsaSubscribing?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editDSASubscribing()"
                 [items]="dsaSubscribing"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -212,26 +174,17 @@
                 [secondaryOrderText]="'Description'"
                 [typeDescription]="'Data sharing agreement'"
                 [model]="'dsa'"
-                [detailsToShow]="dsaDetailsToShow">
+                [detailsToShow]="dsaDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-          <ngb-panel *ngIf="organisation.isService === 0" id="childOrgs">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-4">
-                  Child organisations
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{childOrganisations?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editChildOrganisations()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+          </ngb-tab>
+          <ngb-tab *ngIf="organisation.isService === 0">
+            <ng-template ngbTabTitle><span class="tab-title">Child organisations </span><span class="badge badge-pill badge-primary">{{childOrganisations?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editChildOrganisations()"
                 [items]="childOrganisations"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -240,26 +193,17 @@
                 [secondaryOrderText]="'ODS Code'"
                 [typeDescription]="'Child organisation'"
                 [model]="'organisation'"
-                [detailsToShow]="orgDetailsToShow">
+                [detailsToShow]="orgDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>>
-          <ngb-panel id="parentOrgs">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-4">
-                  Parent organisations
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{parentOrganisations?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit"  type="button" class="btn btn-sm btn-success pull-right" (click)="editParentOrganisations()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+          </ngb-tab>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Parent organisations </span><span class="badge badge-pill badge-primary">{{parentOrganisations?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editParentOrganisations()"
                 [items]="parentOrganisations"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -268,26 +212,17 @@
                 [secondaryOrderText]="'ODS Code'"
                 [typeDescription]="'Parent organisation'"
                 [model]="'organisation'"
-                [detailsToShow]="orgDetailsToShow">
+                [detailsToShow]="orgDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-          <ngb-panel *ngIf="organisation.isService === 0" id="servs">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-4">
-                  Services
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{services?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editServices()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+          </ngb-tab>
+          <ngb-tab *ngIf="organisation.isService === 0">
+            <ng-template ngbTabTitle><span class="tab-title">Services </span><span class="badge badge-pill badge-primary">{{services?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editServices()"
                 [items]="services"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -296,11 +231,14 @@
                 [secondaryOrderText]="'ODS Code'"
                 [typeDescription]="'Service'"
                 [model]="'organisation'"
-                [detailsToShow]="orgDetailsToShow">
+                [detailsToShow]="orgDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-        </ngb-accordion>
+          </ngb-tab>
+        </ngb-tabset>
+
       </form>
       <br>
       <br>

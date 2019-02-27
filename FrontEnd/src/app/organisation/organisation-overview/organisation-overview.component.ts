@@ -17,24 +17,29 @@ import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 })
 export class OrganisationOverviewComponent implements OnInit {
   organisations: Organisation[];
-  file: File;
-  existingOrg: Organisation;
-  newOrg: Organisation;
-  filesToUpload: FileUpload[] = [];
-  fileList: FileList;
-  currentUser: User;
   allowEdit = false;
-  allowBulk = false;
+  allowConfig = false;
 
   public activeProject: UserProject;
 
-  conflictedOrgs: Organisation[];
   orgStats: OrganisationManagerStatistics[];
   orgLoadingComplete = false;
   serviceStats: OrganisationManagerStatistics[];
   serviceLoadingComplete = false;
   regionStats: OrganisationManagerStatistics[];
   regionLoadingComplete = false;
+  dpaStats: OrganisationManagerStatistics[];
+  dpaLoadingComplete = false;
+  dsaStats: OrganisationManagerStatistics[];
+  dsaLoadingComplete = false;
+  dataflowStats: OrganisationManagerStatistics[];
+  dataflowLoadingComplete = false;
+  cohortStats: OrganisationManagerStatistics[];
+  cohortLoadingComplete = false;
+  datasetStats: OrganisationManagerStatistics[];
+  datasetLoadingComplete = false;
+  projectStats: OrganisationManagerStatistics[];
+  projectLoadingComplete = false;
 
   constructor(private $modal: NgbModal,
               private organisationService: OrganisationService,
@@ -53,21 +58,20 @@ export class OrganisationOverviewComponent implements OnInit {
     });
 
     this.getOverview();
-    this.currentUser = this.securityService.getCurrentUser();
   }
 
   roleChanged() {
     const vm = this;
 
     vm.allowEdit = false;
-    vm.allowBulk = false;
+    vm.allowConfig = false;
 
     if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
       vm.allowEdit = true;
     }
 
-    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Bulk') != null) {
-      vm.allowBulk = true;
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Config') != null) {
+      vm.allowConfig = true;
     }
   }
 
@@ -76,8 +80,12 @@ export class OrganisationOverviewComponent implements OnInit {
     vm.getOrganisationStatistics();
     vm.getServiceStatistics();
     vm.getRegionStatistics();
-    vm.getConflictingOrganisations();
-
+    vm.getDpaStatistics();
+    vm.getDsaStatistics();
+    vm.getDataFlowStatistics();
+    vm.getCohortStatistics();
+    vm.getDataSetStatistics();
+    vm.getProjectStatistics();
   }
 
   getOrganisationStatistics() {
@@ -125,186 +133,102 @@ export class OrganisationOverviewComponent implements OnInit {
       );
   }
 
-  fileChange(event) {
+  getDpaStatistics() {
     const vm = this;
-    vm.filesToUpload = [];
-
-    vm.fileList = event.target.files;
-
-    if (vm.fileList.length > 0) {
-      this.file = vm.fileList[0];
-      for (let i = 0; i <= vm.fileList.length - 1; i++) {
-        this.filesToUpload.push(<FileUpload>{
-            name: vm.fileList[i].name,
-            file: vm.fileList[i]
-          }
-        );
-      }
-    } else {
-      this.file = null;
-    }
-  }
-
-  private uploadFile(fileToUpload: FileUpload) {
-    const vm = this;
-
-    const myReader: FileReader = new FileReader();
-
-    myReader.onloadend = function(e) {
-      fileToUpload.fileData = myReader.result;
-      fileToUpload.file = null;
-      vm.log.success('Uploading File ' + fileToUpload.name, null, 'Upload file');
-      vm.sendToServer(fileToUpload);
-    }
-
-    myReader.readAsText(fileToUpload.file);
-  }
-
-  private getNextFileToUpload() {
-    const vm = this;
-    let allUploaded = true;
-    for (const file of vm.filesToUpload) {
-      if (file.success == null) {
-        vm.uploadFile(file);
-        vm.getOrganisationStatistics();
-        allUploaded = false;
-        break;
-      }
-    }
-
-    if (allUploaded) {
-      vm.log.success('All files uploaded successfully.', null, 'Upload files');
-      vm.log.success('Saving organisation mappings.', null, 'Upload files');
-      vm.saveBulkMappings();
-    }
-  }
-
-  private endUpload() {
-    const vm = this;
-    vm.organisationService.endUpload()
-      .subscribe(
-        result => {
-          vm.log.success('Organisation mappings saved successfully.' , null, 'Save organisation mappings');
-          vm.log.success('All organisations uploaded successfully.' , null, 'Save organisations');
-          vm.getOrganisationStatistics();
-          vm.getServiceStatistics();
-          vm.getRegionStatistics();
-          vm.getConflictingOrganisations();
+    vm.dpaLoadingComplete = false;
+    vm.organisationService.getStatistics('dpa')
+      .subscribe(result => {
+          vm.dpaStats = result;
+          vm.dpaLoadingComplete = true;
         },
-        error => vm.log.error('The organisation mappings could not be saved. Please try again.', error, 'Save organisation mappings')
-      )
-  }
-
-  private saveBulkMappings() {
-    const vm = this;
-    vm.organisationService.saveMappings(10000)
-      .subscribe(
-        (result) => {
-          if (result > 0) {
-            vm.log.success(result + ' Mappings to process remaining', null, 'Process mappings');
-            vm.saveBulkMappings();
-          } else {
-            vm.endUpload();
-          }
+        error => {
+          vm.log.error('The data processing agreement statistics could not be loaded. Please try again.', error, 'Load data processing agreement statistics');
+          vm.dpaLoadingComplete = true;
         }
-      )
+      );
   }
 
-  private sendToServer(fileToUpload: FileUpload) {
+  getDsaStatistics() {
     const vm = this;
-    vm.organisationService.uploadCsv(fileToUpload)
+    vm.dsaLoadingComplete = false;
+    vm.organisationService.getStatistics('dsa')
       .subscribe(result => {
-          fileToUpload.success = 1;
-          vm.log.success(result + ' Organisations uploaded successfully ' + fileToUpload.name, null, 'Upload organisations');
-          vm.getNextFileToUpload();
+          vm.dsaStats = result;
+          vm.dsaLoadingComplete = true;
         },
-        error => vm.log.error('The organisations could not be uploaded. Please try again. ' + fileToUpload.name, error, 'Upload bulk organisations')
+        error => {
+          vm.log.error('The data sharing agreement statistics could not be loaded. Please try again.', error, 'load data sharing agreement statistics');
+          vm.dsaLoadingComplete = true;
+        }
       );
-  };
+  }
 
-  private getConflictingOrganisations() {
+  getDataFlowStatistics() {
     const vm = this;
-    vm.organisationService.getConflictedOrganisations()
-      .subscribe(result => vm.conflictedOrgs = result,
-        error => vm.log.error('The conflicted organisations could not be loaded. Please try again.', error, 'Get conflicting organisations'))
-  }
-
-  ok() {
-    this.uploadFiles();
-  }
-
-  private uploadFiles() {
-    const vm = this;
-    vm.organisationService.startUpload()
-      .subscribe(
-        result => {
-          vm.getNextFileToUpload();
-        },
-        error => vm.log.error('The upload could not be started. Please try again.', error, 'Upload file')
-      );
-
-  }
-
-  cancel() {
-    this.file = null;
-  }
-
-  resolveDifferences(organisation: Organisation) {
-    const vm = this;
-    vm.newOrg = organisation;
-    vm.organisationService.getOrganisationAddresses(organisation.uuid)
-      .subscribe(
-        result => {vm.newOrg.addresses = result},
-        error => vm.log.error('The organisation address could not be loaded. Please try again.', error, 'Load address')
-      );
-
-    vm.organisationService.getOrganisation(organisation.bulkConflictedWith)
+    vm.dataflowLoadingComplete = false;
+    vm.organisationService.getStatistics('dataflow')
       .subscribe(result => {
-          vm.existingOrg = result
-          vm.organisationService.getOrganisationAddresses(organisation.bulkConflictedWith)
-            .subscribe(
-              (result) => vm.existingOrg.addresses = result,
-              (error) => vm.log.error('The organisation address could not be loaded. Please try again.', error, 'Load address')
-            );
+          vm.dataflowStats = result;
+          vm.dataflowLoadingComplete = true;
         },
-        error => vm.log.error('The organisation could not be loaded. Please try again.', error, 'Load organisation')
-
+        error => {
+          vm.log.error('The data flow statistics could not be loaded. Please try again.', error, 'Load data flow statistics');
+          vm.dataflowLoadingComplete = true;
+        }
       );
   }
 
-  saveConflict() {
+  getCohortStatistics() {
     const vm = this;
-    vm.organisationService.saveOrganisation(vm.existingOrg)
-      .subscribe(saved => {
-          vm.removeConflict(vm.newOrg);
+    vm.cohortLoadingComplete = false;
+    vm.organisationService.getStatistics('cohort')
+      .subscribe(result => {
+          vm.cohortStats = result;
+          vm.cohortLoadingComplete = true;
         },
-        error => vm.log.error('The organisation could not be saved. Please try again.', error, 'Save organisation')
+        error => {
+          vm.log.error('The cohort statistics could not be loaded. Please try again.', error, 'Load cohort statistics');
+          vm.cohortLoadingComplete = true;
+        }
       );
   }
 
-  cancelConflictResolution() {
-    this.existingOrg = null;
+  getProjectStatistics() {
+    const vm = this;
+    vm.projectLoadingComplete = false;
+    vm.organisationService.getStatistics('project')
+      .subscribe(result => {
+          vm.projectStats = result;
+          vm.projectLoadingComplete = true;
+        },
+        error => {
+          vm.log.error('The project statistics could not be loaded. Please try again.', error, 'Load project statistics');
+          vm.projectLoadingComplete = true;
+        }
+      );
   }
 
-  removeConflict(org) {
+  getDataSetStatistics() {
     const vm = this;
-    vm.organisationService.deleteOrganisation(org.uuid)
-      .subscribe(
-        result => vm.log.success('Conflict resolved', vm.existingOrg, 'Resolve conflict'),
-        error => vm.log.error('The conflict could not be resolved. Please try again.', error, 'Resolve conflict')
-      )
-
-    const index = vm.conflictedOrgs.indexOf(org, 0);
-    if (index > -1) {
-      this.conflictedOrgs.splice(index, 1);
-    }
-    this.newOrg = null;
-    this.existingOrg = null;
-
+    vm.datasetLoadingComplete = false;
+    vm.organisationService.getStatistics('dataset')
+      .subscribe(result => {
+          vm.datasetStats = result;
+          vm.datasetLoadingComplete = true;
+        },
+        error => {
+          vm.log.error('The data set statistics could not be loaded. Please try again.', error, 'Load data set statistics');
+          vm.datasetLoadingComplete = true;
+        }
+      );
   }
 
   goToOrganisations() {
     this.router.navigate(['/organisations', {mode: 'organisations'}]);
+  }
+
+  goToConfig() {
+    this.router.navigate(['/configuration']);
   }
 
   goToServices() {
@@ -313,5 +237,33 @@ export class OrganisationOverviewComponent implements OnInit {
 
   goToRegions() {
     this.router.navigate(['/regions']);
+  }
+
+  goToDpa() {
+    this.router.navigate(['/dpas']);
+  }
+
+  goToDsa() {
+    this.router.navigate(['/dsas']);
+  }
+
+  goToDataFlow() {
+    this.router.navigate(['/dataFlows']);
+  }
+
+  goToCohorts() {
+    this.router.navigate(['/cohorts']);
+  }
+
+  goToDataSets() {
+    this.router.navigate(['/dataSets']);
+  }
+
+  goToDataExchanges() {
+    this.router.navigate(['/dataExchanges']);
+  }
+
+  goToProjects() {
+    this.router.navigate(['/projects']);
   }
 }

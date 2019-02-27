@@ -96,7 +96,7 @@ export class DataSharingAgreementComponent implements OnInit {
   }
 
   close() {
-    this.router.navigate(['/sharingOverview']);
+    this.router.navigate(['/overview']);
   }
 
 }

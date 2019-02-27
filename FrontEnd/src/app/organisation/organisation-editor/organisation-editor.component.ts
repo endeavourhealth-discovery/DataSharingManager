@@ -207,14 +207,14 @@ export class OrganisationEditorComponent implements OnInit {
       .subscribe(saved => {
           vm.organisation.uuid = saved;
           vm.log.success('Organisation saved successfully.', vm.organisation, 'Save organisation');
-          if (close) { this.router.navigate(['/organisationOverview']); }
+          if (close) { this.router.navigate(['/overview']); }
         },
         error => vm.log.error('The organisation could not be saved. Please try again.', error, 'Save organisation')
       );
   }
 
   close() {
-    this.router.navigate(['/organisationOverview']);
+    this.router.navigate(['/overview']);
   }
 
   addAddress() {

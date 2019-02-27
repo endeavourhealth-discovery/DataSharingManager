@@ -26,23 +26,12 @@
           </div>
         </fieldset>
 
-        <ngb-accordion>
-          <ngb-panel id="dataproc">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-2">
-                  Data processing agreements
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{dpas?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editDataProcessingAgreements()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+        <ngb-tabset>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Data processing agreements </span><span class="badge badge-pill badge-primary">{{dpas?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editDataProcessingAgreements()"
                 [items]="dpas"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -51,11 +40,13 @@
                 [secondaryOrderText]="'Description'"
                 [typeDescription]="'Data processing agreement'"
                 [model]="'dpa'"
-                [detailsToShow]="dpaDetailsToShow">
+                [detailsToShow]="dpaDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-        </ngb-accordion>
+          </ngb-tab>
+        </ngb-tabset>
       </form>
       <br>
       <br>

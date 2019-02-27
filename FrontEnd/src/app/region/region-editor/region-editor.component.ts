@@ -150,14 +150,14 @@ export class RegionEditorComponent implements OnInit {
       .subscribe(saved => {
           vm.region.uuid = saved;
           vm.log.success('Region saved', vm.region, 'Save region');
-          if (close) { this.router.navigate(['/organisationOverview']); }
+          if (close) { this.router.navigate(['/overview']); }
         },
         error => vm.log.error('The region could not be saved. Please try again.', error, 'Save region')
       );
   }
 
   close() {
-    this.router.navigate(['/organisationOverview']);
+    this.router.navigate(['/overview']);
   }
 
   private getRegionOrganisations() {

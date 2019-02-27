@@ -27,23 +27,12 @@
           </fieldset>
         </div>
 
-        <ngb-accordion>
-          <ngb-panel id="sharingAgreement">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-2">
-                  Sharing agreements
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{sharingAgreements?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editSharingAgreements()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+        <ngb-tabset>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Sharing agreements </span><span class="badge badge-pill badge-primary">{{sharingAgreements?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editSharingAgreements()"
                 [items]="sharingAgreements"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -52,26 +41,17 @@
                 [secondaryOrderText]="'Description'"
                 [typeDescription]="'Sharing agreement'"
                 [model]="'dsa'"
-                [detailsToShow]="sharingAgreementsDetailsToShow">
+                [detailsToShow]="sharingAgreementsDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-          <ngb-panel id="processingAgreement">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-2">
-                  Processing agreements
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{processingAgreements?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editSharingAgreements()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+          </ngb-tab>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Processing agreements </span><span class="badge badge-pill badge-primary">{{processingAgreements?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editProcessingAgreements()"
                 [items]="processingAgreements"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -80,26 +60,17 @@
                 [secondaryOrderText]="'Description'"
                 [typeDescription]="'Processing agreement'"
                 [model]="'dpa'"
-                [detailsToShow]="processingAgreementsDetailsToShow">
+                [detailsToShow]="processingAgreementsDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-          <ngb-panel id="parentRegion">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-2">
-                  Parent regions
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{parentRegions?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editParentRegions()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+          </ngb-tab>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Parent regions </span><span class="badge badge-pill badge-primary">{{parentRegions?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editParentRegions()"
                 [items]="parentRegions"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -108,26 +79,17 @@
                 [secondaryOrderText]="'Description'"
                 [typeDescription]="'Parent region'"
                 [model]="'region'"
-                [detailsToShow]="regionDetailsToShow">
+                [detailsToShow]="regionDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-          <ngb-panel id="childRegion">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-2">
-                  Child regions
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{childRegions?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editChildRegions()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+          </ngb-tab>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Child regions </span><span class="badge badge-pill badge-primary">{{childRegions?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editChildRegions()"
                 [items]="childRegions"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -136,26 +98,17 @@
                 [secondaryOrderText]="'Description'"
                 [typeDescription]="'Child region'"
                 [model]="'region'"
-                [detailsToShow]="regionDetailsToShow">
+                [detailsToShow]="regionDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-          <ngb-panel id="orgs">
-            <ng-template ngbPanelTitle>
-              <div class="row">
-                <div class="col-md-2">
-                  Organisations
-                </div>
-                <div class="col-md-1">
-                  <span class="badge badge-pill badge-primary">{{organisations?.length}}</span>
-                </div>
-                <div class="col-md-1">
-                  <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success pull-right" (click)="editOrganisations()">Edit</button>
-                </div>
-              </div>
-            </ng-template>
-            <ng-template ngbPanelContent>
+          </ngb-tab>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Organisation </span><span class="badge badge-pill badge-primary">{{organisations?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
               <entity-viewer
+                (onshowPicker)="editOrganisations()"
                 [items]="organisations"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
@@ -165,11 +118,14 @@
                 [typeDescription]="'Organisation'"
                 [model]="'organisation'"
                 [pageSize]="12"
-                [detailsToShow]="orgDetailsToShow">
+                [detailsToShow]="orgDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
               </entity-viewer>
             </ng-template>
-          </ngb-panel>
-        </ngb-accordion>
+          </ngb-tab>
+        </ngb-tabset>
+        <br/>
         <eds-google-maps
           [markers]="markers">
         </eds-google-maps>

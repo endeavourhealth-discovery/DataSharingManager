@@ -7,7 +7,14 @@
       <div class="row">
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-header text-white">Regions</div>
+            <div class="card-header text-white">
+              Regions
+              <div class="pull-right">
+                <button *ngIf="!allowEdit" type="button" class="btn btn-sm btn-info" (click)="goToRegions()">View regions</button>
+                <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success" (click)="goToRegions()">Edit regions</button>
+              </div>
+
+            </div>
             <div class="card-body">
               <loadingIndicator [done]="regionLoadingComplete">
                 <div class="row" *ngFor="let regionStat of regionStats">
@@ -20,15 +27,19 @@
                 </div>
               </loadingIndicator>
               <br>
-              <div class="pull-right">
-                <button type="button" class="btn btn-sm btn-info" (click)="goToRegions()">View regions</button>
-              </div>
             </div>
           </div>
         </div>
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-header text-white">Organisations</div>
+            <div class="card-header text-white">
+              Organisations
+              <div class="pull-right">
+                <button *ngIf="allowConfig" type="button" class="btn btn-sm btn-success" (click)="goToConfig()">Bulk upload organisations</button>
+                <button *ngIf="!allowEdit" type="button" class="btn btn-sm btn-info" (click)="goToOrganisations()">View organisations</button>
+                <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success" (click)="goToOrganisations()">Edit organisations</button>
+              </div>
+            </div>
             <div class="card-body">
               <loadingIndicator [done]="orgLoadingComplete">
                 <div class="row" *ngFor="let stat of orgStats">
@@ -41,9 +52,6 @@
               </div>
               </loadingIndicator>
               <br>
-              <div class="pull-right">
-                <button type="button" class="btn btn-sm btn-info" (click)="goToOrganisations()">View organisations</button>
-              </div>
             </div>
           </div>
         </div>
@@ -52,7 +60,13 @@
       <div class="row">
         <div class="col-md-6">
           <div class="card h-100">
-            <div class="card-header text-white">Services</div>
+            <div class="card-header text-white">
+              Services
+              <div class="pull-right">
+                <button *ngIf="!allowEdit" type="button" class="btn btn-sm btn-info" (click)="goToServices()">View services</button>
+                <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success" (click)="goToServices()">Edit services</button>
+              </div>
+            </div>
             <div class="card-body">
               <loadingIndicator [done]="serviceLoadingComplete">
                 <div class="row" *ngFor="let serviceStat of serviceStats">
@@ -65,224 +79,137 @@
                 </div>
               </loadingIndicator>
               <br>
-              <div class="pull-right">
-                <button type="button" class="btn btn-sm btn-info" (click)="goToServices()">View services</button>
-              </div>
             </div>
           </div>
         </div>
-        <div *ngIf="allowBulk" class="col-md-6">
-          <div class="card h-100">
-            <div class="card-header text-white">Bulk upload</div>
-            <div class="card-body">
-              <form endUserRole="form" class="container-fluid">
-                <div class="row">
-                  <div class="form-group col-md-12">
-
-                    <button for="fileUpload" class="btn btn-primary" (click)="fileUploader.click()">Select files</button>
-                    <input #fileUploader id="fileUpload" type="file" (change)="fileChange($event)" placeholder="Upload file" accept=".csv" multiple="true" >
-                    <label class="control-label" for="fileUpload" *ngIf="fileList?.length > 2">{{fileList.length}} files selected</label>
-                    <label class="control-label" for="fileUpload" *ngIf="fileList?.length == 1">{{fileList[0].name}} selected</label>
-                    <label class="control-label" for="fileUpload" *ngIf="!fileList">No files selected</label>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-12">
-                    <button type="button" class="btn btn-default" (click)="cancel()">Cancel</button>
-                    <button type="button" class="btn btn-primary" (click)="ok()" [disabled]="!file">Upload files</button>
-                  </div>
-                </div>
-              </form>
-
-            </div>
-          </div>
-        </div>
-      </div>
-      <div *ngIf="allowBulk" class="row">
         <div class="col-md-6">
-          <div class="card" *ngIf="conflictedOrgs?.length > 0">
-            <div class="card-header">Conflicting organisations</div>
+          <div class="card h-100">
+            <div class="card-header text-white">
+              Projects
+              <div class="pull-right">
+                <button *ngIf="!allowEdit" type="button" class="btn btn-sm btn-info" (click)="goToProjects()">View projects</button>
+                <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success" (click)="goToProjects()">Edit projects</button>
+              </div>
+            </div>
             <div class="card-body">
-              <div class="table">
-                <table class="table table-striped table-condensed">
-                  <tbody>
-                  <tr class="hover-box show-child-on-hover" *ngFor="let org of conflictedOrgs">
-                    <td><a (click)="resolveDifferences(org)">{{org.name}}</a></td>
-                    <td>{{org.odsCode}}</td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
+              <loadingIndicator [done]="projectLoadingComplete">
+                <div class="row" *ngFor="let proj of projectStats">
+                  <div class="col-md-10">
+                    {{proj.label}}
+                  </div>
+                  <div class="col-md-2">
+                    {{proj.value}}
+                  </div>
+                </div>
+              </loadingIndicator>
+              <br>
             </div>
           </div>
         </div>
       </div>
-
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-header text-white">
+              Data sharing agreements
+              <div class="pull-right">
+                <button *ngIf="!allowEdit" type="button" class="btn btn-sm btn-info" (click)="goToDsa()">View data sharing agreements</button>
+                <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success" (click)="goToDsa()">Edit data sharing agreements</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <loadingIndicator [done]="dsaLoadingComplete">
+                <div class="row" *ngFor="let dsa of dsaStats">
+                  <div class="col-md-10">
+                    {{dsa.label}}
+                  </div>
+                  <div class="col-md-2">
+                    {{dsa.value}}
+                  </div>
+                </div>
+              </loadingIndicator>
+              <br>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-header text-white">
+              Data processing agreements
+              <div class="pull-right">
+                <button *ngIf="!allowEdit" type="button" class="btn btn-sm btn-info" (click)="goToDpa()">View data processing agreements</button>
+                <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success" (click)="goToDpa()">Edit data processing agreements</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <loadingIndicator [done]="dpaLoadingComplete">
+                <div class="row" *ngFor="let dpa of dpaStats">
+                  <div class="col-md-10">
+                    {{dpa.label}}
+                  </div>
+                  <div class="col-md-2">
+                    {{dpa.value}}
+                  </div>
+                </div>
+              </loadingIndicator>
+              <br>
+            </div>
+          </div>
+        </div>
+      </div>
       <br>
-
-      <div *ngIf="allowBulk">
-        <div class="card" *ngIf="existingOrg">
-          <div class="card-header">Resolve conflicting organisations
-            <div class="pull-right">
-              <button *ngIf="existingOrg" class="btn btn-sm btn-success"
-                      (click)="cancelConflictResolution()"
-                      title="Add">Cancel
-              </button>
-              <button *ngIf="existingOrg" class="btn btn-sm btn-success"
-                      (click)="saveConflict()"
-                      title="Add">Save conflict
-              </button>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-header text-white">
+              Datasets
+              <div class="pull-right">
+                <button *ngIf="!allowEdit" type="button" class="btn btn-sm btn-info" (click)="goToDataSets()">View datasets</button>
+                <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success" (click)="goToDataSets()">Edit datasets</button>
+              </div>
             </div>
-
+            <div class="card-body">
+              <loadingIndicator [done]="datasetLoadingComplete">
+                <div class="row" *ngFor="let dataset of datasetStats">
+                  <div class="col-md-10">
+                    {{dataset.label}}
+                  </div>
+                  <div class="col-md-2">
+                    {{dataset.value}}
+                  </div>
+                </div>
+              </loadingIndicator>
+              <br>
+            </div>
           </div>
-          <div class="card-body">
-            <form>
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label class="control-label">Existing organisation name</label>
-                  <input type="text" class="form-control" placeholder="Organisation name" [(ngModel)]="existingOrg.name" name="name">
-                </div>
-                <div class="form-group col-md-6">
-                  <label class="control-label">New organisation name</label>
-                  <input type="text" disabled="true" class="form-control" placeholder="Organisation name" [(ngModel)]="newOrg.name" name="newname">
-                </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-header text-white">
+              Base populations
+              <div class="pull-right">
+                <button *ngIf="!allowEdit" type="button" class="btn btn-sm btn-info" (click)="goToCohorts()">View cohorts</button>
+                <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success" (click)="goToCohorts()">Edit cohorts</button>
               </div>
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label class="control-label">Existing alternative name</label>
-                  <input type="text" class="form-control" placeholder="Alternative name" [(ngModel)]="existingOrg.alternativeName" name="alternativeName">
-                </div>
-                <div class="form-group col-md-6">
-                  <label class="control-label">Alternative name</label>
-                  <input type="text" disabled="true" class="form-control" placeholder="Alternative name" [(ngModel)]="newOrg.alternativeName" name="newalternativeName">
-                </div>
-              </div>
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label class="control-label">Existing ODS code</label>
-                  <input type="text" class="form-control" placeholder="ODS code" [(ngModel)]="existingOrg.odsCode" name="odsCode">
-                </div>
-                <div class="form-group col-md-6">
-                  <label class="control-label">New ODS code</label>
-                  <input type="text" disabled="true" class="form-control" placeholder="ODS code" [(ngModel)]="newOrg.odsCode" name="newodsCode">
-                </div>
-              </div>
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label class="control-label">Existing ICO code</label>
-                  <input type="text" class="form-control" placeholder="ICO code" [(ngModel)]="existingOrg.icoCode" name="icoCode">
-                </div>
-                <div class="form-group col-md-6">
-                  <label class="control-label">New ICO code</label>
-                  <input type="text" disabled="true" class="form-control" placeholder="ICO code" [(ngModel)]="newOrg.icoCode" name="newicoCode">
-                </div>
-              </div>
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label class="control-label">Existing IG toolkit status</label>
-                  <input type="text" class="form-control" placeholder="IG toolkit status" [(ngModel)]="existingOrg.igToolkitStatus" name="igToolkitStatus">
-                </div>
-                <div class="form-group col-md-6">
-                  <label class="control-label">New IG toolkit status</label>
-                  <input type="text" disabled="true" class="form-control" placeholder="IG toolkit status" [(ngModel)]="newOrg.igToolkitStatus" name="newigToolkitStatus">
-                </div>
-              </div>
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label class="control-label">Existing date of registration</label>
-                  <input type="date" class="form-control" placeholder="Date of registration" [(ngModel)]="existingOrg.dateOfRegistration" name="dateOfRegistration">
-                </div>
-                <div class="form-group col-md-6">
-                  <label class="control-label">New date of registration</label>
-                  <input type="date" disabled="true" class="form-control" placeholder="Date of registration" [(ngModel)]="newOrg.dateOfRegistration" name="newdateOfRegistration">
-                </div>
-              </div>
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label class="control-label">Existing registration person</label>
-                  <input type="text" class="form-control" placeholder="Registration person" [(ngModel)]="existingOrg.registrationPerson" name="registrationPerson">
-                </div>
-                <div class="form-group col-md-6">
-                  <label class="control-label">New registration person</label>
-                  <input type="text" disabled="true" class="form-control" placeholder="Registration person" [(ngModel)]="newOrg.registrationPerson" name="newregistrationPerson">
-                </div>
-              </div>
-              <div class="row">
-                <div class="form-group col-md-6">
-                  <label class="control-label">Existing evidence of registration</label>
-                  <input type="text" class="form-control" placeholder="Evidence of registration" [(ngModel)]="existingOrg.evidenceOfRegistration" name="evidenceOfRegistration">
-                </div>
-                <div class="form-group col-md-6">
-                  <label class="control-label">New evidence of registration</label>
-                  <input type="text" disabled="true" class="form-control" placeholder="Evidence of registration" [(ngModel)]="newOrg.evidenceOfRegistration" name="newevidenceOfRegistration">
-                </div>
-              </div>
-              <div class="well" *ngFor="let address of existingOrg.addresses">
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label class="control-label">Existing building name</label>
-                    <input type="text" class="form-control" placeholder="Building name" [(ngModel)]="address.buildingName" name="buildingName">
+            </div>
+            <div class="card-body">
+              <loadingIndicator [done]="cohortLoadingComplete">
+                <div class="row" *ngFor="let cohort of cohortStats">
+                  <div class="col-md-10">
+                    {{cohort.label}}
                   </div>
-                  <div class="form-group col-md-6">
-                    <label class="control-label">New building name</label>
-                    <input type="text" disabled="true" class="form-control" placeholder="Building name" [(ngModel)]="newOrg.addresses[0].buildingName" name="newbuildingName">
+                  <div class="col-md-2">
+                    {{cohort.value}}
                   </div>
                 </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label class="control-label">Existing number and street</label>
-                    <input type="text" class="form-control" placeholder="Number and street" [(ngModel)]="address.numberAndStreet" name="numberAndStreet">
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label class="control-label">New number and street</label>
-                    <input type="text" disabled="true" class="form-control" placeholder="Number and street" [(ngModel)]="newOrg.addresses[0].numberAndStreet" name="newnumberAndStreet">
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label class="control-label">Existing locality</label>
-                    <input type="text" class="form-control" placeholder="Locality" [(ngModel)]="address.locality" name="locality">
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label class="control-label">New locality</label>
-                    <input type="text" disabled="true" class="form-control" placeholder="Locality" [(ngModel)]="newOrg.addresses[0].locality" name="newlocality">
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label class="control-label">Existing city</label>
-                    <input type="text" class="form-control" placeholder="City" [(ngModel)]="address.city" name="city">
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label class="control-label">New city</label>
-                    <input type="text" disabled="true" class="form-control" placeholder="City" [(ngModel)]="newOrg.addresses[0].city" name="newcity">
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label class="control-label">Existing county</label>
-                    <input type="text" class="form-control" placeholder="County" [(ngModel)]="address.county" name="county">
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label class="control-label">New county</label>
-                    <input type="text" disabled="true" class="form-control" placeholder="County" [(ngModel)]="newOrg.addresses[0].county" name="newcounty">
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label class="control-label">Existing postcode</label>
-                    <input type="text" class="form-control" placeholder="Postcode" [(ngModel)]="address.postcode" name="postcode">
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label class="control-label">New postcode</label>
-                    <input type="text" disabled="true" class="form-control" placeholder="Postcode" [(ngModel)]="newOrg.addresses[0].postcode" name="newpostcode">
-                  </div>
-                </div>
-              </div>
-            </form>
+              </loadingIndicator>
+              <br>
+            </div>
           </div>
         </div>
       </div>
+      <br>
     </div>
   </div>
 </div>

@@ -3,6 +3,7 @@ import {Organisation} from '../models/Organisation';
 import {OrganisationService} from '../organisation.service';
 import {LoggerService} from 'eds-angular4';
 import {NgbModal, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {RegionService} from "../../region/region.service";
 
 @Component({
   selector: 'app-organisation-picker',
@@ -19,13 +20,17 @@ export class OrganisationPickerComponent implements OnInit {
   showMultipleMessage = false;
   searchType: string;
   uuid: string;
+  regionUUID: string;
+  dsaUUID: string;
   odsCodes: string;
 
-  public static open(modalService: NgbModal, organisations: Organisation[], searchType: string, uuid: string = '') {
+  public static open(modalService: NgbModal, organisations: Organisation[], searchType: string, uuid: string = '',
+                     regionUUID: string = '', dsaUUID : string = '') {
     const modalRef = modalService.open(OrganisationPickerComponent, { backdrop : 'static'});
     modalRef.componentInstance.resultData = Object.assign([], organisations);
     modalRef.componentInstance.searchType = searchType;
-    modalRef.componentInstance.uuid = uuid;
+    modalRef.componentInstance.regionUUID = regionUUID;
+    modalRef.componentInstance.dsaUUID = dsaUUID;
 
     return modalRef;
   }
@@ -53,7 +58,6 @@ export class OrganisationPickerComponent implements OnInit {
     const vm = this;
     vm.showMultipleMessage = false;
     var odsList = vm.odsCodes.replace(/\n/g, ',').split(',');
-    console.log(odsList);
 
     vm.organisationService.getMultipleOrganisationsFromODSList(odsList)
       .subscribe(

@@ -25,13 +25,14 @@ import {DataExchangeComponent} from "./data-exchange/data-exchange/data-exchange
 import {DataExchangeEditorComponent} from "./data-exchange/data-exchange-editor/data-exchange-editor.component";
 import {ProjectComponent} from "./project/project/project.component";
 import {ProjectEditorComponent} from "./project/project-editor/project-editor.component";
+import {ConfigComponent} from "./config/config/config.component";
 
 @Injectable()
 export class AppMenuService implements  AbstractMenuProvider  {
   static getRoutes(): Routes {
     return [
       { path: '', redirectTo : 'mySharingOverview', pathMatch: 'full' }, // Default route
-      { path: 'organisationOverview', component: OrganisationOverviewComponent},
+      { path: 'overview', component: OrganisationOverviewComponent},
       { path: 'sharingOverview', component: DataSharingSummaryOverviewComponent},
       { path: 'organisations', component: OrganisationComponent},
       { path: 'organisation/:id/:mode', component: OrganisationEditorComponent},
@@ -53,7 +54,8 @@ export class AppMenuService implements  AbstractMenuProvider  {
       { path: 'dataSet/:id/:mode', component: DataSetEditorComponent},
       { path: 'mySharingOverview', component: MySharingOverviewComponent},
       { path: 'projects', component: ProjectComponent},
-      { path: 'project/:id/:mode', component: ProjectEditorComponent}
+      { path: 'project/:id/:mode', component: ProjectEditorComponent},
+      { path: 'configuration', component: ConfigComponent},
     ];
   }
 
@@ -70,8 +72,8 @@ export class AppMenuService implements  AbstractMenuProvider  {
   getMenuOptions(): MenuOption[] {
     return [
       {caption: 'My Sharing', state: 'mySharingOverview', icon: 'fa fa-user', role: 'Viewer'},
-      {caption: 'Overview', state: 'organisationOverview', icon: 'fa fa-hospital-o', role: 'Viewer'},
-      {caption: 'Sharing', state: 'sharingOverview', icon: 'fa-share-alt', role: 'Viewer'}
+      {caption: 'Overview', state: 'overview', icon: 'fa fa-hospital-o', role: 'Viewer'},
+      {caption: 'Configuration', state: 'configuration', icon: 'fa-cogs', role: 'Config'}
     ];
   }
 }
