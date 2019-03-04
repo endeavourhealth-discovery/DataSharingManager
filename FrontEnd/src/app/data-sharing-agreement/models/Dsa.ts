@@ -14,6 +14,7 @@ export class Dsa {
     regions: { [key: string]: string; };
     publishers: { [key: string]: string; };
     subscribers: { [key: string]: string; };
+    projects: { [key: string]: string; };
     documentations: Documentation[];
     purposes: Purpose[];
     benefits: Purpose[];

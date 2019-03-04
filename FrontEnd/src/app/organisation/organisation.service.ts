@@ -224,4 +224,64 @@ export class OrganisationService  {
       .map((response) => response.json());
   }
 
+  searchOrganisationsInParentRegion(regionUUID: string, searchTerm: string):  Observable<Organisation[]> {
+    const vm = this;
+    let params = new URLSearchParams();
+    params.set('regionUUID', regionUUID);
+    params.set('searchTerm', searchTerm);
+    return vm.http.get('api/organisation/searchOrganisationsInParentRegion', { search : params })
+      .map((response) => response.json());
+  }
+
+  searchPublishersInDSA(dsaUuid: string, searchTerm: string):  Observable<Organisation[]> {
+    const vm = this;
+    let params = new URLSearchParams();
+    params.set('dsaUUID', dsaUuid);
+    params.set('searchTerm', searchTerm);
+    return vm.http.get('api/organisation/searchPublishersFromDSA', { search : params })
+      .map((response) => response.json());
+  }
+
+  searchSubscribersInDSA(dsaUuid: string, searchTerm: string):  Observable<Organisation[]> {
+    const vm = this;
+    let params = new URLSearchParams();
+    params.set('dsaUUID', dsaUuid);
+    params.set('searchTerm', searchTerm);
+    return vm.http.get('api/organisation/searchSubscribersFromDSA', { search : params })
+      .map((response) => response.json());
+  }
+
+  searchOrganisationsInParentRegionWithOdsList(regionUuid: string, odsCodes: string[]):  Observable<Organisation[]> {
+    const vm = this;
+    let params = new URLSearchParams();
+    params.set('regionUUID', regionUuid);
+    for (let ix in odsCodes) {
+      params.append('odsCodes', odsCodes[ix]);
+    }
+    return vm.http.get('api/organisation/searchOrganisationsInParentRegionWithOdsList', { search : params })
+      .map((response) => response.json());
+  }
+
+  searchPublishersFromDSAWithOdsList(dsaUuid: string, odsCodes: string[]):  Observable<Organisation[]> {
+    const vm = this;
+    let params = new URLSearchParams();
+    params.set('dsaUUID', dsaUuid);
+    for (let ix in odsCodes) {
+      params.append('odsCodes', odsCodes[ix]);
+    }
+    return vm.http.get('api/organisation/searchPublishersFromDSAWithOdsList', { search : params })
+      .map((response) => response.json());
+  }
+
+  searchSubscribersFromDSAWithOdsList(dsaUuid: string, odsCodes: string[]):  Observable<Organisation[]> {
+    const vm = this;
+    let params = new URLSearchParams();
+    params.set('dsaUUID', dsaUuid);
+    for (let ix in odsCodes) {
+      params.append('odsCodes', odsCodes[ix]);
+    }
+    return vm.http.get('api/organisation/searchSubscribersFromDSAWithOdsList', { search : params })
+      .map((response) => response.json());
+  }
+
 }

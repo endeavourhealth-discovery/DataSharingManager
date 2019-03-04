@@ -47,11 +47,40 @@ export class OrganisationPickerComponent implements OnInit {
     if (vm.searchData.length < 3) {
       return;
     }
-    vm.organisationService.search(vm.searchData, vm.searchType)
-      .subscribe(
-        (result) => vm.searchResults = result.filter(function(x) {return x.uuid != vm.uuid; }),
-        (error) => vm.log.error(error)
-      );
+
+    if (vm.regionUUID != '') {
+      vm.organisationService.searchOrganisationsInParentRegion(vm.regionUUID, vm.searchData)
+        .subscribe(
+          (result) => vm.searchResults = result.filter(function (x) {
+            return x.uuid != vm.uuid;
+          }),
+          (error) => vm.log.error(error)
+        );
+    } else if (vm.dsaUUID != '' && vm.searchType == 'publisher') {
+      vm.organisationService.searchPublishersInDSA(vm.dsaUUID, vm.searchData)
+        .subscribe(
+          (result) => vm.searchResults = result.filter(function (x) {
+            return x.uuid != vm.uuid;
+          }),
+          (error) => vm.log.error(error)
+        );
+    } else if (vm.dsaUUID != '' && vm.searchType == 'subscriber') {
+      vm.organisationService.searchSubscribersInDSA(vm.dsaUUID, vm.searchData)
+        .subscribe(
+          (result) => vm.searchResults = result.filter(function (x) {
+            return x.uuid != vm.uuid;
+          }),
+          (error) => vm.log.error(error)
+        );
+    } else {
+      vm.organisationService.search(vm.searchData, vm.searchType)
+        .subscribe(
+          (result) => vm.searchResults = result.filter(function (x) {
+            return x.uuid != vm.uuid;
+          }),
+          (error) => vm.log.error(error)
+        );
+    }
   }
 
   searchMultiple() {
@@ -59,14 +88,43 @@ export class OrganisationPickerComponent implements OnInit {
     vm.showMultipleMessage = false;
     var odsList = vm.odsCodes.replace(/\n/g, ',').split(',');
 
-    vm.organisationService.getMultipleOrganisationsFromODSList(odsList)
-      .subscribe(
-        (result) => {
-          vm.multipleSearchResults = result,
-          vm.multipleSearchMissing = odsList.filter((x) => !result.filter(y => y.odsCode === x).length);
-        },
-        (error) => vm.log.error(error)
-      );
+    if (vm.regionUUID != '') {
+      vm.organisationService.searchOrganisationsInParentRegionWithOdsList(vm.regionUUID, odsList)
+        .subscribe(
+          (result) => {
+              vm.multipleSearchResults = result,
+              vm.multipleSearchMissing = odsList.filter((x) => !result.filter(y => y.odsCode === x).length);
+          },
+          (error) => vm.log.error(error)
+        );
+    } else if (vm.dsaUUID != '' && vm.searchType == 'publisher') {
+      vm.organisationService.searchPublishersFromDSAWithOdsList(vm.dsaUUID, odsList)
+        .subscribe(
+          (result) => {
+              vm.multipleSearchResults = result,
+              vm.multipleSearchMissing = odsList.filter((x) => !result.filter(y => y.odsCode === x).length);
+          },
+          (error) => vm.log.error(error)
+        );
+    } else if (vm.dsaUUID != '' && vm.searchType == 'subscriber') {
+      vm.organisationService.searchSubscribersFromDSAWithOdsList(vm.dsaUUID, odsList)
+        .subscribe(
+          (result) => {
+              vm.multipleSearchResults = result,
+              vm.multipleSearchMissing = odsList.filter((x) => !result.filter(y => y.odsCode === x).length);
+          },
+          (error) => vm.log.error(error)
+        );
+    } else {
+      vm.organisationService.getMultipleOrganisationsFromODSList(odsList)
+        .subscribe(
+          (result) => {
+              vm.multipleSearchResults = result,
+              vm.multipleSearchMissing = odsList.filter((x) => !result.filter(y => y.odsCode === x).length);
+          },
+          (error) => vm.log.error(error)
+        );
+    }
   }
 
   private addToSelection(match: Organisation) {

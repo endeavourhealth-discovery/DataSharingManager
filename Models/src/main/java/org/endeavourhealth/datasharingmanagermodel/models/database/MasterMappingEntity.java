@@ -334,6 +334,11 @@ public class MasterMappingEntity {
             saveParentMappings(regions, MapType.REGION.getMapType(), dsa.getUuid(), MapType.DATASHARINGAGREEMENT.getMapType());
         }
 
+        if (dsa.getProjects() != null) {
+            Map<UUID, String> projects = dsa.getProjects();
+            saveChildMappings(projects, MapType.PROJECT.getMapType(), dsa.getUuid(), MapType.DATASHARINGAGREEMENT.getMapType());
+        }
+
         if (dsa.getPublishers() != null) {
             Map<UUID, String> publishers = dsa.getPublishers();
             saveChildMappings(publishers, MapType.PUBLISHER.getMapType(), dsa.getUuid(), MapType.DATASHARINGAGREEMENT.getMapType());

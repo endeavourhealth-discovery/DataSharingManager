@@ -275,7 +275,7 @@ export class ProjectEditorComponent implements OnInit {
 
   private editPublishers() {
     const vm = this;
-    OrganisationPickerComponent.open(vm.$modal, vm.publishers, "organisations")
+    OrganisationPickerComponent.open(vm.$modal, vm.publishers, "publisher", '', '', vm.dsas[0].uuid)
       .result.then(function
       (result: Organisation[]) { vm.publishers = result; },
       () => vm.log.info('Edit publishers cancelled')
@@ -284,7 +284,7 @@ export class ProjectEditorComponent implements OnInit {
 
   private editSubscribers() {
     const vm = this;
-    OrganisationPickerComponent.open(vm.$modal, vm.subscribers, "organisations")
+    OrganisationPickerComponent.open(vm.$modal, vm.subscribers, "subscriber", '', '', vm.dsas[0].uuid)
       .result.then(function
       (result: Organisation[]) { vm.subscribers = result; },
       () => vm.log.info('Edit subscribers cancelled')

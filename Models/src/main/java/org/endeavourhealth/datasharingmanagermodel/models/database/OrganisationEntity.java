@@ -1,6 +1,7 @@
 package org.endeavourhealth.datasharingmanagermodel.models.database;
 
 import org.endeavourhealth.datasharingmanagermodel.PersistenceManager;
+import org.endeavourhealth.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.datasharingmanagermodel.models.json.JsonOrganisation;
 import org.endeavourhealth.datasharingmanagermodel.models.json.JsonStatistics;
 

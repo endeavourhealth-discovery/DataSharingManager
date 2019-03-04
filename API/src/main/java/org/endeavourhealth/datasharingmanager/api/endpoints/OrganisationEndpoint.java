@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Path("/organisation")
 @Metrics(registry = "EdsRegistry")
@@ -595,6 +596,120 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         return getMultipleOrganisationsFromODSList(odsCodes);
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.OrganisationEndpoint.searchOrganisationsInParentRegion")
+    @Path("/searchOrganisationsInParentRegion")
+    @ApiOperation(value = "Returns a list of Json representations of Organisations based on" +
+            "a search term. Only searches in organisations that are part of the parent region.")
+    public Response searchOrganisationsInParentRegion(@Context SecurityContext sc,
+                                                        @ApiParam(value = "region UUID") @QueryParam("regionUUID") String regionUUID,
+                                                        @ApiParam(value = "search term") @QueryParam("searchTerm") String searchTerm
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "regionUUID",
+                "regionUUID", regionUUID, "searchTerm", searchTerm);
+
+        return searchOrganisationsInRegion(regionUUID, searchTerm, null);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.OrganisationEndpoint.searchPublishersFromDSA")
+    @Path("/searchPublishersFromDSA")
+    @ApiOperation(value = "Returns a list of Json representations of Organisations based on" +
+            "a search term. Only searches in publishers that are part of the DSA.")
+    public Response searchPublishersInDSA(@Context SecurityContext sc,
+                                                        @ApiParam(value = "dsa UUID") @QueryParam("dsaUUID") String dsaUUID,
+                                                        @ApiParam(value = "search term") @QueryParam("searchTerm") String searchTerm
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "regionUUID",
+                "regionUUID", dsaUUID, "searchTerm", searchTerm);
+
+        return searchPublishersInDSA(dsaUUID, searchTerm, null);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.OrganisationEndpoint.searchSubscribersFromDSA")
+    @Path("/searchSubscribersFromDSA")
+    @ApiOperation(value = "Returns a list of Json representations of Organisations based on" +
+            "a search term. Only searches in subscribers that are part of the DSA.")
+    public Response searchSubscribersInDSA(@Context SecurityContext sc,
+                                            @ApiParam(value = "dsa UUID") @QueryParam("dsaUUID") String dsaUUID,
+                                            @ApiParam(value = "search term") @QueryParam("searchTerm") String searchTerm
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "regionUUID",
+                "regionUUID", dsaUUID, "searchTerm", searchTerm);
+
+        return searchSubscribersInDSA(dsaUUID, searchTerm, null);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.OrganisationEndpoint.searchOrganisationsInParentRegionWithOdsList")
+    @Path("/searchOrganisationsInParentRegionWithOdsList")
+    @ApiOperation(value = "Returns a list of Json representations of Organisations based on" +
+            "a search term. Only searches in organisations that are part of the parent region.")
+    public Response searchOrganisationsInParentRegionWithOdsList(@Context SecurityContext sc,
+                                                      @ApiParam(value = "region UUID") @QueryParam("regionUUID") String regionUUID,
+                                                      @ApiParam(value = "ODS Codes") @QueryParam("odsCodes") List<String> odsCodes
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "regionUUID",
+                "regionUUID", regionUUID, "searchTerm", odsCodes);
+
+        return searchOrganisationsInRegion(regionUUID, null, odsCodes);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.OrganisationEndpoint.searchPublishersFromDSAWithOdsList")
+    @Path("/searchPublishersFromDSAWithOdsList")
+    @ApiOperation(value = "Returns a list of Json representations of Organisations based on" +
+            "a search term. Only searches in publishers that are part of the DSA.")
+    public Response searchPublishersFromDSAWithOdsList(@Context SecurityContext sc,
+                                          @ApiParam(value = "dsa UUID") @QueryParam("dsaUUID") String dsaUUID,
+                                          @ApiParam(value = "ODS Codes") @QueryParam("odsCodes") List<String> odsCodes
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "regionUUID",
+                "regionUUID", dsaUUID, "searchTerm", odsCodes);
+
+        return searchPublishersInDSA(dsaUUID, null, odsCodes);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.OrganisationEndpoint.searchSubscribersFromDSAWithOdsList")
+    @Path("/searchSubscribersFromDSAWithOdsList")
+    @ApiOperation(value = "Returns a list of Json representations of Organisations based on" +
+            "a search term. Only searches in subscribers that are part of the DSA.")
+    public Response searchSubscribersFromDSAWithOdsList(@Context SecurityContext sc,
+                                           @ApiParam(value = "dsa UUID") @QueryParam("dsaUUID") String dsaUUID,
+                                           @ApiParam(value = "ODS Codes") @QueryParam("odsCodes") List<String> odsCodes
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "regionUUID",
+                "regionUUID", dsaUUID, "searchTerm", odsCodes);
+
+        return searchSubscribersInDSA(dsaUUID, null, odsCodes);
+    }
+
     private Response getOrganisationsByType(byte type) throws Exception {
         List<OrganisationEntity> organisations = OrganisationEntity.getOrganisationByType(type);
 
@@ -821,6 +936,73 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
                 .ok()
                 .entity(matchingOrganisations)
                 .build();
+    }
+
+    private Response searchOrganisations(List<String> organisationUuids, String searchTerm) throws Exception {
+        List<OrganisationEntity> baseOrganisationList = new ArrayList<>();
+        List<OrganisationEntity> matchingOrgs = new ArrayList<>();
+
+        if (!organisationUuids.isEmpty()) {
+            baseOrganisationList = OrganisationEntity.getOrganisationsFromList(organisationUuids);
+
+            matchingOrgs = baseOrganisationList.stream()
+                    .filter(org -> org.getName().toLowerCase().contains(searchTerm.toLowerCase())
+                            || org.getOdsCode().toLowerCase().contains(searchTerm.toLowerCase())).collect(Collectors.toList());
+        }
+
+        return Response
+                .ok()
+                .entity(matchingOrgs)
+                .build();
+    }
+
+    private Response searchOrganisationsWithODSList(List<String> organisationUuids, List<String> odsCodes) throws Exception {
+        List<OrganisationEntity> baseOrganisationList = new ArrayList<>();
+        List<OrganisationEntity> matchingOrgs = new ArrayList<>();
+
+        if (!organisationUuids.isEmpty()) {
+            baseOrganisationList = OrganisationEntity.getOrganisationsFromList(organisationUuids);
+
+            matchingOrgs = baseOrganisationList.stream()
+                    .filter(org -> odsCodes.contains(org.getOdsCode()))
+                            .collect(Collectors.toList());
+        }
+
+        return Response
+                .ok()
+                .entity(matchingOrgs)
+                .build();
+    }
+
+    private Response searchOrganisationsInRegion(String regionUUID, String searchTerm, List<String> odsCodes) throws Exception {
+        List<String> organisationUuids = MasterMappingEntity.getChildMappings(regionUUID, MapType.REGION.getMapType(), MapType.ORGANISATION.getMapType());
+
+        if (searchTerm != null) {
+            return searchOrganisations(organisationUuids, searchTerm);
+        } else {
+            return searchOrganisationsWithODSList(organisationUuids, odsCodes);
+        }
+
+    }
+
+    private Response searchPublishersInDSA(String dsaUUID, String searchTerm, List<String> odsCodes) throws Exception {
+        List<String> organisationUuids =  MasterMappingEntity.getChildMappings(dsaUUID, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType());
+
+        if (searchTerm != null) {
+            return searchOrganisations(organisationUuids, searchTerm);
+        } else {
+            return searchOrganisationsWithODSList(organisationUuids, odsCodes);
+        }
+    }
+
+    private Response searchSubscribersInDSA(String dsaUUID, String searchTerm, List<String> odsCodes) throws Exception {
+        List<String> organisationUuids =  MasterMappingEntity.getChildMappings(dsaUUID, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.SUBSCRIBER.getMapType());
+
+        if (searchTerm != null) {
+            return searchOrganisations(organisationUuids, searchTerm);
+        } else {
+            return searchOrganisationsWithODSList(organisationUuids, odsCodes);
+        }
     }
 
     private Response startUpload() throws Exception {

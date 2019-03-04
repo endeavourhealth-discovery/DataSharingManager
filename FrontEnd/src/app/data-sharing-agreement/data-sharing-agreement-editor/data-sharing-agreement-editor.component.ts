@@ -172,6 +172,13 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       this.dsa.subscribers[sub.uuid] = sub.name;
     }
 
+    // Populate projects before save
+    vm.dsa.projects = {};
+    for (const idx in this.projects) {
+      const proj: Project = this.projects[idx];
+      this.dsa.projects[proj.uuid] = proj.name;
+    }
+
     // Populate purposes before save
     vm.dsa.purposes = [];
     vm.dsa.purposes = this.purposes;
@@ -232,7 +239,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   private editPublishers() {
     const vm = this;
-    OrganisationPickerComponent.open(vm.$modal, vm.publishers, 'organisation')
+    OrganisationPickerComponent.open(vm.$modal, vm.publishers, 'publisher', '', vm.regions[0].uuid, '')
       .result.then(function
       (result: Organisation[]) { vm.publishers = result; },
       () => vm.log.info('Edit publishers cancelled')
@@ -241,7 +248,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   private editSubscribers() {
     const vm = this;
-    OrganisationPickerComponent.open(vm.$modal, vm.subscribers, 'organisation')
+    OrganisationPickerComponent.open(vm.$modal, vm.subscribers, 'subscriber', '', vm.regions[0].uuid, '')
       .result.then(function
       (result: Organisation[]) { vm.subscribers = result; },
       () => vm.log.info('Edit subscribers cancelled')

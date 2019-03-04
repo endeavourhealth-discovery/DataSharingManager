@@ -21,6 +21,7 @@ public class JsonDSA {
     private Map<UUID, String> regions = null;
     private Map<UUID, String> publishers = null;
     private Map<UUID, String> subscribers = null;
+    private Map<UUID, String> projects = null;
     private List<JsonDocumentation> documentations = new ArrayList<>();
     private List<JsonPurpose> purposes = new ArrayList<>();
     private List<JsonPurpose> benefits = new ArrayList<>();
@@ -143,5 +144,13 @@ public class JsonDSA {
 
     public void setDocumentations(List<JsonDocumentation> documentations) {
         this.documentations = documentations;
+    }
+
+    public Map<UUID, String> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Map<UUID, String> projects) {
+        this.projects = projects;
     }
 }
