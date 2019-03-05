@@ -13,10 +13,12 @@ export class DataSharingAgreementPickerComponent implements OnInit {
   @Input() resultData: Dsa[];
   searchData: string;
   searchResults: Dsa[];
+  limit: number;
 
-  public static open(modalService: NgbModal, dsas: Dsa[]) {
+  public static open(modalService: NgbModal, dsas: Dsa[], limit: number = 0) {
     const modalRef = modalService.open(DataSharingAgreementPickerComponent, { backdrop : 'static'});
     modalRef.componentInstance.resultData = Object.assign([], dsas);
+    modalRef.componentInstance.limit = limit;
 
     return modalRef;
   }
@@ -42,7 +44,12 @@ export class DataSharingAgreementPickerComponent implements OnInit {
 
   private addToSelection(match: Dsa) {
     if (!this.resultData.some(x => x.uuid === match.uuid)) {
-      this.resultData.push(match);
+      if (this.limit == 1){
+        this.resultData = [];
+        this.resultData.push(match);
+      } else {
+        this.resultData.push(match);
+      }
     }
   }
 

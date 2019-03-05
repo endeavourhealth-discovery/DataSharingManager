@@ -261,7 +261,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
   private editRegions() {
     const vm = this;
-    RegionPickerComponent.open(vm.$modal, vm.regions)
+    RegionPickerComponent.open(vm.$modal, vm.regions, '', 1)
       .result.then(function
       (result: Region[]) { vm.regions = result; },
       () => vm.log.info('Edit regions cancelled')

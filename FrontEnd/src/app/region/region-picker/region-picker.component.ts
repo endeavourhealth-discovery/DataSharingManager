@@ -15,11 +15,13 @@ export class RegionPickerComponent implements OnInit {
   searchData: string;
   searchResults: Region[];
   uuid: string;
+  limit: number;
 
-  public static open(modalService: NgbModal, regions: Region[], uuid: string = '') {
+  public static open(modalService: NgbModal, regions: Region[], uuid: string = '', limit: number = 0) {
     const modalRef = modalService.open(RegionPickerComponent, { backdrop : 'static'});
     modalRef.componentInstance.resultData = Object.assign([], regions);
     modalRef.componentInstance.uuid = uuid;
+    modalRef.componentInstance.limit = limit;
 
     return modalRef;
   }
@@ -46,7 +48,12 @@ export class RegionPickerComponent implements OnInit {
 
   private addToSelection(match: Region) {
     if (!this.resultData.some(x => x.uuid === match.uuid)) {
-      this.resultData.push(match);
+      if (this.limit == 1) {
+        this.resultData = [];
+        this.resultData.push(match);
+      } else {
+        this.resultData.push(match);
+      }
     }
   }
 

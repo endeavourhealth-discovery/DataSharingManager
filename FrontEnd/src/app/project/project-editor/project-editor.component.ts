@@ -266,7 +266,7 @@ export class ProjectEditorComponent implements OnInit {
 
   private editDataSharingAgreements() {
     const vm = this;
-    DataSharingAgreementPickerComponent.open(vm.$modal, vm.dsas)
+    DataSharingAgreementPickerComponent.open(vm.$modal, vm.dsas, 1)
       .result.then(function
       (result: Dsa[]) { vm.dsas = result; },
       () => vm.log.info('Edit data sharing agreements cancelled')
