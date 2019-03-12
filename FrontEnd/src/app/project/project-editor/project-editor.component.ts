@@ -5,7 +5,13 @@ import {Project} from "../models/Project";
 import {DataSet} from "../../data-set/models/Dataset";
 import {Cohort} from "../../cohort/models/Cohort";
 import {ToastsManager} from "ng2-toastr";
-import {LoggerService, SecurityService, UserManagerNotificationService, UserManagerService} from "eds-angular4";
+import {
+  LoggerService,
+  MessageBoxDialog,
+  SecurityService,
+  UserManagerNotificationService,
+  UserManagerService
+} from "eds-angular4";
 import {ActivatedRoute, Router} from "@angular/router";
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ProjectService} from "../project.service";
