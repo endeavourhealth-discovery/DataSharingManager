@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {DataSharingAgreementService} from '../data-sharing-agreement.service';
-import {LoggerService, SecurityService, UserManagerNotificationService} from 'eds-angular4';
+import {LoggerService, MessageBoxDialog, SecurityService, UserManagerNotificationService} from 'eds-angular4';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NgbModal, NgbRadioGroup} from '@ng-bootstrap/ng-bootstrap';
 import {Purpose} from '../models/Purpose';
@@ -239,20 +239,34 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   private editPublishers() {
     const vm = this;
-    OrganisationPickerComponent.open(vm.$modal, vm.publishers, 'publisher', '', vm.regions[0].uuid, '')
-      .result.then(function
-      (result: Organisation[]) { vm.publishers = result; },
-      () => vm.log.info('Edit publishers cancelled')
-    );
+    if (!vm.regions[0]) {
+      MessageBoxDialog.open(vm.$modal, 'Edit publishers', 'The data sharing agreement must be associated with a region before editing publishers', 'Ok', '')
+        .result.then();
+    } else {
+      OrganisationPickerComponent.open(vm.$modal, vm.publishers, 'publisher', '', vm.regions[0].uuid, '')
+        .result.then(function
+        (result: Organisation[]) {
+          vm.publishers = result;
+        },
+        () => vm.log.info('Edit publishers cancelled')
+      );
+    }
   }
 
   private editSubscribers() {
     const vm = this;
-    OrganisationPickerComponent.open(vm.$modal, vm.subscribers, 'subscriber', '', vm.regions[0].uuid, '')
-      .result.then(function
-      (result: Organisation[]) { vm.subscribers = result; },
-      () => vm.log.info('Edit subscribers cancelled')
-    );
+    if (!vm.regions[0]) {
+      MessageBoxDialog.open(vm.$modal, 'Edit subscribers', 'The data sharing agreement must be associated with a region before editing subscribers', 'Ok', '')
+        .result.then();
+    } else {
+      OrganisationPickerComponent.open(vm.$modal, vm.subscribers, 'subscriber', '', vm.regions[0].uuid, '')
+        .result.then(function
+        (result: Organisation[]) {
+          vm.subscribers = result;
+        },
+        () => vm.log.info('Edit subscribers cancelled')
+      );
+    }
   }
 
   private editPurposes(index: number = -1) {
@@ -450,7 +464,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   cancel() {
-    this.file = null;
+    const vm = this;
+    vm.file = null;
   }
 
   checkEndDate() {

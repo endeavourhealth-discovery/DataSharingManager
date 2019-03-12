@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewContainerRef} from '@angular/core';
 import {DataProcessingAgreementService} from '../data-processing-agreement.service';
-import {LoggerService, SecurityService, UserManagerNotificationService} from 'eds-angular4';
+import {LoggerService, MessageBoxDialog, SecurityService, UserManagerNotificationService} from 'eds-angular4';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {DataSet} from '../../data-set/models/Dataset';
@@ -332,6 +332,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   fileChange(event) {
+    console.log('change');
+    console.log(event);
     const fileList: FileList = event.target.files;
     if (fileList.length > 0) {
       this.file = fileList[0];
@@ -346,7 +348,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
     myReader.onloadend = function(e){
       // you can perform an action with readed data here
-      vm.log.success('Uploading file', null, 'Upload document');
+      vm.log.success('Uploading complete', null, 'Upload document');
       vm.pdfSrc = myReader.result;
       const newDoc: Documentation = new Documentation();
       newDoc.fileData = myReader.result;
@@ -373,11 +375,18 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
   private editPublishers() {
     const vm = this;
-    OrganisationPickerComponent.open(vm.$modal, vm.publishers, 'organisation', '', vm.regions[0].uuid)
-      .result.then(function
-      (result: Organisation[]) { vm.publishers = result; },
-      () => vm.log.info('Edit publishers cancelled')
-    );
+    if (!vm.regions[0]) {
+      MessageBoxDialog.open(vm.$modal, 'Edit publishers', 'The data processing agreement must be associated with a region before editing publishers', 'Ok', '')
+        .result.then();
+    } else {
+      OrganisationPickerComponent.open(vm.$modal, vm.publishers, 'organisation', '', vm.regions[0].uuid)
+        .result.then(function
+        (result: Organisation[]) {
+          vm.publishers = result;
+        },
+        () => vm.log.info('Edit publishers cancelled')
+      );
+    }
   }
 
   private getPublishers() {

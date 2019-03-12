@@ -275,20 +275,34 @@ export class ProjectEditorComponent implements OnInit {
 
   private editPublishers() {
     const vm = this;
-    OrganisationPickerComponent.open(vm.$modal, vm.publishers, "publisher", '', '', vm.dsas[0].uuid)
-      .result.then(function
-      (result: Organisation[]) { vm.publishers = result; },
-      () => vm.log.info('Edit publishers cancelled')
-    );
+    if (!vm.dsas[0]) {
+      MessageBoxDialog.open(vm.$modal, 'Edit publishers', 'The project must be associated with a data sharing agreement before editing publishers', 'Ok', '')
+        .result.then();
+    } else {
+      OrganisationPickerComponent.open(vm.$modal, vm.publishers, "publisher", '', '', vm.dsas[0].uuid)
+        .result.then(function
+        (result: Organisation[]) {
+          vm.publishers = result;
+        },
+        () => vm.log.info('Edit publishers cancelled')
+      );
+    }
   }
 
   private editSubscribers() {
     const vm = this;
-    OrganisationPickerComponent.open(vm.$modal, vm.subscribers, "subscriber", '', '', vm.dsas[0].uuid)
-      .result.then(function
-      (result: Organisation[]) { vm.subscribers = result; },
-      () => vm.log.info('Edit subscribers cancelled')
-    );
+    if (!vm.dsas[0]) {
+      MessageBoxDialog.open(vm.$modal, 'Edit subscribers', 'The project must be associated with a data sharing agreement before editing subscribers', 'Ok', '')
+        .result.then();
+    } else {
+      OrganisationPickerComponent.open(vm.$modal, vm.subscribers, "subscriber", '', '', vm.dsas[0].uuid)
+        .result.then(function
+        (result: Organisation[]) {
+          vm.subscribers = result;
+        },
+        () => vm.log.info('Edit subscribers cancelled')
+      );
+    }
   }
 
   private editBasePopulations() {

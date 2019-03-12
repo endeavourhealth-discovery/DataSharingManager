@@ -14,7 +14,7 @@
                   <div class="form-group col-md-12">
 
                     <button for="fileUpload" class="btn btn-success" (click)="fileUploader.click()">Select files</button>
-                    <input #fileUploader id="fileUpload" type="file" (change)="fileChange($event)" placeholder="Upload file" accept=".csv" multiple="true" >
+                    <input #fileUploader id="fileUpload" type="file" (click)="fileUploader.value = null" (change)="fileChange($event)" placeholder="Upload file" accept=".csv" multiple="true" >
                     <label class="control-label" for="fileUpload" *ngIf="fileList?.length > 2">{{fileList.length}} files selected</label>
                     <label class="control-label" for="fileUpload" *ngIf="fileList?.length == 1">{{fileList[0].name}} selected</label>
                     <label class="control-label" for="fileUpload" *ngIf="!fileList">No files selected</label>

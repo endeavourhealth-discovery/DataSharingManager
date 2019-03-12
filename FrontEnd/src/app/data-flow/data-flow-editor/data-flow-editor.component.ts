@@ -313,7 +313,7 @@ export class DataFlowEditorComponent implements OnInit {
 
     myReader.onloadend = function(e){
       // you can perform an action with readed data here
-      vm.log.success('Uploading file', null, 'Upload document');
+      vm.log.success('Uploading complete', null, 'Upload document');
       vm.pdfSrc = myReader.result;
       const newDoc: Documentation = new Documentation();
       newDoc.fileData = myReader.result;
