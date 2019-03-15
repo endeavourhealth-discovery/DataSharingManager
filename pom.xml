@@ -19,10 +19,10 @@
         <frontend-maven-plugin.version>1.4</frontend-maven-plugin.version>
         <node.version>v6.10.1</node.version>
 
-        <eds-api.version>1.27-SNAPSHOT</eds-api.version>
+        <eds-api.version>1.32-SNAPSHOT</eds-api.version>
         <eds-config.version>1.25-SNAPSHOT</eds-config.version>
         <user-manager-models.version>0.0.18-SNAPSHOT</user-manager-models.version>
-        <data-sharing-manager-models.version>0.0.11-SNAPSHOT</data-sharing-manager-models.version>
+        <data-sharing-manager-models.version>0.0.12-SNAPSHOT</data-sharing-manager-models.version>
 
         <aspectj.version>1.8.9</aspectj.version>
         <aspectj-metrics.version>1.2.0</aspectj-metrics.version>
