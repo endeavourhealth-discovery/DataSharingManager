@@ -2,7 +2,6 @@ package org.endeavourhealth.datasharingmanagermodel;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.endeavourhealth.common.config.ConfigManager;
-import org.endeavourhealth.coreui.framework.StartupConfig;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -43,13 +42,5 @@ public class PersistenceManager {
         properties.put("hibernate.hikari.dataSource.password", pass);
 
         entityManagerFactory = Persistence.createEntityManagerFactory("DataSharingManager", properties);
-
-        StartupConfig.registerShutdownHook("Hikari", () -> {
-            if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
-                System.out.println("Closing EntityManagerFactory...");
-                entityManagerFactory.close();
-                System.out.println("EntityManagerFactory closed");
-            }
-        });
     }
 }

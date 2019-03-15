@@ -18,20 +18,21 @@
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
         <frontend-maven-plugin.version>1.4</frontend-maven-plugin.version>
         <node.version>v6.10.1</node.version>
-        <swagger.version>1.5.13</swagger.version>
 
         <eds-api.version>1.27-SNAPSHOT</eds-api.version>
-        <user-manager-models.version>0.0.16-SNAPSHOT</user-manager-models.version>
-        <data-sharing-manager-models.version>0.0.10-SNAPSHOT</data-sharing-manager-models.version>
+        <eds-config.version>1.25-SNAPSHOT</eds-config.version>
+        <user-manager-models.version>0.0.18-SNAPSHOT</user-manager-models.version>
+        <data-sharing-manager-models.version>0.0.11-SNAPSHOT</data-sharing-manager-models.version>
 
         <aspectj.version>1.8.9</aspectj.version>
         <aspectj-metrics.version>1.2.0</aspectj-metrics.version>
         <dropwizard-metrics.version>3.1.0</dropwizard-metrics.version>
         <gson.version>2.3</gson.version>
         <hibernate.version>5.2.12.Final</hibernate.version>
-        <jersey.version>2.22.1</jersey.version>
-        <keycloak.version>2.0.0.Final</keycloak.version>
+        <jersey.version>2.25.1</jersey.version>
+        <keycloak.version>4.8.3.Final</keycloak.version>
         <servlet.version>3.1.0</servlet.version>
+        <swagger.version>1.5.22</swagger.version>
 
         <maven-sonar-plugin.version>3.5.0.1254</maven-sonar-plugin.version>
 
