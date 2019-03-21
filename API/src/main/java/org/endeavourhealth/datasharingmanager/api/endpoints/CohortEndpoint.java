@@ -7,15 +7,18 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.CohortEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataProcessingAgreementEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonCohort;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
-import org.endeavourhealth.datasharingmanagermodel.models.database.CohortEntity;
-import org.endeavourhealth.datasharingmanagermodel.models.database.DataProcessingAgreementEntity;
-import org.endeavourhealth.datasharingmanagermodel.models.database.MasterMappingEntity;
-import org.endeavourhealth.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.datasharingmanagermodel.models.json.JsonCohort;
+import org.endeavourhealth.datasharingmanager.api.DAL.CohortDAL;
+import org.endeavourhealth.datasharingmanager.api.DAL.DataProcessingAgreementDAL;
+import org.endeavourhealth.datasharingmanager.api.DAL.MasterMappingDAL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,14 +91,14 @@ public final class CohortEndpoint extends AbstractEndpoint {
                 "Cohort", cohort);
 
         if (cohort.getUuid() != null) {
-            MasterMappingEntity.deleteAllMappings(cohort.getUuid());
-            CohortEntity.updateCohort(cohort);
+            new MasterMappingDAL().deleteAllMappings(cohort.getUuid());
+            new CohortDAL().updateCohort(cohort);
         } else {
             cohort.setUuid(UUID.randomUUID().toString());
-            CohortEntity.saveCohort(cohort);
+            new CohortDAL().saveCohort(cohort);
         }
 
-        MasterMappingEntity.saveCohortMappings(cohort);
+        new MasterMappingDAL().saveCohortMappings(cohort);
 
         clearLogbackMarkers();
 
@@ -119,7 +122,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
                 COHORT,
                 COHORT_ID, uuid);
 
-        CohortEntity.deleteCohort(uuid);
+        new CohortDAL().deleteCohort(uuid);
 
         clearLogbackMarkers();
         return Response
@@ -147,7 +150,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
 
     private Response getCohortList() throws Exception {
 
-        List<CohortEntity> cohorts = CohortEntity.getAllCohorts();
+        List<CohortEntity> cohorts = new CohortDAL().getAllCohorts();
 
         clearLogbackMarkers();
         return Response
@@ -157,7 +160,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
     }
 
     private Response getSingleCohort(String uuid) throws Exception {
-        CohortEntity cohortEntity = CohortEntity.getCohort(uuid);
+        CohortEntity cohortEntity = new CohortDAL().getCohort(uuid);
 
         return Response
                 .ok()
@@ -167,7 +170,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
     }
 
     private Response search(String searchData) throws Exception {
-        Iterable<CohortEntity> cohorts = CohortEntity.search(searchData);
+        Iterable<CohortEntity> cohorts = new CohortDAL().search(searchData);
 
         clearLogbackMarkers();
         return Response
@@ -178,12 +181,12 @@ public final class CohortEndpoint extends AbstractEndpoint {
 
     private Response getLinkedDpas(String cohortUuid) throws Exception {
 
-        List<String> dpaUuids = MasterMappingEntity.getParentMappings(cohortUuid, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        List<String> dpaUuids = new SecurityMasterMappingDAL().getParentMappings(cohortUuid, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
 
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!dpaUuids.isEmpty())
-            ret = DataProcessingAgreementEntity.getDPAsFromList(dpaUuids);
+            ret = new DataProcessingAgreementDAL().getDPAsFromList(dpaUuids);
 
         clearLogbackMarkers();
         return Response

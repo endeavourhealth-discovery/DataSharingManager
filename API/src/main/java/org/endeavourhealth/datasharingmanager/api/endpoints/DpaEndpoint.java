@@ -7,14 +7,15 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDPA;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
-import org.endeavourhealth.datasharingmanagermodel.models.database.*;
-import org.endeavourhealth.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.datasharingmanagermodel.models.json.JsonDPA;
-import org.endeavourhealth.datasharingmanagermodel.models.json.JsonDocumentation;
+import org.endeavourhealth.datasharingmanager.api.DAL.AddressDAL;
+import org.endeavourhealth.datasharingmanager.api.DAL.DataProcessingAgreementDAL;
+import org.endeavourhealth.datasharingmanager.api.Logic.DataProcessingAgreementLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,17 +55,8 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "DPA Id", uuid,
                 "SearchData", searchData);
 
-
-        if (uuid == null && searchData == null) {
-            LOG.trace("getDPA - list");
-            return getDPAList();
-        } else if (uuid != null){
-            LOG.trace("getDPA - single - " + uuid);
-            return getSingleDPA(uuid);
-        } else {
-            LOG.trace("Search DPA - " + searchData);
-            return search(searchData);
-        }
+        clearLogbackMarkers();
+        return new DataProcessingAgreementLogic().getDPA(uuid, searchData);
     }
 
     @POST
@@ -82,35 +74,8 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "DPA",
                 "DPA", dpa);
 
-        if (dpa.getUuid() != null) {
-            MasterMappingEntity.deleteAllMappings(dpa.getUuid());
-            DataProcessingAgreementEntity.updateDPA(dpa);
-        } else {
-            dpa.setUuid(UUID.randomUUID().toString());
-            DataProcessingAgreementEntity.saveDPA(dpa);
-        }
-
-        for (JsonDocumentation doc : dpa.getDocumentations()) {
-            if (doc.getUuid() != null) {
-                DocumentationEntity.updateDocument(doc);
-            } else {
-                doc.setUuid(UUID.randomUUID().toString());
-                DocumentationEntity.saveDocument(doc);
-            }
-        }
-
-
-        dpa.setPurposes(DsaEndpoint.setUuidsAndSavePurpose(dpa.getPurposes()));
-        dpa.setBenefits(DsaEndpoint.setUuidsAndSavePurpose(dpa.getBenefits()));
-
-        MasterMappingEntity.saveDataProcessingAgreementMappings(dpa);
-
         clearLogbackMarkers();
-
-        return Response
-                .ok()
-                .entity(dpa.getUuid())
-                .build();
+        return new DataProcessingAgreementLogic().postDPA(dpa);
     }
 
     @DELETE
@@ -128,7 +93,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "DPA",
                 "DPA Id", uuid);
 
-        DataProcessingAgreementEntity.deleteDPA(uuid);
+        new DataProcessingAgreementDAL().deleteDPA(uuid);
 
         clearLogbackMarkers();
         return Response
@@ -151,7 +116,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "dataflows(s)",
                 "DPA Id", uuid);
 
-        return getLinkedDataFlows(uuid);
+        return new DataProcessingAgreementLogic().getLinkedDataFlows(uuid);
     }
 
     @GET
@@ -169,7 +134,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "cohorts(s)",
                 "DPA Id", uuid);
 
-        return getLinkedCohorts(uuid);
+        return new DataProcessingAgreementLogic().getLinkedCohorts(uuid);
     }
 
     @GET
@@ -187,7 +152,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "Data Sets(s)",
                 "DPA Id", uuid);
 
-        return getLinkedDataSets(uuid);
+        return new DataProcessingAgreementLogic().getLinkedDataSets(uuid);
     }
 
     @GET
@@ -205,7 +170,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "publisher(s)",
                 "DSA Id", uuid);
 
-        return getPublishers(uuid);
+        return new DataProcessingAgreementLogic().getPublishers(uuid);
     }
 
     @GET
@@ -223,7 +188,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "dataflow(s)",
                 "DSA Id", uuid);
 
-        return getLinkedRegions(uuid);
+        return new DataProcessingAgreementLogic().getLinkedRegions(uuid);
     }
 
     @GET
@@ -241,7 +206,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "purpose(s)",
                 "DSA Id", uuid);
 
-        return getPurposes(uuid);
+        return new DataProcessingAgreementLogic().getPurposes(uuid);
     }
 
     @GET
@@ -259,7 +224,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "benefits(s)",
                 "DSA Id", uuid);
 
-        return getBenefits(uuid);
+        return new DataProcessingAgreementLogic().getBenefits(uuid);
     }
 
     @GET
@@ -277,7 +242,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "check Organisation(s)",
                 "ODS Code", odsCode);
 
-        return checkOrganisationIsPartOfDPA(odsCode, false);
+        return new DataProcessingAgreementLogic().checkOrganisationIsPartOfDPA(odsCode, false);
     }
 
     @GET
@@ -295,7 +260,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "check Organisation(s)",
                 "ODS Code", odsCode);
 
-        return checkOrganisationIsPartOfDPA(odsCode, true);
+        return new DataProcessingAgreementLogic().checkOrganisationIsPartOfDPA(odsCode, true);
     }
 
     @GET
@@ -314,7 +279,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "check Organisation(s)",
                 "ODS Code", odsCode);
 
-        return checkOrganisationAndSystemIsPartOfDPA(odsCode, systemName);
+        return new DataProcessingAgreementLogic().checkOrganisationAndSystemIsPartOfDPA(odsCode, systemName);
     }
 
     @GET
@@ -331,7 +296,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "Marker(s)",
                 "Region Id", uuid);
 
-        return AddressEntity.getOrganisationMarkers(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.SUBSCRIBER.getMapType());
+        return new AddressDAL().getOrganisationMarkers(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.SUBSCRIBER.getMapType());
     }
 
     @GET
@@ -348,175 +313,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "Marker(s)",
                 "Region Id", uuid);
 
-        return AddressEntity.getOrganisationMarkers(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType());
-    }
-
-    private Response getDPAList() throws Exception {
-
-        List<DataProcessingAgreementEntity> dpas = DataProcessingAgreementEntity.getAllDPAs();
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(dpas)
-                .build();
-    }
-
-    private Response getSingleDPA(String uuid) throws Exception {
-        DataProcessingAgreementEntity dpaEntity = DataProcessingAgreementEntity.getDPA(uuid);
-
-        return Response
-                .ok()
-                .entity(dpaEntity)
-                .build();
-
-    }
-
-    private Response search(String searchData) throws Exception {
-        Iterable<DataProcessingAgreementEntity> dpas = DataProcessingAgreementEntity.search(searchData);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(dpas)
-                .build();
-    }
-
-    private Response getLinkedDataFlows(String dpaUuid) throws Exception {
-
-        List<String> dataFlowUuids = MasterMappingEntity.getChildMappings(dpaUuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.DATAFLOW.getMapType());
-        List<DataFlowEntity> ret = new ArrayList<>();
-
-        if (!dataFlowUuids.isEmpty())
-            ret = DataFlowEntity.getDataFlowsFromList(dataFlowUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getLinkedCohorts(String dpaUuid) throws Exception {
-        List<String> cohorts = MasterMappingEntity.getChildMappings(dpaUuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.COHORT.getMapType());
-
-        List<CohortEntity> ret = new ArrayList<>();
-
-        if (!cohorts.isEmpty())
-            ret = CohortEntity.getCohortsFromList(cohorts);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getLinkedDataSets(String dpaUuid) throws Exception {
-        List<String> datasets = MasterMappingEntity.getChildMappings(dpaUuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.DATASET.getMapType());
-
-        List<DatasetEntity> ret = new ArrayList<>();
-
-        if (!datasets.isEmpty())
-            ret = DatasetEntity.getDataSetsFromList(datasets);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getLinkedRegions(String dsaUuid) throws Exception {
-
-        List<String> regionUuids = MasterMappingEntity.getParentMappings(dsaUuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.REGION.getMapType());
-
-        List<RegionEntity> ret = new ArrayList<>();
-
-        if (!regionUuids.isEmpty())
-            ret = RegionEntity.getRegionsFromList(regionUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getPublishers(String dsaUuid) throws Exception {
-
-        List<String> publisherUuids = MasterMappingEntity.getChildMappings(dsaUuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType());
-
-        List<OrganisationEntity> ret = new ArrayList<>();
-
-        if (!publisherUuids.isEmpty())
-            ret = OrganisationEntity.getOrganisationsFromList(publisherUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getPurposes(String dsaUuid) throws Exception {
-        List<String> purposeUuids = MasterMappingEntity.getChildMappings(dsaUuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType());
-
-        List<PurposeEntity> ret = new ArrayList<>();
-
-        if (!purposeUuids.isEmpty())
-            ret = PurposeEntity.getPurposesFromList(purposeUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getBenefits(String dsaUuid) throws Exception {
-
-        List<String> benefitUuids = MasterMappingEntity.getChildMappings(dsaUuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType());
-
-        List<PurposeEntity> ret = new ArrayList<>();
-
-        if (!benefitUuids.isEmpty())
-            ret = PurposeEntity.getPurposesFromList(benefitUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response checkOrganisationIsPartOfDPA(String odsCode, boolean countOnly) throws Exception {
-
-        List<DataProcessingAgreementEntity> matchingDpa = DataProcessingAgreementEntity.getDataProcessingAgreementsForOrganisation(odsCode);
-
-        if (countOnly) {
-            return Response
-                    .ok()
-                    .entity(matchingDpa.size())
-                    .build();
-        }
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(matchingDpa)
-                .build();
-    }
-
-    private Response checkOrganisationAndSystemIsPartOfDPA(String odsCode, String systemName) throws Exception {
-
-        List<DataProcessingAgreementEntity> matchingDpa = DataProcessingAgreementEntity.getDataProcessingAgreementsForOrganisationAndSystemType(odsCode, systemName);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(matchingDpa)
-                .build();
+        return new AddressDAL().getOrganisationMarkers(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType());
     }
 
 }

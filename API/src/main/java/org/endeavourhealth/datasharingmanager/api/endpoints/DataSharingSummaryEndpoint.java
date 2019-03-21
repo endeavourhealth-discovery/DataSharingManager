@@ -7,12 +7,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataSharingSummaryEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDataSharingSummary;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
-import org.endeavourhealth.datasharingmanagermodel.models.database.DataSharingSummaryEntity;
-import org.endeavourhealth.datasharingmanagermodel.models.json.JsonDataSharingSummary;
+import org.endeavourhealth.datasharingmanager.api.DAL.DataSharingSummaryDAL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,10 +84,10 @@ public final class DataSharingSummaryEndpoint extends AbstractEndpoint {
                 "Data Sharing Summary", dataSharingSummary);
 
         if (dataSharingSummary.getUuid() != null) {
-            DataSharingSummaryEntity.updateDataSharingSummary(dataSharingSummary);
+            new DataSharingSummaryDAL().updateDataSharingSummary(dataSharingSummary);
         } else {
             dataSharingSummary.setUuid(UUID.randomUUID().toString());
-            DataSharingSummaryEntity.saveDataSharingSummary(dataSharingSummary);
+            new DataSharingSummaryDAL().saveDataSharingSummary(dataSharingSummary);
         }
 
         clearLogbackMarkers();
@@ -111,7 +112,7 @@ public final class DataSharingSummaryEndpoint extends AbstractEndpoint {
                 "Data Sharing Summary",
                 "Data Sharing Summary Id", uuid);
 
-        DataSharingSummaryEntity.deleteDataSharingSummary(uuid);
+        new DataSharingSummaryDAL().deleteDataSharingSummary(uuid);
 
         clearLogbackMarkers();
         return Response
@@ -121,7 +122,7 @@ public final class DataSharingSummaryEndpoint extends AbstractEndpoint {
 
     private Response getDataSharingSummaryList() throws Exception {
 
-        List<DataSharingSummaryEntity> dataSharingSummaries = DataSharingSummaryEntity.getAllDataSharingSummaries();
+        List<DataSharingSummaryEntity> dataSharingSummaries = new DataSharingSummaryDAL().getAllDataSharingSummaries();
 
         clearLogbackMarkers();
         return Response
@@ -131,7 +132,7 @@ public final class DataSharingSummaryEndpoint extends AbstractEndpoint {
     }
 
     private Response getSingleDataSharingSummary(String uuid) throws Exception {
-        DataSharingSummaryEntity dataSharingSummary = DataSharingSummaryEntity.getDataSharingSummary(uuid);
+        DataSharingSummaryEntity dataSharingSummary = new DataSharingSummaryDAL().getDataSharingSummary(uuid);
 
         return Response
                 .ok()
@@ -141,7 +142,7 @@ public final class DataSharingSummaryEndpoint extends AbstractEndpoint {
     }
 
     private Response search(String searchData) throws Exception {
-        Iterable<DataSharingSummaryEntity> datasharingsummaryEntities = DataSharingSummaryEntity.search(searchData);
+        Iterable<DataSharingSummaryEntity> datasharingsummaryEntities = new DataSharingSummaryDAL().search(searchData);
 
         clearLogbackMarkers();
         return Response

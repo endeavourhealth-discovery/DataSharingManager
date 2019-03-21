@@ -9,13 +9,15 @@ import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.config.ConfigManager;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonRegion;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
-import org.endeavourhealth.datasharingmanagermodel.models.database.*;
-import org.endeavourhealth.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.datasharingmanagermodel.models.json.JsonRegion;
+import org.endeavourhealth.datasharingmanager.api.DAL.AddressDAL;
+import org.endeavourhealth.datasharingmanager.api.DAL.RegionDAL;
+import org.endeavourhealth.datasharingmanager.api.Logic.RegionLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,9 +26,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Path("/region")
 @Metrics(registry = "EdsRegistry")
@@ -54,16 +53,9 @@ public final class RegionEndpoint extends AbstractEndpoint {
                 "Organisation Id", uuid,
                 "SearchData", searchData);
 
-        if (uuid == null && searchData == null) {
-            LOG.trace("getRegion - list");
-            return getRegionList();
-        } else if (uuid != null){
-            LOG.trace("getRegion - single - " + uuid);
-            return getSingleRegion(uuid);
-        } else {
-            LOG.trace("Search Region - " + searchData);
-            return search(searchData);
-        }
+        clearLogbackMarkers();
+        return new RegionLogic().getRegion(uuid, searchData);
+
     }
 
     @POST
@@ -81,23 +73,8 @@ public final class RegionEndpoint extends AbstractEndpoint {
                 "Region",
                 "Region", region);
 
-        if (region.getUuid() != null) {
-            RegionEntity.updateRegion(region);
-            MasterMappingEntity.deleteAllMappings(region.getUuid());
-        } else {
-            region.setUuid(UUID.randomUUID().toString());
-            RegionEntity.saveRegion(region);
-        }
-
-        //Process Mappings
-        MasterMappingEntity.saveRegionMappings(region);
-
         clearLogbackMarkers();
-
-        return Response
-                .ok()
-                .entity(region.getUuid())
-                .build();
+        return new RegionLogic().postRegion(region);
     }
 
     @DELETE
@@ -115,7 +92,7 @@ public final class RegionEndpoint extends AbstractEndpoint {
                 "Region",
                 "Region Id", uuid);
 
-        RegionEntity.deleteRegion(uuid);
+        new RegionDAL().deleteRegion(uuid);
 
         clearLogbackMarkers();
         return Response
@@ -137,7 +114,7 @@ public final class RegionEndpoint extends AbstractEndpoint {
                 "Organisation(s)",
                 "Region Id", uuid);
 
-        return getRegionOrganisations(uuid);
+        return new RegionLogic().getRegionOrganisations(uuid);
     }
 
     @GET
@@ -154,7 +131,7 @@ public final class RegionEndpoint extends AbstractEndpoint {
                 "Parent Region(s)",
                 "Region Id", uuid);
 
-        return getParentRegions(uuid);
+        return new RegionLogic().getParentRegions(uuid);
     }
 
     @GET
@@ -171,7 +148,7 @@ public final class RegionEndpoint extends AbstractEndpoint {
                 "Child Region(s)",
                 "Region Id", uuid);
 
-        return getChildRegions(uuid);
+        return new RegionLogic().getChildRegions(uuid);
     }
 
     @GET
@@ -188,7 +165,7 @@ public final class RegionEndpoint extends AbstractEndpoint {
                 "Sharing Agreement(s)",
                 "Region Id", uuid);
 
-        return getSharingAgreements(uuid);
+        return new RegionLogic().getSharingAgreements(uuid);
     }
 
     @GET
@@ -205,7 +182,7 @@ public final class RegionEndpoint extends AbstractEndpoint {
                 "Processing Agreement(s)",
                 "Region Id", uuid);
 
-        return getProcessingAgreements(uuid);
+        return new RegionLogic().getProcessingAgreements(uuid);
     }
 
     @GET
@@ -241,112 +218,6 @@ public final class RegionEndpoint extends AbstractEndpoint {
                 "Marker(s)",
                 "Region Id", uuid);
 
-        return AddressEntity.getOrganisationMarkers(uuid, MapType.REGION.getMapType(), MapType.ORGANISATION.getMapType());
-    }
-
-    private Response getRegionList() throws Exception {
-
-        List<RegionEntity> regions = RegionEntity.getAllRegions();
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(regions)
-                .build();
-    }
-
-    private Response getSingleRegion(String uuid) throws Exception {
-        RegionEntity regionEntity = RegionEntity.getSingleRegion(uuid);
-
-        return Response
-                .ok()
-                .entity(regionEntity)
-                .build();
-
-    }
-
-    private Response getRegionOrganisations(String regionUUID) throws Exception {
-
-        List<String> organisationUuids = MasterMappingEntity.getChildMappings(regionUUID, MapType.REGION.getMapType(), MapType.ORGANISATION.getMapType());
-        List<OrganisationEntity> ret = new ArrayList<>();
-
-        if (!organisationUuids.isEmpty())
-            ret = OrganisationEntity.getOrganisationsFromList(organisationUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response search(String searchData) throws Exception {
-        Iterable<RegionEntity> regions = RegionEntity.search(searchData);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(regions)
-                .build();
-    }
-
-    private Response getParentRegions(String regionUuid) throws Exception {
-
-        List<String> regionUuids = MasterMappingEntity.getParentMappings(regionUuid, MapType.REGION.getMapType(), MapType.REGION.getMapType());
-        List<RegionEntity> ret = new ArrayList<>();
-
-        if (!regionUuids.isEmpty())
-            ret = RegionEntity.getRegionsFromList(regionUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getChildRegions(String regionUuid) throws Exception {
-
-        List<String> regionUuids = MasterMappingEntity.getChildMappings(regionUuid, MapType.REGION.getMapType(), MapType.REGION.getMapType());
-        List<RegionEntity> ret = new ArrayList<>();
-
-        if (!regionUuids.isEmpty())
-            ret = RegionEntity.getRegionsFromList(regionUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getSharingAgreements(String regionUuid) throws Exception {
-
-        List<String> sharingAgreementUuids = MasterMappingEntity.getChildMappings(regionUuid, MapType.REGION.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
-        List<DataSharingAgreementEntity> ret = new ArrayList<>();
-
-        if (!sharingAgreementUuids.isEmpty())
-            ret = DataSharingAgreementEntity.getDSAsFromList(sharingAgreementUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getProcessingAgreements(String regionUuid) throws Exception {
-
-        List<String> processingAgreementUuids = MasterMappingEntity.getChildMappings(regionUuid, MapType.REGION.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        List<DataProcessingAgreementEntity> ret = new ArrayList<>();
-
-        if (!processingAgreementUuids.isEmpty())
-            ret = DataProcessingAgreementEntity.getDPAsFromList(processingAgreementUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
+        return new AddressDAL().getOrganisationMarkers(uuid, MapType.REGION.getMapType(), MapType.ORGANISATION.getMapType());
     }
 }

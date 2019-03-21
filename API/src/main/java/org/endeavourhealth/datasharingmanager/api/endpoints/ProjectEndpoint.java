@@ -7,22 +7,21 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectApplicationPolicyDAL;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.ProjectApplicationPolicyEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonAuthorityToShare;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProjectApplicationPolicy;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.ApplicationPolicyCache;
+import org.endeavourhealth.common.security.usermanagermodel.models.database.ApplicationPolicyEntity;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
-import org.endeavourhealth.core.database.dal.admin.models.Organisation;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
-import org.endeavourhealth.datasharingmanagermodel.models.database.*;
-import org.endeavourhealth.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.datasharingmanagermodel.models.json.JsonAuthorityToShare;
-import org.endeavourhealth.datasharingmanagermodel.models.json.JsonProject;
-import org.endeavourhealth.datasharingmanagermodel.models.json.JsonProjectApplicationPolicy;
-import org.endeavourhealth.usermanagermodel.models.caching.OrganisationCache;
-import org.endeavourhealth.usermanagermodel.models.caching.UserCache;
-import org.endeavourhealth.usermanagermodel.models.database.ApplicationPolicyEntity;
-import org.endeavourhealth.usermanagermodel.models.database.UserProjectEntity;
-import org.endeavourhealth.usermanagermodel.models.json.JsonUser;
-import org.keycloak.representations.idm.UserRepresentation;
+import org.endeavourhealth.datasharingmanager.api.DAL.ProjectApplicationPolicyDAL;
+import org.endeavourhealth.datasharingmanager.api.DAL.ProjectDAL;
+import org.endeavourhealth.datasharingmanager.api.Logic.ProjectLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +30,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.endeavourhealth.common.security.SecurityUtils.getCurrentUserId;
 
@@ -63,18 +60,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
                 "Project UUID", uuid,
                 "SearchData", searchData);
 
-
-        if (uuid == null && searchData == null) {
-            LOG.trace("Project - list");
-
-            return getProjectList();
-        } else if (uuid != null){
-            LOG.trace("Project - single - " + uuid);
-            return getSingleProject(uuid);
-        } else {
-            LOG.trace("Search Projects - " + searchData);
-            return search(searchData);
-        }
+        return new ProjectLogic().getProjects(uuid, searchData);
     }
 
     @POST
@@ -93,22 +79,9 @@ public class ProjectEndpoint extends AbstractEndpoint {
                 "Project",
                 "Project", project);
 
-        if (project.getUuid() != null) {
-            MasterMappingEntity.deleteAllMappings(project.getUuid());
-            ProjectEntity.updateProject(project);
-        } else {
-            project.setUuid(UUID.randomUUID().toString());
-            ProjectEntity.saveProject(project);
-        }
-
-        MasterMappingEntity.saveProjectMappings(project);
-
         clearLogbackMarkers();
 
-        return Response
-                .ok()
-                .entity(project.getUuid())
-                .build();
+        return new ProjectLogic().postProject(project);
     }
 
     @DELETE
@@ -126,7 +99,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
                 "Project",
                 "Project UUID", uuid);
 
-        ProjectEntity.deleteProject(uuid);
+        new ProjectDAL().deleteProject(uuid);
 
         clearLogbackMarkers();
         return Response
@@ -148,7 +121,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
                 "Publishers(s)",
                 "Project UUID", uuid);
 
-        return getLinkedOrganisations(uuid, MapType.PUBLISHER.getMapType());
+        return new ProjectLogic().getLinkedOrganisations(uuid, MapType.PUBLISHER.getMapType());
     }
 
     @GET
@@ -165,7 +138,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
                 "Subscribers(s)",
                 "Project UUID", uuid);
 
-        return getLinkedOrganisations(uuid, MapType.SUBSCRIBER.getMapType());
+        return new ProjectLogic().getLinkedOrganisations(uuid, MapType.SUBSCRIBER.getMapType());
     }
 
     @GET
@@ -182,7 +155,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
                 "DSA(s)",
                 "Project UUID", uuid);
 
-        return getLinkedDsas(uuid);
+        return new ProjectLogic().getLinkedDsas(uuid);
     }
 
     @GET
@@ -199,7 +172,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
                 "Base Population(s)",
                 "Project UUID", uuid);
 
-        return getBasePopulations(uuid);
+        return new ProjectLogic().getBasePopulations(uuid);
     }
 
     @GET
@@ -216,7 +189,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
                 "Data set(s)",
                 "Project UUID", uuid);
 
-        return getDataSets(uuid);
+        return new ProjectLogic().getDataSets(uuid);
     }
 
     @GET
@@ -234,7 +207,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
 
         LOG.trace("getUser");
 
-        ProjectApplicationPolicyEntity projectPolicy = ProjectApplicationPolicyEntity.getProjectApplicationPolicyId(projectUuid);
+        ProjectApplicationPolicyEntity projectPolicy = new SecurityProjectApplicationPolicyDAL().getProjectApplicationPolicyId(projectUuid);
         if (projectPolicy == null) {
             projectPolicy = new ProjectApplicationPolicyEntity();
         }
@@ -261,7 +234,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
 
         LOG.trace("getUser");
 
-        ProjectApplicationPolicyEntity.saveProjectApplicationPolicyId(projectApplicationPolicy);
+        new ProjectApplicationPolicyDAL().saveProjectApplicationPolicyId(projectApplicationPolicy);
 
         AbstractEndpoint.clearLogbackMarkers();
         return Response
@@ -281,7 +254,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
                 "application policy(s)");
 
-        List<ApplicationPolicyEntity> applicationPolicies = ApplicationPolicyEntity.getAllApplicationPolicies();
+        List<ApplicationPolicyEntity> applicationPolicies = ApplicationPolicyCache.getAllApplicationPolicies();
 
         clearLogbackMarkers();
         return Response
@@ -301,7 +274,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
                 "Users");
 
-        return getUsers();
+        return new ProjectLogic().getUsers();
     }
 
     @GET
@@ -317,121 +290,11 @@ public class ProjectEndpoint extends AbstractEndpoint {
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
                 "Users assigned to project");
 
-        return getUsersAssignedToProject(projectUuid);
-    }
+        List<JsonAuthorityToShare> authorities = new org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectDAL().getUsersAssignedToProject(projectUuid);
 
-    private Response getUsersAssignedToProject(String projectUuid) throws Exception {
-
-        List<UserProjectEntity> userProjects = UserProjectEntity.getUserProjectEntitiesForProject(projectUuid);
-
-        List<JsonAuthorityToShare> authorities = new ArrayList<>();
-
-        for (UserProjectEntity userProject : userProjects) {
-            JsonAuthorityToShare auth = authorities.stream().filter(a -> a.getOrganisationId().equals(userProject.getOrganisationId())).findFirst().orElse(new JsonAuthorityToShare());
-            if (auth.getOrganisationId() == null) {
-                OrganisationEntity org = OrganisationCache.getOrganisationDetails(userProject.getOrganisationId());
-                auth.setOrganisationId(org.getUuid());
-                auth.setOrganisationName(org.getName());
-                auth.setOrganisationOdsCode(org.getOdsCode());
-
-                authorities.add(auth);
-            }
-            UserRepresentation u = UserCache.getUserDetails(userProject.getUserId());
-            JsonUser jsonUser = new JsonUser(u);
-            auth.addUser(jsonUser);
-
-        }
-
-        clearLogbackMarkers();
         return Response
                 .ok()
                 .entity(authorities)
-                .build();
-    }
-
-    private Response getUsers() throws Exception {
-
-        List<JsonUser> users = UserCache.getAllUsers();
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(users)
-                .build();
-    }
-
-    private Response getProjectList() throws Exception {
-
-        List<ProjectEntity> dataFlows = ProjectEntity.getAllProjects();
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(dataFlows)
-                .build();
-    }
-
-    private Response getSingleProject(String uuid) throws Exception {
-        ProjectEntity dataFlow = ProjectEntity.getProject(uuid);
-
-        return Response
-                .ok()
-                .entity(dataFlow)
-                .build();
-
-    }
-
-    private Response search(String searchData) throws Exception {
-        Iterable<ProjectEntity> projects = ProjectEntity.search(searchData);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(projects)
-                .build();
-    }
-
-    private Response getLinkedDsas(String projectId) throws Exception {
-
-        List<DataSharingAgreementEntity> ret = ProjectEntity.getLinkedDsas(projectId);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getBasePopulations(String projectId) throws Exception {
-
-        List<CohortEntity> ret = ProjectEntity.getBasePopulations(projectId);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getDataSets(String projectId) throws Exception {
-
-        List<DatasetEntity> ret = ProjectEntity.getDataSets(projectId);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getLinkedOrganisations(String projectId, Short mapType) throws Exception {
-
-        List<OrganisationEntity> ret = ProjectEntity.getLinkedOrganisations(projectId, mapType);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
                 .build();
     }
 }

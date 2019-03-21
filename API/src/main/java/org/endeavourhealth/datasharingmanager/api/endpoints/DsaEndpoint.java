@@ -7,15 +7,15 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDSA;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
-import org.endeavourhealth.datasharingmanagermodel.models.database.*;
-import org.endeavourhealth.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.datasharingmanagermodel.models.json.JsonDSA;
-import org.endeavourhealth.datasharingmanagermodel.models.json.JsonDocumentation;
-import org.endeavourhealth.datasharingmanagermodel.models.json.JsonPurpose;
+import org.endeavourhealth.datasharingmanager.api.DAL.*;
+import org.endeavourhealth.datasharingmanager.api.Logic.DataSharingAgreementLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,9 +24,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Path("/dsa")
 @Metrics(registry = "EdsRegistry")
@@ -55,17 +53,9 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 "DSA Id", uuid,
                 "SearchData", searchData);
 
+        clearLogbackMarkers();
+        return new DataSharingAgreementLogic().getDSAs(uuid, searchData);
 
-        if (uuid == null && searchData == null) {
-            LOG.trace("getDSA - list");
-            return getDSAList();
-        } else if (uuid != null){
-            LOG.trace("getDSA - single - " + uuid);
-            return getSingleDSA(uuid);
-        } else {
-            LOG.trace("Search DSA - " + searchData);
-            return search(searchData);
-        }
     }
 
     @POST
@@ -84,36 +74,9 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 "DSA",
                 "DSA", dsa);
 
-        PurposeEntity.deleteAllPurposes(dsa.getUuid(), MapType.DATASHARINGAGREEMENT.getMapType());
-
-        if (dsa.getUuid() != null) {
-            MasterMappingEntity.deleteAllMappings(dsa.getUuid());
-            DataSharingAgreementEntity.updateDSA(dsa);
-        } else {
-            dsa.setUuid(UUID.randomUUID().toString());
-            DataSharingAgreementEntity.saveDSA(dsa);
-        }
-
-        for (JsonDocumentation doc : dsa.getDocumentations()) {
-            if (doc.getUuid() != null) {
-                DocumentationEntity.updateDocument(doc);
-            } else {
-                doc.setUuid(UUID.randomUUID().toString());
-                DocumentationEntity.saveDocument(doc);
-            }
-        }
-
-        dsa.setPurposes(setUuidsAndSavePurpose(dsa.getPurposes()));
-        dsa.setBenefits(setUuidsAndSavePurpose(dsa.getBenefits()));
-
-        MasterMappingEntity.saveDataSharingAgreementMappings(dsa);
-
         clearLogbackMarkers();
 
-        return Response
-                .ok()
-                .entity(dsa.getUuid())
-                .build();
+        return new DataSharingAgreementLogic().postDSA(dsa);
     }
 
     @DELETE
@@ -131,7 +94,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 "DSA",
                 "DSA Id", uuid);
 
-        DataSharingAgreementEntity.deleteDSA(uuid);
+        new DataSharingAgreementDAL().deleteDSA(uuid);
 
         clearLogbackMarkers();
         return Response
@@ -146,7 +109,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
     @Path("/dataflows")
     @ApiOperation(value = "Returns a list of Json representations of cohorts that are linked " +
             "to the data sharing agreement.  Accepts a UUID of a data sharing agreement.")
-    public Response getLinkedCohortsForDSA(@Context SecurityContext sc,
+    public Response getLinkedDataflowsDSA(@Context SecurityContext sc,
                                      @ApiParam(value = "UUID of data flow") @QueryParam("uuid") String uuid
     ) throws Exception {
         super.setLogbackMarkers(sc);
@@ -154,7 +117,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 "dataflow(s)",
                 "DSA Id", uuid);
 
-        return getLinkedDataFlows(uuid);
+        return new DataSharingAgreementLogic().getLinkedDataFlows(uuid);
     }
 
     @GET
@@ -172,7 +135,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 "dataflow(s)",
                 "DSA Id", uuid);
 
-        return getLinkedRegions(uuid);
+        return new DataSharingAgreementLogic().getLinkedRegions(uuid);
     }
 
     @GET
@@ -190,7 +153,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 "publisher(s)",
                 "DSA Id", uuid);
 
-        return getPublishers(uuid);
+        return new DataSharingAgreementLogic().getPublishers(uuid);
     }
 
     @GET
@@ -208,7 +171,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 "subscriber(s)",
                 "DSA Id", uuid);
 
-        return getSubscribers(uuid);
+        return new DataSharingAgreementLogic().getSubscribers(uuid);
     }
 
     @GET
@@ -226,7 +189,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 "purpose(s)",
                 "DSA Id", uuid);
 
-        return getPurposes(uuid);
+        return new DataSharingAgreementLogic().getPurposes(uuid);
     }
 
     @GET
@@ -244,7 +207,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 "benefits(s)",
                 "DSA Id", uuid);
 
-        return getBenefits(uuid);
+        return new DataSharingAgreementLogic().getBenefits(uuid);
     }
 
     @GET
@@ -261,7 +224,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 "Marker(s)",
                 "DAS Id", uuid);
 
-        return AddressEntity.getOrganisationMarkers(uuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.SUBSCRIBER.getMapType());
+        return new AddressDAL().getOrganisationMarkers(uuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.SUBSCRIBER.getMapType());
     }
 
     @GET
@@ -278,7 +241,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 "Marker(s)",
                 "DSA Id", uuid);
 
-        return AddressEntity.getOrganisationMarkers(uuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType());
+        return new AddressDAL().getOrganisationMarkers(uuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType());
     }
 
     @GET
@@ -295,7 +258,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 "Marker(s)",
                 "DSA Id", uuid);
 
-        return getProjects(uuid);
+        return new DataSharingAgreementLogic().getProjects(uuid);
     }
 
     @GET
@@ -313,165 +276,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 "check Organisation(s)",
                 "ODS Code", odsCode);
 
-        return checkOrganisationIsPartOfDSA(odsCode);
-    }
-
-    private Response getDSAList() throws Exception {
-
-        List<DataSharingAgreementEntity> dsas = DataSharingAgreementEntity.getAllDSAs();
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(dsas)
-                .build();
-    }
-
-    private Response getSingleDSA(String uuid) throws Exception {
-        DataSharingAgreementEntity dsaEntity = DataSharingAgreementEntity.getDSA(uuid);
-
-        return Response
-                .ok()
-                .entity(dsaEntity)
-                .build();
-
-    }
-
-    private Response search(String searchData) throws Exception {
-        Iterable<DataSharingAgreementEntity> dsas = DataSharingAgreementEntity.search(searchData);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(dsas)
-                .build();
-    }
-
-    private Response getLinkedDataFlows(String dsaUuid) throws Exception {
-
-        List<String> dataFlowUuids = MasterMappingEntity.getChildMappings(dsaUuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.DATAFLOW.getMapType());
-
-        List<DataFlowEntity> ret = new ArrayList<>();
-
-        if (!dataFlowUuids.isEmpty())
-            ret = DataFlowEntity.getDataFlowsFromList(dataFlowUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getLinkedRegions(String dsaUuid) throws Exception {
-
-        List<String> regionUuids = MasterMappingEntity.getParentMappings(dsaUuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.REGION.getMapType());
-
-        List<RegionEntity> ret = new ArrayList<>();
-
-        if (!regionUuids.isEmpty())
-            ret = RegionEntity.getRegionsFromList(regionUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getPublishers(String dsaUuid) throws Exception {
-
-        List<String> publisherUuids = MasterMappingEntity.getChildMappings(dsaUuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType());
-
-        List<OrganisationEntity> ret = new ArrayList<>();
-
-        if (!publisherUuids.isEmpty())
-            ret = OrganisationEntity.getOrganisationsFromList(publisherUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getSubscribers(String dsaUuid) throws Exception {
-
-        List<String> subscriberUuids = MasterMappingEntity.getChildMappings(dsaUuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.SUBSCRIBER.getMapType());
-
-        List<OrganisationEntity> ret = new ArrayList<>();
-
-        if (!subscriberUuids.isEmpty())
-            ret = OrganisationEntity.getOrganisationsFromList(subscriberUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getPurposes(String dsaUuid) throws Exception {
-        List<String> purposeUuids = MasterMappingEntity.getChildMappings(dsaUuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType());
-
-        List<PurposeEntity> ret = new ArrayList<>();
-
-        if (!purposeUuids.isEmpty())
-            ret = PurposeEntity.getPurposesFromList(purposeUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getBenefits(String dsaUuid) throws Exception {
-
-        List<String> benefitUuids = MasterMappingEntity.getChildMappings(dsaUuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType());
-
-        List<PurposeEntity> ret = new ArrayList<>();
-
-        if (!benefitUuids.isEmpty())
-            ret = PurposeEntity.getPurposesFromList(benefitUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    private Response getProjects(String dsaUuid) throws Exception {
-
-        List<String> projectUuids = MasterMappingEntity.getChildMappings(dsaUuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PROJECT.getMapType());
-
-        List<ProjectEntity> ret = new ArrayList<>();
-
-        if (!projectUuids.isEmpty())
-            ret = ProjectEntity.getProjectsFromList(projectUuids);
-
-        clearLogbackMarkers();
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
-    public static List<JsonPurpose> setUuidsAndSavePurpose(List<JsonPurpose> purposes) throws Exception {
-        for (JsonPurpose purpose : purposes) {
-            if (purpose.getUuid() == null) {
-                purpose.setUuid(UUID.randomUUID().toString());
-            }
-            PurposeEntity.savePurpose(purpose);
-        }
-
-        return purposes;
-    }
-
-    private Response checkOrganisationIsPartOfDSA(String odsCode) throws Exception {
-
-        List<String> matchingDpaEndpoints = DataSharingAgreementEntity.checkDataSharingAgreementsForOrganisation(odsCode);
+        List<String> matchingDpaEndpoints = new DataSharingAgreementDAL().checkDataSharingAgreementsForOrganisation(odsCode);
 
         clearLogbackMarkers();
         return Response

@@ -7,13 +7,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DocumentationEntity;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
-import org.endeavourhealth.datasharingmanagermodel.models.database.DocumentationEntity;
-import org.endeavourhealth.datasharingmanagermodel.models.database.MasterMappingEntity;
-import org.endeavourhealth.datasharingmanagermodel.models.enums.MapType;
+import org.endeavourhealth.datasharingmanager.api.DAL.DocumentationDAL;
+import org.endeavourhealth.datasharingmanager.api.Logic.DocumentationLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,12 @@ public final class DocumentEndpoint extends AbstractEndpoint {
                 "Documents(s)",
                 "Document Id", uuid);
 
-        return getSingleDocument(uuid);
+        DocumentationEntity documentationEntity = new DocumentationDAL().getDocument(uuid);
+
+        return Response
+                .ok()
+                .entity(documentationEntity)
+                .build();
     }
 
     @GET
@@ -68,7 +73,7 @@ public final class DocumentEndpoint extends AbstractEndpoint {
                 "Parent Id", parentUuid,
                 "Parent Type", parentType);
 
-        return getAssociatedDocuments(parentUuid, parentType);
+        return new DocumentationLogic().getAssociatedDocuments(parentUuid, parentType);
     }
 
     @DELETE
@@ -86,39 +91,11 @@ public final class DocumentEndpoint extends AbstractEndpoint {
                 "Cohort",
                 "Cohort Id", uuid);
 
-        DocumentationEntity.deleteDocument(uuid);
+        new DocumentationDAL().deleteDocument(uuid);
 
         clearLogbackMarkers();
         return Response
                 .ok()
                 .build();
     }
-
-    private Response getSingleDocument(String uuid) throws Exception {
-        DocumentationEntity documentationEntity = DocumentationEntity.getDocument(uuid);
-
-        return Response
-                .ok()
-                .entity(documentationEntity)
-                .build();
-
-    }
-
-    private Response getAssociatedDocuments(String parentUuid, Short parentType) throws Exception {
-
-        List<String> documentUuids = MasterMappingEntity.getChildMappings(parentUuid, parentType, MapType.DOCUMENT.getMapType());
-        List<DocumentationEntity> ret = new ArrayList<>();
-
-        if (!documentUuids.isEmpty())
-            ret = DocumentationEntity.getDocumentsFromList(documentUuids);
-
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-
-    }
-
-
-
 }

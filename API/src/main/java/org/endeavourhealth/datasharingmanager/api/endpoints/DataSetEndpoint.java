@@ -7,15 +7,18 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataProcessingAgreementEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DatasetEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDataSet;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
-import org.endeavourhealth.datasharingmanagermodel.models.database.DataProcessingAgreementEntity;
-import org.endeavourhealth.datasharingmanagermodel.models.database.DatasetEntity;
-import org.endeavourhealth.datasharingmanagermodel.models.database.MasterMappingEntity;
-import org.endeavourhealth.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.datasharingmanagermodel.models.json.JsonDataSet;
+import org.endeavourhealth.datasharingmanager.api.DAL.DataProcessingAgreementDAL;
+import org.endeavourhealth.datasharingmanager.api.DAL.DatasetDAL;
+import org.endeavourhealth.datasharingmanager.api.DAL.MasterMappingDAL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +27,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -87,14 +89,14 @@ public final class DataSetEndpoint extends AbstractEndpoint {
                 "Data set", dataSet);
 
         if (dataSet.getUuid() != null) {
-            MasterMappingEntity.deleteAllMappings(dataSet.getUuid());
-            DatasetEntity.updateDataSet(dataSet);
+            new MasterMappingDAL().deleteAllMappings(dataSet.getUuid());
+            new DatasetDAL().updateDataSet(dataSet);
         } else {
             dataSet.setUuid(UUID.randomUUID().toString());
-            DatasetEntity.saveDataSet(dataSet);
+            new DatasetDAL().saveDataSet(dataSet);
         }
 
-        MasterMappingEntity.saveDataSetMappings(dataSet);
+        new MasterMappingDAL().saveDataSetMappings(dataSet);
 
         clearLogbackMarkers();
 
@@ -118,7 +120,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
                 "data set",
                 "data set Id", uuid);
 
-        DatasetEntity.deleteDataSet(uuid);
+        new DatasetDAL().deleteDataSet(uuid);
 
         clearLogbackMarkers();
         return Response
@@ -146,7 +148,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
 
     private Response getDataSetList() throws Exception {
 
-        List<DatasetEntity> dataSets = DatasetEntity.getAllDataSets();
+        List<DatasetEntity> dataSets = new DatasetDAL().getAllDataSets();
 
         clearLogbackMarkers();
         return Response
@@ -156,7 +158,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
     }
 
     private Response getSingleDataSet(String uuid) throws Exception {
-        DatasetEntity dataSet = DatasetEntity.getDataSet(uuid);
+        DatasetEntity dataSet = new DatasetDAL().getDataSet(uuid);
 
         return Response
                 .ok()
@@ -166,7 +168,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
     }
 
     private Response search(String searchData) throws Exception {
-        Iterable<DatasetEntity> dataSets = DatasetEntity.search(searchData);
+        Iterable<DatasetEntity> dataSets = new DatasetDAL().search(searchData);
 
         clearLogbackMarkers();
         return Response
@@ -177,12 +179,12 @@ public final class DataSetEndpoint extends AbstractEndpoint {
 
     private Response getLinkedDpas(String cohortUuid) throws Exception {
 
-        List<String> dpaUuids = MasterMappingEntity.getParentMappings(cohortUuid, MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        List<String> dpaUuids = new SecurityMasterMappingDAL().getParentMappings(cohortUuid, MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
 
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!dpaUuids.isEmpty())
-            ret = DataProcessingAgreementEntity.getDPAsFromList(dpaUuids);
+            ret = new DataProcessingAgreementDAL().getDPAsFromList(dpaUuids);
 
         clearLogbackMarkers();
         return Response

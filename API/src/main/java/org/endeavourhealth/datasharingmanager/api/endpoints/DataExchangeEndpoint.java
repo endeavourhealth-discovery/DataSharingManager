@@ -7,13 +7,18 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataExchangeEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataFlowEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDataExchange;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
-import org.endeavourhealth.datasharingmanagermodel.models.database.*;
-import org.endeavourhealth.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.datasharingmanagermodel.models.json.JsonDataExchange;
+import org.endeavourhealth.datasharingmanager.api.DAL.DataExchangeDAL;
+import org.endeavourhealth.datasharingmanager.api.DAL.DataFlowDAL;
+import org.endeavourhealth.datasharingmanager.api.DAL.MasterMappingDAL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,14 +89,14 @@ public class DataExchangeEndpoint extends AbstractEndpoint {
                 "Data exchange", dataExchange);
 
         if (dataExchange.getUuid() != null) {
-            MasterMappingEntity.deleteAllMappings(dataExchange.getUuid());
-            DataExchangeEntity.updateDataExchange(dataExchange);
+            new MasterMappingDAL().deleteAllMappings(dataExchange.getUuid());
+            new DataExchangeDAL().updateDataExchange(dataExchange);
         } else {
             dataExchange.setUuid(UUID.randomUUID().toString());
-            DataExchangeEntity.saveDataExchange(dataExchange);
+            new DataExchangeDAL().saveDataExchange(dataExchange);
         }
         
-        MasterMappingEntity.saveDataExchangeMappings(dataExchange);
+        new MasterMappingDAL().saveDataExchangeMappings(dataExchange);
 
         clearLogbackMarkers();
 
@@ -116,7 +121,7 @@ public class DataExchangeEndpoint extends AbstractEndpoint {
                 "Data exchange",
                 "Data exchange Id", uuid);
 
-        DataExchangeEntity.deleteDataExchange(uuid);
+        new DataExchangeDAL().deleteDataExchange(uuid);
 
         clearLogbackMarkers();
         return Response
@@ -143,7 +148,7 @@ public class DataExchangeEndpoint extends AbstractEndpoint {
 
     private Response getDataExchangeList() throws Exception {
 
-        List<DataExchangeEntity> dataExchanges = DataExchangeEntity.getAllDataExchanges();
+        List<DataExchangeEntity> dataExchanges = new DataExchangeDAL().getAllDataExchanges();
 
         clearLogbackMarkers();
         return Response
@@ -153,7 +158,7 @@ public class DataExchangeEndpoint extends AbstractEndpoint {
     }
 
     private Response getSingleDataExchange(String uuid) throws Exception {
-        DataExchangeEntity dataExchange = DataExchangeEntity.getDataExchange(uuid);
+        DataExchangeEntity dataExchange = new DataExchangeDAL().getDataExchange(uuid);
 
         return Response
                 .ok()
@@ -163,7 +168,7 @@ public class DataExchangeEndpoint extends AbstractEndpoint {
     }
 
     private Response search(String searchData) throws Exception {
-        Iterable<DataExchangeEntity> dataExchanges = DataExchangeEntity.search(searchData);
+        Iterable<DataExchangeEntity> dataExchanges = new DataExchangeDAL().search(searchData);
 
         clearLogbackMarkers();
         return Response
@@ -174,11 +179,11 @@ public class DataExchangeEndpoint extends AbstractEndpoint {
 
     private Response getLinkedDataFlows(String dateExchangeId) throws Exception {
 
-        List<String> dataFlowUuids = MasterMappingEntity.getParentMappings(dateExchangeId, MapType.DATAEXCHANGE.getMapType(), MapType.DATAFLOW.getMapType());
+        List<String> dataFlowUuids = new SecurityMasterMappingDAL().getParentMappings(dateExchangeId, MapType.DATAEXCHANGE.getMapType(), MapType.DATAFLOW.getMapType());
         List<DataFlowEntity> ret = new ArrayList<>();
 
         if (!dataFlowUuids.isEmpty())
-            ret = DataFlowEntity.getDataFlowsFromList(dataFlowUuids);
+            ret = new DataFlowDAL().getDataFlowsFromList(dataFlowUuids);
 
         clearLogbackMarkers();
         return Response
