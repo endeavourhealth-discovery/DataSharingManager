@@ -19,6 +19,7 @@ import {DocumentationService} from "../../documentation/documentation.service";
 import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 import {Project} from "../../project/models/Project";
 import {ProjectPickerComponent} from "../../project/project-picker/project-picker.component";
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-data-sharing-agreement-editor',
@@ -75,7 +76,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
               private router: Router,
               private route: ActivatedRoute,
               public toastr: ToastsManager, vcr: ViewContainerRef,
-              private userManagerNotificationService: UserManagerNotificationService) {
+              private userManagerNotificationService: UserManagerNotificationService,
+              private datePipe: DatePipe) {
     this.toastr.setRootViewContainerRef(vcr);
   }
 
@@ -123,6 +125,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     vm.dsaService.getDsa(uuid)
       .subscribe(result =>  {
           vm.dsa = result;
+          vm.dsa.startDate = this.datePipe.transform(vm.dsa.startDate,"yyyy-MM-dd");
+          vm.dsa.endDate = this.datePipe.transform(vm.dsa.endDate,"yyyy-MM-dd");
           vm.checkEndDate();
           vm.getLinkedDataFlows();
           vm.getLinkedRegions();

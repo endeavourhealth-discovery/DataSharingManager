@@ -24,6 +24,7 @@ import {ApplicationPolicy} from "../models/ApplicationPolicy";
 import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 import {User} from "eds-angular4/dist/security/models/User";
 import {AuthorityToShare} from "../models/AuthorityToShare";
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-project-editor',
@@ -114,7 +115,8 @@ export class ProjectEditorComponent implements OnInit {
               private router: Router,
               private route: ActivatedRoute,
               public toastr: ToastsManager, vcr: ViewContainerRef,
-              private userManagerNotificationService: UserManagerNotificationService) {
+              private userManagerNotificationService: UserManagerNotificationService,
+              private datePipe: DatePipe) {
     this.toastr.setRootViewContainerRef(vcr);
   }
 
@@ -203,7 +205,9 @@ export class ProjectEditorComponent implements OnInit {
     const vm = this;
     vm.projectService.getProject(uuid)
       .subscribe(result =>  {
-          vm.project = result;
+          vm.project = result
+          vm.project.startDate = this.datePipe.transform(vm.project.startDate,"yyyy-MM-dd");
+          vm.project.endDate = this.datePipe.transform(vm.project.endDate,"yyyy-MM-dd");
           vm.getLinkedDsas();
           vm.getLinkedBasePopulations();
           vm.getLinkedPublishers();

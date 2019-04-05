@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {CommonModule, DatePipe} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import { OrganisationComponent } from './organisation/organisation.component';
 import { OrganisationOverviewComponent } from './organisation-overview/organisation-overview.component';
@@ -33,6 +33,7 @@ import {ControlsModule} from "eds-angular4/dist/controls";
   ],
   providers: [
     OrganisationService,
-    LoggerService]
+    LoggerService,
+    DatePipe]
 })
 export class OrganisationModule { }

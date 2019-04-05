@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {CommonModule, DatePipe} from '@angular/common';
 import { ProjectComponent } from './project/project.component';
 import { ProjectPickerComponent } from './project-picker/project-picker.component';
 import { ProjectEditorComponent } from './project-editor/project-editor.component';
@@ -31,7 +31,8 @@ import {ProjectService} from "./project.service";
   ],
   providers: [
     ProjectService,
-    LoggerService
+    LoggerService,
+    DatePipe
   ]
 })
 export class ProjectModule { }

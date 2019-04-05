@@ -21,6 +21,7 @@ import {PurposeAddComponent} from '../../data-sharing-agreement/purpose-add/purp
 import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 import {Region} from "../../region/models/Region";
 import {RegionPickerComponent} from "../../region/region-picker/region-picker.component";
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-data-processing-agreement-editor',
@@ -73,7 +74,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
               private router: Router,
               private route: ActivatedRoute,
               public toastr: ToastsManager, vcr: ViewContainerRef,
-              private userManagerNotificationService: UserManagerNotificationService) {
+              private userManagerNotificationService: UserManagerNotificationService,
+              private datePipe: DatePipe) {
     this.toastr.setRootViewContainerRef(vcr);
   }
 
@@ -121,6 +123,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     vm.dpaService.getDpa(uuid)
       .subscribe(result => {
           vm.dpa = result;
+          vm.dpa.startDate = this.datePipe.transform(vm.dpa.startDate,"yyyy-MM-dd");
+          vm.dpa.endDate = this.datePipe.transform(vm.dpa.endDate,"yyyy-MM-dd");
           vm.checkEndDate();
           vm.getPublishers();
           vm.getLinkedDataFlows();
@@ -466,6 +470,10 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     } else {
       vm.disableStatus = false;
     }
+  }
+
+  test() {
+    console.log(this.dpa);
   }
 
 }

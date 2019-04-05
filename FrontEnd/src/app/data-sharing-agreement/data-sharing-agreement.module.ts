@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {CommonModule, DatePipe} from '@angular/common';
 import { DataSharingAgreementComponent } from './data-sharing-agreement/data-sharing-agreement.component';
 import { DataSharingAgreementEditorComponent } from './data-sharing-agreement-editor/data-sharing-agreement-editor.component';
 import { DataSharingAgreementPickerComponent } from './data-sharing-agreement-picker/data-sharing-agreement-picker.component';
@@ -33,6 +33,6 @@ import {ControlsModule} from "eds-angular4/dist/controls";
     PurposeAddComponent,
     DataSharingAgreementPickerComponent
   ],
-  providers: [DataSharingAgreementService]
+  providers: [DataSharingAgreementService, DatePipe]
 })
 export class DataSharingAgreementModule { }

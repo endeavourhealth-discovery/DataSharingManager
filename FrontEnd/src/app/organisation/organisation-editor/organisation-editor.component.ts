@@ -15,6 +15,7 @@ import {DataProcessingAgreementPickerComponent} from '../../data-processing-agre
 import {DataSharingAgreementPickerComponent} from '../../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component';
 import {OrganisationType} from '../models/OrganisationType';
 import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-organisation-editor',
@@ -54,7 +55,8 @@ export class OrganisationEditorComponent implements OnInit {
               private router: Router,
               private route: ActivatedRoute,
               public toastr: ToastsManager, vcr: ViewContainerRef,
-              private userManagerNotificationService: UserManagerNotificationService) {
+              private userManagerNotificationService: UserManagerNotificationService,
+              private datePipe: DatePipe) {
     this.toastr.setRootViewContainerRef(vcr);
   }
 
@@ -137,6 +139,7 @@ export class OrganisationEditorComponent implements OnInit {
     vm.organisationService.getOrganisation(uuid)
       .subscribe(result =>  {
           vm.organisation = result;
+          vm.organisation.dateOfRegistration = this.datePipe.transform(vm.organisation.dateOfRegistration,"yyyy-MM-dd");
           if (vm.organisation.isService) {
             vm.orgType = 'Service';
           } else { // only get these for organisations, not services
