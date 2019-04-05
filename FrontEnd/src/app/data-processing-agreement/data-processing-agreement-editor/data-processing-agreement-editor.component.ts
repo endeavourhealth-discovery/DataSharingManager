@@ -118,7 +118,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
   load(uuid: string) {
     const vm = this;
-    console.log(uuid);
     vm.dpaService.getDpa(uuid)
       .subscribe(result => {
           vm.dpa = result;
@@ -332,8 +331,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   fileChange(event) {
-    console.log('change');
-    console.log(event);
     const fileList: FileList = event.target.files;
     if (fileList.length > 0) {
       this.file = fileList[0];

@@ -120,7 +120,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   load(uuid: string) {
     const vm = this;
-    console.log(uuid);
     vm.dsaService.getDsa(uuid)
       .subscribe(result =>  {
           vm.dsa = result;
@@ -142,8 +141,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   save(close: boolean) {
     const vm = this;
-    console.log('before');
-    console.log(vm.dsa);
     // Populate data flows before save
     vm.dsa.dataFlows = {};
     for (const idx in this.dataFlows) {
@@ -191,14 +188,11 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     vm.dsa.documentations = [];
     vm.dsa.documentations = vm.documentations;
 
-    console.log(vm.dsa);
     vm.dsaService.saveDsa(vm.dsa)
       .subscribe(saved => {
           vm.dsa.uuid = saved;
           vm.log.success('Data sharing agreement saved', vm.dsa, 'Save data sharing agreement');
 
-          console.log('after');
-          console.log(vm.dsa);
           if (close) { vm.close(); }
         },
         error => vm.log.error('The data sharing agreement could not be saved. Please try again.', error, 'Save data sharing agreement')
@@ -322,8 +316,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     const vm = this;
     vm.dsaService.getProjects(vm.dsa.uuid)
       .subscribe(
-        result => { vm.projects = result;
-        console.log('projects', result); },
+        result => vm.projects = result,
         error => vm.log.error('The associated projects could not be loaded. Please try again.', error, 'Load associated projects')
       );
   }
@@ -382,7 +375,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
         result => {
           vm.mapMarkers = result;
           vm.publisherMarkers = result;
-          console.log(vm.publisherMarkers);
         },
         error => vm.log.error('The associated publisher map data could not be loaded. Please try again.', error, 'Load publisher map data')
       )
@@ -421,12 +413,9 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   swapMarkers() {
     const vm = this;
-    console.log(vm.showPub);
     if (vm.showPub) {
-      console.log('showing pubs');
       vm.mapMarkers = vm.publisherMarkers;
     } else {
-      console.log('showing subs');
       vm.mapMarkers = vm.subscriberMarkers;
     }
   }

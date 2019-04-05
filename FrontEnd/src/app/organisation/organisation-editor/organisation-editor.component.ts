@@ -374,10 +374,7 @@ export class OrganisationEditorComponent implements OnInit {
   }
 
   deleteAddress(address: Address) {
-    console.log('deleting');
-    console.log(address);
     const index = this.addresses.findIndex(a => a.uuid === address.uuid);
-    console.log(index);
     if (index > -1) {
       this.addresses.splice(index, 1);
     }

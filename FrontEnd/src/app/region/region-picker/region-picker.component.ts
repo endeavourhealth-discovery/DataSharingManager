@@ -38,7 +38,6 @@ export class RegionPickerComponent implements OnInit {
     if (vm.searchData.length < 3) {
       return;
     }
-    console.log(vm.uuid);
     vm.regionService.search(vm.searchData)
       .subscribe(
         (result) => vm.searchResults = result.filter(function(x) {return x.uuid != vm.uuid; }),
@@ -66,12 +65,10 @@ export class RegionPickerComponent implements OnInit {
 
   ok() {
     this.activeModal.close(this.resultData);
-    console.log('OK Pressed');
   }
 
   cancel() {
     this.activeModal.dismiss('cancel');
-    console.log('Cancel Pressed');
   }
 
 }

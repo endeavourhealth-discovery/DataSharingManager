@@ -54,12 +54,10 @@ export class CohortPickerComponent implements OnInit {
 
   ok() {
     this.activeModal.close(this.resultData);
-    console.log('OK Pressed');
   }
 
   cancel() {
     this.activeModal.dismiss('cancel');
-    console.log('Cancel Pressed');
   }
 
 }

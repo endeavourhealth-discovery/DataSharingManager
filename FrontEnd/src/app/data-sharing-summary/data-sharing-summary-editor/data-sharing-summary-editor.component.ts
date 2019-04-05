@@ -81,7 +81,6 @@ export class DataSharingSummaryEditorComponent implements OnInit {
 
   save(close: boolean) {
     const vm = this;
-    console.log(vm.dataSharingSummary);
 
     vm.dataSharingSummaryService.saveDataSharingSummary(vm.dataSharingSummary)
       .subscribe(saved => {

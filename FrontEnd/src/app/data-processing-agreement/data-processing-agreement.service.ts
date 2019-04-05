@@ -17,7 +17,6 @@ export class DataProcessingAgreementService {
 
   getAllDpas(): Observable<Dpa[]> {
     const vm = this;
-    console.log('getting all DPAs');
     return vm.http.get('api/dpa')
       .map((response) => response.json());
   }
@@ -25,9 +24,7 @@ export class DataProcessingAgreementService {
   getDpa(uuid: string): Observable<Dpa> {
     const vm = this;
     const params = new URLSearchParams();
-    console.log(uuid);
     params.set('uuid', uuid);
-    console.log('getting SINGLE DPAs');
     return vm.http.get('api/dpa', { search : params })
       .map((response) => response.json());
   }

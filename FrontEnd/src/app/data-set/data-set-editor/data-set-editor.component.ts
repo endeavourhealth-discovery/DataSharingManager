@@ -114,8 +114,6 @@ export class DataSetEditorComponent implements OnInit {
           vm.dataset.uuid = saved;
           vm.log.success('Data set saved', vm.dataset, 'Save data set');
 
-          console.log('after');
-          console.log(vm.dataset);
           if (close) { vm.close(); }
         },
         error => vm.log.error('The data set could not be saved. Please try again.', error, 'Save data set')

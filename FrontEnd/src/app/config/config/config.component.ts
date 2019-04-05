@@ -69,7 +69,7 @@ export class ConfigComponent implements OnInit {
   private getConflictingOrganisations() {
     const vm = this;
     vm.organisationService.getConflictedOrganisations()
-      .subscribe(result => {vm.conflictedOrgs = result; console.log(result)},
+      .subscribe(result => {vm.conflictedOrgs = result; },
         error => vm.log.error('The conflicted organisations could not be loaded. Please try again.', error, 'Get conflicting organisations'))
   }
 

@@ -162,7 +162,6 @@ export class ProjectEditorComponent implements OnInit {
       .subscribe(
         (result) => {
           vm.userList = result;
-          console.log(vm.userList);
         },
         (error) => {
           vm.log.error('User list could not be loaded. Please try again.', error, 'Load user list');
@@ -176,7 +175,6 @@ export class ProjectEditorComponent implements OnInit {
       .subscribe(
         (result) => {
           vm.authToShare = result;
-          console.log('Authority', vm.authToShare);
         },
         (error) => {
           vm.log.error('Authority to share could not be loaded. Please try again.', error, 'Load authority to share');
@@ -313,7 +311,6 @@ export class ProjectEditorComponent implements OnInit {
 
   private editBasePopulations() {
     const vm = this;
-    console.log(vm.basePopulation);
     CohortPickerComponent.open(vm.$modal, vm.basePopulation)
       .result.then(function
       (result: Cohort[]) { vm.basePopulation= result; },
@@ -323,7 +320,6 @@ export class ProjectEditorComponent implements OnInit {
 
   private editDataSets() {
     const vm = this;
-    console.log(vm.dataSet);
     DataSetPickerComponent.open(vm.$modal, vm.dataSet)
       .result.then(function
       (result: DataSet[]) { vm.dataSet = result; },

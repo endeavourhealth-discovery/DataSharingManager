@@ -97,7 +97,7 @@ export class OrganisationOverviewComponent implements OnInit {
           vm.orgLoadingComplete = true;
         },
         error => {
-          console.log('Failed to load organisation statistics', error, 'Load service statistics');
+          vm.log.error('Failed to load organisation statistics', error, 'Load service statistics');
           vm.orgLoadingComplete = true;
         }
       );
@@ -112,7 +112,7 @@ export class OrganisationOverviewComponent implements OnInit {
           vm.serviceLoadingComplete = true;
         },
         error => {
-          console.log('Failed to load service statistics', error, 'Load service statistics');
+          vm.log.error('Failed to load service statistics', error, 'Load service statistics');
           vm.serviceLoadingComplete = true;
         }
       );
@@ -127,7 +127,7 @@ export class OrganisationOverviewComponent implements OnInit {
           vm.regionLoadingComplete = true;
         },
         error => {
-          console.log('Failed to load region statistics', error, 'Load region statistics');
+          vm.log.error('Failed to load region statistics', error, 'Load region statistics');
           vm.regionLoadingComplete = true;
         }
       );
