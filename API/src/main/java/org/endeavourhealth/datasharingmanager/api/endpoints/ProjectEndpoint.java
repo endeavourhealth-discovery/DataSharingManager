@@ -163,13 +163,13 @@ public class ProjectEndpoint extends AbstractEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.ProjectEndpoint.getBasePopulations")
     @Path("/basePopulations")
-    @ApiOperation(value = "Returns a list of Json representations of base populations that are linked " +
+    @ApiOperation(value = "Returns a list of Json representations of cohorts that are linked " +
             "to the project.  Accepts a UUID of a project.")
     public Response getBasePopulations(@Context SecurityContext sc,
                                            @ApiParam(value = "UUID of project") @QueryParam("uuid") String uuid) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
-                "Base Population(s)",
+                "Cohort(s)",
                 "Project UUID", uuid);
 
         return new ProjectLogic().getBasePopulations(uuid);

@@ -318,7 +318,7 @@ export class ProjectEditorComponent implements OnInit {
     CohortPickerComponent.open(vm.$modal, vm.basePopulation)
       .result.then(function
       (result: Cohort[]) { vm.basePopulation= result; },
-      () => vm.log.info('Edit base population cancelled')
+      () => vm.log.info('Edit cohort cancelled')
     );
   }
 
@@ -363,7 +363,7 @@ export class ProjectEditorComponent implements OnInit {
     vm.projectService.getLinkedBasePopulation(vm.project.uuid)
       .subscribe(
         result => vm.basePopulation = result,
-        error => vm.log.error('The associated base population could not be loaded. Please try again.', error, 'Load associated base population')
+        error => vm.log.error('The associated cohort could not be loaded. Please try again.', error, 'Load associated cohort')
       );
   }
 
