@@ -12,12 +12,12 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.databa
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataProcessingAgreementEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonCohort;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.CohortDAL;
-import org.endeavourhealth.datasharingmanager.api.DAL.DataProcessingAgreementDAL;
 import org.endeavourhealth.datasharingmanager.api.DAL.MasterMappingDAL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,7 +186,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!dpaUuids.isEmpty())
-            ret = new DataProcessingAgreementDAL().getDPAsFromList(dpaUuids);
+            ret = new DataProcessingAgreementCache().getDPADetails(dpaUuids);
 
         clearLogbackMarkers();
         return Response

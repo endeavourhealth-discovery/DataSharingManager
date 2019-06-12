@@ -1,12 +1,14 @@
 package org.endeavourhealth.datasharingmanager.api.Logic;
 
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityCohortDAL;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityDataProcessingAgreementDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityDatasetDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDPA;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 
@@ -71,7 +73,7 @@ public class DataProcessingAgreementLogic {
     }
 
     private Response getSingleDPA(String uuid) throws Exception {
-        DataProcessingAgreementEntity dpaEntity = new DataProcessingAgreementDAL().getDPA(uuid);
+        DataProcessingAgreementEntity dpaEntity = new DataProcessingAgreementCache().getDPADetails(uuid);
 
         return Response
                 .ok()
@@ -192,7 +194,7 @@ public class DataProcessingAgreementLogic {
 
     public Response checkOrganisationIsPartOfDPA(String odsCode, boolean countOnly) throws Exception {
 
-        List<DataProcessingAgreementEntity> matchingDpa = new DataProcessingAgreementDAL().getDataProcessingAgreementsForOrganisation(odsCode);
+        List<DataProcessingAgreementEntity> matchingDpa = new SecurityDataProcessingAgreementDAL().getDataProcessingAgreementsForOrganisation(odsCode);
 
         if (countOnly) {
             return Response
@@ -209,7 +211,7 @@ public class DataProcessingAgreementLogic {
 
     public Response checkOrganisationAndSystemIsPartOfDPA(String odsCode, String systemName) throws Exception {
 
-        List<DataProcessingAgreementEntity> matchingDpa = new DataProcessingAgreementDAL().getDataProcessingAgreementsForOrganisationAndSystemType(odsCode, systemName);
+        List<DataProcessingAgreementEntity> matchingDpa = new SecurityDataProcessingAgreementDAL().getDataProcessingAgreementsForOrganisationAndSystemType(odsCode, systemName);
 
         return Response
                 .ok()

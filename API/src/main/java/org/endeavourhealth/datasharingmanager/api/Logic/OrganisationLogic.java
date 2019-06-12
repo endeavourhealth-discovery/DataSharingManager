@@ -10,6 +10,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.J
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonFileUpload;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonOrganisation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonStatistics;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
@@ -189,7 +190,7 @@ public class OrganisationLogic {
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!dpaUUIDs.isEmpty())
-            ret = new DataProcessingAgreementDAL().getDPAsFromList(dpaUUIDs);
+            ret = new DataProcessingAgreementCache().getDPADetails(dpaUUIDs);
 
         return Response
                 .ok()
@@ -203,7 +204,7 @@ public class OrganisationLogic {
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!dpaUUIDs.isEmpty())
-            ret = new DataProcessingAgreementDAL().getDPAsFromList(dpaUUIDs);
+            ret = new DataProcessingAgreementCache().getDPADetails(dpaUUIDs);
 
         return Response
                 .ok()

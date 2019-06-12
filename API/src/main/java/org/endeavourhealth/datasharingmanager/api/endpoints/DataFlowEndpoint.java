@@ -12,6 +12,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.databa
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDataFlow;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
@@ -259,7 +260,7 @@ public final class DataFlowEndpoint extends AbstractEndpoint {
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!dpaUuids.isEmpty())
-            ret = new DataProcessingAgreementDAL().getDPAsFromList(dpaUuids);
+            ret = new DataProcessingAgreementCache().getDPADetails(dpaUuids);
 
         clearLogbackMarkers();
         return Response

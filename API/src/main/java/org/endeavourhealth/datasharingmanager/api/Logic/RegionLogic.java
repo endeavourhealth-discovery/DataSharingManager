@@ -7,6 +7,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.databa
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.RegionEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonRegion;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.RegionCache;
@@ -140,7 +141,7 @@ public class RegionLogic {
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!processingAgreementUuids.isEmpty())
-            ret = new DataProcessingAgreementDAL().getDPAsFromList(processingAgreementUuids);
+            ret = new DataProcessingAgreementCache().getDPADetails(processingAgreementUuids);
 
         return Response
                 .ok()
