@@ -317,7 +317,7 @@ public class OrganisationLogic {
 
     public Response getMultipleOrganisationsFromODSList(List<String> odsCodes) throws Exception {
 
-        List<OrganisationEntity> matchingOrganisations = new OrganisationDAL().searchOrganisationsFromOdsList(odsCodes);
+        List<OrganisationEntity> matchingOrganisations = OrganisationCache.getOrganisationDetailsFromOdsCodeList(odsCodes);
 
         return Response
                 .ok()
