@@ -4,6 +4,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.databa
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonOrganisation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonStatistics;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -16,6 +17,10 @@ import java.sql.Date;
 import java.util.*;
 
 public class OrganisationDAL {
+
+    private void clearOrganisationCache(String organisationId) throws Exception {
+        OrganisationCache.clearOrganisationCache(organisationId);
+    }
 
     public void deleteUneditedBulkOrganisations() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
@@ -93,6 +98,8 @@ public class OrganisationDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearOrganisationCache(organisation.getUuid());
     }
 
     public void saveOrganisation(JsonOrganisation organisation) throws Exception {
@@ -119,6 +126,8 @@ public class OrganisationDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearOrganisationCache(organisation.getUuid());
     }
 
     public void bulkSaveOrganisation(List<OrganisationEntity> organisationEntities) throws Exception {
@@ -152,6 +161,8 @@ public class OrganisationDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearOrganisationCache(uuid);
     }
 
     public Long getTotalNumberOfOrganisations(String expression, boolean searchServices) throws Exception {

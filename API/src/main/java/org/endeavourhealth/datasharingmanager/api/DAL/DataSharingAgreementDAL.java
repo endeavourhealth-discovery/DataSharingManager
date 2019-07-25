@@ -4,6 +4,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.databa
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDSA;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -16,6 +17,10 @@ import java.sql.Date;
 import java.util.List;
 
 public class DataSharingAgreementDAL {
+
+    private void clearDSACache(String dsaId) throws Exception {
+        DataSharingAgreementCache.clearDataSharingAgreementCache(dsaId);
+    }
 
     public List<DataSharingAgreementEntity> getAllDSAs() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
@@ -51,6 +56,8 @@ public class DataSharingAgreementDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearDSACache(dsa.getUuid());
     }
 
     public void saveDSA(JsonDSA dsa) throws Exception {
@@ -74,6 +81,8 @@ public class DataSharingAgreementDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearDSACache(dsa.getUuid());
     }
 
     public void deleteDSA(String uuid) throws Exception {
@@ -85,6 +94,8 @@ public class DataSharingAgreementDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearDSACache(uuid);
     }
 
     public List<DataSharingAgreementEntity> search(String expression) throws Exception {

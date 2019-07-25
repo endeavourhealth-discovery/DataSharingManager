@@ -3,6 +3,7 @@ package org.endeavourhealth.datasharingmanager.api.DAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.RegionEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonRegion;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.RegionCache;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -14,6 +15,10 @@ import java.util.List;
 
 public class RegionDAL {
 
+    private void clearRegionCache(String regionID) throws Exception {
+        RegionCache.clearRegionCache(regionID);
+    }
+
     public void updateRegion(JsonRegion region) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
@@ -24,6 +29,8 @@ public class RegionDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearRegionCache(region.getUuid());
     }
 
     public void saveRegion(JsonRegion region) throws Exception {
@@ -38,6 +45,8 @@ public class RegionDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearRegionCache(region.getUuid());
     }
 
     public void deleteRegion(String uuid) throws Exception {
@@ -49,6 +58,8 @@ public class RegionDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearRegionCache(uuid);
     }
 
     public List<RegionEntity> getRegionsFromList(List<String> regions) throws Exception {

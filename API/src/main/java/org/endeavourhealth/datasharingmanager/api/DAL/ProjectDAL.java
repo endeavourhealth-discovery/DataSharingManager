@@ -16,6 +16,10 @@ import java.util.*;
 
 public class ProjectDAL {
 
+    private void clearProjectCache(String projectId) throws Exception {
+        ProjectCache.clearProjectCache(projectId);
+    }
+
     public List<ProjectEntity> getAllProjects() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
@@ -61,6 +65,8 @@ public class ProjectDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearProjectCache(project.getUuid());
     }
 
     public void saveProject(JsonProject project) throws Exception {
@@ -95,6 +101,8 @@ public class ProjectDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearProjectCache(project.getUuid());
     }
 
     public void deleteProject(String uuid) throws Exception {
@@ -106,6 +114,8 @@ public class ProjectDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearProjectCache(uuid);
     }
 
     public List<ProjectEntity> search(String expression) throws Exception {

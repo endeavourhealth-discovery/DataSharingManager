@@ -1,12 +1,11 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataProcessingAgreementEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDPA;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -16,6 +15,10 @@ import java.sql.Date;
 import java.util.List;
 
 public class DataProcessingAgreementDAL {
+
+    private void clearDPACache(String dpaId) throws Exception {
+        DataProcessingAgreementCache.clearDataProcessingAgreementCache(dpaId);
+    }
 
     public List<DataProcessingAgreementEntity> getAllDPAs() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
@@ -54,6 +57,8 @@ public class DataProcessingAgreementDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearDPACache(dpa.getUuid());
     }
 
     public void saveDPA(JsonDPA dpa) throws Exception {
@@ -81,6 +86,8 @@ public class DataProcessingAgreementDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearDPACache(dpa.getUuid());
     }
 
     public void deleteDPA(String uuid) throws Exception {
@@ -92,6 +99,8 @@ public class DataProcessingAgreementDAL {
         entityManager.getTransaction().commit();
 
         entityManager.close();
+
+        clearDPACache(uuid);
     }
 
     public List<DataProcessingAgreementEntity> search(String expression) throws Exception {
