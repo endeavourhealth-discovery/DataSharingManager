@@ -28,14 +28,14 @@ export class OrganisationEditorComponent implements OnInit {
 
   region: Region = <Region>{};
   organisation: Organisation = <Organisation>{};
-  regions: Region[];
-  childOrganisations: Organisation[];
-  parentOrganisations: Organisation[];
-  services: Organisation[];
-  addresses: Address[];
-  dpaPublishing: Dpa[];
-  dsaPublishing: Dsa[];
-  dsaSubscribing: Dsa[];
+  regions: Region[] = [];
+  childOrganisations: Organisation[] = [];
+  parentOrganisations: Organisation[] = [];
+  services: Organisation[] = [];
+  addresses: Address[] = [];
+  dpaPublishing: Dpa[] = [];
+  dsaPublishing: Dsa[] = [];
+  dsaSubscribing: Dsa[] = [];
   organisationTypes: OrganisationType[];
   location: any;
   orgType = 'Organisation';
@@ -210,14 +210,14 @@ export class OrganisationEditorComponent implements OnInit {
       .subscribe(saved => {
           vm.organisation.uuid = saved;
           vm.log.success('Organisation saved successfully.', vm.organisation, 'Save organisation');
-          if (close) { this.router.navigate(['/overview']); }
+          if (close) { window.history.back(); }
         },
         error => vm.log.error('The organisation could not be saved. Please try again.', error, 'Save organisation')
       );
   }
 
   close() {
-    this.router.navigate(['/overview']);
+    window.history.back();
   }
 
   addAddress() {

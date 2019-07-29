@@ -33,22 +33,22 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   public accordionClass = 'accordionClass';
 
   dpa: Dpa = <Dpa>{};
-  dataFlows: DataFlow[];
-  cohorts: Cohort[];
-  dataSets: DataSet[];
-  regions: Region[];
-  documentations: Documentation[];
-  publishers: Organisation[];
+  dataFlows: DataFlow[] = [];
+  cohorts: Cohort[] = [];
+  dataSets: DataSet[] = [];
+  regions: Region[] = [];
+  documentations: Documentation[] = [];
+  publishers: Organisation[] = [];
   allowEdit = false;
   processor = 'Discovery';
   file: File;
   pdfSrc: any;
   page = 1;
-  publisherMarkers: Marker[];
-  subscriberMarkers: Marker[];
-  mapMarkers: Marker[];
-  purposes: Purpose[] = [];
-  benefits: Purpose[] = [];
+  publisherMarkers: Marker[] = [];
+  subscriberMarkers: Marker[] = [];
+  mapMarkers: Marker[] = [];
+  purposes: Purpose[] = [] = [];
+  benefits: Purpose[] = [] = [];
   disableStatus = false;
 
   public activeProject: UserProject;

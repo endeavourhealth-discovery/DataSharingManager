@@ -30,17 +30,17 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   private paramSubscriber: any;
 
   dsa: Dsa = <Dsa>{};
-  dataFlows: DataFlow[];
-  regions: Region[];
-  projects: Project[];
-  publishers: Organisation[];
-  subscribers: Organisation[];
-  documentations: Documentation[];
+  dataFlows: DataFlow[] = [];
+  regions: Region[] = [];
+  projects: Project[] = [];
+  publishers: Organisation[] = [];
+  subscribers: Organisation[] = [];
+  documentations: Documentation[] = [];
   purposes: Purpose[] = [];
   benefits: Purpose[] = [];
   publisherMarkers: Marker[];
   subscriberMarkers: Marker[];
-  mapMarkers: Marker[];
+  mapMarkers: Marker[] = [];
   showPub = true;
   allowEdit = false;
   file: File;

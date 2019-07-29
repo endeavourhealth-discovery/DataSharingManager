@@ -22,7 +22,7 @@ export class DataSetEditorComponent implements OnInit {
   public accordionClass = 'accordionClass';
 
   dataset: DataSet = <DataSet>{};
-  dpas: Dpa[];
+  dpas: Dpa[] = [];
   allowEdit = false;
 
   public activeProject: UserProject;

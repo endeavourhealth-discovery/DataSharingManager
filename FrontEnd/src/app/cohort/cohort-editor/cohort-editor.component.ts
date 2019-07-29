@@ -17,7 +17,7 @@ import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 export class CohortEditorComponent implements OnInit {
   private paramSubscriber: any;
   cohort: Cohort = <Cohort>{};
-  dpas: Dpa[];
+  dpas: Dpa[] = [];
   allowEdit = false;
 
   public activeProject: UserProject;

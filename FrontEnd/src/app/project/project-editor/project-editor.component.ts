@@ -35,14 +35,14 @@ export class ProjectEditorComponent implements OnInit {
   private paramSubscriber: any;
 
   project: Project = <Project>{};
-  dsas: Dsa[];
-  publishers: Organisation[];
-  subscribers: Organisation[];
-  basePopulation: Cohort[];
-  dataSet: DataSet[];
+  dsas: Dsa[] = [];
+  publishers: Organisation[] = [];
+  subscribers: Organisation[] = [];
+  basePopulation: Cohort[] = [];
+  dataSet: DataSet[] = [];
   allowEdit = false;
-  userList: User[];
-  authToShare: AuthorityToShare[];
+  userList: User[] = [];
+  authToShare: AuthorityToShare[] = [];
   disableStatus = false;
 
   public activeProject: UserProject;

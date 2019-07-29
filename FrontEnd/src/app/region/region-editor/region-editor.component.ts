@@ -24,12 +24,12 @@ export class RegionEditorComponent implements OnInit {
   private paramSubscriber: any;
 
   region: Region = <Region>{};
-  organisations: Organisation[];
-  parentRegions: Region[];
-  childRegions: Region[];
-  sharingAgreements: Dsa[];
-  processingAgreements: Dpa[];
-  markers: Marker[];
+  organisations: Organisation[] = [];
+  parentRegions: Region[] = [];
+  childRegions: Region[] = [];
+  sharingAgreements: Dsa[] = [];
+  processingAgreements: Dpa[] = [];
+  markers: Marker[] = [];
   editDisabled = false;
   latitude: number = 33.8121;
   longitude: number = -117.918;
@@ -150,14 +150,14 @@ export class RegionEditorComponent implements OnInit {
       .subscribe(saved => {
           vm.region.uuid = saved;
           vm.log.success('Region saved', vm.region, 'Save region');
-          if (close) { this.router.navigate(['/overview']); }
+          if (close) { window.history.back(); }
         },
         error => vm.log.error('The region could not be saved. Please try again.', error, 'Save region')
       );
   }
 
   close() {
-    this.router.navigate(['/overview']);
+    window.history.back();
   }
 
   private getRegionOrganisations() {
