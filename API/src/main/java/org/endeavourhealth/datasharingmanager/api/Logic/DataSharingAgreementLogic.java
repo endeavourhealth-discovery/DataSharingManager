@@ -55,7 +55,7 @@ public class DataSharingAgreementLogic {
         new MasterMappingDAL().saveDataSharingAgreementMappings(dsa);
 
         return Response
-                .ok()
+                .ok(dsa.getUuid())
                 .build();
 
     }
