@@ -17,105 +17,132 @@ public class DataFlowDAL {
     public List<DataFlowEntity> getAllDataFlows() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DataFlowEntity> cq = cb.createQuery(DataFlowEntity.class);
-        Root<DataFlowEntity> rootEntry = cq.from(DataFlowEntity.class);
-        CriteriaQuery<DataFlowEntity> all = cq.select(rootEntry);
-        TypedQuery<DataFlowEntity> allQuery = entityManager.createQuery(all);
-        List<DataFlowEntity> ret =  allQuery.getResultList();
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<DataFlowEntity> cq = cb.createQuery(DataFlowEntity.class);
+            Root<DataFlowEntity> rootEntry = cq.from(DataFlowEntity.class);
+            CriteriaQuery<DataFlowEntity> all = cq.select(rootEntry);
+            TypedQuery<DataFlowEntity> allQuery = entityManager.createQuery(all);
+            List<DataFlowEntity> ret = allQuery.getResultList();
 
-        entityManager.close();
+            return ret;
+        } finally {
+            entityManager.close();
+        }
 
-        return ret;
     }
 
     public DataFlowEntity getDataFlow(String uuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DataFlowEntity ret = entityManager.find(DataFlowEntity.class, uuid);
+        try {
+            DataFlowEntity ret = entityManager.find(DataFlowEntity.class, uuid);
 
-        entityManager.close();
+            return ret;
+        } finally {
+            entityManager.close();
+        }
 
-        return ret;
     }
 
     public void updateDataFlow(JsonDataFlow dataFlow) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DataFlowEntity dataFlowEntity = entityManager.find(DataFlowEntity.class, dataFlow.getUuid());
-        entityManager.getTransaction().begin();
-        dataFlowEntity.setName(dataFlow.getName());
-        dataFlowEntity.setStorageProtocolId(dataFlow.getStorageProtocolId());
-        dataFlowEntity.setDeidentificationLevel(dataFlow.getDeidentificationLevel());
-        dataFlowEntity.setConsentModelId(dataFlow.getConsentModelId());
-        dataFlowEntity.setPurpose(dataFlow.getPurpose());
-        entityManager.getTransaction().commit();
-
-        entityManager.close();
+        try {
+            DataFlowEntity dataFlowEntity = entityManager.find(DataFlowEntity.class, dataFlow.getUuid());
+            entityManager.getTransaction().begin();
+            dataFlowEntity.setName(dataFlow.getName());
+            dataFlowEntity.setStorageProtocolId(dataFlow.getStorageProtocolId());
+            dataFlowEntity.setDeidentificationLevel(dataFlow.getDeidentificationLevel());
+            dataFlowEntity.setConsentModelId(dataFlow.getConsentModelId());
+            dataFlowEntity.setPurpose(dataFlow.getPurpose());
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void saveDataFlow(JsonDataFlow dataFlow) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DataFlowEntity dataFlowEntity = new DataFlowEntity();
-        entityManager.getTransaction().begin();
-        dataFlowEntity.setName(dataFlow.getName());
-        dataFlowEntity.setStorageProtocolId(dataFlow.getStorageProtocolId());
-        dataFlowEntity.setDeidentificationLevel(dataFlow.getDeidentificationLevel());
-        dataFlowEntity.setConsentModelId(dataFlow.getConsentModelId());
-        dataFlowEntity.setPurpose(dataFlow.getPurpose());
-        dataFlowEntity.setUuid(dataFlow.getUuid());
-        entityManager.persist(dataFlowEntity);
-        entityManager.getTransaction().commit();
-
-        entityManager.close();
+        try {
+            DataFlowEntity dataFlowEntity = new DataFlowEntity();
+            entityManager.getTransaction().begin();
+            dataFlowEntity.setName(dataFlow.getName());
+            dataFlowEntity.setStorageProtocolId(dataFlow.getStorageProtocolId());
+            dataFlowEntity.setDeidentificationLevel(dataFlow.getDeidentificationLevel());
+            dataFlowEntity.setConsentModelId(dataFlow.getConsentModelId());
+            dataFlowEntity.setPurpose(dataFlow.getPurpose());
+            dataFlowEntity.setUuid(dataFlow.getUuid());
+            entityManager.persist(dataFlowEntity);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void deleteDataFlow(String uuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DataFlowEntity dataFlowEntity = entityManager.find(DataFlowEntity.class, uuid);
-        entityManager.getTransaction().begin();
-        entityManager.remove(dataFlowEntity);
-        entityManager.getTransaction().commit();
-
-        entityManager.close();
+        try {
+            DataFlowEntity dataFlowEntity = entityManager.find(DataFlowEntity.class, uuid);
+            entityManager.getTransaction().begin();
+            entityManager.remove(dataFlowEntity);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public List<DataFlowEntity> search(String expression) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DataFlowEntity> cq = cb.createQuery(DataFlowEntity.class);
-        Root<DataFlowEntity> rootEntry = cq.from(DataFlowEntity.class);
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<DataFlowEntity> cq = cb.createQuery(DataFlowEntity.class);
+            Root<DataFlowEntity> rootEntry = cq.from(DataFlowEntity.class);
 
-        Predicate predicate = cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%");
+            Predicate predicate = cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%");
 
-        cq.where(predicate);
-        TypedQuery<DataFlowEntity> query = entityManager.createQuery(cq);
-        List<DataFlowEntity> ret = query.getResultList();
+            cq.where(predicate);
+            TypedQuery<DataFlowEntity> query = entityManager.createQuery(cq);
+            List<DataFlowEntity> ret = query.getResultList();
 
-        entityManager.close();
-
-        return ret;
+            return ret;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public List<DataFlowEntity> getDataFlowsFromList(List<String> dataFlows) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DataFlowEntity> cq = cb.createQuery(DataFlowEntity.class);
-        Root<DataFlowEntity> rootEntry = cq.from(DataFlowEntity.class);
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<DataFlowEntity> cq = cb.createQuery(DataFlowEntity.class);
+            Root<DataFlowEntity> rootEntry = cq.from(DataFlowEntity.class);
 
-        Predicate predicate = rootEntry.get("uuid").in(dataFlows);
+            Predicate predicate = rootEntry.get("uuid").in(dataFlows);
 
-        cq.where(predicate);
-        TypedQuery<DataFlowEntity> query = entityManager.createQuery(cq);
+            cq.where(predicate);
+            TypedQuery<DataFlowEntity> query = entityManager.createQuery(cq);
 
-        List<DataFlowEntity> ret = query.getResultList();
+            List<DataFlowEntity> ret = query.getResultList();
 
-        entityManager.close();
+            return ret;
 
-        return ret;
+        } finally {
+            entityManager.close();
+        }
+
     }
 }

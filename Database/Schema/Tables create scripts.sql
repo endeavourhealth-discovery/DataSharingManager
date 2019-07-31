@@ -408,14 +408,21 @@ create table data_sharing_manager.data_sharing_agreement (
 
 create table data_sharing_manager.documentation (
 	uuid char(36) not null comment 'Unique identifier for the data sharing agreement',
-    title varchar(50) not null comment 'Title of the document',
-    filename varchar(50) not null comment 'Filename of the document',
+    title varchar(200) not null comment 'Title of the document',
+    filename varchar(200) not null comment 'Filename of the document',
     fileData mediumtext not null comment 'Base64 encoded file data',   
     
     constraint data_sharing_manager_documentation_uuid_pk primary key (uuid),
     index data_sharing_manager_documentation_title_idx (title)
 ) comment 'Hold documentation associated with sharing agreements';
 
+/*
+alter table data_sharing_manager.documentation
+modify column title varchar(200) not null comment 'Title of the document';
+
+alter table data_sharing_manager.documentation
+modify column filename varchar(200) not null comment 'Filename of the document';
+*/
 create table data_sharing_manager.purpose (
 	uuid char(36) not null comment 'Unique identifier for the purpose',
     title varchar(50) not null comment 'Title of the purpose/benefit',

@@ -23,48 +23,56 @@ public class ProjectDAL {
     public List<ProjectEntity> getAllProjects() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<ProjectEntity> cq = cb.createQuery(ProjectEntity.class);
-        Root<ProjectEntity> rootEntry = cq.from(ProjectEntity.class);
-        CriteriaQuery<ProjectEntity> all = cq.select(rootEntry);
-        TypedQuery<ProjectEntity> allQuery = entityManager.createQuery(all);
-        List<ProjectEntity> ret =  allQuery.getResultList();
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<ProjectEntity> cq = cb.createQuery(ProjectEntity.class);
+            Root<ProjectEntity> rootEntry = cq.from(ProjectEntity.class);
+            CriteriaQuery<ProjectEntity> all = cq.select(rootEntry);
+            TypedQuery<ProjectEntity> allQuery = entityManager.createQuery(all);
+            List<ProjectEntity> ret = allQuery.getResultList();
 
-        entityManager.close();
+            return ret;
+        } finally {
+            entityManager.close();
+        }
 
-        return ret;
     }
 
     public void updateProject(JsonProject project) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        ProjectEntity projectEntity = entityManager.find(ProjectEntity.class, project.getUuid());
-        entityManager.getTransaction().begin();
-        projectEntity.setName(project.getName());
-        projectEntity.setLeadUser(project.getLeadUser());
-        projectEntity.setTechnicalLeadUser(project.getTechnicalLeadUser());
-        projectEntity.setConsentModelId(project.getConsentModelId());
-        projectEntity.setDeidentificationLevel(project.getDeidentificationLevel());
-        projectEntity.setProjectTypeId(project.getProjectTypeId());
-        projectEntity.setSecurityInfrastructureId(project.getSecurityInfrastructureId());
-        projectEntity.setIpAddress(project.getIpAddress());
-        projectEntity.setSummary(project.getSummary());
-        projectEntity.setBusinessCase(project.getBusinessCase());
-        projectEntity.setObjectives(project.getObjectives());
-        projectEntity.setSecurityArchitectureId(project.getSecurityArchitectureId());
-        projectEntity.setStorageProtocolId(project.getStorageProtocolId());
-        projectEntity.setBusinessCaseStatus(project.getBusinessCaseStatus());
-        projectEntity.setFlowScheduleId(project.getFlowScheduleId());
-        projectEntity.setProjectStatusId(project.getProjectStatusId());
-        if (project.getStartDate() != null) {
-            projectEntity.setStartDate(Date.valueOf(project.getStartDate()));
+        try {
+            ProjectEntity projectEntity = entityManager.find(ProjectEntity.class, project.getUuid());
+            entityManager.getTransaction().begin();
+            projectEntity.setName(project.getName());
+            projectEntity.setLeadUser(project.getLeadUser());
+            projectEntity.setTechnicalLeadUser(project.getTechnicalLeadUser());
+            projectEntity.setConsentModelId(project.getConsentModelId());
+            projectEntity.setDeidentificationLevel(project.getDeidentificationLevel());
+            projectEntity.setProjectTypeId(project.getProjectTypeId());
+            projectEntity.setSecurityInfrastructureId(project.getSecurityInfrastructureId());
+            projectEntity.setIpAddress(project.getIpAddress());
+            projectEntity.setSummary(project.getSummary());
+            projectEntity.setBusinessCase(project.getBusinessCase());
+            projectEntity.setObjectives(project.getObjectives());
+            projectEntity.setSecurityArchitectureId(project.getSecurityArchitectureId());
+            projectEntity.setStorageProtocolId(project.getStorageProtocolId());
+            projectEntity.setBusinessCaseStatus(project.getBusinessCaseStatus());
+            projectEntity.setFlowScheduleId(project.getFlowScheduleId());
+            projectEntity.setProjectStatusId(project.getProjectStatusId());
+            if (project.getStartDate() != null) {
+                projectEntity.setStartDate(Date.valueOf(project.getStartDate()));
+            }
+            if (project.getEndDate() != null) {
+                projectEntity.setEndDate(Date.valueOf(project.getEndDate()));
+            }
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
         }
-        if (project.getEndDate() != null) {
-            projectEntity.setEndDate(Date.valueOf(project.getEndDate()));
-        }
-        entityManager.getTransaction().commit();
-
-        entityManager.close();
 
         clearProjectCache(project.getUuid());
     }
@@ -72,35 +80,41 @@ public class ProjectDAL {
     public void saveProject(JsonProject project) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        ProjectEntity projectEntity = new ProjectEntity();
-        entityManager.getTransaction().begin();
-        projectEntity.setUuid(project.getUuid());
-        projectEntity.setName(project.getName());
-        projectEntity.setLeadUser(project.getLeadUser());
-        projectEntity.setTechnicalLeadUser(project.getTechnicalLeadUser());
-        projectEntity.setConsentModelId(project.getConsentModelId());
-        projectEntity.setDeidentificationLevel(project.getDeidentificationLevel());
-        projectEntity.setProjectTypeId(project.getProjectTypeId());
-        projectEntity.setSecurityInfrastructureId(project.getSecurityInfrastructureId());
-        projectEntity.setIpAddress(project.getIpAddress());
-        projectEntity.setSummary(project.getSummary());
-        projectEntity.setBusinessCase(project.getBusinessCase());
-        projectEntity.setObjectives(project.getObjectives());
-        projectEntity.setSecurityArchitectureId(project.getSecurityArchitectureId());
-        projectEntity.setStorageProtocolId(project.getStorageProtocolId());
-        projectEntity.setBusinessCaseStatus(project.getBusinessCaseStatus());
-        projectEntity.setFlowScheduleId(project.getFlowScheduleId());
-        projectEntity.setProjectStatusId(project.getProjectStatusId());
-        if (project.getStartDate() != null) {
-            projectEntity.setStartDate(Date.valueOf(project.getStartDate()));
-        }
-        if (project.getEndDate() != null) {
-            projectEntity.setEndDate(Date.valueOf(project.getEndDate()));
-        }
-        entityManager.persist(projectEntity);
-        entityManager.getTransaction().commit();
+        try {
+            ProjectEntity projectEntity = new ProjectEntity();
+            entityManager.getTransaction().begin();
+            projectEntity.setUuid(project.getUuid());
+            projectEntity.setName(project.getName());
+            projectEntity.setLeadUser(project.getLeadUser());
+            projectEntity.setTechnicalLeadUser(project.getTechnicalLeadUser());
+            projectEntity.setConsentModelId(project.getConsentModelId());
+            projectEntity.setDeidentificationLevel(project.getDeidentificationLevel());
+            projectEntity.setProjectTypeId(project.getProjectTypeId());
+            projectEntity.setSecurityInfrastructureId(project.getSecurityInfrastructureId());
+            projectEntity.setIpAddress(project.getIpAddress());
+            projectEntity.setSummary(project.getSummary());
+            projectEntity.setBusinessCase(project.getBusinessCase());
+            projectEntity.setObjectives(project.getObjectives());
+            projectEntity.setSecurityArchitectureId(project.getSecurityArchitectureId());
+            projectEntity.setStorageProtocolId(project.getStorageProtocolId());
+            projectEntity.setBusinessCaseStatus(project.getBusinessCaseStatus());
+            projectEntity.setFlowScheduleId(project.getFlowScheduleId());
+            projectEntity.setProjectStatusId(project.getProjectStatusId());
+            if (project.getStartDate() != null) {
+                projectEntity.setStartDate(Date.valueOf(project.getStartDate()));
+            }
+            if (project.getEndDate() != null) {
+                projectEntity.setEndDate(Date.valueOf(project.getEndDate()));
+            }
+            entityManager.persist(projectEntity);
+            entityManager.getTransaction().commit();
 
-        entityManager.close();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
 
         clearProjectCache(project.getUuid());
     }
@@ -108,12 +122,18 @@ public class ProjectDAL {
     public void deleteProject(String uuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        ProjectEntity projectEntity = entityManager.find(ProjectEntity.class, uuid);
-        entityManager.getTransaction().begin();
-        entityManager.remove(projectEntity);
-        entityManager.getTransaction().commit();
+        try {
+            ProjectEntity projectEntity = entityManager.find(ProjectEntity.class, uuid);
+            entityManager.getTransaction().begin();
+            entityManager.remove(projectEntity);
+            entityManager.getTransaction().commit();
 
-        entityManager.close();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
 
         clearProjectCache(uuid);
     }
@@ -121,19 +141,22 @@ public class ProjectDAL {
     public List<ProjectEntity> search(String expression) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<ProjectEntity> cq = cb.createQuery(ProjectEntity.class);
-        Root<ProjectEntity> rootEntry = cq.from(ProjectEntity.class);
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<ProjectEntity> cq = cb.createQuery(ProjectEntity.class);
+            Root<ProjectEntity> rootEntry = cq.from(ProjectEntity.class);
 
-        Predicate predicate = cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%");
+            Predicate predicate = cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%");
 
-        cq.where(predicate);
-        TypedQuery<ProjectEntity> query = entityManager.createQuery(cq);
-        List<ProjectEntity> ret = query.getResultList();
+            cq.where(predicate);
+            TypedQuery<ProjectEntity> query = entityManager.createQuery(cq);
+            List<ProjectEntity> ret = query.getResultList();
 
-        entityManager.close();
+            return ret;
 
-        return ret;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public boolean checkProjectIsActive(String projectId) throws Exception {

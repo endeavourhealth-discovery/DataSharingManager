@@ -17,79 +17,106 @@ public class DatasetDAL {
     public List<DatasetEntity> getAllDataSets() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DatasetEntity> cq = cb.createQuery(DatasetEntity.class);
-        Root<DatasetEntity> rootEntry = cq.from(DatasetEntity.class);
-        CriteriaQuery<DatasetEntity> all = cq.select(rootEntry);
-        TypedQuery<DatasetEntity> allQuery = entityManager.createQuery(all);
-        List<DatasetEntity> ret = allQuery.getResultList();
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<DatasetEntity> cq = cb.createQuery(DatasetEntity.class);
+            Root<DatasetEntity> rootEntry = cq.from(DatasetEntity.class);
+            CriteriaQuery<DatasetEntity> all = cq.select(rootEntry);
+            TypedQuery<DatasetEntity> allQuery = entityManager.createQuery(all);
 
-        entityManager.close();
+            List<DatasetEntity> ret = allQuery.getResultList();
 
-        return ret;
+            return ret;
+        } finally {
+            entityManager.close();
+        }
+
     }
 
     public DatasetEntity getDataSet(String uuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DatasetEntity ret = entityManager.find(DatasetEntity.class, uuid);
-        entityManager.close();
+        try {
+            DatasetEntity ret = entityManager.find(DatasetEntity.class, uuid);
 
-        return ret;
+            return ret;
+        } finally {
+            entityManager.close();
+        }
+
     }
 
     public void updateDataSet(JsonDataSet dataset) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DatasetEntity dataSetEntity = entityManager.find(DatasetEntity.class, dataset.getUuid());
-        entityManager.getTransaction().begin();
-        dataSetEntity.setName(dataset.getName());
-        dataSetEntity.setDescription(dataset.getDescription());
-        entityManager.getTransaction().commit();
-
-        entityManager.close();
+        try {
+            DatasetEntity dataSetEntity = entityManager.find(DatasetEntity.class, dataset.getUuid());
+            entityManager.getTransaction().begin();
+            dataSetEntity.setName(dataset.getName());
+            dataSetEntity.setDescription(dataset.getDescription());
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void saveDataSet(JsonDataSet dataset) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DatasetEntity dataSetEntity = new DatasetEntity();
-        entityManager.getTransaction().begin();
-        dataSetEntity.setUuid(dataset.getUuid());
-        dataSetEntity.setName(dataset.getName());
-        dataSetEntity.setDescription(dataset.getDescription());
-        entityManager.persist(dataSetEntity);
-        entityManager.getTransaction().commit();
+        try {
+            DatasetEntity dataSetEntity = new DatasetEntity();
+            entityManager.getTransaction().begin();
+            dataSetEntity.setUuid(dataset.getUuid());
+            dataSetEntity.setName(dataset.getName());
+            dataSetEntity.setDescription(dataset.getDescription());
+            entityManager.persist(dataSetEntity);
+            entityManager.getTransaction().commit();
 
-        entityManager.close();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void deleteDataSet(String uuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DatasetEntity dataSetEntity = entityManager.find(DatasetEntity.class, uuid);
-        entityManager.getTransaction().begin();
-        entityManager.remove(dataSetEntity);
-        entityManager.getTransaction().commit();
-
-        entityManager.close();
+        try {
+            DatasetEntity dataSetEntity = entityManager.find(DatasetEntity.class, uuid);
+            entityManager.getTransaction().begin();
+            entityManager.remove(dataSetEntity);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public List<DatasetEntity> search(String expression) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DatasetEntity> cq = cb.createQuery(DatasetEntity.class);
-        Root<DatasetEntity> rootEntry = cq.from(DatasetEntity.class);
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<DatasetEntity> cq = cb.createQuery(DatasetEntity.class);
+            Root<DatasetEntity> rootEntry = cq.from(DatasetEntity.class);
 
-        Predicate predicate = cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%");
+            Predicate predicate = cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%");
 
-        cq.where(predicate);
-        TypedQuery<DatasetEntity> query = entityManager.createQuery(cq);
-        List<DatasetEntity> ret = query.getResultList();
+            cq.where(predicate);
+            TypedQuery<DatasetEntity> query = entityManager.createQuery(cq);
+            List<DatasetEntity> ret = query.getResultList();
 
-        entityManager.close();
+            return ret;
+        } finally {
+            entityManager.close();
+        }
 
-        return ret;
     }
 }

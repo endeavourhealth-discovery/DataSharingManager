@@ -25,20 +25,24 @@ public class OrganisationDAL {
     public void deleteUneditedBulkOrganisations() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        entityManager.getTransaction().begin();
-        Query query = entityManager.createQuery(
-                "DELETE from OrganisationEntity o " +
-                        "where o.bulkImported = :active " +
-                        "and o.bulkItemUpdated = :notActive");
-        query.setParameter("active", 1);
-        query.setParameter("notActive", 0);
+        try {
+            entityManager.getTransaction().begin();
+            Query query = entityManager.createQuery(
+                    "DELETE from OrganisationEntity o " +
+                            "where o.bulkImported = :active " +
+                            "and o.bulkItemUpdated = :notActive");
+            query.setParameter("active", 1);
+            query.setParameter("notActive", 0);
 
-        int deletedCount = query.executeUpdate();
+            int deletedCount = query.executeUpdate();
 
-        entityManager.getTransaction().commit();
-
-        System.out.println(deletedCount + " deleted");
-        entityManager.close();
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public List<OrganisationEntity> getOrganisations(String expression, boolean searchServices,
@@ -47,57 +51,65 @@ public class OrganisationDAL {
                                                             String orderColumn, boolean descending) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<OrganisationEntity> cq = cb.createQuery(OrganisationEntity.class);
-        Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<OrganisationEntity> cq = cb.createQuery(OrganisationEntity.class);
+            Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
 
-        //Services are just organisations with the isService flag set to true;
-        Predicate predicate= cb.equal(rootEntry.get("isService"), (byte) (searchServices ? 1 : 0));
+            //Services are just organisations with the isService flag set to true;
+            Predicate predicate = cb.equal(rootEntry.get("isService"), (byte) (searchServices ? 1 : 0));
 
-        if (!expression.equals("")){
-            predicate = cb.and(cb.equal(rootEntry.get("isService"), (byte) (searchServices ? 1 : 0)),
-                    (cb.or(cb.like(rootEntry.get("name"), "%" + expression + "%"),
-                            cb.like(rootEntry.get("odsCode"), "%" + expression + "%"),
-                            cb.like(rootEntry.get("alternativeName"), "%" + expression + "%"),
-                            cb.like(rootEntry.get("icoCode"), "%" + expression + "%"))));
+            if (!expression.equals("")) {
+                predicate = cb.and(cb.equal(rootEntry.get("isService"), (byte) (searchServices ? 1 : 0)),
+                        (cb.or(cb.like(rootEntry.get("name"), "%" + expression + "%"),
+                                cb.like(rootEntry.get("odsCode"), "%" + expression + "%"),
+                                cb.like(rootEntry.get("alternativeName"), "%" + expression + "%"),
+                                cb.like(rootEntry.get("icoCode"), "%" + expression + "%"))));
+            }
+
+            if (descending)
+                cq.where(predicate).orderBy(cb.desc(rootEntry.get(orderColumn)), cb.desc(rootEntry.get("uuid")));
+            else
+                cq.where(predicate).orderBy(cb.asc(rootEntry.get(orderColumn)), cb.asc(rootEntry.get("uuid")));
+
+            TypedQuery<OrganisationEntity> query = entityManager.createQuery(cq);
+            query.setFirstResult((pageNumber - 1) * pageSize);
+            query.setMaxResults(pageSize);
+            List<OrganisationEntity> ret = query.getResultList();
+
+            return ret;
+        } finally {
+            entityManager.close();
         }
-
-        if (descending)
-            cq.where(predicate).orderBy(cb.desc(rootEntry.get(orderColumn)), cb.desc(rootEntry.get("uuid")));
-        else
-            cq.where(predicate).orderBy(cb.asc(rootEntry.get(orderColumn)), cb.asc(rootEntry.get("uuid")));
-
-        TypedQuery<OrganisationEntity> query = entityManager.createQuery(cq);
-        query.setFirstResult((pageNumber - 1) * pageSize);
-        query.setMaxResults(pageSize);
-        List<OrganisationEntity> ret = query.getResultList();
-
-        entityManager.close();
-
-        return ret;
     }
 
     public void updateOrganisation(JsonOrganisation organisation) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        OrganisationEntity organisationEntity = entityManager.find(OrganisationEntity.class, organisation.getUuid());
-        entityManager.getTransaction().begin();
-        organisationEntity.setName(organisation.getName());
-        organisationEntity.setAlternativeName(organisation.getAlternativeName());
-        organisationEntity.setOdsCode(organisation.getOdsCode());
-        organisationEntity.setIcoCode(organisation.getIcoCode());
-        organisationEntity.setIgToolkitStatus(organisation.getIgToolkitStatus());
-        organisationEntity.setIsService((byte) (organisation.getIsService().equals("1") ? 1 : 0));
-        organisationEntity.setType(organisation.getType());
-        organisationEntity.setBulkItemUpdated((byte)1);
-        if (organisation.getDateOfRegistration() != null) {
-            organisationEntity.setDateOfRegistration(Date.valueOf(organisation.getDateOfRegistration()));
-        }
-        //organisationEntity.setRegistrationPerson(organisation.getRegistrationPerson());
-        organisationEntity.setEvidenceOfRegistration(organisation.getEvidenceOfRegistration());
-        entityManager.getTransaction().commit();
+        try {
+            OrganisationEntity organisationEntity = entityManager.find(OrganisationEntity.class, organisation.getUuid());
+            entityManager.getTransaction().begin();
+            organisationEntity.setName(organisation.getName());
+            organisationEntity.setAlternativeName(organisation.getAlternativeName());
+            organisationEntity.setOdsCode(organisation.getOdsCode());
+            organisationEntity.setIcoCode(organisation.getIcoCode());
+            organisationEntity.setIgToolkitStatus(organisation.getIgToolkitStatus());
+            organisationEntity.setIsService((byte) (organisation.getIsService().equals("1") ? 1 : 0));
+            organisationEntity.setType(organisation.getType());
+            organisationEntity.setBulkItemUpdated((byte) 1);
+            if (organisation.getDateOfRegistration() != null) {
+                organisationEntity.setDateOfRegistration(Date.valueOf(organisation.getDateOfRegistration()));
+            }
+            //organisationEntity.setRegistrationPerson(organisation.getRegistrationPerson());
+            organisationEntity.setEvidenceOfRegistration(organisation.getEvidenceOfRegistration());
+            entityManager.getTransaction().commit();
 
-        entityManager.close();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
 
         clearOrganisationCache(organisation.getUuid());
     }
@@ -105,27 +117,33 @@ public class OrganisationDAL {
     public void saveOrganisation(JsonOrganisation organisation) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        OrganisationEntity organisationEntity = new OrganisationEntity();
-        entityManager.getTransaction().begin();
-        organisationEntity.setName(organisation.getName());
-        organisationEntity.setAlternativeName(organisation.getAlternativeName());
-        organisationEntity.setOdsCode(organisation.getOdsCode());
-        organisationEntity.setIcoCode(organisation.getIcoCode());
-        organisationEntity.setIgToolkitStatus(organisation.getIgToolkitStatus());
-        organisationEntity.setIsService((byte) (organisation.getIsService().equals("1") ? 1 : 0));
-        organisationEntity.setBulkImported((byte) (organisation.getBulkImported().equals("1") ? 1 : 0));
-        organisationEntity.setBulkItemUpdated((byte) (organisation.getBulkItemUpdated().equals("1") ? 1 : 0));
-        organisationEntity.setType(organisation.getType());
-        if (organisation.getDateOfRegistration() != null) {
-            organisationEntity.setDateOfRegistration(Date.valueOf(organisation.getDateOfRegistration()));
-        }
-        //organisationEntity.setRegistrationPerson(organisation.getRegistrationPerson());
-        organisationEntity.setEvidenceOfRegistration(organisation.getEvidenceOfRegistration());
-        organisationEntity.setUuid(organisation.getUuid());
-        entityManager.persist(organisationEntity);
-        entityManager.getTransaction().commit();
+        try {
+            OrganisationEntity organisationEntity = new OrganisationEntity();
+            entityManager.getTransaction().begin();
+            organisationEntity.setName(organisation.getName());
+            organisationEntity.setAlternativeName(organisation.getAlternativeName());
+            organisationEntity.setOdsCode(organisation.getOdsCode());
+            organisationEntity.setIcoCode(organisation.getIcoCode());
+            organisationEntity.setIgToolkitStatus(organisation.getIgToolkitStatus());
+            organisationEntity.setIsService((byte) (organisation.getIsService().equals("1") ? 1 : 0));
+            organisationEntity.setBulkImported((byte) (organisation.getBulkImported().equals("1") ? 1 : 0));
+            organisationEntity.setBulkItemUpdated((byte) (organisation.getBulkItemUpdated().equals("1") ? 1 : 0));
+            organisationEntity.setType(organisation.getType());
+            if (organisation.getDateOfRegistration() != null) {
+                organisationEntity.setDateOfRegistration(Date.valueOf(organisation.getDateOfRegistration()));
+            }
+            //organisationEntity.setRegistrationPerson(organisation.getRegistrationPerson());
+            organisationEntity.setEvidenceOfRegistration(organisation.getEvidenceOfRegistration());
+            organisationEntity.setUuid(organisation.getUuid());
+            entityManager.persist(organisationEntity);
+            entityManager.getTransaction().commit();
 
-        entityManager.close();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
 
         clearOrganisationCache(organisation.getUuid());
     }
@@ -133,34 +151,44 @@ public class OrganisationDAL {
     public void bulkSaveOrganisation(List<OrganisationEntity> organisationEntities) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        int batchSize = 50;
+        try {
+            int batchSize = 50;
 
-        entityManager.getTransaction().begin();
+            entityManager.getTransaction().begin();
 
-        for (int i = 0; i < organisationEntities.size(); i++) {
-            OrganisationEntity organisationEntity = organisationEntities.get(i);
-            entityManager.merge(organisationEntity);
-            new AddressDAL().deleteAddressForOrganisations(organisationEntity.getUuid());
-            if (i % batchSize == 0){
-                entityManager.flush();
-                entityManager.clear();
+            for (int i = 0; i < organisationEntities.size(); i++) {
+                OrganisationEntity organisationEntity = organisationEntities.get(i);
+                entityManager.merge(organisationEntity);
+                new AddressDAL().deleteAddressForOrganisations(organisationEntity.getUuid());
+                if (i % batchSize == 0) {
+                    entityManager.flush();
+                    entityManager.clear();
+                }
             }
+
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
         }
-
-        entityManager.getTransaction().commit();
-
-        entityManager.close();
     }
 
     public void deleteOrganisation(String uuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        OrganisationEntity organisationEntity = entityManager.find(OrganisationEntity.class, uuid);
-        entityManager.getTransaction().begin();
-        entityManager.remove(organisationEntity);
-        entityManager.getTransaction().commit();
-
-        entityManager.close();
+        try {
+            OrganisationEntity organisationEntity = entityManager.find(OrganisationEntity.class, uuid);
+            entityManager.getTransaction().begin();
+            entityManager.remove(organisationEntity);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
 
         clearOrganisationCache(uuid);
     }
@@ -168,81 +196,91 @@ public class OrganisationDAL {
     public Long getTotalNumberOfOrganisations(String expression, boolean searchServices) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-        Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+            Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
 
 
-        //Services are just organisations with the isService flag set to true;
-        Predicate predicate= cb.equal(rootEntry.get("isService"), (byte) (searchServices ? 1 : 0));
+            //Services are just organisations with the isService flag set to true;
+            Predicate predicate = cb.equal(rootEntry.get("isService"), (byte) (searchServices ? 1 : 0));
 
 
-        if (!expression.equals("")) {
-            predicate = cb.and(cb.equal(rootEntry.get("isService"), (byte) (searchServices ? 1 : 0)),
-                    (cb.or(cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%"),
-                            cb.like(cb.upper(rootEntry.get("odsCode")), "%" + expression.toUpperCase() + "%"),
-                            cb.like(cb.upper(rootEntry.get("alternativeName")), "%" + expression.toUpperCase() + "%"),
-                            cb.like(cb.upper(rootEntry.get("icoCode")), "%" + expression.toUpperCase() + "%"))));
+            if (!expression.equals("")) {
+                predicate = cb.and(cb.equal(rootEntry.get("isService"), (byte) (searchServices ? 1 : 0)),
+                        (cb.or(cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%"),
+                                cb.like(cb.upper(rootEntry.get("odsCode")), "%" + expression.toUpperCase() + "%"),
+                                cb.like(cb.upper(rootEntry.get("alternativeName")), "%" + expression.toUpperCase() + "%"),
+                                cb.like(cb.upper(rootEntry.get("icoCode")), "%" + expression.toUpperCase() + "%"))));
+            }
+
+            cq.select((cb.countDistinct(rootEntry)));
+
+            cq.where(predicate);
+
+            Long ret = entityManager.createQuery(cq).getSingleResult();
+
+            return ret;
+
+        } finally {
+            entityManager.close();
         }
-
-        cq.select((cb.countDistinct(rootEntry)));
-
-        cq.where(predicate);
-
-        Long ret = entityManager.createQuery(cq).getSingleResult();
-
-
-        entityManager.close();
-
-        return ret;
     }
 
     public List<OrganisationEntity> getUpdatedBulkOrganisations() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<OrganisationEntity> cq = cb.createQuery(OrganisationEntity.class);
-        Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<OrganisationEntity> cq = cb.createQuery(OrganisationEntity.class);
+            Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
 
-        Predicate predicate = cb.and(cb.equal(rootEntry.get("bulkImported"), (byte) 1),
-                (cb.equal(rootEntry.get("bulkItemUpdated"), (byte) 1)));
+            Predicate predicate = cb.and(cb.equal(rootEntry.get("bulkImported"), (byte) 1),
+                    (cb.equal(rootEntry.get("bulkItemUpdated"), (byte) 1)));
 
-        cq.where(predicate);
-        TypedQuery<OrganisationEntity> query = entityManager.createQuery(cq);
-        List<OrganisationEntity> ret = query.getResultList();
+            cq.where(predicate);
+            TypedQuery<OrganisationEntity> query = entityManager.createQuery(cq);
+            List<OrganisationEntity> ret = query.getResultList();
 
-        entityManager.close();
-
-        return ret;
+            return ret;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public List<OrganisationEntity> getConflictedOrganisations() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<OrganisationEntity> cq = cb.createQuery(OrganisationEntity.class);
-        Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
+        try {
 
-        Predicate predicate = cb.isNotNull(rootEntry.get("bulkConflictedWith"));
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<OrganisationEntity> cq = cb.createQuery(OrganisationEntity.class);
+            Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
 
-        cq.where(predicate);
-        TypedQuery<OrganisationEntity> query = entityManager.createQuery(cq);
-        List<OrganisationEntity> ret = query.getResultList();
+            Predicate predicate = cb.isNotNull(rootEntry.get("bulkConflictedWith"));
 
-        entityManager.close();
+            cq.where(predicate);
+            TypedQuery<OrganisationEntity> query = entityManager.createQuery(cq);
+            List<OrganisationEntity> ret = query.getResultList();
 
-        return ret;
+            return ret;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public List<Object[]> executeOrganisationStatisticQuery(String queryName) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        Query query = entityManager.createNamedQuery(queryName);
-        List<Object[]> result = query.getResultList();
+        try {
+            Query query = entityManager.createNamedQuery(queryName);
+            List<Object[]> result = query.getResultList();
 
-        entityManager.close();
+            return result;
+        } finally {
+            entityManager.close();
+        }
 
-        return result;
     }
 
     public List<JsonStatistics> getStatisticsForType(String type) throws Exception {
@@ -374,18 +412,21 @@ public class OrganisationDAL {
     public List<OrganisationEntity> getOrganisationByType(byte orgType) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<OrganisationEntity> cq = cb.createQuery(OrganisationEntity.class);
-        Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<OrganisationEntity> cq = cb.createQuery(OrganisationEntity.class);
+            Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
 
-        Predicate predicate = cb.equal(rootEntry.get("type"), orgType);
+            Predicate predicate = cb.equal(rootEntry.get("type"), orgType);
 
-        cq.where(predicate);
-        TypedQuery<OrganisationEntity> query = entityManager.createQuery(cq);
-        List<OrganisationEntity> ret = query.getResultList();
+            cq.where(predicate);
+            TypedQuery<OrganisationEntity> query = entityManager.createQuery(cq);
+            List<OrganisationEntity> ret = query.getResultList();
 
-        entityManager.close();
+            return ret;
 
-        return ret;
+        } finally {
+            entityManager.close();
+        }
     }
 }

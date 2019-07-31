@@ -15,15 +15,19 @@ public class OrganisationTypeDAL {
     public List<OrganisationTypeEntity> getAllOrganisationTypes() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<OrganisationTypeEntity> cq = cb.createQuery(OrganisationTypeEntity.class);
-        Root<OrganisationTypeEntity> rootEntry = cq.from(OrganisationTypeEntity.class);
-        CriteriaQuery<OrganisationTypeEntity> all = cq.select(rootEntry);
-        TypedQuery<OrganisationTypeEntity> allQuery = entityManager.createQuery(all);
-        List<OrganisationTypeEntity> ret =  allQuery.getResultList();
+        try {
 
-        entityManager.close();
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<OrganisationTypeEntity> cq = cb.createQuery(OrganisationTypeEntity.class);
+            Root<OrganisationTypeEntity> rootEntry = cq.from(OrganisationTypeEntity.class);
+            CriteriaQuery<OrganisationTypeEntity> all = cq.select(rootEntry);
+            TypedQuery<OrganisationTypeEntity> allQuery = entityManager.createQuery(all);
+            List<OrganisationTypeEntity> ret = allQuery.getResultList();
 
-        return ret;
+            return ret;
+        } finally {
+            entityManager.close();
+        }
+
     }
 }

@@ -23,40 +23,49 @@ public class DataProcessingAgreementDAL {
     public List<DataProcessingAgreementEntity> getAllDPAs() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DataProcessingAgreementEntity> cq = cb.createQuery(DataProcessingAgreementEntity.class);
-        Root<DataProcessingAgreementEntity> rootEntry = cq.from(DataProcessingAgreementEntity.class);
-        CriteriaQuery<DataProcessingAgreementEntity> all = cq.select(rootEntry);
-        TypedQuery<DataProcessingAgreementEntity> allQuery = entityManager.createQuery(all);
-        List<DataProcessingAgreementEntity> ret =  allQuery.getResultList();
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<DataProcessingAgreementEntity> cq = cb.createQuery(DataProcessingAgreementEntity.class);
+            Root<DataProcessingAgreementEntity> rootEntry = cq.from(DataProcessingAgreementEntity.class);
+            CriteriaQuery<DataProcessingAgreementEntity> all = cq.select(rootEntry);
+            TypedQuery<DataProcessingAgreementEntity> allQuery = entityManager.createQuery(all);
+            List<DataProcessingAgreementEntity> ret = allQuery.getResultList();
 
-        entityManager.close();
+            return ret;
+        } finally {
+            entityManager.close();
+        }
 
-        return ret;
     }
 
     public void updateDPA(JsonDPA dpa) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DataProcessingAgreementEntity dpaEntity = entityManager.find(DataProcessingAgreementEntity.class, dpa.getUuid());
-        entityManager.getTransaction().begin();
-        dpaEntity.setName(dpa.getName());
-        dpaEntity.setDescription(dpa.getDescription());
-        dpaEntity.setDerivation(dpa.getDerivation());
-        dpaEntity.setPublisherInformation(dpa.getPublisherInformation());
-        dpaEntity.setPublisherContractInformation(dpa.getPublisherContractInformation());
-        dpaEntity.setPublisherDataset(dpa.getPublisherDataset());
-        dpaEntity.setDsaStatusId(dpa.getDsaStatusId());
-        dpaEntity.setReturnToSenderPolicy(dpa.getReturnToSenderPolicy());
-        if (dpa.getStartDate() != null) {
-            dpaEntity.setStartDate(Date.valueOf(dpa.getStartDate()));
-        }
-        if (dpa.getEndDate() != null) {
-            dpaEntity.setEndDate(Date.valueOf(dpa.getEndDate()));
-        }
-        entityManager.getTransaction().commit();
+        try {
+            DataProcessingAgreementEntity dpaEntity = entityManager.find(DataProcessingAgreementEntity.class, dpa.getUuid());
+            entityManager.getTransaction().begin();
+            dpaEntity.setName(dpa.getName());
+            dpaEntity.setDescription(dpa.getDescription());
+            dpaEntity.setDerivation(dpa.getDerivation());
+            dpaEntity.setPublisherInformation(dpa.getPublisherInformation());
+            dpaEntity.setPublisherContractInformation(dpa.getPublisherContractInformation());
+            dpaEntity.setPublisherDataset(dpa.getPublisherDataset());
+            dpaEntity.setDsaStatusId(dpa.getDsaStatusId());
+            dpaEntity.setReturnToSenderPolicy(dpa.getReturnToSenderPolicy());
+            if (dpa.getStartDate() != null) {
+                dpaEntity.setStartDate(Date.valueOf(dpa.getStartDate()));
+            }
+            if (dpa.getEndDate() != null) {
+                dpaEntity.setEndDate(Date.valueOf(dpa.getEndDate()));
+            }
+            entityManager.getTransaction().commit();
 
-        entityManager.close();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
 
         clearDPACache(dpa.getUuid());
     }
@@ -64,28 +73,33 @@ public class DataProcessingAgreementDAL {
     public void saveDPA(JsonDPA dpa) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DataProcessingAgreementEntity dpaEntity = new DataProcessingAgreementEntity();
-        entityManager.getTransaction().begin();
-        dpaEntity.setName(dpa.getName());
-        dpaEntity.setName(dpa.getName());
-        dpaEntity.setDescription(dpa.getDescription());
-        dpaEntity.setDerivation(dpa.getDerivation());
-        dpaEntity.setPublisherInformation(dpa.getPublisherInformation());
-        dpaEntity.setPublisherContractInformation(dpa.getPublisherContractInformation());
-        dpaEntity.setPublisherDataset(dpa.getPublisherDataset());
-        dpaEntity.setDsaStatusId(dpa.getDsaStatusId());
-        dpaEntity.setReturnToSenderPolicy(dpa.getReturnToSenderPolicy());
-        if (dpa.getStartDate() != null) {
-            dpaEntity.setStartDate(Date.valueOf(dpa.getStartDate()));
+        try {
+            DataProcessingAgreementEntity dpaEntity = new DataProcessingAgreementEntity();
+            entityManager.getTransaction().begin();
+            dpaEntity.setName(dpa.getName());
+            dpaEntity.setName(dpa.getName());
+            dpaEntity.setDescription(dpa.getDescription());
+            dpaEntity.setDerivation(dpa.getDerivation());
+            dpaEntity.setPublisherInformation(dpa.getPublisherInformation());
+            dpaEntity.setPublisherContractInformation(dpa.getPublisherContractInformation());
+            dpaEntity.setPublisherDataset(dpa.getPublisherDataset());
+            dpaEntity.setDsaStatusId(dpa.getDsaStatusId());
+            dpaEntity.setReturnToSenderPolicy(dpa.getReturnToSenderPolicy());
+            if (dpa.getStartDate() != null) {
+                dpaEntity.setStartDate(Date.valueOf(dpa.getStartDate()));
+            }
+            if (dpa.getEndDate() != null) {
+                dpaEntity.setEndDate(Date.valueOf(dpa.getEndDate()));
+            }
+            dpaEntity.setUuid(dpa.getUuid());
+            entityManager.persist(dpaEntity);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
         }
-        if (dpa.getEndDate() != null) {
-            dpaEntity.setEndDate(Date.valueOf(dpa.getEndDate()));
-        }
-        dpaEntity.setUuid(dpa.getUuid());
-        entityManager.persist(dpaEntity);
-        entityManager.getTransaction().commit();
-
-        entityManager.close();
 
         clearDPACache(dpa.getUuid());
     }
@@ -93,12 +107,17 @@ public class DataProcessingAgreementDAL {
     public void deleteDPA(String uuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DataProcessingAgreementEntity dpaEntity = entityManager.find(DataProcessingAgreementEntity.class, uuid);
-        entityManager.getTransaction().begin();
-        entityManager.remove(dpaEntity);
-        entityManager.getTransaction().commit();
-
-        entityManager.close();
+        try {
+            DataProcessingAgreementEntity dpaEntity = entityManager.find(DataProcessingAgreementEntity.class, uuid);
+            entityManager.getTransaction().begin();
+            entityManager.remove(dpaEntity);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
 
         clearDPACache(uuid);
     }
@@ -106,19 +125,22 @@ public class DataProcessingAgreementDAL {
     public List<DataProcessingAgreementEntity> search(String expression) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DataProcessingAgreementEntity> cq = cb.createQuery(DataProcessingAgreementEntity.class);
-        Root<DataProcessingAgreementEntity> rootEntry = cq.from(DataProcessingAgreementEntity.class);
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<DataProcessingAgreementEntity> cq = cb.createQuery(DataProcessingAgreementEntity.class);
+            Root<DataProcessingAgreementEntity> rootEntry = cq.from(DataProcessingAgreementEntity.class);
 
-        Predicate predicate = cb.or(cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%"),
-                cb.like(cb.upper(rootEntry.get("description")), "%" + expression.toUpperCase() + "%"));
+            Predicate predicate = cb.or(cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%"),
+                    cb.like(cb.upper(rootEntry.get("description")), "%" + expression.toUpperCase() + "%"));
 
-        cq.where(predicate);
-        TypedQuery<DataProcessingAgreementEntity> query = entityManager.createQuery(cq);
-        List<DataProcessingAgreementEntity> ret = query.getResultList();
+            cq.where(predicate);
+            TypedQuery<DataProcessingAgreementEntity> query = entityManager.createQuery(cq);
+            List<DataProcessingAgreementEntity> ret = query.getResultList();
 
-        entityManager.close();
+            return ret;
 
-        return ret;
+        } finally {
+            entityManager.close();
+        }
     }
 }

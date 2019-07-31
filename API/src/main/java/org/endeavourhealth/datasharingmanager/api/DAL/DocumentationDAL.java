@@ -16,85 +16,115 @@ public class DocumentationDAL {
     public DocumentationEntity getDocument(String uuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DocumentationEntity ret = entityManager.find(DocumentationEntity.class, uuid);
-        entityManager.close();
+        try {
+            DocumentationEntity ret = entityManager.find(DocumentationEntity.class, uuid);
 
-        return ret;
+            return ret;
+        } finally {
+            entityManager.close();
+        }
+
     }
 
     public void saveDocument(JsonDocumentation document) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DocumentationEntity documentationEntity = new DocumentationEntity();
-        documentationEntity.setUuid(document.getUuid());
-        documentationEntity.setFilename(document.getFilename());
-        documentationEntity.setTitle(document.getTitle());
-        documentationEntity.setFileData(document.getFileData());
-        entityManager.getTransaction().begin();
-        entityManager.persist(documentationEntity);
-        entityManager.getTransaction().commit();
-
-        entityManager.close();
+        try {
+            DocumentationEntity documentationEntity = new DocumentationEntity();
+            documentationEntity.setUuid(document.getUuid());
+            documentationEntity.setFilename(document.getFilename());
+            documentationEntity.setTitle(document.getTitle());
+            documentationEntity.setFileData(document.getFileData());
+            entityManager.getTransaction().begin();
+            entityManager.persist(documentationEntity);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void updateDocument(JsonDocumentation document) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DocumentationEntity documentationEntity = entityManager.find(DocumentationEntity.class, document.getUuid());
-        entityManager.getTransaction().begin();
-        documentationEntity.setTitle(document.getTitle());
-        documentationEntity.setFilename(document.getFilename());
-        entityManager.getTransaction().commit();
+        try {
+            DocumentationEntity documentationEntity = entityManager.find(DocumentationEntity.class, document.getUuid());
+            entityManager.getTransaction().begin();
+            documentationEntity.setTitle(document.getTitle());
+            documentationEntity.setFilename(document.getFilename());
+            entityManager.getTransaction().commit();
 
-        entityManager.close();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void deleteDocument(String uuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DocumentationEntity documentationEntity = entityManager.find(DocumentationEntity.class, uuid);
-        entityManager.getTransaction().begin();
-        entityManager.remove(documentationEntity);
-        entityManager.getTransaction().commit();
+        try {
+            DocumentationEntity documentationEntity = entityManager.find(DocumentationEntity.class, uuid);
+            entityManager.getTransaction().begin();
+            entityManager.remove(documentationEntity);
+            entityManager.getTransaction().commit();
 
-        entityManager.close();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void deleteAllAssociatedDocuments(String parentUuid, Short parentMapType) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
         List<String> documents = new SecurityMasterMappingDAL().getChildMappings(parentUuid, parentMapType, MapType.DOCUMENT.getMapType());
 
         if (documents.size() == 0)
             return;
 
-        entityManager.getTransaction().begin();
-        CriteriaBuilder criteriaBuilder  = entityManager.getCriteriaBuilder();
-        CriteriaDelete<DocumentationEntity> query = criteriaBuilder.createCriteriaDelete(DocumentationEntity.class);
-        Root<DocumentationEntity> root = query.from(DocumentationEntity.class);
-        query.where(root.get("uuid").in(documents));
+        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+        try {
 
-        entityManager.createQuery(query).executeUpdate();
-        entityManager.getTransaction().commit();
+            entityManager.getTransaction().begin();
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaDelete<DocumentationEntity> query = criteriaBuilder.createCriteriaDelete(DocumentationEntity.class);
+            Root<DocumentationEntity> root = query.from(DocumentationEntity.class);
+            query.where(root.get("uuid").in(documents));
 
-        entityManager.close();
+            entityManager.createQuery(query).executeUpdate();
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public List<DocumentationEntity> getDocumentsFromList(List<String> documents) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DocumentationEntity> cq = cb.createQuery(DocumentationEntity.class);
-        Root<DocumentationEntity> rootEntry = cq.from(DocumentationEntity.class);
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<DocumentationEntity> cq = cb.createQuery(DocumentationEntity.class);
+            Root<DocumentationEntity> rootEntry = cq.from(DocumentationEntity.class);
 
-        Predicate predicate = rootEntry.get("uuid").in(documents);
+            Predicate predicate = rootEntry.get("uuid").in(documents);
 
-        cq.where(predicate);
-        TypedQuery<DocumentationEntity> query = entityManager.createQuery(cq);
+            cq.where(predicate);
+            TypedQuery<DocumentationEntity> query = entityManager.createQuery(cq);
 
-        List<DocumentationEntity> ret = query.getResultList();
+            List<DocumentationEntity> ret = query.getResultList();
 
-        entityManager.close();
+            return ret;
+        } finally {
+            entityManager.close();
+        }
 
-        return ret;
     }
 }

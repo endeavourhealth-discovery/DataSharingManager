@@ -17,118 +17,145 @@ public class DataExchangeDAL {
     public List<DataExchangeEntity> getAllDataExchanges() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DataExchangeEntity> cq = cb.createQuery(DataExchangeEntity.class);
-        Root<DataExchangeEntity> rootEntry = cq.from(DataExchangeEntity.class);
-        CriteriaQuery<DataExchangeEntity> all = cq.select(rootEntry);
-        TypedQuery<DataExchangeEntity> allQuery = entityManager.createQuery(all);
-        List<DataExchangeEntity> ret =  allQuery.getResultList();
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<DataExchangeEntity> cq = cb.createQuery(DataExchangeEntity.class);
+            Root<DataExchangeEntity> rootEntry = cq.from(DataExchangeEntity.class);
+            CriteriaQuery<DataExchangeEntity> all = cq.select(rootEntry);
+            TypedQuery<DataExchangeEntity> allQuery = entityManager.createQuery(all);
+            List<DataExchangeEntity> ret = allQuery.getResultList();
 
-        entityManager.close();
+            return ret;
+        } finally {
+            entityManager.close();
+        }
 
-        return ret;
     }
 
     public DataExchangeEntity getDataExchange(String uuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DataExchangeEntity ret = entityManager.find(DataExchangeEntity.class, uuid);
+        try {
+            DataExchangeEntity ret = entityManager.find(DataExchangeEntity.class, uuid);
 
-        entityManager.close();
+            return ret;
+        } finally {
+            entityManager.close();
+        }
 
-        return ret;
     }
 
     public void updateDataExchange(JsonDataExchange dataExchange) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DataExchangeEntity dataExchangeEntity = entityManager.find(DataExchangeEntity.class, dataExchange.getUuid());
-        entityManager.getTransaction().begin();
-        dataExchangeEntity.setName(dataExchange.getName());
-        dataExchangeEntity.setPublisher(dataExchange.isPublisher() ? (byte)1 : (byte)0);
-        dataExchangeEntity.setSystemName(dataExchange.getSystemName());
-        dataExchangeEntity.setDirectionId(dataExchange.getDirectionId());
-        dataExchangeEntity.setFlowScheduleId(dataExchange.getFlowScheduleId());
-        dataExchangeEntity.setApproximateVolume(dataExchange.getApproximateVolume());
-        dataExchangeEntity.setDataExchangeMethodId(dataExchange.getDataExchangeMethodId());
-        dataExchangeEntity.setSecurityInfrastructureId(dataExchange.getSecurityInfrastructureId());
-        dataExchangeEntity.setSecurityArchitectureId(dataExchange.getSecurityArchitectureId());
-        dataExchangeEntity.setEndpoint(dataExchange.getEndpoint());
-        dataExchangeEntity.setFlowStatusId(dataExchange.getFlowStatusId());
+        try {
+            DataExchangeEntity dataExchangeEntity = entityManager.find(DataExchangeEntity.class, dataExchange.getUuid());
+            entityManager.getTransaction().begin();
+            dataExchangeEntity.setName(dataExchange.getName());
+            dataExchangeEntity.setPublisher(dataExchange.isPublisher() ? (byte) 1 : (byte) 0);
+            dataExchangeEntity.setSystemName(dataExchange.getSystemName());
+            dataExchangeEntity.setDirectionId(dataExchange.getDirectionId());
+            dataExchangeEntity.setFlowScheduleId(dataExchange.getFlowScheduleId());
+            dataExchangeEntity.setApproximateVolume(dataExchange.getApproximateVolume());
+            dataExchangeEntity.setDataExchangeMethodId(dataExchange.getDataExchangeMethodId());
+            dataExchangeEntity.setSecurityInfrastructureId(dataExchange.getSecurityInfrastructureId());
+            dataExchangeEntity.setSecurityArchitectureId(dataExchange.getSecurityArchitectureId());
+            dataExchangeEntity.setEndpoint(dataExchange.getEndpoint());
+            dataExchangeEntity.setFlowStatusId(dataExchange.getFlowStatusId());
 
-        entityManager.getTransaction().commit();
-
-        entityManager.close();
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void saveDataExchange(JsonDataExchange dataExchange) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DataExchangeEntity dataExchangeEntity = new DataExchangeEntity();
-        entityManager.getTransaction().begin();
-        dataExchangeEntity.setName(dataExchange.getName());
-        dataExchangeEntity.setPublisher(dataExchange.isPublisher() ? (byte)1 : (byte)0);
-        dataExchangeEntity.setSystemName(dataExchange.getSystemName());
-        dataExchangeEntity.setDirectionId(dataExchange.getDirectionId());
-        dataExchangeEntity.setFlowScheduleId(dataExchange.getFlowScheduleId());
-        dataExchangeEntity.setApproximateVolume(dataExchange.getApproximateVolume());
-        dataExchangeEntity.setDataExchangeMethodId(dataExchange.getDataExchangeMethodId());
-        dataExchangeEntity.setSecurityInfrastructureId(dataExchange.getSecurityInfrastructureId());
-        dataExchangeEntity.setSecurityArchitectureId(dataExchange.getSecurityArchitectureId());
-        dataExchangeEntity.setEndpoint(dataExchange.getEndpoint());
-        dataExchangeEntity.setFlowStatusId(dataExchange.getFlowStatusId());
-        dataExchangeEntity.setUuid(dataExchange.getUuid());
-        entityManager.persist(dataExchangeEntity);
-        entityManager.getTransaction().commit();
-
-        entityManager.close();
+        try {
+            DataExchangeEntity dataExchangeEntity = new DataExchangeEntity();
+            entityManager.getTransaction().begin();
+            dataExchangeEntity.setName(dataExchange.getName());
+            dataExchangeEntity.setPublisher(dataExchange.isPublisher() ? (byte) 1 : (byte) 0);
+            dataExchangeEntity.setSystemName(dataExchange.getSystemName());
+            dataExchangeEntity.setDirectionId(dataExchange.getDirectionId());
+            dataExchangeEntity.setFlowScheduleId(dataExchange.getFlowScheduleId());
+            dataExchangeEntity.setApproximateVolume(dataExchange.getApproximateVolume());
+            dataExchangeEntity.setDataExchangeMethodId(dataExchange.getDataExchangeMethodId());
+            dataExchangeEntity.setSecurityInfrastructureId(dataExchange.getSecurityInfrastructureId());
+            dataExchangeEntity.setSecurityArchitectureId(dataExchange.getSecurityArchitectureId());
+            dataExchangeEntity.setEndpoint(dataExchange.getEndpoint());
+            dataExchangeEntity.setFlowStatusId(dataExchange.getFlowStatusId());
+            dataExchangeEntity.setUuid(dataExchange.getUuid());
+            entityManager.persist(dataExchangeEntity);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void deleteDataExchange(String uuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        DataExchangeEntity DataExchangeEntity = entityManager.find(DataExchangeEntity.class, uuid);
-        entityManager.getTransaction().begin();
-        entityManager.remove(DataExchangeEntity);
-        entityManager.getTransaction().commit();
+        try {
+            DataExchangeEntity DataExchangeEntity = entityManager.find(DataExchangeEntity.class, uuid);
+            entityManager.getTransaction().begin();
+            entityManager.remove(DataExchangeEntity);
+            entityManager.getTransaction().commit();
 
-        entityManager.close();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public List<DataExchangeEntity> search(String expression) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DataExchangeEntity> cq = cb.createQuery(DataExchangeEntity.class);
-        Root<DataExchangeEntity> rootEntry = cq.from(DataExchangeEntity.class);
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<DataExchangeEntity> cq = cb.createQuery(DataExchangeEntity.class);
+            Root<DataExchangeEntity> rootEntry = cq.from(DataExchangeEntity.class);
 
-        Predicate predicate = cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%");
+            Predicate predicate = cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%");
 
-        cq.where(predicate);
-        TypedQuery<DataExchangeEntity> query = entityManager.createQuery(cq);
-        List<DataExchangeEntity> ret = query.getResultList();
+            cq.where(predicate);
+            TypedQuery<DataExchangeEntity> query = entityManager.createQuery(cq);
+            List<DataExchangeEntity> ret = query.getResultList();
 
-        entityManager.close();
-
-        return ret;
+            return ret;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public List<DataExchangeEntity> getDataExchangesFromList(List<String> dataFlows) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DataExchangeEntity> cq = cb.createQuery(DataExchangeEntity.class);
-        Root<DataExchangeEntity> rootEntry = cq.from(DataExchangeEntity.class);
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<DataExchangeEntity> cq = cb.createQuery(DataExchangeEntity.class);
+            Root<DataExchangeEntity> rootEntry = cq.from(DataExchangeEntity.class);
 
-        Predicate predicate = rootEntry.get("uuid").in(dataFlows);
+            Predicate predicate = rootEntry.get("uuid").in(dataFlows);
 
-        cq.where(predicate);
-        TypedQuery<DataExchangeEntity> query = entityManager.createQuery(cq);
+            cq.where(predicate);
+            TypedQuery<DataExchangeEntity> query = entityManager.createQuery(cq);
 
-        List<DataExchangeEntity> ret = query.getResultList();
+            List<DataExchangeEntity> ret = query.getResultList();
 
-        entityManager.close();
+            return ret;
+        } finally {
+            entityManager.close();
+        }
 
-        return ret;
     }
 }

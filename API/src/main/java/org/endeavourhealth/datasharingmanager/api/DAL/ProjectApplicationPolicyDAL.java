@@ -10,7 +10,6 @@ import javax.persistence.EntityManager;
 public class ProjectApplicationPolicyDAL {
 
     public void saveProjectApplicationPolicyId(JsonProjectApplicationPolicy projectApplicationPolicy) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
         ProjectApplicationPolicyEntity oldPolicy = new SecurityProjectApplicationPolicyDAL().getProjectApplicationPolicyId(projectApplicationPolicy.getProjectUuid());
 
@@ -21,14 +20,21 @@ public class ProjectApplicationPolicyDAL {
             }
         }
 
-        entityManager.getTransaction().begin();
-        ProjectApplicationPolicyEntity projectApplicationPolicyEntity = new ProjectApplicationPolicyEntity();
-        projectApplicationPolicyEntity.setProjectUuid(projectApplicationPolicy.getProjectUuid());
-        projectApplicationPolicyEntity.setApplicationPolicyId(projectApplicationPolicy.getApplicationPolicyId());
-        entityManager.merge(projectApplicationPolicyEntity);
-        entityManager.getTransaction().commit();
+        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        entityManager.close();
+        try {
+            entityManager.getTransaction().begin();
+            ProjectApplicationPolicyEntity projectApplicationPolicyEntity = new ProjectApplicationPolicyEntity();
+            projectApplicationPolicyEntity.setProjectUuid(projectApplicationPolicy.getProjectUuid());
+            projectApplicationPolicyEntity.setApplicationPolicyId(projectApplicationPolicy.getApplicationPolicyId());
+            entityManager.merge(projectApplicationPolicyEntity);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
 
     }
 }

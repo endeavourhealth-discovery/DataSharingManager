@@ -20,79 +20,95 @@ public class MasterMappingDAL {
     public void deleteAllMappings(String uuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        entityManager.getTransaction().begin();
-        Query query = entityManager.createQuery(
-                "DELETE from MasterMappingEntity m " +
-                        "where m.childUuid = :uuid " +
-                        "or m.parentUuid = :uuid");
-        query.setParameter("uuid", uuid);
+        try {
+            entityManager.getTransaction().begin();
+            Query query = entityManager.createQuery(
+                    "DELETE from MasterMappingEntity m " +
+                            "where m.childUuid = :uuid " +
+                            "or m.parentUuid = :uuid");
+            query.setParameter("uuid", uuid);
 
-        int deletedCount = query.executeUpdate();
+            int deletedCount = query.executeUpdate();
 
-        entityManager.getTransaction().commit();
-
-        System.out.println(deletedCount + " deleted");
-        entityManager.close();
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void saveParentMappings(Map<UUID, String> parents, Short parentMapTypeId, String childUuid, Short childMapTypeId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        parents.forEach((k, v) -> {
-            MasterMappingEntity mme = new MasterMappingEntity();
-            entityManager.getTransaction().begin();
-            mme.setChildUuid(childUuid);
-            mme.setChildMapTypeId(childMapTypeId);
-            mme.setParentUuid(k.toString());
-            mme.setParentMapTypeId(parentMapTypeId);
-            entityManager.persist(mme);
-            entityManager.getTransaction().commit();
-        });
-
-        entityManager.close();
-
+        try {
+            parents.forEach((k, v) -> {
+                MasterMappingEntity mme = new MasterMappingEntity();
+                entityManager.getTransaction().begin();
+                mme.setChildUuid(childUuid);
+                mme.setChildMapTypeId(childMapTypeId);
+                mme.setParentUuid(k.toString());
+                mme.setParentMapTypeId(parentMapTypeId);
+                entityManager.persist(mme);
+                entityManager.getTransaction().commit();
+            });
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void saveChildMappings(Map<UUID, String> children, Short childMapTypeId, String parentUuid, Short parentMapTypeId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        children.forEach((k, v) -> {
-            MasterMappingEntity mme = new MasterMappingEntity();
-            entityManager.getTransaction().begin();
-            mme.setChildUuid(k.toString());
-            mme.setChildMapTypeId(childMapTypeId);
-            mme.setParentUuid(parentUuid);
-            mme.setParentMapTypeId(parentMapTypeId);
-            entityManager.persist(mme);
-            entityManager.getTransaction().commit();
-        });
-
-        entityManager.close();
+        try {
+            children.forEach((k, v) -> {
+                MasterMappingEntity mme = new MasterMappingEntity();
+                entityManager.getTransaction().begin();
+                mme.setChildUuid(k.toString());
+                mme.setChildMapTypeId(childMapTypeId);
+                mme.setParentUuid(parentUuid);
+                mme.setParentMapTypeId(parentMapTypeId);
+                entityManager.persist(mme);
+                entityManager.getTransaction().commit();
+            });
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public List<String> getParentMappingsFromList(List<String> childUuids, Short childMapTypeId, Short parentMapTypeId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<MasterMappingEntity> cq = cb.createQuery(MasterMappingEntity.class);
-        Root<MasterMappingEntity> rootEntry = cq.from(MasterMappingEntity.class);
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<MasterMappingEntity> cq = cb.createQuery(MasterMappingEntity.class);
+            Root<MasterMappingEntity> rootEntry = cq.from(MasterMappingEntity.class);
 
-        Predicate predicate = cb.and((rootEntry.get("childUuid").in(childUuids) ),
-                cb.equal(rootEntry.get("childMapTypeId"), childMapTypeId),
-                cb.equal(rootEntry.get("parentMapTypeId"), parentMapTypeId));
+            Predicate predicate = cb.and((rootEntry.get("childUuid").in(childUuids)),
+                    cb.equal(rootEntry.get("childMapTypeId"), childMapTypeId),
+                    cb.equal(rootEntry.get("parentMapTypeId"), parentMapTypeId));
 
-        cq.where(predicate);
-        TypedQuery<MasterMappingEntity> query = entityManager.createQuery(cq);
-        List<MasterMappingEntity> maps =  query.getResultList();
+            cq.where(predicate);
+            TypedQuery<MasterMappingEntity> query = entityManager.createQuery(cq);
+            List<MasterMappingEntity> maps = query.getResultList();
 
-        List<String> children = new ArrayList<>();
-        for(MasterMappingEntity mme : maps){
-            children.add(mme.getParentUuid());
+            List<String> children = new ArrayList<>();
+            for (MasterMappingEntity mme : maps) {
+                children.add(mme.getParentUuid());
+            }
+
+            return children;
+        } finally {
+            entityManager.close();
         }
 
-        entityManager.close();
-
-        return children;
     }
 
     public void saveOrganisationMappings(JsonOrganisation organisation) throws Exception {
@@ -416,19 +432,26 @@ public class MasterMappingDAL {
 
     public void bulkSaveMappings(List<MasterMappingEntity> mappings) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-        int batchSize = 50;
-        entityManager.getTransaction().begin();
 
-        for(int i = 0; i < mappings.size(); ++i) {
-            MasterMappingEntity mapping = mappings.get(i);
-            entityManager.merge(mapping);
-            if(i % batchSize == 0) {
-                entityManager.flush();
-                entityManager.clear();
+        try {
+            int batchSize = 50;
+            entityManager.getTransaction().begin();
+
+            for (int i = 0; i < mappings.size(); ++i) {
+                MasterMappingEntity mapping = mappings.get(i);
+                entityManager.merge(mapping);
+                if (i % batchSize == 0) {
+                    entityManager.flush();
+                    entityManager.clear();
+                }
             }
-        }
 
-        entityManager.getTransaction().commit();
-        entityManager.close();
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 }

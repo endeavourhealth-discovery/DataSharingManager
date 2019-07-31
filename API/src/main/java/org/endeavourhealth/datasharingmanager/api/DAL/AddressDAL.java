@@ -32,102 +32,132 @@ public class AddressDAL {
     public List<AddressEntity> getAddressesForOrganisation(String uuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<AddressEntity> cq = cb.createQuery(AddressEntity.class);
-        Root<AddressEntity> rootEntry = cq.from(AddressEntity.class);
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<AddressEntity> cq = cb.createQuery(AddressEntity.class);
+            Root<AddressEntity> rootEntry = cq.from(AddressEntity.class);
 
-        Predicate predicate = cb.equal(rootEntry.get("organisationUuid"), uuid);
-        cq.where(predicate);
+            Predicate predicate = cb.equal(rootEntry.get("organisationUuid"), uuid);
+            cq.where(predicate);
 
-        TypedQuery<AddressEntity> query = entityManager.createQuery(cq);
-        List<AddressEntity> ret = query.getResultList();
-        entityManager.close();
-        return ret;
+            TypedQuery<AddressEntity> query = entityManager.createQuery(cq);
+            List<AddressEntity> ret = query.getResultList();
+
+            return ret;
+
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void bulkSaveAddresses(List<AddressEntity> addressEntities) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        int batchSize = 50;
+        try {
+            int batchSize = 50;
 
-        entityManager.getTransaction().begin();
+            entityManager.getTransaction().begin();
 
-        for (int i = 0; i < addressEntities.size(); i++) {
-            AddressEntity addressEntity = addressEntities.get(i);
-            entityManager.merge(addressEntity);
-            if (i % batchSize == 0){
-                entityManager.flush();
-                entityManager.clear();
+            for (int i = 0; i < addressEntities.size(); i++) {
+                AddressEntity addressEntity = addressEntities.get(i);
+                entityManager.merge(addressEntity);
+                if (i % batchSize == 0) {
+                    entityManager.flush();
+                    entityManager.clear();
+                }
             }
+
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
         }
 
-        entityManager.getTransaction().commit();
-
-        entityManager.close();
     }
 
     public void saveAddress(JsonAddress address) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        AddressEntity addressEntity = new AddressEntity(address);
-        addressEntity.setUuid(address.getUuid());
-        entityManager.getTransaction().begin();
-        entityManager.persist(addressEntity);
-        entityManager.getTransaction().commit();
+        try {
+            AddressEntity addressEntity = new AddressEntity(address);
+            addressEntity.setUuid(address.getUuid());
+            entityManager.getTransaction().begin();
+            entityManager.persist(addressEntity);
+            entityManager.getTransaction().commit();
 
-        entityManager.close();
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void updateAddress(JsonAddress address) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        AddressEntity addressEntity = entityManager.find(AddressEntity.class, address.getUuid());
-        entityManager.getTransaction().begin();
-        addressEntity.setOrganisationUuid(address.getOrganisationUuid());
-        addressEntity.setBuildingName(address.getBuildingName());
-        addressEntity.setNumberAndStreet(address.getNumberAndStreet());
-        addressEntity.setLocality(address.getLocality());
-        addressEntity.setCity(address.getCity());
-        addressEntity.setCounty(address.getCounty());
-        addressEntity.setPostcode(address.getPostcode());
-        addressEntity.setGeolocationReprocess((byte)0);
-        entityManager.getTransaction().commit();
+        try {
 
-        entityManager.close();
+            AddressEntity addressEntity = entityManager.find(AddressEntity.class, address.getUuid());
+            entityManager.getTransaction().begin();
+            addressEntity.setOrganisationUuid(address.getOrganisationUuid());
+            addressEntity.setBuildingName(address.getBuildingName());
+            addressEntity.setNumberAndStreet(address.getNumberAndStreet());
+            addressEntity.setLocality(address.getLocality());
+            addressEntity.setCity(address.getCity());
+            addressEntity.setCounty(address.getCounty());
+            addressEntity.setPostcode(address.getPostcode());
+            addressEntity.setGeolocationReprocess((byte) 0);
+            entityManager.getTransaction().commit();
+
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void updateGeolocation(JsonAddress address) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        AddressEntity addressEntity = entityManager.find(AddressEntity.class, address.getUuid());
-        entityManager.getTransaction().begin();
-        addressEntity.setLat(address.getLat());
-        addressEntity.setLng(address.getLng());
-        addressEntity.setGeolocationReprocess((byte)0);
-        entityManager.getTransaction().commit();
+        try {
 
-        entityManager.close();
+            AddressEntity addressEntity = entityManager.find(AddressEntity.class, address.getUuid());
+            entityManager.getTransaction().begin();
+            addressEntity.setLat(address.getLat());
+            addressEntity.setLng(address.getLng());
+            addressEntity.setGeolocationReprocess((byte) 0);
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     private List<Object[]> getAddressMarkers(String parentUUID, Short parentMapType, Short childMapType) throws Exception {
 
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        Query query = entityManager.createQuery(
-                "select o.name, a.lat, a.lng from OrganisationEntity o " +
-                        "inner join AddressEntity a on a.organisationUuid = o.uuid " +
-                        "inner join MasterMappingEntity mm on mm.childUuid = o.uuid and mm.childMapTypeId = :childMap " +
-                        "where mm.parentUuid = :parentUuid " +
-                        "and mm.parentMapTypeId = :parentMap");
-        query.setParameter("parentUuid", parentUUID);
-        query.setParameter("childMap", childMapType);
-        query.setParameter("parentMap", parentMapType);
+        try {
 
-        List<Object[]> result = query.getResultList();
+            Query query = entityManager.createQuery(
+                    "select o.name, a.lat, a.lng from OrganisationEntity o " +
+                            "inner join AddressEntity a on a.organisationUuid = o.uuid " +
+                            "inner join MasterMappingEntity mm on mm.childUuid = o.uuid and mm.childMapTypeId = :childMap " +
+                            "where mm.parentUuid = :parentUuid " +
+                            "and mm.parentMapTypeId = :parentMap");
+            query.setParameter("parentUuid", parentUUID);
+            query.setParameter("childMap", childMapType);
+            query.setParameter("parentMap", parentMapType);
 
-        entityManager.close();
+            List<Object[]> result = query.getResultList();
 
-        return result;
+            return result;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public Response getOrganisationMarkers(String regionUuid, Short parentMapType, Short childMapType) throws Exception {
@@ -173,17 +203,23 @@ public class AddressDAL {
     public void deleteAddressForOrganisations(String organisationUuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        entityManager.getTransaction().begin();
-        Query query = entityManager.createQuery(
-                "DELETE from AddressEntity a " +
-                        "where a.organisationUuid = :orgUuid ");
-        query.setParameter("orgUuid", organisationUuid);
+        try {
 
-        int deletedCount = query.executeUpdate();
+            entityManager.getTransaction().begin();
+            Query query = entityManager.createQuery(
+                    "DELETE from AddressEntity a " +
+                            "where a.organisationUuid = :orgUuid ");
+            query.setParameter("orgUuid", organisationUuid);
 
-        entityManager.getTransaction().commit();
+            int deletedCount = query.executeUpdate();
 
-        entityManager.close();
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
     }
 
     public void getGeolocation(JsonAddress address) throws Exception {
