@@ -13,6 +13,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.J
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.RegionCache;
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 import org.endeavourhealth.datasharingmanager.api.utility.CsvHelper;
 
@@ -325,12 +326,11 @@ public class OrganisationLogic {
                 .build();
     }
 
-    private Response searchOrganisations(List<String> organisationUuids, String searchTerm) throws Exception {
-        List<OrganisationEntity> baseOrganisationList = new ArrayList<>();
+    private Response searchOrganisations(List<OrganisationEntity> baseOrganisationList, String searchTerm) throws Exception {
+
         List<OrganisationEntity> matchingOrgs = new ArrayList<>();
 
-        if (!organisationUuids.isEmpty()) {
-            baseOrganisationList = OrganisationCache.getOrganisationDetails(organisationUuids);
+        if (!baseOrganisationList.isEmpty()) {
 
             matchingOrgs = baseOrganisationList.stream()
                     .filter(org -> org.getName().toLowerCase().contains(searchTerm.toLowerCase())
@@ -343,12 +343,11 @@ public class OrganisationLogic {
                 .build();
     }
 
-    public Response searchOrganisationsWithODSList(List<String> organisationUuids, List<String> odsCodes) throws Exception {
-        List<OrganisationEntity> baseOrganisationList = new ArrayList<>();
+    public Response searchOrganisationsWithODSList(List<OrganisationEntity> baseOrganisationList, List<String> odsCodes) throws Exception {
+
         List<OrganisationEntity> matchingOrgs = new ArrayList<>();
 
-        if (!organisationUuids.isEmpty()) {
-            baseOrganisationList = OrganisationCache.getOrganisationDetails(organisationUuids);
+        if (!baseOrganisationList.isEmpty()) {
 
             matchingOrgs = baseOrganisationList.stream()
                     .filter(org -> odsCodes.contains(org.getOdsCode()))
@@ -362,33 +361,43 @@ public class OrganisationLogic {
     }
 
     public Response searchOrganisationsInRegion(String regionUUID, String searchTerm, List<String> odsCodes) throws Exception {
-        List<String> organisationUuids = new SecurityMasterMappingDAL().getChildMappings(regionUUID, MapType.REGION.getMapType(), MapType.ORGANISATION.getMapType());
+
+        List<OrganisationEntity> orgsInAllChildRegions = RegionCache.getAllOrganisationsForAllChildRegions(regionUUID);
 
         if (searchTerm != null) {
-            return searchOrganisations(organisationUuids, searchTerm);
+            return searchOrganisations(orgsInAllChildRegions, searchTerm);
         } else {
-            return searchOrganisationsWithODSList(organisationUuids, odsCodes);
+            return searchOrganisationsWithODSList(orgsInAllChildRegions, odsCodes);
         }
 
     }
 
     public Response searchPublishersInDSA(String dsaUUID, String searchTerm, List<String> odsCodes) throws Exception {
+
         List<String> organisationUuids =  new SecurityMasterMappingDAL().getChildMappings(dsaUUID, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType());
 
+        List<OrganisationEntity> baseOrgs = new ArrayList<>();
+        if (!organisationUuids.isEmpty())
+            baseOrgs = OrganisationCache.getOrganisationDetails(organisationUuids);
+
         if (searchTerm != null) {
-            return searchOrganisations(organisationUuids, searchTerm);
+            return searchOrganisations(baseOrgs, searchTerm);
         } else {
-            return searchOrganisationsWithODSList(organisationUuids, odsCodes);
+            return searchOrganisationsWithODSList(baseOrgs, odsCodes);
         }
     }
 
     public Response searchSubscribersInDSA(String dsaUUID, String searchTerm, List<String> odsCodes) throws Exception {
         List<String> organisationUuids =  new SecurityMasterMappingDAL().getChildMappings(dsaUUID, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.SUBSCRIBER.getMapType());
 
+        List<OrganisationEntity> baseOrgs = new ArrayList<>();
+        if (!organisationUuids.isEmpty())
+            baseOrgs = OrganisationCache.getOrganisationDetails(organisationUuids);
+
         if (searchTerm != null) {
-            return searchOrganisations(organisationUuids, searchTerm);
+            return searchOrganisations(baseOrgs, searchTerm);
         } else {
-            return searchOrganisationsWithODSList(organisationUuids, odsCodes);
+            return searchOrganisationsWithODSList(baseOrgs, odsCodes);
         }
     }
 
