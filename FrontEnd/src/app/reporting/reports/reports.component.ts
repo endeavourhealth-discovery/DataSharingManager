@@ -6,7 +6,6 @@ import {DataProcessingAgreementService} from "../../data-processing-agreement/da
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {Organisation} from "../../organisation/models/Organisation";
 import {ReportData} from "../models/ReportData";
-import {Angular2Csv} from "angular2-csv";
 import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {Project} from "../../project/models/Project";
 import {DataSharingAgreementService} from "../../data-sharing-agreement/data-sharing-agreement.service";
@@ -216,7 +215,7 @@ export class ReportsComponent implements OnInit {
 
   exportToCSV() {
     const vm = this;
-    new Angular2Csv(vm.reportData, vm.reportName, vm.options);
+    // new Angular2Csv(vm.reportData, vm.reportName, vm.options);
   }
 
 }
