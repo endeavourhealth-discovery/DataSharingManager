@@ -1,0 +1,110 @@
+<div class="module">
+  <div class="container-fluid">
+    <div class="module-heading">
+      Reporting
+      <div class="pull-right">
+        <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success" (click)="runDPAPublisherReport()">Run Publisher Report</button>
+      </div>
+    </div>
+    <div class="module-body">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">Data Processing Agreements</div>
+            <div class="card-body">
+              <loadingIndicator [done]="dpaLoadingComplete">
+                <table *ngIf="dpas" class="table table-striped table-sm">
+                  <tbody>
+                  <tr *ngFor="let dpa of dpas" class="hover-box show-child-on-hover d-flex">
+                    <td class="col-md-12" (click)="runDPAPublisherReport(dpa)">{{dpa.name}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </loadingIndicator>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">Data Sharing Agreements</div>
+            <div class="card-body">
+              <loadingIndicator [done]="dsaLoadingComplete">
+                <table *ngIf="dsas" class="table table-striped table-sm">
+                  <tbody>
+                  <tr *ngFor="let dsa of dsas" class="hover-box show-child-on-hover d-flex">
+                    <td class="col-md-12" (click)="runDSAPublisherReport(dsa)">{{dsa.name}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </loadingIndicator>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">Projects</div>
+            <div class="card-body">
+              <loadingIndicator [done]="projectLoadingComplete">
+                <table *ngIf="projects" class="table table-striped table-sm">
+                  <tbody>
+                  <tr *ngFor="let proj of projects" class="hover-box show-child-on-hover d-flex">
+                    <td class="col-md-12" (click)="runProjectPublisherReport(proj)">{{proj.name}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </loadingIndicator>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br><br>
+
+      <div *ngIf="reportData">
+        <loadingIndicator [done]="reportComplete">
+          <div class="row">
+            <div class="col-md-11">
+              <h3>{{reportName}}</h3>
+            </div>
+            <div class="col-md-1">
+              <button type="button" class="btn btn-sm btn-success" (click)="exportToCSV()">Export</button>
+            </div>
+          </div>
+          <table *ngIf="reportData" class="table table-striped table-sm">
+            <thead>
+              <tr class="d-flex">
+                <th class="col-3"  (click)="sort('practiceName');">Practice name
+                  <span class="fa fa-sort" style="cursor: pointer"></span>
+                </th>
+                <th class="col-1" (click)="sort('odsCode');">Ods code
+                  <span class="fa fa-sort" style="cursor: pointer"></span>
+                </th>
+                <th class="col-3" (click)="sort('ccg')">CCG
+                  <span class="fa fa-sort" style="cursor: pointer"></span>
+                </th>
+                <th class="col-2" (click)="sort('referenceAgreement')">Agreement
+                  <span class="fa fa-sort" style="cursor: pointer"></span>
+                </th>
+                <th class="col-2" (click)="sort('lastReceived')">Last received
+                  <span class="fa fa-sort" style="cursor: pointer"></span>
+                </th>
+                <th class="col-1" (click)="sort('inError')">In error
+                  <span class="fa fa-sort" style="cursor: pointer"></span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let org of reportData" class="hover-box show-child-on-hover d-flex">
+                <td class="col-md-3">{{org.practiceName}}</td>
+                <td class="col-md-1">{{org.odsCode}}</td>
+                <td class="col-md-3">{{org.ccg}}</td>
+                <td class="col-md-2">{{org.referenceAgreement}}</td>
+                <td class="col-md-2">{{org.lastReceived}}</td>
+                <td class="col-md-1">{{org.inError}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </loadingIndicator>
+      </div>
+    </div>
+  </div>
+</div>

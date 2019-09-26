@@ -23,6 +23,8 @@ import {MySharingModule} from "./my-sharing/my-sharing.module";
 import {DataExchangeModule} from "./data-exchange/data-exchange.module";
 import {ProjectModule} from "./project/project.module";
 import {ConfigModule} from "./config/config.module";
+import {ReportingModule} from "./reporting/reporting.module";
+
 
 @NgModule({
   declarations: [],
@@ -43,6 +45,7 @@ import {ConfigModule} from "./config/config.module";
     MySharingModule,
     ProjectModule,
     ConfigModule,
+    ReportingModule,
     RouterModule.forRoot(AppMenuService.getRoutes(), {useHash: true}),
     NgbModule.forRoot(),
     ToastModule.forRoot()

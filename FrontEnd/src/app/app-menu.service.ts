@@ -26,6 +26,7 @@ import {DataExchangeEditorComponent} from "./data-exchange/data-exchange-editor/
 import {ProjectComponent} from "./project/project/project.component";
 import {ProjectEditorComponent} from "./project/project-editor/project-editor.component";
 import {ConfigComponent} from "./config/config/config.component";
+import {ReportsComponent} from "./reporting/reports/reports.component";
 
 @Injectable()
 export class AppMenuService implements  AbstractMenuProvider  {
@@ -56,6 +57,7 @@ export class AppMenuService implements  AbstractMenuProvider  {
       { path: 'projects', component: ProjectComponent},
       { path: 'project/:id/:mode', component: ProjectEditorComponent},
       { path: 'configuration', component: ConfigComponent},
+      { path: 'reporting', component: ReportsComponent},
     ];
   }
 
@@ -73,7 +75,8 @@ export class AppMenuService implements  AbstractMenuProvider  {
     return [
       {caption: 'My agreements', state: 'mySharingOverview', icon: 'fa fa-user', role: 'Viewer'},
       {caption: 'Overview', state: 'overview', icon: 'fa fa-hospital-o', role: 'Viewer'},
-      {caption: 'Configuration', state: 'configuration', icon: 'fa-cogs', role: 'Config'}
+      {caption: 'Configuration', state: 'configuration', icon: 'fa-cogs', role: 'Config'},
+      {caption: 'Reporting', state: 'reporting', icon: 'fa-line-chart', role: 'Config'}
     ];
   }
 }

@@ -97,6 +97,11 @@ export class ProjectEditorComponent implements OnInit {
     {num: 5, name: 'One off'}
   ];
 
+  outputFormat = [
+    {num: 0, name: 'FHIR'},
+    {num: 1, name: 'CSV'}
+  ];
+
   status = [
     {num: 0, name : 'Active'},
     {num: 1, name : 'Inactive'}
