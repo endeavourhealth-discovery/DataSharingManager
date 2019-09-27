@@ -10,6 +10,7 @@ import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {Project} from "../../project/models/Project";
 import {DataSharingAgreementService} from "../../data-sharing-agreement/data-sharing-agreement.service";
 import {ProjectService} from "../../project/project.service";
+import { ExportToCsv } from 'export-to-csv';
 
 @Component({
   selector: 'app-reports',
@@ -41,9 +42,8 @@ export class ReportsComponent implements OnInit {
     headers: ['Practice Name', 'ODS Code', 'CCG', 'Agreement', 'Last Received', 'In Error'],
     showTitle: false,
     title: 'Publisher Report',
+    useTextFile: false,
     useBom: false,
-    removeNewLines: true,
-    keys: ['approved','age','name' ]
   };
 
   constructor(private reportingService: ReportingService,
@@ -216,6 +216,9 @@ export class ReportsComponent implements OnInit {
   exportToCSV() {
     const vm = this;
     // new Angular2Csv(vm.reportData, vm.reportName, vm.options);
-  }
 
+    const csvExporter = new ExportToCsv(vm.options);
+
+    csvExporter.generateCsv(vm.reportData);
+  }
 }
