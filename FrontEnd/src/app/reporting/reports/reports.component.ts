@@ -87,7 +87,7 @@ export class ReportsComponent implements OnInit {
   getDPAs() {
     const vm = this;
     vm.dpaLoadingComplete = false;
-    vm.dpaService.getAllDpas()
+    vm.dpaService.getAllDpas(null)
       .subscribe(
         result => {
           vm.dpas = result;

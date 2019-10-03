@@ -15,9 +15,13 @@ export class DataProcessingAgreementService {
 
   constructor(private http: Http) { }
 
-  getAllDpas(): Observable<Dpa[]> {
+  getAllDpas(userId: string): Observable<Dpa[]> {
     const vm = this;
-    return vm.http.get('api/dpa')
+    const params = new URLSearchParams();
+    if (userId != null) {
+      params.set('userId', userId);
+    }
+    return vm.http.get('api/dpa', { search : params })
       .map((response) => response.json());
   }
 

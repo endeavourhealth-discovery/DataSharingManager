@@ -15,7 +15,9 @@ import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 export class DataProcessingAgreementComponent implements OnInit {
   dpas: Dpa[];
   allowEdit = false;
+  superUser = false;
   loadingComplete = false;
+  userId = "";
 
   public activeProject: UserProject;
 
@@ -36,23 +38,32 @@ export class DataProcessingAgreementComponent implements OnInit {
       this.activeProject = active;
       this.roleChanged();
     });
-    this.getDsas();
   }
 
   roleChanged() {
     const vm = this;
 
-    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Super User') != null) {
       vm.allowEdit = true;
+      vm.superUser = true;
+      vm.userId = null;
+    } else if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+      vm.allowEdit = true;
+      vm.superUser = false;
+      vm.userId = vm.activeProject.userId;
     } else {
       vm.allowEdit = false;
+      vm.superUser = false;
+      vm.userId = vm.activeProject.userId;
     }
+
+    vm.getDsas(vm.userId);
   }
 
-  getDsas() {
+  getDsas(userId: string) {
     const vm = this;
     vm.loadingComplete = false;
-    vm.dpaService.getAllDpas()
+    vm.dpaService.getAllDpas(userId)
       .subscribe(
         result => {
           vm.dpas = result;

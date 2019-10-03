@@ -47,7 +47,8 @@ public final class DpaEndpoint extends AbstractEndpoint {
             "Returns a JSON representation of the matching set of Data processing agreement")
     public Response getDPA(@Context SecurityContext sc,
                         @ApiParam(value = "Optional uuid") @QueryParam("uuid") String uuid,
-                        @ApiParam(value = "Optional search term") @QueryParam("searchData") String searchData
+                        @ApiParam(value = "Optional search term") @QueryParam("searchData") String searchData,
+                        @ApiParam(value = "Optional user Id to restrict based on region") @QueryParam("userId") String userId
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
@@ -56,7 +57,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "SearchData", searchData);
 
         clearLogbackMarkers();
-        return new DataProcessingAgreementLogic().getDPA(uuid, searchData);
+        return new DataProcessingAgreementLogic().getDPA(uuid, searchData, userId);
     }
 
     @POST

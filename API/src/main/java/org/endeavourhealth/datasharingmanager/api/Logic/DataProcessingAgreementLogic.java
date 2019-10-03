@@ -10,6 +10,8 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.J
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.UserCache;
+import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 
 import javax.ws.rs.core.Response;
@@ -19,11 +21,14 @@ import java.util.UUID;
 
 public class DataProcessingAgreementLogic {
 
-    public Response getDPA(String uuid, String searchData) throws Exception {
+    public Response getDPA(String uuid, String searchData, String userId) throws Exception {
 
-        if (uuid == null && searchData == null) {
+        if (uuid == null && searchData == null && userId == null) {
             return getDPAList();
-        } else if (uuid != null){
+        } else if (userId != null) {
+            return getDPAListFilterOnRegion(userId);
+        }
+        else if (uuid != null){
             return getSingleDPA(uuid);
         } else {
             return search(searchData);
@@ -65,6 +70,18 @@ public class DataProcessingAgreementLogic {
     private Response getDPAList() throws Exception {
 
         List<DataProcessingAgreementEntity> dpas = new DataProcessingAgreementDAL().getAllDPAs();
+
+        return Response
+                .ok()
+                .entity(dpas)
+                .build();
+    }
+
+    private Response getDPAListFilterOnRegion(String userId) throws Exception {
+
+        UserRegionEntity userRegion = UserCache.getUserRegion(userId);
+
+        List<DataProcessingAgreementEntity> dpas = DataProcessingAgreementCache.getAllDPAsForAllChildRegions(userRegion.getRegionId());
 
         return Response
                 .ok()
