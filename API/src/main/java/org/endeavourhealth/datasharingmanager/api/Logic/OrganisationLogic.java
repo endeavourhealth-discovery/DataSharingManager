@@ -171,10 +171,14 @@ public class OrganisationLogic {
                 .build();
     }
 
-    public Response getRegionsForOrganisation(String organisationUuid) throws Exception {
+    public Response getRegionsForOrganisation(String organisationUuid, String userId) throws Exception {
 
         List<String> regionUuids = new SecurityMasterMappingDAL().getParentMappings(organisationUuid, MapType.ORGANISATION.getMapType(), MapType.REGION.getMapType());
         List<RegionEntity> ret = new ArrayList<>();
+
+        if (userId != null) {
+            regionUuids = new RegionLogic().filterRegionsForUser(regionUuids, userId);
+        }
 
         if (!regionUuids.isEmpty())
             ret = new RegionDAL().getRegionsFromList(regionUuids);

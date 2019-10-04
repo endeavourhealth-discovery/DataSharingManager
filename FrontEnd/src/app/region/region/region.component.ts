@@ -17,6 +17,8 @@ export class RegionComponent implements OnInit {
   organisations: Organisation[];
   regions: Region[] = [];
   allowEdit = false;
+  superUser = false;
+  userId: string;
   loadingComplete = false;
 
   public activeProject: UserProject;
@@ -38,23 +40,32 @@ export class RegionComponent implements OnInit {
       this.activeProject = active;
       this.roleChanged();
     });
-    this.getRegions();
   }
 
   roleChanged() {
     const vm = this;
 
-    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Super User') != null) {
       vm.allowEdit = true;
+      vm.superUser = true;
+      vm.userId = null;
+    } else if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+      vm.allowEdit = true;
+      vm.superUser = false;
+      vm.userId = vm.activeProject.userId;
     } else {
       vm.allowEdit = false;
+      vm.superUser = false;
+      vm.userId = vm.activeProject.userId;
     }
+
+    this.getRegions(vm.userId);
   }
 
-  getRegions() {
+  getRegions(userId: string) {
     const vm = this;
     vm.loadingComplete = false;
-    vm.regionService.getAllRegions()
+    vm.regionService.getAllRegions(userId)
       .subscribe(
         result => {
           vm.regions = result;

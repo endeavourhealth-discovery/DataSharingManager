@@ -15,7 +15,9 @@ import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 export class DataSharingAgreementComponent implements OnInit {
   dsas: Dsa[];
   allowEdit = false;
+  superUser = false;
   loadingComplete = false;
+  userId: string;
 
   public activeProject: UserProject;
 
@@ -36,23 +38,32 @@ export class DataSharingAgreementComponent implements OnInit {
       this.activeProject = active;
       this.roleChanged();
     });
-    this.getDsas();
   }
 
   roleChanged() {
     const vm = this;
 
-    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Super User') != null) {
       vm.allowEdit = true;
+      vm.superUser = true;
+      vm.userId = null;
+    } else if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+      vm.allowEdit = true;
+      vm.superUser = false;
+      vm.userId = vm.activeProject.userId;
     } else {
       vm.allowEdit = false;
+      vm.superUser = false;
+      vm.userId = vm.activeProject.userId;
     }
+    this.getDsas(vm.userId);
   }
 
-  getDsas() {
+  getDsas(userId: string) {
     const vm = this;
     vm.loadingComplete = false;
-    vm.dsaService.getAllDsas()
+    console.log(userId);
+    vm.dsaService.getAllDsas(userId)
       .subscribe(
         result => {
           vm.dsas = result;

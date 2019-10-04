@@ -61,10 +61,13 @@ export class DataProcessingAgreementService {
     return vm.makeAPICall(uuid, 'api/dpa/dataflows');
   }
 
-  getLinkedRegions(uuid: string):  Observable<Region[]> {
+  getLinkedRegions(uuid: string, userId: string):  Observable<Region[]> {
     const vm = this;
     const params = new URLSearchParams();
     params.set('uuid', uuid);
+    if (userId != null) {
+      params.set('userId', userId);
+    }
     return vm.http.get('api/dpa/regions', { search : params })
       .map((response) => response.json());
   }

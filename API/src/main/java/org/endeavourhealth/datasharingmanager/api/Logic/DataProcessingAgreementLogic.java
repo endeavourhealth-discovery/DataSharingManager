@@ -27,8 +27,7 @@ public class DataProcessingAgreementLogic {
             return getDPAList();
         } else if (userId != null) {
             return getDPAListFilterOnRegion(userId);
-        }
-        else if (uuid != null){
+        } else if (uuid != null){
             return getSingleDPA(uuid);
         } else {
             return search(searchData);
@@ -150,9 +149,13 @@ public class DataProcessingAgreementLogic {
                 .build();
     }
 
-    public Response getLinkedRegions(String dsaUuid) throws Exception {
+    public Response getLinkedRegions(String dsaUuid, String userId) throws Exception {
 
         List<String> regionUuids = new SecurityMasterMappingDAL().getParentMappings(dsaUuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.REGION.getMapType());
+
+        if (userId != null) {
+            regionUuids = new RegionLogic().filterRegionsForUser(regionUuids, userId);
+        }
 
         List<RegionEntity> ret = new ArrayList<>();
 

@@ -45,7 +45,8 @@ public final class DsaEndpoint extends AbstractEndpoint {
             "Returns a JSON representation of the matching set of Data Flows")
     public Response getDSA(@Context SecurityContext sc,
                         @ApiParam(value = "Optional uuid") @QueryParam("uuid") String uuid,
-                        @ApiParam(value = "Optional search term") @QueryParam("searchData") String searchData
+                        @ApiParam(value = "Optional search term") @QueryParam("searchData") String searchData,
+                        @ApiParam(value = "Optional user Id to restrict based on region") @QueryParam("userId") String userId
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
@@ -54,7 +55,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 "SearchData", searchData);
 
         clearLogbackMarkers();
-        return new DataSharingAgreementLogic().getDSAs(uuid, searchData);
+        return new DataSharingAgreementLogic().getDSAs(uuid, searchData, userId);
 
     }
 
@@ -128,14 +129,15 @@ public final class DsaEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Returns a list of Json representations of regions that are linked " +
             "to the data sharing agreement.  Accepts a UUID of a data sharing agreement.")
     public Response getLinkedRegionsForDSA(@Context SecurityContext sc,
-                                     @ApiParam(value = "UUID of data flow") @QueryParam("uuid") String uuid
+                                     @ApiParam(value = "UUID of data flow") @QueryParam("uuid") String uuid,
+                                           @ApiParam(value = "Optional user Id to restrict based on region") @QueryParam("userId") String userId
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
                 "dataflow(s)",
                 "DSA Id", uuid);
 
-        return new DataSharingAgreementLogic().getLinkedRegions(uuid);
+        return new DataSharingAgreementLogic().getLinkedRegions(uuid, userId);
     }
 
     @GET

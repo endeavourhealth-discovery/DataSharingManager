@@ -12,9 +12,13 @@ export class RegionService {
 
   constructor(private http: Http) { }
 
-  getAllRegions(): Observable<Region[]> {
+  getAllRegions(userId: string): Observable<Region[]> {
     const vm = this;
-    return vm.http.get('api/region')
+    const params = new URLSearchParams();
+    if (userId != null) {
+      params.set('userId', userId);
+    }
+    return vm.http.get('api/region', { search : params })
       .map((response) => response.json());
   }
 
@@ -34,10 +38,13 @@ export class RegionService {
       .map((response) => response.json());
   }
 
-  getParentRegions(uuid: string):  Observable<Region[]> {
+  getParentRegions(uuid: string, userId: string):  Observable<Region[]> {
     const vm = this;
     const params = new URLSearchParams();
     params.set('uuid', uuid);
+    if (userId != null) {
+      params.set('userId', userId);
+    }
     return vm.http.get('api/region/parentRegions', { search : params })
       .map((response) => response.json());
   }

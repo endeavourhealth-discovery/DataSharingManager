@@ -5,6 +5,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.databa
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.ProjectCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.UserCache;
+import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
 import org.endeavourhealth.common.security.usermanagermodel.models.json.JsonUser;
 import org.endeavourhealth.datasharingmanager.api.DAL.MasterMappingDAL;
 import org.endeavourhealth.datasharingmanager.api.DAL.ProjectDAL;
@@ -15,16 +16,29 @@ import java.util.UUID;
 
 public class ProjectLogic {
 
-    public Response getProjects(String uuid, String searchData) throws Exception {
+    public Response getProjects(String uuid, String searchData, String userId) throws Exception {
 
-        if (uuid == null && searchData == null) {
-
+        if (uuid == null && searchData == null && userId == null) {
             return getProjectList();
-        } else if (uuid != null){
+        } else if (userId != null) {
+            return getProjectListFilterOnRegion(userId);
+        }  else if (uuid != null){
             return getSingleProject(uuid);
         } else {
             return search(searchData);
         }
+    }
+
+    private Response getProjectListFilterOnRegion(String userId) throws Exception {
+
+        UserRegionEntity userRegion = UserCache.getUserRegion(userId);
+
+        List<ProjectEntity> dpas = ProjectCache.getAllProjectsForAllChildRegions(userRegion.getRegionId());
+
+        return Response
+                .ok()
+                .entity(dpas)
+                .build();
     }
 
     public Response postProject(JsonProject project) throws Exception {

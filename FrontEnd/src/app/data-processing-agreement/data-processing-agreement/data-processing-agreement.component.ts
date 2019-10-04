@@ -16,8 +16,8 @@ export class DataProcessingAgreementComponent implements OnInit {
   dpas: Dpa[];
   allowEdit = false;
   superUser = false;
+  userId: string;
   loadingComplete = false;
-  userId = "";
 
   public activeProject: UserProject;
 

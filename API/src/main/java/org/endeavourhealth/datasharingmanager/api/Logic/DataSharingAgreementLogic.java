@@ -6,9 +6,8 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDSA;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonPurpose;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.ProjectCache;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.*;
+import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 
 import javax.ws.rs.core.Response;
@@ -19,14 +18,29 @@ import java.util.UUID;
 public class DataSharingAgreementLogic {
 
 
-    public Response getDSAs(String uuid, String searchData) throws Exception {
-        if (uuid == null && searchData == null) {
+    public Response getDSAs(String uuid, String searchData, String userId) throws Exception {
+
+        if (uuid == null && searchData == null && userId == null) {
             return getDSAList();
+        } else if (userId != null) {
+            return getDSAListFilterOnRegion(userId);
         } else if (uuid != null){
             return getSingleDSA(uuid);
         } else {
             return search(searchData);
         }
+    }
+
+    private Response getDSAListFilterOnRegion(String userId) throws Exception {
+
+        UserRegionEntity userRegion = UserCache.getUserRegion(userId);
+
+        List<DataSharingAgreementEntity> dpas = DataSharingAgreementCache.getAllDSAsForAllChildRegions(userRegion.getRegionId());
+
+        return Response
+                .ok()
+                .entity(dpas)
+                .build();
     }
 
     public Response postDSA(JsonDSA dsa) throws Exception {
@@ -115,9 +129,13 @@ public class DataSharingAgreementLogic {
                 .build();
     }
 
-    public Response getLinkedRegions(String dsaUuid) throws Exception {
+    public Response getLinkedRegions(String dsaUuid, String userId) throws Exception {
 
         List<String> regionUuids = new SecurityMasterMappingDAL().getParentMappings(dsaUuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.REGION.getMapType());
+
+        if (userId != null) {
+            regionUuids = new RegionLogic().filterRegionsForUser(regionUuids, userId);
+        }
 
         List<RegionEntity> ret = new ArrayList<>();
 

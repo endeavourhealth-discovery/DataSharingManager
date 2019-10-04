@@ -7,28 +7,42 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.databa
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.RegionEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonRegion;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.RegionCache;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.*;
+import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class RegionLogic {
 
-    public Response getRegion(String uuid, String searchData) throws Exception {
+    public Response getRegion(String uuid, String searchData, String userId) throws Exception {
 
-        if (uuid == null && searchData == null) {
+        if (uuid == null && searchData == null && userId == null) {
             return getRegionList();
-        } else if (uuid != null){
+        } else if (userId != null) {
+            return getRegionListFilterOnRegion(userId);
+        }  else if (uuid != null){
             return getSingleRegion(uuid);
         } else {
             return search(searchData);
         }
+    }
+
+    private Response getRegionListFilterOnRegion(String userId) throws Exception {
+
+        UserRegionEntity userRegion = UserCache.getUserRegion(userId);
+
+        List<RegionEntity> dpas = RegionCache.getAllChildRegionsForRegion(userRegion.getRegionId());
+
+        return Response
+                .ok()
+                .entity(dpas)
+                .build();
     }
 
     public Response postRegion(JsonRegion region) throws Exception {
@@ -93,10 +107,31 @@ public class RegionLogic {
                 .build();
     }
 
-    public Response getParentRegions(String regionUuid) throws Exception {
+    public List<String> filterRegionsForUser(List<String> regions, String userId) throws Exception {
+
+        UserRegionEntity userRegion = UserCache.getUserRegion(userId);
+
+        List<RegionEntity> regionsForUsers = RegionCache.getAllChildRegionsForRegion(userRegion.getRegionId());
+
+        Set<String> regionForUserSet =
+                regionsForUsers.stream()
+                        .map(RegionEntity::getUuid)
+                        .collect(Collectors.toSet());
+
+        regions = regions.stream().filter(reg -> regionForUserSet.contains(reg)).collect(Collectors.toList());
+
+        return regions;
+
+    }
+
+    public Response getParentRegions(String regionUuid, String userId) throws Exception {
 
         List<String> regionUuids = new SecurityMasterMappingDAL().getParentMappings(regionUuid, MapType.REGION.getMapType(), MapType.REGION.getMapType());
         List<RegionEntity> ret = new ArrayList<>();
+
+        if (userId != null) {
+            regionUuids = filterRegionsForUser(regionUuids, userId);
+        }
 
         if (!regionUuids.isEmpty())
             ret = new RegionDAL().getRegionsFromList(regionUuids);

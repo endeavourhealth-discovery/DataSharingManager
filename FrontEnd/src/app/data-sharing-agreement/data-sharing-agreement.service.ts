@@ -15,9 +15,13 @@ export class DataSharingAgreementService {
   constructor(private http: Http) { }
 
 
-  getAllDsas(): Observable<Dsa[]> {
+  getAllDsas(userId: string): Observable<Dsa[]> {
     const vm = this;
-    return vm.http.get('api/dsa')
+    const params = new URLSearchParams();
+    if (userId != null) {
+      params.set('userId', userId);
+    }
+    return vm.http.get('api/dsa', { search : params })
       .map((response) => response.json());
   }
 
@@ -59,10 +63,13 @@ export class DataSharingAgreementService {
       .map((response) => response.json());
   }
 
-  getLinkedRegions(uuid: string):  Observable<Region[]> {
+  getLinkedRegions(uuid: string, userId: string):  Observable<Region[]> {
     const vm = this;
     const params = new URLSearchParams();
     params.set('uuid', uuid);
+    if (userId != null) {
+      params.set('userId', userId);
+    }
     return vm.http.get('api/dsa/regions', { search : params })
       .map((response) => response.json());
   }

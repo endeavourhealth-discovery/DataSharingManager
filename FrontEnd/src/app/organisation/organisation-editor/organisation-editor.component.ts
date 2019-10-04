@@ -40,6 +40,8 @@ export class OrganisationEditorComponent implements OnInit {
   location: any;
   orgType = 'Organisation';
   allowEdit = false;
+  superUser = false;
+  userId: string;
 
   public activeProject: UserProject;
 
@@ -67,21 +69,29 @@ export class OrganisationEditorComponent implements OnInit {
       this.activeProject = active;
       this.roleChanged();
     });
-
-    this.paramSubscriber = this.route.params.subscribe(
-      params => {
-        this.performAction(params['mode'], params['id']);
-      });
   }
 
   roleChanged() {
     const vm = this;
 
-    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Super User') != null) {
       vm.allowEdit = true;
+      vm.superUser = true;
+      vm.userId = null;
+    } else if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+      vm.allowEdit = true;
+      vm.superUser = false;
+      vm.userId = vm.activeProject.userId;
     } else {
       vm.allowEdit = false;
+      vm.superUser = false;
+      vm.userId = vm.activeProject.userId;
     }
+
+    this.paramSubscriber = this.route.params.subscribe(
+      params => {
+        this.performAction(params['mode'], params['id']);
+      });
   }
 
   protected performAction(action: string, itemUuid: string) {
@@ -296,7 +306,7 @@ export class OrganisationEditorComponent implements OnInit {
 
   private getOrganisationRegions() {
     const vm = this;
-    vm.organisationService.getOrganisationRegions(vm.organisation.uuid)
+    vm.organisationService.getOrganisationRegions(vm.organisation.uuid, vm.userId)
       .subscribe(
         result => vm.regions = result,
         error => vm.log.error('The associated regions could not be loaded. Please try again.', error, 'Load organisation regions')

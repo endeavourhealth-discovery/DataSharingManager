@@ -18,8 +18,7 @@ import { ExportToCsv } from 'export-to-csv';
   styleUrls: ['./reports.component.css']
 })
 export class ReportsComponent implements OnInit {
-  allowEdit = false;
-  allowBulk = false;
+  userId: string;
   dpaLoadingComplete = false;
   dsaLoadingComplete = false;
   projectLoadingComplete = false;
@@ -63,15 +62,10 @@ export class ReportsComponent implements OnInit {
   roleChanged() {
     const vm = this;
 
-    vm.allowEdit = false;
-    vm.allowBulk = false;
-
-    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
-      vm.allowEdit = true;
-    }
-
-    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Config') != null) {
-      vm.allowBulk = true;
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Super User') != null) {
+      vm.userId = null;
+    } else {
+      vm.userId = vm.activeProject.userId;
     }
 
     vm.getAvailableReports();
@@ -87,7 +81,7 @@ export class ReportsComponent implements OnInit {
   getDPAs() {
     const vm = this;
     vm.dpaLoadingComplete = false;
-    vm.dpaService.getAllDpas(null)
+    vm.dpaService.getAllDpas(vm.userId)
       .subscribe(
         result => {
           vm.dpas = result;
@@ -104,7 +98,7 @@ export class ReportsComponent implements OnInit {
   getDsas() {
     const vm = this;
     vm.dsaLoadingComplete = false;
-    vm.dsaService.getAllDsas()
+    vm.dsaService.getAllDsas(vm.userId)
       .subscribe(
         result => {
           vm.dsas = result;
@@ -120,7 +114,7 @@ export class ReportsComponent implements OnInit {
   getProjects() {
     const vm = this;
     vm.projectLoadingComplete = false;
-    vm.projectService.getAllProjects()
+    vm.projectService.getAllProjects(vm.userId)
       .subscribe(
         result => {
           vm.projects = result;

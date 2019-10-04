@@ -16,9 +16,13 @@ export class ProjectService {
 
   constructor(private http: Http) { }
 
-  getAllProjects(): Observable<Project[]> {
+  getAllProjects(userId: string): Observable<Project[]> {
     const vm = this;
-    return vm.http.get('api/project')
+    const params = new URLSearchParams();
+    if (userId != null) {
+      params.set('userId', userId);
+    }
+    return vm.http.get('api/project', { search : params })
       .map((response) => response.json());
   }
 

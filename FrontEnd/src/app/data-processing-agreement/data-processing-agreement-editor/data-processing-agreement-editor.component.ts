@@ -52,6 +52,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   disableStatus = false;
 
   public activeProject: UserProject;
+  superUser = false;
+  userId: string;
 
   status = [
     {num: 0, name: 'Active'},
@@ -80,10 +82,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.paramSubscriber = this.route.params.subscribe(
-      params => {
-        this.performAction(params['mode'], params['id']);
-      });
 
     this.userManagerNotificationService.activeUserProject.subscribe(active => {
       this.activeProject = active;
@@ -94,11 +92,24 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   roleChanged() {
     const vm = this;
 
-    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Super User') != null) {
       vm.allowEdit = true;
+      vm.superUser = true;
+      vm.userId = null;
+    } else if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+      vm.allowEdit = true;
+      vm.superUser = false;
+      vm.userId = vm.activeProject.userId;
     } else {
       vm.allowEdit = false;
+      vm.superUser = false;
+      vm.userId = vm.activeProject.userId;
     }
+
+    this.paramSubscriber = this.route.params.subscribe(
+      params => {
+        this.performAction(params['mode'], params['id']);
+      });
   }
 
   protected performAction(action: string, itemUuid: string) {
@@ -282,7 +293,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
   private getLinkedRegions() {
     const vm = this;
-    vm.dpaService.getLinkedRegions(vm.dpa.uuid)
+    vm.dpaService.getLinkedRegions(vm.dpa.uuid, vm.userId)
       .subscribe(
         result => vm.regions = result,
         error => vm.log.error('The associated regions could not be loaded. Please try again.', error, 'Load associated regions')

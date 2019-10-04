@@ -23,10 +23,13 @@ export class OrganisationService  {
       .map((response) => response.json());
   }
 
-  getOrganisationRegions(uuid: string):  Observable<Region[]> {
+  getOrganisationRegions(uuid: string, userId: string):  Observable<Region[]> {
     const vm = this;
     const params = new URLSearchParams();
     params.set('uuid', uuid);
+    if (userId != null) {
+      params.set('userId', userId);
+    }
     return vm.http.get('api/organisation/regions', { search : params })
       .map((response) => response.json());
   }

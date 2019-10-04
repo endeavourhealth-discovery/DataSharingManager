@@ -182,14 +182,15 @@ public final class DpaEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Returns a list of Json representations of regions that are linked " +
             "to the data processing agreement.  Accepts a UUID of a data processing agreement.")
     public Response getLinkedRegionsForDPA(@Context SecurityContext sc,
-                                           @ApiParam(value = "UUID of DPA") @QueryParam("uuid") String uuid
+                                           @ApiParam(value = "UUID of DPA") @QueryParam("uuid") String uuid,
+                                           @ApiParam(value = "Optional user Id to restrict based on region") @QueryParam("userId") String userId
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
                 "dataflow(s)",
                 "DSA Id", uuid);
 
-        return new DataProcessingAgreementLogic().getLinkedRegions(uuid);
+        return new DataProcessingAgreementLogic().getLinkedRegions(uuid, userId);
     }
 
     @GET

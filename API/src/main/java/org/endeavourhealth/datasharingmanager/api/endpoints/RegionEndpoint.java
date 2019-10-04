@@ -45,7 +45,8 @@ public final class RegionEndpoint extends AbstractEndpoint {
             "Returns a JSON representation of the matching set of regions")
     public Response getRegion(@Context SecurityContext sc,
                         @ApiParam(value = "Optional uuid") @QueryParam("uuid") String uuid,
-                        @ApiParam(value = "Optional search term") @QueryParam("searchData") String searchData
+                        @ApiParam(value = "Optional search term") @QueryParam("searchData") String searchData,
+                        @ApiParam(value = "Optional user Id to restrict based on region") @QueryParam("userId") String userId
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
@@ -54,7 +55,7 @@ public final class RegionEndpoint extends AbstractEndpoint {
                 "SearchData", searchData);
 
         clearLogbackMarkers();
-        return new RegionLogic().getRegion(uuid, searchData);
+        return new RegionLogic().getRegion(uuid, searchData, userId);
 
     }
 
@@ -125,13 +126,15 @@ public final class RegionEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Returns a list of Json representations of parent regions that are linked " +
             "to the region.  Accepts a UUID of a region.")
     public Response getParentRegionsForRegion(@Context SecurityContext sc,
-                                     @ApiParam(value = "UUID of the region") @QueryParam("uuid") String uuid) throws Exception {
+                                     @ApiParam(value = "UUID of the region") @QueryParam("uuid") String uuid,
+                                              @ApiParam(value = "Optional user Id to restrict based on region") @QueryParam("userId") String userId
+    ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
                 "Parent Region(s)",
                 "Region Id", uuid);
 
-        return new RegionLogic().getParentRegions(uuid);
+        return new RegionLogic().getParentRegions(uuid, userId);
     }
 
     @GET

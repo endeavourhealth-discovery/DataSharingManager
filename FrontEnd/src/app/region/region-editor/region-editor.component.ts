@@ -35,6 +35,8 @@ export class RegionEditorComponent implements OnInit {
   longitude: number = -117.918;
   zoom: number = 12;
   allowEdit = false;
+  superUser = false;
+  userId: string;
 
   public activeProject: UserProject;
 
@@ -54,10 +56,6 @@ export class RegionEditorComponent implements OnInit {
   this.toastr.setRootViewContainerRef(vcr); }
 
   ngOnInit() {
-    this.paramSubscriber = this.route.params.subscribe(
-      params => {
-        this.performAction(params['mode'], params['id']);
-      });
 
     this.userManagerNotificationService.activeUserProject.subscribe(active => {
       this.activeProject = active;
@@ -68,11 +66,24 @@ export class RegionEditorComponent implements OnInit {
   roleChanged() {
     const vm = this;
 
-    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Super User') != null) {
       vm.allowEdit = true;
+      vm.superUser = true;
+      vm.userId = null;
+    } else if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+      vm.allowEdit = true;
+      vm.superUser = false;
+      vm.userId = vm.activeProject.userId;
     } else {
       vm.allowEdit = false;
+      vm.superUser = false;
+      vm.userId = vm.activeProject.userId;
     }
+
+    this.paramSubscriber = this.route.params.subscribe(
+      params => {
+        this.performAction(params['mode'], params['id']);
+      });
   }
 
   protected performAction(action: string, itemUuid: string) {
@@ -171,7 +182,7 @@ export class RegionEditorComponent implements OnInit {
 
   private getParentRegions() {
     const vm = this;
-    vm.regionService.getParentRegions(vm.region.uuid)
+    vm.regionService.getParentRegions(vm.region.uuid, vm.userId)
       .subscribe(
         result => vm.parentRegions = result,
         error => vm.log.error('The parent regions could not be loaded. Please try again.', error, 'Load parent regions')

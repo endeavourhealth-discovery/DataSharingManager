@@ -52,7 +52,8 @@ public class ProjectEndpoint extends AbstractEndpoint {
             "Returns a JSON representation of the matching set of projects")
     public Response getProjects(@Context SecurityContext sc,
                                 @ApiParam(value = "Optional uuid") @QueryParam("uuid") String uuid,
-                                @ApiParam(value = "Optional search term") @QueryParam("searchData") String searchData
+                                @ApiParam(value = "Optional search term") @QueryParam("searchData") String searchData,
+                                @ApiParam(value = "Optional user Id to restrict based on region") @QueryParam("userId") String userId
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
@@ -60,7 +61,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
                 "Project UUID", uuid,
                 "SearchData", searchData);
 
-        return new ProjectLogic().getProjects(uuid, searchData);
+        return new ProjectLogic().getProjects(uuid, searchData, userId);
     }
 
     @POST

@@ -16,7 +16,9 @@ import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 export class ProjectComponent implements OnInit {
   projects: Project[];
   allowEdit = false;
+  superUser = false;
   loadingComplete = false;
+  userId: string;
 
   public activeProject: UserProject;
 
@@ -38,23 +40,32 @@ export class ProjectComponent implements OnInit {
       this.roleChanged();
     });
 
-    this.getProjects();
   }
 
   roleChanged() {
     const vm = this;
 
-    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Super User') != null) {
       vm.allowEdit = true;
+      vm.superUser = true;
+      vm.userId = null;
+    } else if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+      vm.allowEdit = true;
+      vm.superUser = false;
+      vm.userId = vm.activeProject.userId;
     } else {
       vm.allowEdit = false;
+      vm.superUser = false;
+      vm.userId = vm.activeProject.userId;
     }
+
+    this.getProjects(vm.userId);
   }
 
-  getProjects() {
+  getProjects(userId: string) {
     const vm = this;
     vm.loadingComplete = false;
-    vm.projectService.getAllProjects()
+    vm.projectService.getAllProjects(userId)
       .subscribe(
         result => {
           vm.projects = result;

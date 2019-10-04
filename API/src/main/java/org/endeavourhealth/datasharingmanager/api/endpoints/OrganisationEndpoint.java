@@ -119,14 +119,15 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Returns a list of Json representations of regions that are linked " +
             "to the organisation.  Accepts a UUID of an organisation.")
     public Response getRegionsForOrganisation(@Context SecurityContext sc,
-                        @ApiParam(value = "UUID of organisation") @QueryParam("uuid") String uuid
+                        @ApiParam(value = "UUID of organisation") @QueryParam("uuid") String uuid,
+                        @ApiParam(value = "Optional user Id to restrict based on region") @QueryParam("userId") String userId
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
                 "Region(s)",
                 "Organisation Id", uuid);
 
-        return new OrganisationLogic().getRegionsForOrganisation(uuid);
+        return new OrganisationLogic().getRegionsForOrganisation(uuid, userId);
     }
 
     @GET
