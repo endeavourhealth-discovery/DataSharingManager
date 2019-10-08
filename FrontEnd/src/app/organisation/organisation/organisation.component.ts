@@ -29,15 +29,13 @@ export class OrganisationComponent implements OnInit {
   public activeProject: UserProject;
 
   ngOnInit() {
-    this.paramSubscriber = this.route.params.subscribe(
-      params => {
-        this.performAction(params['mode']);
-      });
 
     this.userManagerNotificationService.activeUserProject.subscribe(active => {
       this.activeProject = active;
       this.roleChanged();
     });
+
+
   }
 
   roleChanged() {
@@ -48,6 +46,11 @@ export class OrganisationComponent implements OnInit {
     } else {
       vm.allowEdit = false;
     }
+
+    this.paramSubscriber = this.route.params.subscribe(
+      params => {
+        this.performAction(params['mode']);
+      });
   }
 
   constructor(private $modal: NgbModal,

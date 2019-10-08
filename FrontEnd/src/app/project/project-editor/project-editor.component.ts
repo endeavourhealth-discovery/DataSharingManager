@@ -34,6 +34,8 @@ import { DatePipe } from '@angular/common';
 export class ProjectEditorComponent implements OnInit {
   private paramSubscriber: any;
 
+  mode: string;
+  projectId: string;
   project: Project = <Project>{};
   dsas: Dsa[] = [];
   publishers: Organisation[] = [];
@@ -41,6 +43,7 @@ export class ProjectEditorComponent implements OnInit {
   basePopulation: Cohort[] = [];
   dataSet: DataSet[] = [];
   allowEdit = false;
+  superUser = false;
   userList: User[] = [];
   authToShare: AuthorityToShare[] = [];
   disableStatus = false;
@@ -128,6 +131,8 @@ export class ProjectEditorComponent implements OnInit {
   ngOnInit() {
     this.paramSubscriber = this.route.params.subscribe(
       params => {
+        this.mode = params['mode'];
+        this.projectId =  params['id'];
         this.performAction(params['mode'], params['id']);
       });
 
@@ -143,10 +148,19 @@ export class ProjectEditorComponent implements OnInit {
   roleChanged() {
     const vm = this;
 
-    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Super User') != null) {
+      vm.allowEdit = true;
+      vm.superUser = true;
+    } else if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
       vm.allowEdit = true;
     } else {
       vm.allowEdit = false;
+    }
+
+    if (!vm.superUser) {
+      if (vm.activeProject.projectId != vm.projectId) {
+        vm.allowEdit = false;
+      }
     }
   }
 

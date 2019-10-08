@@ -35,7 +35,7 @@ export class AppMenuService implements  AbstractMenuProvider  {
       { path: '', redirectTo : 'mySharingOverview', pathMatch: 'full' }, // Default route
       { path: 'overview', component: OrganisationOverviewComponent},
       { path: 'sharingOverview', component: DataSharingSummaryOverviewComponent},
-      { path: 'organisations', component: OrganisationComponent},
+      { path: 'organisations/:mode', component: OrganisationComponent},
       { path: 'organisation/:id/:mode', component: OrganisationEditorComponent},
       { path: 'regions', component: RegionComponent},
       { path: 'region/:id/:mode', component: RegionEditorComponent},
@@ -74,7 +74,14 @@ export class AppMenuService implements  AbstractMenuProvider  {
   getMenuOptions(): MenuOption[] {
     return [
       {caption: 'My agreements', state: 'mySharingOverview', icon: 'fa fa-user', role: 'Viewer'},
-      {caption: 'Overview', state: 'overview', icon: 'fa fa-hospital-o', role: 'Viewer'},
+      {caption: 'Regions', state: 'regions', icon: 'fa fa-globe', role: 'Viewer'},
+      {caption: 'Organisations', state: 'organisations/organisations', icon: 'fa fa-sitemap', role: 'Viewer'},
+      {caption: 'Services', state: 'organisations/services', icon: 'fa fa-hospital-o', role: 'Viewer'},
+      {caption: 'Projects', state: 'projects', icon: 'fa fa-list-ol', role: 'Viewer'},
+      {caption: 'Data sharing agreements', state: 'dsas', icon: 'fa fa-share-square', role: 'Viewer'},
+      {caption: 'Data processing agreements', state: 'dpas', icon: 'fa fa-upload', role: 'Viewer'},
+      {caption: 'Data sets', state: 'dataSets', icon: 'fa fa-table', role: 'Viewer'},
+      {caption: 'Cohorts', state: 'cohorts', icon: 'fa fa-users', role: 'Viewer'},
       {caption: 'Configuration', state: 'configuration', icon: 'fa-cogs', role: 'Config'},
       {caption: 'Reporting', state: 'reporting', icon: 'fa-line-chart', role: 'Config'}
     ];
