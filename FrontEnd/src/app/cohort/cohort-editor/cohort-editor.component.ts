@@ -41,10 +41,6 @@ export class CohortEditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.paramSubscriber = this.route.params.subscribe(
-      params => {
-        this.performAction(params['mode'], params['id']);
-      });
 
     this.userManagerNotificationService.activeUserProject.subscribe(active => {
       this.activeProject = active;
@@ -60,6 +56,11 @@ export class CohortEditorComponent implements OnInit {
     } else {
       vm.allowEdit = false;
     }
+
+    this.paramSubscriber = this.route.params.subscribe(
+      params => {
+        this.performAction(params['mode'], params['id']);
+      });
   }
 
   protected performAction(action: string, itemUuid: string) {

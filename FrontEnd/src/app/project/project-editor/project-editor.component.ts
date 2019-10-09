@@ -129,20 +129,11 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.paramSubscriber = this.route.params.subscribe(
-      params => {
-        this.mode = params['mode'];
-        this.projectId =  params['id'];
-        this.performAction(params['mode'], params['id']);
-      });
 
     this.userManagerNotificationService.activeUserProject.subscribe(active => {
       this.activeProject = active;
       this.roleChanged();
     });
-
-    this.getAvailableApplicationPolicies();
-    this.getUserList();
   }
 
   roleChanged() {
@@ -162,6 +153,16 @@ export class ProjectEditorComponent implements OnInit {
         vm.allowEdit = false;
       }
     }
+
+    this.paramSubscriber = this.route.params.subscribe(
+      params => {
+        this.mode = params['mode'];
+        this.projectId =  params['id'];
+        this.performAction(params['mode'], params['id']);
+      });
+
+    this.getAvailableApplicationPolicies();
+    this.getUserList();
   }
 
   getAvailableApplicationPolicies() {

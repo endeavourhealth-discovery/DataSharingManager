@@ -6,9 +6,6 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ToastsManager} from 'ng2-toastr';
 import {DataSet} from "../models/Dataset";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
-import {Dsa} from "../../data-sharing-agreement/models/Dsa";
-import {Region} from "../../region/models/Region";
-import {DataFlow} from "../../data-flow/models/DataFlow";
 import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
 import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 
@@ -42,10 +39,6 @@ export class DataSetEditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.paramSubscriber = this.route.params.subscribe(
-      params => {
-        this.performAction(params['mode'], params['id']);
-      });
 
     this.userManagerNotificationService.activeUserProject.subscribe(active => {
       this.activeProject = active;
@@ -61,6 +54,11 @@ export class DataSetEditorComponent implements OnInit {
     } else {
       vm.allowEdit = false;
     }
+
+    this.paramSubscriber = this.route.params.subscribe(
+      params => {
+        this.performAction(params['mode'], params['id']);
+      });
   }
 
   protected performAction(action: string, itemUuid: string) {

@@ -63,7 +63,6 @@ export class OrganisationEditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getOrganisationTypes();
 
     this.userManagerNotificationService.activeUserProject.subscribe(active => {
       this.activeProject = active;
@@ -88,6 +87,7 @@ export class OrganisationEditorComponent implements OnInit {
       vm.userId = vm.activeProject.userId;
     }
 
+    this.getOrganisationTypes();
     this.paramSubscriber = this.route.params.subscribe(
       params => {
         this.performAction(params['mode'], params['id']);
