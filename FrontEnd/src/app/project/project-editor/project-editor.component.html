@@ -153,7 +153,7 @@
           </div>
         </fieldset>
 
-        <ngb-tabset>
+        <ngb-tabset #links>
           <ngb-tab>
             <ng-template ngbTabTitle><span class="tab-title">Data sharing agreements </span><span class="badge badge-pill badge-primary">{{dsas?.length}}</span></ng-template>
             <ng-template ngbTabContent>
@@ -252,23 +252,14 @@
           <ngb-tab>
             <ng-template ngbTabTitle><span class="tab-title">Authority to share </span></ng-template>
             <ng-template ngbTabContent>
-              <div class="row">
+              <div *ngIf="authToShare.length == 0" class="row">
                 <div class="col-md-12">
-                  <ngb-tabset>
-                    <ngb-tab *ngFor="let org of authToShare" title="{{org.organisationName}}">
-                      <ng-template ngbTabContent>
-                        <div class="card">
-                          <div class="card-body">
-                            <div *ngFor="let user of org.users" class="row">
-                              <div class="col-md-12">
-                                {{user.forename}} {{user.surname}} ({{user.username}})
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </ng-template>
-                    </ngb-tab>
-                  </ngb-tabset>
+                  <p>There are no users assigned to this project</p>
+                </div>
+              </div>
+              <div *ngIf="authToShare.length > 0"  class="row">
+                <div class="col-md-12">
+                  <ng-container *ngTemplateOutlet="authtabset"></ng-container>
                 </div>
               </div>
             </ng-template>
@@ -289,6 +280,24 @@
             </ng-template>
           </ngb-tab>
         </ngb-tabset>
+
+        <ng-template #authtabset>
+          <ngb-tabset #auths>
+            <ngb-tab *ngFor="let org of authToShare" title="{{org.organisationName}}">
+              <ng-template ngbTabContent>
+                <div class="card">
+                  <div class="card-body">
+                    <div *ngFor="let user of org.users" class="row">
+                      <div class="col-md-12">
+                        {{user.forename}} {{user.surname}} ({{user.username}})
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </ngb-tab>
+          </ngb-tabset>
+        </ng-template>
       </form>
       <br>
       <br>
