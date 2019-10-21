@@ -26,7 +26,7 @@ export class ReportsComponent implements OnInit {
   reportData: ReportData[];
   sortReverse = true;
   sortField = 'practiceName';
-  reportName = 'Publisher Report';
+  reportName: string;
   public activeProject: UserProject;
 
   dpas: Dpa[];
@@ -130,7 +130,8 @@ export class ReportsComponent implements OnInit {
   runDPAPublisherReport(dpa: Dpa) {
     const vm = this;
     vm.reportComplete = false;
-    vm.reportName = dpa.name + ' : ' + vm.reportName;
+
+    vm.reportName = dpa.name + ' : Publisher Report';
     vm.dpaService.getPublishers(dpa.uuid)
       .subscribe(
         result => {
@@ -146,7 +147,7 @@ export class ReportsComponent implements OnInit {
   runDSAPublisherReport(dsa: Dsa) {
     const vm = this;
     vm.reportComplete = false;
-    vm.reportName = dsa.name + ' : ' + vm.reportName;
+    vm.reportName = dsa.name + ' : Publisher Report';
     vm.dsaService.getPublishers(dsa.uuid)
       .subscribe(
         result => {
@@ -162,7 +163,7 @@ export class ReportsComponent implements OnInit {
   runProjectPublisherReport(project: Project) {
     const vm = this;
     vm.reportComplete = false;
-    vm.reportName = project.name + ' : ' + vm.reportName;
+    vm.reportName = project.name + ' : Publisher Report';
     vm.projectService.getLinkedPublishers(project.uuid)
       .subscribe(
         result => {
