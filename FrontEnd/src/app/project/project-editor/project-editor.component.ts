@@ -97,7 +97,8 @@ export class ProjectEditorComponent implements OnInit {
     {num: 2, name: 'Weekly'},
     {num: 3, name: 'Monthly'},
     {num: 4, name: 'Annually'},
-    {num: 5, name: 'One off'}
+    {num: 5, name: 'One off'},
+    {num: 6, name: 'Quarterly'}
   ];
 
   outputFormat = [
