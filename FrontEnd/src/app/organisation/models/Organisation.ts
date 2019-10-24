@@ -15,6 +15,7 @@ export class Organisation {
     bulkItemUpdated: number;
     bulkConflictedWith: string;
     type: string;
+    selected: boolean;
     regions: { [key: string]: string; };
     parentOrganisations: { [key: string]: string; };
     childOrganisations: { [key: string]: string; };

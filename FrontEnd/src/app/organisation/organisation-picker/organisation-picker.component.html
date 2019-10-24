@@ -6,15 +6,15 @@
 </div>
 <div class="modal-body">
   <form endUserRole="form" class="container-fluid">
-    <ngb-tabset>
-      <ngb-tab title="Add individual">
+    <ngb-tabset (tabChange)="onTabChange($event)">
+      <ngb-tab title="Add individual" id="individual">
         <ng-template ngbTabContent>
           <div class="row">
             <div class="form-group col-md-12">
               <label class="control-label">Search criteria</label>
               <div class="input-group">
                 <input type="text" class="form-control" placeholder="Search term" aria-describedby="searchTerm"
-                       [(ngModel)]="searchData" (keyup.enter)="search()" autofocus name="searchData">
+                       [(ngModel)]="searchData" (keyup.enter)="search($event)" autofocus name="searchData">
                 <span class="input-group-append" (click)="search()" style="cursor: pointer">
                   <em class="fa fa-search input-group-text" id="searchTerm" aria-hidden="true"></em>
                 </span>
@@ -51,7 +51,7 @@
           </div>
         </ng-template>
       </ngb-tab>
-      <ngb-tab title="Add multiple">
+      <ngb-tab title="Add multiple" id="multiple">
         <ng-template ngbTabContent>
           <div class="row">
             <div class="form-group col-md-12">
@@ -87,6 +87,41 @@
             <button type="button" class="btn btn-success"
                     (click)="addMultiple();">Add</button>
             <label *ngIf="showMultipleMessage" class="control-label">{{multipleAddedCount}} organisations added</label>
+          </div>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="Select from list" id="select">
+        <ng-template ngbTabContent>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label class="control-label">Selection</label> <small class="text-muted"></small>
+              <table *ngIf="availableOrgs" class="table table-striped table-sm">
+                <thead>
+                <tr class="d-flex">
+                  <th class="w-50">Organisation name</th>
+                  <th class="w-25">ODS code</th>
+                  <th class="w-25">
+                    <div class="custom-control custom-checkbox form-control-plaintext">
+                      <input type="checkbox" class="custom-control-input" (change)="checkAllOrganisations($event)" id="chkCreateUsers" name="chkCreateUsers">
+                      <label class="custom-control-label" for="chkCreateUsers">Selected</label>
+                    </div>
+                  </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of availableOrgs" class="hover-box show-child-on-hover d-flex">
+                  <td class="w-50">{{item.name}}</td>
+                  <td class="w-25">{{item.odsCode}}</td>
+                  <td class="w-25">
+                    <div class="custom-control custom-checkbox form-control-plaintext">
+                      <input type="checkbox" class="custom-control-input" [(ngModel)]="item.selected" id="{{item.uuid}}" name="{{item.uuid}}">
+                      <label class="custom-control-label" for="{{item.uuid}}"></label>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </ng-template>
       </ngb-tab>

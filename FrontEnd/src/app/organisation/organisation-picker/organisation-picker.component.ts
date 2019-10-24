@@ -4,6 +4,7 @@ import {OrganisationService} from '../organisation.service';
 import {LoggerService} from 'eds-angular4';
 import {NgbModal, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {RegionService} from "../../region/region.service";
+import {DataSharingAgreementService} from "../../data-sharing-agreement/data-sharing-agreement.service";
 
 @Component({
   selector: 'app-organisation-picker',
@@ -13,6 +14,7 @@ import {RegionService} from "../../region/region.service";
 export class OrganisationPickerComponent implements OnInit {
   @Input() resultData: Organisation[];
   searchData: string;
+  availableOrgs: Organisation[];
   searchResults: Organisation[];
   multipleSearchResults: Organisation[];
   multipleSearchMissing: string[];
@@ -37,13 +39,30 @@ export class OrganisationPickerComponent implements OnInit {
 
   constructor(public activeModal: NgbActiveModal,
               private log: LoggerService,
-              private organisationService: OrganisationService) { }
+              private organisationService: OrganisationService,
+              private regionService: RegionService,
+              private dsaService: DataSharingAgreementService) { }
 
   ngOnInit() {
+    const vm = this;
+    if (vm.regionUUID != '') {
+      this.getRegionOrganisations(vm.regionUUID);
+    } else if (vm.dsaUUID != '') {
+      if (vm.searchType == 'publisher') {
+        this.getDSAPublishers(vm.dsaUUID);
+      } else if (vm.searchType == 'subscriber') {
+        this.getDSASubscribers(vm.dsaUUID);
+      }
+    }
   }
 
-  search() {
+  search($event: KeyboardEvent) {
     const vm = this;
+    if ($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+    }
+    console.log('gete');
     if (vm.searchData.length < 3) {
       return;
     }
@@ -73,11 +92,12 @@ export class OrganisationPickerComponent implements OnInit {
           (error) => vm.log.error(error)
         );
     } else {
+      console.log('searching');
       vm.organisationService.search(vm.searchData, vm.searchType)
         .subscribe(
-          (result) => vm.searchResults = result.filter(function (x) {
+          (result) => {console.log(result); vm.searchResults = result.filter(function (x) {
             return x.uuid != vm.uuid;
-          }),
+          })},
           (error) => vm.log.error(error)
         );
     }
@@ -154,11 +174,77 @@ export class OrganisationPickerComponent implements OnInit {
   }
 
   ok() {
+    this.moveSelectedOrgsIntoResultData();
     this.activeModal.close(this.resultData);
   }
 
   cancel() {
     this.activeModal.dismiss('cancel');
+  }
+
+  checkAllOrganisations(ev) {
+    console.log('selecting all');
+    this.availableOrgs.forEach(x => x.selected = ev.target.checked);
+  }
+
+  getRegionOrganisations(regionUUID: string) {
+    const vm = this;
+    vm.regionService.getRegionOrganisations(regionUUID)
+      .subscribe(
+        result => {
+            vm.availableOrgs = result;
+            vm.availableOrgs.forEach(x => x.selected = false);
+          },
+        error => vm.log.error('The region organisations could not be loaded. Please try again.', error, 'Load regions organisations')
+      );
+  }
+
+  getDSAPublishers(dsaUUID: string) {
+    const vm = this;
+    vm.dsaService.getPublishers(dsaUUID)
+      .subscribe(
+        result => {
+          vm.availableOrgs = result;
+          vm.availableOrgs.forEach(x => x.selected = false);
+        },
+        error => vm.log.error('The dsa publishers could not be loaded. Please try again.', error, 'Load publishers')
+      );
+  }
+
+  getDSASubscribers(dsaUUID: string) {
+    const vm = this;
+    vm.dsaService.getSubscribers(dsaUUID)
+      .subscribe(
+        result => {
+          vm.availableOrgs = result;
+          vm.availableOrgs.forEach(x => x.selected = false);
+        },
+        error => vm.log.error('The dsa subscribers could not be loaded. Please try again.', error, 'Load subscribers')
+      );
+  }
+
+  onTabChange(ev) {
+    console.log(this.availableOrgs);
+    if (ev.nextId == 'select') {
+      for (let match of this.resultData) {
+        let foundOrg = this.availableOrgs.findIndex(o => o.uuid === match.uuid);
+        if (foundOrg > -1) {
+          this.availableOrgs[foundOrg].selected = true;
+        }
+      }
+    } else {
+      this.moveSelectedOrgsIntoResultData();
+    }
+  }
+
+  moveSelectedOrgsIntoResultData() {
+    for (let match of this.availableOrgs) {
+      if (match.selected) {
+        if (!this.resultData.some(x => x.uuid === match.uuid)) {
+          this.resultData.push(match);
+        }
+      }
+    }
   }
 
 }
