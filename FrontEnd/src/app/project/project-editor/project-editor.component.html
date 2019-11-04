@@ -212,6 +212,49 @@
             </ng-template>
           </ngb-tab>
           <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Associated documentation </span><span class="badge badge-pill badge-primary">{{documentations?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
+              <entity-viewer (deleted)="removeFromDocumentation($event)"
+                             [items]="documentations"
+                             [primary]="'title'"
+                             [primaryOrderText]="'Title'"
+                             [displayClass]="'region'"
+                             [typeDescription]="'document'"
+                             [model]="'documentation'"
+                             [detailsToShow]="documentDetailsToShow"
+                             [allowDelete]="allowEdit"
+                             [allowEdit]="allowEdit"
+                             [showEditButton]="false">
+              </entity-viewer>
+              <div *ngIf="allowEdit" class="row">
+                <div class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-header">Upload associated documentation</div>
+                    <div class="card-body">
+                      <form class="container-fluid">
+                        <div class="row">
+                          <div class="form-group col-md-12">
+                            <button for="fileUpload" id="fileUpload" class="btn btn-success" (click)="fileUploader.click()">Select files</button>
+                            <input #fileUploader type="file" (click)="fileUploader.value = null" (change)="fileChange($event)" accept=".pdf">
+                            <label class="control-label" for="fileUpload" *ngIf="!file">No files selected</label>
+                            <label class="control-label" for="fileUpload" *ngIf="file">{{file.name}}</label>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-12">
+                            <button type="button" class="btn btn-success" (click)="ok()" [disabled]="!file">OK</button>
+                            <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab>
             <ng-template ngbTabTitle><span class="tab-title">Cohort </span><span class="badge badge-pill badge-primary">{{basePopulation?.length}}</span></ng-template>
             <ng-template ngbTabContent>
               <entity-viewer

@@ -1,3 +1,5 @@
+import {Documentation} from "../../documentation/models/Documentation";
+
 export class Project {
   uuid: string;
   name: string;
@@ -25,6 +27,7 @@ export class Project {
   projectConfiguration: { [key: string]: string; };
   dsas: { [key: string]: string; };
   applicationPolicy: string;
+  documentations: Documentation[];
 
   getDisplayItems(): any[] {
     return [

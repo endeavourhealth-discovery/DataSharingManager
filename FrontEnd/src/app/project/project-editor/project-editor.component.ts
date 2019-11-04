@@ -25,6 +25,8 @@ import {UserProject} from "eds-angular4/dist/user-manager/models/UserProject";
 import {User} from "eds-angular4/dist/security/models/User";
 import {AuthorityToShare} from "../models/AuthorityToShare";
 import { DatePipe } from '@angular/common';
+import {Documentation} from "../../documentation/models/Documentation";
+import {DocumentationService} from "../../documentation/documentation.service";
 
 @Component({
   selector: 'app-project-editor',
@@ -42,11 +44,15 @@ export class ProjectEditorComponent implements OnInit {
   subscribers: Organisation[] = [];
   basePopulation: Cohort[] = [];
   dataSet: DataSet[] = [];
+  documentations: Documentation[] = [];
   allowEdit = false;
   superUser = false;
   userList: User[] = [];
   authToShare: AuthorityToShare[] = [];
   disableStatus = false;
+
+  file: File;
+  pdfSrc: any;
 
   public activeProject: UserProject;
 
@@ -125,6 +131,7 @@ export class ProjectEditorComponent implements OnInit {
               private route: ActivatedRoute,
               public toastr: ToastsManager, vcr: ViewContainerRef,
               private userManagerNotificationService: UserManagerNotificationService,
+              private documentationService: DocumentationService,
               private datePipe: DatePipe) {
     this.toastr.setRootViewContainerRef(vcr);
   }
@@ -236,6 +243,7 @@ export class ProjectEditorComponent implements OnInit {
           vm.getLinkedDataSets();
           vm.getProjectApplicationPolicy();
           vm.getUsersAssignedToProject();
+          vm.getAssociatedDocumentation();
         },
         error => vm.log.error('The project could not be loaded. Please try again.', error, 'Load project')
       );
@@ -277,6 +285,10 @@ export class ProjectEditorComponent implements OnInit {
       const ds: DataSet = this.dataSet[idx];
       this.project.dataSet[ds.uuid] = ds.name;
     }
+
+    // Populate documents before save
+    vm.project.documentations = [];
+    vm.project.documentations = vm.documentations;
 
     vm.projectService.saveProject(vm.project)
       .subscribe(saved => {
@@ -413,6 +425,15 @@ export class ProjectEditorComponent implements OnInit {
       );
   }
 
+  private getAssociatedDocumentation() {
+    const vm = this;
+    vm.documentationService.getAllAssociatedDocuments(vm.project.uuid, '14')
+      .subscribe(
+        result => vm.documentations = result,
+        error => vm.log.error('The associated documentation could not be loaded. Please try again.', error, 'Load associated documentation')
+      );
+  }
+
   changeUserApplicationPolicy(policyId: string) {
     const vm = this;
     let changedPolicy = new ProjectApplicationPolicy();
@@ -450,6 +471,42 @@ export class ProjectEditorComponent implements OnInit {
     } else {
       vm.disableStatus = false;
     }
+  }
+
+  fileChange(event) {
+    const fileList: FileList = event.target.files;
+    if (fileList.length > 0) {
+      this.file = fileList[0];
+    } else {
+      this.file = null;
+    }
+  }
+
+  private uploadFile() {
+    const vm = this;
+    const myReader: FileReader = new FileReader();
+
+    myReader.onloadend = function(e){
+      // you can perform an action with readed data here
+      vm.log.success('Uploading complete', null, 'Upload document');
+      vm.pdfSrc = myReader.result;
+      const newDoc: Documentation = new Documentation();
+      newDoc.fileData = myReader.result;
+      newDoc.title = vm.file.name;
+      newDoc.filename = vm.file.name;
+      vm.documentations.push(newDoc);
+    }
+
+
+    myReader.readAsDataURL(vm.file);
+  }
+
+  ok() {
+    this.uploadFile();
+  }
+
+  cancel() {
+    this.file = null;
   }
 
 }

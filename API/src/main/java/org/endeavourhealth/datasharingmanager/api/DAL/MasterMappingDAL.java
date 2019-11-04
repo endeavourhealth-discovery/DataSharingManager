@@ -341,6 +341,15 @@ public class MasterMappingDAL {
             Map<UUID, String> exchanges = project.getDsas();
             saveParentMappings(exchanges, MapType.DATASHARINGAGREEMENT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
+
+        if (project.getDocumentations() != null) {
+            Map<UUID, String> documentation = new HashMap<>();
+            List<JsonDocumentation> jsonDocumentations =  project.getDocumentations();
+            for (JsonDocumentation doc : jsonDocumentations) {
+                documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
+            }
+            saveChildMappings(documentation, MapType.DOCUMENT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
+        }
     }
 
     public void saveDataExchangeMappings(JsonDataExchange dataExchange) throws Exception {

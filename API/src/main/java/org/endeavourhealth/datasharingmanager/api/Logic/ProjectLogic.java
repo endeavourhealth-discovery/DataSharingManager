@@ -2,11 +2,13 @@ package org.endeavourhealth.datasharingmanager.api.Logic;
 
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.ProjectCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.UserCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
 import org.endeavourhealth.common.security.usermanagermodel.models.json.JsonUser;
+import org.endeavourhealth.datasharingmanager.api.DAL.DocumentationDAL;
 import org.endeavourhealth.datasharingmanager.api.DAL.MasterMappingDAL;
 import org.endeavourhealth.datasharingmanager.api.DAL.ProjectDAL;
 
@@ -49,6 +51,15 @@ public class ProjectLogic {
         } else {
             project.setUuid(UUID.randomUUID().toString());
             new ProjectDAL().saveProject(project);
+        }
+
+        for (JsonDocumentation doc : project.getDocumentations()) {
+            if (doc.getUuid() != null) {
+                new DocumentationDAL().updateDocument(doc);
+            } else {
+                doc.setUuid(UUID.randomUUID().toString());
+                new DocumentationDAL().saveDocument(doc);
+            }
         }
 
         new MasterMappingDAL().saveProjectMappings(project);
