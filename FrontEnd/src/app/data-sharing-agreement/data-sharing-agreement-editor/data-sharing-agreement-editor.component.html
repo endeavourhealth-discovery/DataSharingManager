@@ -205,7 +205,7 @@
                         <div class="row">
                           <div class="form-group col-md-12">
                             <button for="fileUpload" id="fileUpload" class="btn btn-success" (click)="fileUploader.click()">Select files</button>
-                            <input #fileUploader type="file" (click)="fileUploader.value = null" (change)="fileChange($event)" accept=".pdf">
+                            <input #fileUploader type="file" (click)="fileUploader.value = null" (change)="fileChange($event)" accept="*">
                             <label class="control-label" for="fileUpload" *ngIf="!file">No files selected</label>
                             <label class="control-label" for="fileUpload" *ngIf="file">{{file.name}}</label>
                           </div>

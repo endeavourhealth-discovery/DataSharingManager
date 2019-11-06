@@ -152,8 +152,10 @@ export class ProjectEditorComponent implements OnInit {
       vm.superUser = true;
     } else if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
       vm.allowEdit = true;
+      vm.superUser = false;
     } else {
       vm.allowEdit = false;
+      vm.superUser = false;
     }
 
     if (!vm.superUser) {
