@@ -54,6 +54,16 @@ export class ProjectEditorComponent implements OnInit {
   file: File;
   pdfSrc: any;
 
+  //Scedule components
+  selectedFrequency: string;
+  frequencyValues = [
+    {num: 0, name: 'Daily'},
+    {num: 1, name: 'Weekly'},
+    {num: 2, name: 'Monthly'},
+    {num: 3, name: 'Yearly'}
+  ];
+
+
   public activeProject: UserProject;
 
   projectApplicationPolicy: ProjectApplicationPolicy;

@@ -322,6 +322,52 @@
               </div>
             </ng-template>
           </ngb-tab>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Scheduler </span></ng-template>
+            <ng-template ngbTabContent>
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label class="form-control-label">Starts</label>
+                    <input type="date" class="form-control" placeholder="Starts" [(ngModel)]="project.starts" name="starts">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-control-label">Ends</label>
+                    <input type="date" class="form-control" placeholder="Ends" [(ngModel)]="project.ends" name="ends">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-control-label">Frequency</label>
+                    <select class="form-control" [(ngModel)]="selectedFrequency" name="selectedFrequency" (change)="project.frequency = selectedFrequency">
+                      <option *ngFor="let freq of frequencyValues" [ngValue]="freq">{{freq.name}}</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-control-label">Week(s):</label>
+                    <input type="text" class="form-control" placeholder="0" [(ngModel)]="project.weeks" name="weeks">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-control-label">At Day(s):</label>
+                    <div class="weekDays-selector">
+                      <input type="checkbox" id="weekday-mon" class="weekday" />
+                      <label for="weekday-mon">M</label>
+                      <input type="checkbox" id="weekday-tue" class="weekday" />
+                      <label for="weekday-tue">T</label>
+                      <input type="checkbox" id="weekday-wed" class="weekday" />
+                      <label for="weekday-wed">W</label>
+                      <input type="checkbox" id="weekday-thu" class="weekday" />
+                      <label for="weekday-thu">T</label>
+                      <input type="checkbox" id="weekday-fri" class="weekday" />
+                      <label for="weekday-fri">F</label>
+                      <input type="checkbox" id="weekday-sat" class="weekday" />
+                      <label for="weekday-sat">S</label>
+                      <input type="checkbox" id="weekday-sun" class="weekday" />
+                      <label for="weekday-sun">S</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-tab>
         </ngb-tabset>
 
         <ng-template #authtabset>
