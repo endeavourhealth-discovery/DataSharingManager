@@ -14,14 +14,20 @@
           <legend>Data set</legend>
           <div class="row">
             <div class="form-group col-md-12">
-              <label class="control-label">Data set name</label>
-              <input type="text" class="form-control" placeholder="Data set name" [(ngModel)]="dataset.name" name="name">
+              <label class="control-label">Name</label>
+              <input type="text" class="form-control" placeholder="Name" [(ngModel)]="dataset.name" name="name">
             </div>
           </div>
           <div class="row">
             <div class="form-group col-md-12">
-              <label class="control-label">Data set description</label>
-              <textarea type="textarea" rows="20" class="form-control" placeholder="Data Set description" [(ngModel)]="dataset.description" name="description"></textarea>
+              <label class="control-label">Description</label>
+              <textarea type="textarea" rows="20" class="form-control" placeholder="Description" [(ngModel)]="dataset.description" name="description"></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label class="control-label">Technical definition</label>
+              <textarea type="textarea" rows="20" class="form-control" placeholder="Technical definition" [(ngModel)]="dataset.technicalDefinition" name="technicalDefinition"></textarea>
             </div>
           </div>
         </fieldset>

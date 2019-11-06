@@ -3,6 +3,7 @@ export class Cohort {
     name:string;
     consentModelId: string;
     description: string;
+    technicalDefinition: string;
     dpas : { [key:string]:string; };
 
     getDisplayItems() :any[] {

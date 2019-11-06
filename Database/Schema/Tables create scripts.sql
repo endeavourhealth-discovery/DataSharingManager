@@ -242,6 +242,7 @@ create table data_sharing_manager.cohort (
     name varchar(100) not null comment 'Name of the cohort',
     consent_model_id smallint null comment 'Consent model of the cohort',
     description varchar(10000) null comment 'description of the cohort',
+    technical_definition mediumtext null comment 'the technical definition of the cohort',
     
     constraint data_sharing_manager_cohort_uuid_pk primary key (uuid),
     index data_sharing_manager_cohort_name_idx (name),    
@@ -253,6 +254,7 @@ create table data_sharing_manager.dataset (
 	uuid char(36) not null comment 'Unique identifier for the cohort',
     name varchar(100) not null,
     description varchar(10000) null,
+    technical_definition mediumtext null,
     
     constraint data_sharing_manager_dataset_uuid_pk primary key (uuid),    
     index data_sharing_manager_dataset_name_idx (name) 

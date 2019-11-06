@@ -54,6 +54,7 @@ public class DatasetDAL {
             entityManager.getTransaction().begin();
             dataSetEntity.setName(dataset.getName());
             dataSetEntity.setDescription(dataset.getDescription());
+            dataSetEntity.setTechnicalDefinition(dataset.getTechnicalDefinition());
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
@@ -72,6 +73,7 @@ public class DatasetDAL {
             dataSetEntity.setUuid(dataset.getUuid());
             dataSetEntity.setName(dataset.getName());
             dataSetEntity.setDescription(dataset.getDescription());
+            dataSetEntity.setTechnicalDefinition(dataset.getTechnicalDefinition());
             entityManager.persist(dataSetEntity);
             entityManager.getTransaction().commit();
 

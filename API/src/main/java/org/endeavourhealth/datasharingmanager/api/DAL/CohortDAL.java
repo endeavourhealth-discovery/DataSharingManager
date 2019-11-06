@@ -54,6 +54,7 @@ public class CohortDAL {
             entityManager.getTransaction().begin();
             cohortEntity.setName(cohort.getName());
             cohortEntity.setConsentModelId(cohort.getConsentModelId());
+            cohortEntity.setTechnicalDefinition(cohort.getTechnicalDefinition());
             cohortEntity.setDescription(cohort.getDescription());
             entityManager.getTransaction().commit();
         } catch (Exception e) {
@@ -73,6 +74,7 @@ public class CohortDAL {
             cohortEntity.setName(cohort.getName());
             cohortEntity.setConsentModelId(cohort.getConsentModelId());
             cohortEntity.setDescription(cohort.getDescription());
+            cohortEntity.setTechnicalDefinition(cohort.getTechnicalDefinition());
             cohortEntity.setUuid(cohort.getUuid());
             entityManager.persist(cohortEntity);
             entityManager.getTransaction().commit();
