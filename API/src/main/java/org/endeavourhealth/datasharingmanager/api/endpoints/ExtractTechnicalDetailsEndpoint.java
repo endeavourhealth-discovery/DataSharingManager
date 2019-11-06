@@ -21,8 +21,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
-import java.util.List;
 
 @Path("/extractTechnicalDetails")
 @Metrics(registry = "EdsRegistry")
