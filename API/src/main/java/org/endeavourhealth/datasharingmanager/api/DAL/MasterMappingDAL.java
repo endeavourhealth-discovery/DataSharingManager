@@ -350,6 +350,15 @@ public class MasterMappingDAL {
             }
             saveChildMappings(documentation, MapType.DOCUMENT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
+
+        if (project.getExtractTechnicalDetails() != null) {
+
+            JsonExtractTechnicalDetails jsonExtractTechnicalDetails = new JsonExtractTechnicalDetails();
+            Map<UUID, String> details = new HashMap<>();
+            details.put(UUID.fromString(jsonExtractTechnicalDetails.getUuid()), jsonExtractTechnicalDetails.getName());
+            saveChildMappings(details, MapType.EXTRACTTECHNICALDETAILS.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
+        }
+
     }
 
     public void saveDataExchangeMappings(JsonDataExchange dataExchange) throws Exception {

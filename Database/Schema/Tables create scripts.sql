@@ -21,6 +21,7 @@ drop table if exists data_sharing_manager.purpose;
 drop table if exists data_sharing_manager.documentation;
 drop table if exists data_sharing_manager.data_processing_agreement;
 drop table if exists data_sharing_manager.project;
+drop table if exists data_sharing_manager.extract_technical_details;
 
 /*Mapping table linking all the entities together*/
 drop table if exists data_sharing_manager.master_mapping;
@@ -183,7 +184,6 @@ create table data_sharing_manager.business_case_status (
 ) comment 'Lookup table holding enumerations for the business case status';
 
 
-
 /*Main entity tables containing the core information*/
 create table data_sharing_manager.region (
 	uuid char(36) not null comment 'Unique identifier for the region',
@@ -237,6 +237,7 @@ create table data_sharing_manager.address (
     foreign key data_sharing_manager_address_organisation_uuid_fk (organisation_uuid) references data_sharing_manager.organisation(uuid) on delete cascade
 ) comment 'Holds address information for organisations';
 
+
 create table data_sharing_manager.cohort (
 	uuid char(36) not null comment 'Unique identifier for the cohort',
     name varchar(100) not null comment 'Name of the cohort',
@@ -250,6 +251,7 @@ create table data_sharing_manager.cohort (
     
 ) comment 'Holds details of the Cohorts that have been defined';
 
+
 create table data_sharing_manager.dataset (
 	uuid char(36) not null comment 'Unique identifier for the cohort',
     name varchar(100) not null,
@@ -260,6 +262,7 @@ create table data_sharing_manager.dataset (
     index data_sharing_manager_dataset_name_idx (name) 
 
 ) comment 'Holds details of the datasets that have been defined';
+
 
 create table data_sharing_manager.data_flow (
 	uuid char(36) not null comment 'Unique identifier for the data flow agreement',
@@ -276,6 +279,7 @@ create table data_sharing_manager.data_flow (
     foreign key data_sharing_manager_data_flow_deidentification_level_fk (deidentification_level) references data_sharing_manager.deidentification_level(id)
     
 ) comment 'Holds details of the data flow configurations that have been defined';
+
 
 create table data_sharing_manager.project (
 	uuid char(36) not null comment 'Unique identifier for the project',
@@ -325,6 +329,7 @@ create table data_sharing_manager.project (
 -- alter table data_sharing_manager.project add foreign key data_sharing_manager_project_business_case_fk (business_case_status) references data_sharing_manager.business_case_status(id);
 -- alter table data_sharing_manager.project add foreign key data_sharing_manager_flow_schedule_fk (flow_schedule_id) references data_sharing_manager.flow_schedule(id);
 
+
 create table data_sharing_manager.data_exchange (
 	uuid char(36) not null comment 'Unique identifier for the data flow configuration',
     name varchar(100) not null comment 'Name of the data flow configuration',
@@ -348,6 +353,7 @@ create table data_sharing_manager.data_exchange (
     
 ) comment 'Holds details of the data exchange configurations that have been defined';
 
+
 create table data_sharing_manager.data_processing_agreement (
 	uuid char(36) not null comment 'Unique identifier for the data processing agreement',
     name varchar(100) not null comment 'Name of the data processing agreement',
@@ -365,6 +371,7 @@ create table data_sharing_manager.data_processing_agreement (
     index data_sharing_manager_data_processing_agreement_name_idx (name),    
     foreign key data_sharing_manager_data_processing_agreement_dsa_status_id_fk (dsa_status_id) references data_sharing_manager.dsa_status(id)
 ) comment 'Holds details of the data processing agreements that have been defined';
+
 
 create table data_sharing_manager.data_sharing_summary (
 	uuid char(36) not null comment 'Unique identifier for the data processing summary',
@@ -391,6 +398,7 @@ create table data_sharing_manager.data_sharing_summary (
     foreign key data_sharing_manager_data_sharing_summary_review_cycle_id_fk (review_cycle_id) references data_sharing_manager.review_cycle(id)
 ) comment 'Holds details of the data sharing summaries that have been defined';
 
+
 create table data_sharing_manager.data_sharing_agreement (
 	uuid char(36) not null comment 'Unique identifier for the data sharing agreement',
     name varchar(100) not null comment 'Name of the data sharing agreement',
@@ -407,6 +415,7 @@ create table data_sharing_manager.data_sharing_agreement (
     foreign key data_sharing_manager_data_sharing_agreement_dsa_status_id_fk (dsa_status_id) references data_sharing_manager.dsa_status(id),
     foreign key data_sharing_manager_data_sharing_agreement_consent_model_id_fk (consent_model_id) references data_sharing_manager.consent_model(id)
 ) comment 'Holds details of the data sharing agreements that have been defined';
+
 
 create table data_sharing_manager.documentation (
 	uuid char(36) not null comment 'Unique identifier for the data sharing agreement',
@@ -425,6 +434,8 @@ modify column title varchar(200) not null comment 'Title of the document';
 alter table data_sharing_manager.documentation
 modify column filename varchar(200) not null comment 'Filename of the document';
 */
+
+
 create table data_sharing_manager.purpose (
 	uuid char(36) not null comment 'Unique identifier for the purpose',
     title varchar(50) not null comment 'Title of the purpose/benefit',
@@ -432,6 +443,7 @@ create table data_sharing_manager.purpose (
     
     constraint data_sharing_manager_purpose_uuid_pk primary key (uuid)
 ) comment 'Hold details of purposes and benefits associated with sharing agreements';
+
 
 /*Mapping table linking all the entities together*/
 create table data_sharing_manager.master_mapping (
@@ -446,6 +458,7 @@ create table data_sharing_manager.master_mapping (
     primary key data_sharing_manager_master_mapping_pk (child_uuid, child_map_type_id, parent_uuid, parent_map_type_id)
 ) comment 'Single mapping table storing how each item is linked to other items';
 
+
 CREATE TABLE data_sharing_manager.project_application_policy
 (
 	project_uuid varchar(36) NOT NULL,
@@ -454,3 +467,24 @@ CREATE TABLE data_sharing_manager.project_application_policy
 	CONSTRAINT pk_id PRIMARY KEY (project_uuid)
 )comment 'An application policy which is assigned to a project to determine access to applications';
 
+
+create table `extract_technical_details` (
+
+    uuid char(36) NOT NULL COMMENT 'Unique identifier for the extract technical details',
+    name varchar(200) NOT NULL COMMENT 'Name of the extract technical details',
+    sftp_host_name varchar(200) NOT NULL COMMENT 'SFTP host name',
+
+    -- for now, just a subset of all the required fields, while doing development
+
+    -- `sftp_host_public_key` mediumtext COMMENT 'Base64 encoded file data for the SFTP host public key, rarely used (.pub)',
+    -- `sftp_host_directory` varchar(200) NOT NULL COMMENT 'SFTP host directory, typically /ftp/',
+    -- `sftp_host_port` int(3) NOT NULL COMMENT 'SFTP host port',
+    -- `sftp_client_username` varchar(200) NOT NULL COMMENT 'SFTP client username',
+    -- `sftp_client_private_key_password` varchar(200) COMMENT 'SFTP client private key password, rarely used',
+    -- `sftp_client_private_key` mediumtext NOT NULL COMMENT 'Base64 encoded file data for the SFTP client private key (.ppk)',
+    -- `pgp_customer_public_key` mediumtext NOT NULL COMMENT 'Base64 encoded file data for the customer pgp public key (.cer)',
+    -- `pgp_archive_public_key` mediumtext NOT NULL COMMENT 'Base64 encoded file data for the archive pgp public key (.cer)',
+    -- `pgp_archive_private_key` mediumtext NOT NULL COMMENT 'Base64 encoded file data for the archive pgp private key (.p12)',
+
+    primary key data_sharing_manager_extract_technical_details_uuid (uuid)
+) comment 'Hold extract technical details';

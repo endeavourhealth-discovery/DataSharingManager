@@ -1,4 +1,3 @@
-
 /*data_sharing_manager.flow_direction*/
 insert into data_sharing_manager.flow_direction (id, direction)
 values (0, "Inbound");
@@ -143,6 +142,9 @@ values (13, "Data Exchange");
 insert into data_sharing_manager.map_type (id, map_type)
 values (14, "Project");
 
+insert into data_sharing_manager.map_type (id, map_type)
+values (15, "Extract Technical Details");
+
 /*data_sharing_manager.security_infrastructure*/
 insert into data_sharing_manager.security_infrastructure (id, security_infrastructure)
 values (0, "N3");
@@ -173,7 +175,6 @@ values (0, "Extract");
 
 insert into data_sharing_manager.project_type (id, project_type)
 values (1, "Query");
-
 
 /*data_sharing_manager.ConsentModel*/
 insert into data_sharing_manager.consent_model (id, consent_model)

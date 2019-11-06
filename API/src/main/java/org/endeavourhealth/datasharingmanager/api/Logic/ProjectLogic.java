@@ -3,12 +3,14 @@ package org.endeavourhealth.datasharingmanager.api.Logic;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonExtractTechnicalDetails;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.ProjectCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.UserCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
 import org.endeavourhealth.common.security.usermanagermodel.models.json.JsonUser;
 import org.endeavourhealth.datasharingmanager.api.DAL.DocumentationDAL;
+import org.endeavourhealth.datasharingmanager.api.DAL.ExtractTechnicalDetailsDAL;
 import org.endeavourhealth.datasharingmanager.api.DAL.MasterMappingDAL;
 import org.endeavourhealth.datasharingmanager.api.DAL.ProjectDAL;
 
@@ -60,6 +62,14 @@ public class ProjectLogic {
                 doc.setUuid(UUID.randomUUID().toString());
                 new DocumentationDAL().saveDocument(doc);
             }
+        }
+
+        JsonExtractTechnicalDetails details = project.getExtractTechnicalDetails();
+        if (details.getUuid() != null) {
+            new ExtractTechnicalDetailsDAL().updateExtractTechnicalDetails(details);
+        } else {
+            details.setUuid(UUID.randomUUID().toString());
+            new ExtractTechnicalDetailsDAL().saveExtractTechnicalDetails(details);
         }
 
         new MasterMappingDAL().saveProjectMappings(project);

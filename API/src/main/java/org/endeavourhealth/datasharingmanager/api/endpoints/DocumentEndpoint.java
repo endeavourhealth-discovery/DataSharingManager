@@ -79,7 +79,7 @@ public final class DocumentEndpoint extends AbstractEndpoint {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Timed(absolute = true, name="DataSharingManager.CohortEndpoint.Delete")
+    @Timed(absolute = true, name="DataSharingManager.DocumentEndpoint.Delete")
     @Path("/")
     @ApiOperation(value = "Delete a document based on UUID that is passed to the API.  Warning! This is permanent.")
     @RequiresAdmin
@@ -88,8 +88,8 @@ public final class DocumentEndpoint extends AbstractEndpoint {
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
-                "Cohort",
-                "Cohort Id", uuid);
+                "Document",
+                "Document Id", uuid);
 
         new DocumentationDAL().deleteDocument(uuid);
 
