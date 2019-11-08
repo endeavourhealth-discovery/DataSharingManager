@@ -145,6 +145,9 @@ values (14, "Project");
 insert into data_sharing_manager.map_type (id, map_type)
 values (15, "Extract Technical Details");
 
+insert into data_sharing_manager.map_type (id, map_type)
+values (16, "Schedule");
+
 /*data_sharing_manager.security_infrastructure*/
 insert into data_sharing_manager.security_infrastructure (id, security_infrastructure)
 values (0, "N3");
