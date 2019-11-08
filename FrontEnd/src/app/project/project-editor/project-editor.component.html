@@ -329,38 +329,38 @@
                 <div class="col-md-3">
                   <div class="form-group">
                     <label class="form-control-label">Starts</label>
-                    <input type="date" class="form-control" placeholder="Starts" [(ngModel)]="project.starts" name="starts">
+                    <input type="date" class="form-control" placeholder="Starts" [(ngModel)]="schedule.starts" name="starts">
                   </div>
                   <div class="form-group">
                     <label class="form-control-label">Ends</label>
-                    <input type="date" class="form-control" placeholder="Ends" [(ngModel)]="project.ends" name="ends">
+                    <input type="date" class="form-control" placeholder="Ends" [(ngModel)]="schedule.ends" name="ends">
                   </div>
                   <div class="form-group">
                     <label class="form-control-label">Frequency</label>
-                    <select class="form-control" [(ngModel)]="selectedFrequency" name="selectedFrequency" (change)="project.frequency = selectedFrequency">
+                    <select class="form-control" [(ngModel)]="selectedFrequency" name="selectedFrequency" (change)="schedule.frequency = selectedFrequency">
                       <option *ngFor="let freq of frequencyValues" [ngValue]="freq">{{freq.name}}</option>
                     </select>
                   </div>
                   <div class="form-group">
                     <label class="form-control-label">Week(s):</label>
-                    <input type="text" class="form-control" placeholder="0" [(ngModel)]="project.weeks" name="weeks">
+                    <input type="text" class="form-control" placeholder="0" [(ngModel)]="schedule.weeks" name="weeks">
                   </div>
                   <div class="form-group">
                     <label class="form-control-label">At Day(s):</label>
                     <div class="weekDays-selector">
-                      <input type="checkbox" id="weekday-mon" class="weekday" />
+                      <input type="checkbox" id="weekday-mon" name="weekday-mon" class="weekday" [(ngModel)]="schedule.isMonday"/>
                       <label for="weekday-mon">M</label>
-                      <input type="checkbox" id="weekday-tue" class="weekday" />
+                      <input type="checkbox" id="weekday-tue" name="weekday-tue" class="weekday" [(ngModel)]="schedule.isTuesday"/>
                       <label for="weekday-tue">T</label>
-                      <input type="checkbox" id="weekday-wed" class="weekday" />
+                      <input type="checkbox" id="weekday-wed" name="weekday-wed"class="weekday" [(ngModel)]="schedule.isWednesday"/>
                       <label for="weekday-wed">W</label>
-                      <input type="checkbox" id="weekday-thu" class="weekday" />
+                      <input type="checkbox" id="weekday-thu" name="weekday-thu" class="weekday" [(ngModel)]="schedule.isThursday"/>
                       <label for="weekday-thu">T</label>
-                      <input type="checkbox" id="weekday-fri" class="weekday" />
+                      <input type="checkbox" id="weekday-fri" name="weekday-fri"class="weekday" [(ngModel)]="schedule.isFriday"/>
                       <label for="weekday-fri">F</label>
-                      <input type="checkbox" id="weekday-sat" class="weekday" />
+                      <input type="checkbox" id="weekday-sat" name="weekday-sat" class="weekday" [(ngModel)]="schedule.isSaturday"/>
                       <label for="weekday-sat">S</label>
-                      <input type="checkbox" id="weekday-sun" class="weekday" />
+                      <input type="checkbox" id="weekday-sun" name="weekday-sun"class="weekday" [(ngModel)]="schedule.isSunday"/>
                       <label for="weekday-sun">S</label>
                     </div>
                   </div>

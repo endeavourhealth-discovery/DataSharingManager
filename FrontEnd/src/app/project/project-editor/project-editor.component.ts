@@ -27,6 +27,7 @@ import {AuthorityToShare} from "../models/AuthorityToShare";
 import { DatePipe } from '@angular/common';
 import {Documentation} from "../../documentation/models/Documentation";
 import {DocumentationService} from "../../documentation/documentation.service";
+import {Schedule} from "../models/Schedule";
 
 @Component({
   selector: 'app-project-editor',
@@ -54,7 +55,7 @@ export class ProjectEditorComponent implements OnInit {
   file: File;
   pdfSrc: any;
 
-  //Scedule components
+  //Schedule components
   selectedFrequency: string;
   frequencyValues = [
     {num: 0, name: 'Daily'},
@@ -67,6 +68,7 @@ export class ProjectEditorComponent implements OnInit {
   public activeProject: UserProject;
 
   projectApplicationPolicy: ProjectApplicationPolicy;
+  schedule: Schedule;
   availablePolicies: ApplicationPolicy[];
   selectedApplicationPolicy: ApplicationPolicy;
 
@@ -183,6 +185,14 @@ export class ProjectEditorComponent implements OnInit {
 
     this.getAvailableApplicationPolicies();
     this.getUserList();
+    this.getSchedule();
+  }
+
+  getSchedule() {
+    //TODO get schedule from DB
+    const vm = this;
+    vm.schedule = new Schedule();
+    vm.schedule.projectUuid = this.activeProject.id;
   }
 
   getAvailableApplicationPolicies() {
@@ -256,6 +266,7 @@ export class ProjectEditorComponent implements OnInit {
           vm.getProjectApplicationPolicy();
           vm.getUsersAssignedToProject();
           vm.getAssociatedDocumentation();
+          vm.getSchedule();
         },
         error => vm.log.error('The project could not be loaded. Please try again.', error, 'Load project')
       );

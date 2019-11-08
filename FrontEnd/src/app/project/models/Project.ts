@@ -29,11 +29,6 @@ export class Project {
   applicationPolicy: string;
   documentations: Documentation[];
 
-  starts: string;
-  ends: string;
-  frequency: string;
-  weeks: string;
-
   getDisplayItems(): any[] {
     return [
       {label: 'Name', property: 'name'}
