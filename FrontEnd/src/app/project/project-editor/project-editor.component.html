@@ -323,6 +323,23 @@
             </ng-template>
           </ngb-tab>
           <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Extract technical details </span></ng-template>
+            <ng-template ngbTabContent>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-control-label">Name</label>
+                    <input type="text" class="form-control" placeholder="Name" [(ngModel)]="extractTechnicalDetails.name" name="extractTechnicalDetailsName">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-control-label">SFTP host name</label>
+                    <input type="text" class="form-control" placeholder="SFTP host name" [(ngModel)]="extractTechnicalDetails.sftpHostName" name="sftpHostName">
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab>
             <ng-template ngbTabTitle><span class="tab-title">Scheduler </span></ng-template>
             <ng-template ngbTabContent>
               <div class="row">

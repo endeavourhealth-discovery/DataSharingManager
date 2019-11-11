@@ -1,4 +1,5 @@
 import {Documentation} from "../../documentation/models/Documentation";
+import {ExtractTechnicalDetails} from "../../extract-technical-details/models/ExtractTechnicalDetails";
 
 export class Project {
   uuid: string;
@@ -28,6 +29,7 @@ export class Project {
   dsas: { [key: string]: string; };
   applicationPolicy: string;
   documentations: Documentation[];
+  extractTechnicalDetails: ExtractTechnicalDetails;
 
   getDisplayItems(): any[] {
     return [

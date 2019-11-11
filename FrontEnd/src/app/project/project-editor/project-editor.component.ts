@@ -28,6 +28,9 @@ import { DatePipe } from '@angular/common';
 import {Documentation} from "../../documentation/models/Documentation";
 import {DocumentationService} from "../../documentation/documentation.service";
 import {Schedule} from "../models/Schedule";
+import {ExtractTechnicalDetails} from "../models/ExtractTechnicalDetails";
+import {Observable} from "rxjs";
+import {Http, URLSearchParams} from "@angular/http";
 
 @Component({
   selector: 'app-project-editor',
@@ -46,6 +49,7 @@ export class ProjectEditorComponent implements OnInit {
   basePopulation: Cohort[] = [];
   dataSet: DataSet[] = [];
   documentations: Documentation[] = [];
+  extractTechnicalDetails: ExtractTechnicalDetails = <ExtractTechnicalDetails>{};
   allowEdit = false;
   superUser = false;
   userList: User[] = [];
@@ -144,6 +148,7 @@ export class ProjectEditorComponent implements OnInit {
               public toastr: ToastsManager, vcr: ViewContainerRef,
               private userManagerNotificationService: UserManagerNotificationService,
               private documentationService: DocumentationService,
+              private http: Http,
               private datePipe: DatePipe) {
     this.toastr.setRootViewContainerRef(vcr);
   }
@@ -186,6 +191,7 @@ export class ProjectEditorComponent implements OnInit {
     this.getAvailableApplicationPolicies();
     this.getUserList();
     this.getSchedule();
+    // this.getDetails();
   }
 
   getSchedule() {
@@ -266,6 +272,8 @@ export class ProjectEditorComponent implements OnInit {
           vm.getProjectApplicationPolicy();
           vm.getUsersAssignedToProject();
           vm.getAssociatedDocumentation();
+          vm.getAssociatedExtractTechnicalDetails();
+          // vm.getDetails();
           vm.getSchedule();
         },
         error => vm.log.error('The project could not be loaded. Please try again.', error, 'Load project')
@@ -312,6 +320,10 @@ export class ProjectEditorComponent implements OnInit {
     // Populate documents before save
     vm.project.documentations = [];
     vm.project.documentations = vm.documentations;
+
+    // Populate extract technical details before save
+    vm.project.extractTechnicalDetails = null;
+    vm.project.extractTechnicalDetails = vm.extractTechnicalDetails;
 
     vm.projectService.saveProject(vm.project)
       .subscribe(saved => {
@@ -455,6 +467,33 @@ export class ProjectEditorComponent implements OnInit {
         result => vm.documentations = result,
         error => vm.log.error('The associated documentation could not be loaded. Please try again.', error, 'Load associated documentation')
       );
+  }
+
+  /*
+  getDetails() {
+    const vm = this;
+    vm.extractTechnicalDetails = new ExtractTechnicalDetails();
+    vm.extractTechnicalDetails.uuid = this.activeProject.id;
+  }*/
+
+  private getAssociatedExtractTechnicalDetails() {
+    const vm = this;
+    vm.getAssociatedExtractTechDetails().subscribe(
+        result => vm.extractTechnicalDetails = result,
+        error => vm.log.error('The associated extract technical details could not be loaded. Please try again.', error, 'Load associated extract technical details')
+    )
+  }
+
+  private getAssociatedExtractTechDetails(): Observable<ExtractTechnicalDetails> {
+    const vm = this;
+    const params = new URLSearchParams();
+    // params.set('uuid', 'd1c7a055-b565-44e4-9931-3e756966f17a');
+    // return vm.http.get('api/extractTechnicalDetails', { search : params })
+    //   .map((response) => response.json());
+    params.set('parentUuid', vm.project.uuid);
+    params.set('parentType', '14');
+    return vm.http.get('api/extractTechnicalDetails/associated', { search : params })
+      .map((response) => response.json());
   }
 
   changeUserApplicationPolicy(policyId: string) {

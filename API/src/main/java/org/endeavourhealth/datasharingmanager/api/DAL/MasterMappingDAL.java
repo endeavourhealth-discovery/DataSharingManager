@@ -353,9 +353,9 @@ public class MasterMappingDAL {
 
         if (project.getExtractTechnicalDetails() != null) {
 
-            JsonExtractTechnicalDetails jsonExtractTechnicalDetails = new JsonExtractTechnicalDetails();
             Map<UUID, String> details = new HashMap<>();
-            details.put(UUID.fromString(jsonExtractTechnicalDetails.getUuid()), jsonExtractTechnicalDetails.getName());
+            details.put(UUID.fromString(project.getExtractTechnicalDetails().getUuid()),
+                    project.getExtractTechnicalDetails().getName());
             saveChildMappings(details, MapType.EXTRACTTECHNICALDETAILS.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
 

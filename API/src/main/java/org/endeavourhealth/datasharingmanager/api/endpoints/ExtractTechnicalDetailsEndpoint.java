@@ -13,6 +13,7 @@ import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.ExtractTechnicalDetailsDAL;
+import org.endeavourhealth.datasharingmanager.api.Logic.ExtractTechnicalDetailsLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,32 @@ public final class ExtractTechnicalDetailsEndpoint extends AbstractEndpoint {
 
         return Response
                 .ok()
+                .entity(extractTechnicalDetailsEntity)
+                .build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.ExtractTechnicalDetailsEndpoint.GetAssociatedExtractTechnicalDetails")
+    @Path("/associated")
+    @ApiOperation(value = "Return Associated Extract Technical Details for an entity. Takes the UUID of the entity " +
+            "and the type of the entity")
+    public Response getAssociatedExtractTechnicalDetails(@Context SecurityContext sc,
+                                           @ApiParam(value = "UUID of entity") @QueryParam("parentUuid") String parentUuid,
+                                           @ApiParam(value = "Type of entity") @QueryParam("parentType") Short parentType
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "Extract Technical Details",
+                "Parent Id", parentUuid,
+                "Parent Type", parentType);
+
+        ExtractTechnicalDetailsEntity extractTechnicalDetailsEntity =  new ExtractTechnicalDetailsLogic().
+                getAssociatedExtractTechnicalDetails(parentUuid, parentType);
+
+        return Response.
+                ok()
                 .entity(extractTechnicalDetailsEntity)
                 .build();
     }
