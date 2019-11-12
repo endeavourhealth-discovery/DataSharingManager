@@ -1,29 +1,29 @@
 export class Schedule {
-  projectUuid: string;
+  uuid: string;
   starts: string;
   ends: string;
-  frequency: string;
+  frequency: number;
   weeks: string;
-  isMonday: boolean;
-  isTuesday: boolean;
-  isWednesday: boolean;
-  isThursday: boolean;
-  isFriday: boolean;
-  isSaturday: boolean;
-  isSunday: boolean;
+  monday: boolean;
+  tuesday: boolean;
+  wednesday: boolean;
+  thursday: boolean;
+  friday: boolean;
+  saturday: boolean;
+  sunday: boolean;
 
   constructor() {
-    this.projectUuid = '';
+    this.uuid = '';
     this.starts = '';
     this.ends = '';
-    this.frequency = '';
+    this.frequency = 0;
     this.weeks = '';
-    this.isMonday = false;
-    this.isTuesday = false;
-    this.isWednesday = false;
-    this.isThursday = false;
-    this.isFriday = false;
-    this.isSaturday= false;
-    this.isSunday= false;
+    this.monday = false;
+    this.tuesday = false;
+    this.wednesday = false;
+    this.thursday = false;
+    this.friday = false;
+    this.saturday= false;
+    this.sunday= false;
   }
 }

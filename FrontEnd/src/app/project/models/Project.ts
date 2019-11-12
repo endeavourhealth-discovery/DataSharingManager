@@ -1,5 +1,6 @@
 import {Documentation} from "../../documentation/models/Documentation";
 import {ExtractTechnicalDetails} from "../../extract-technical-details/models/ExtractTechnicalDetails";
+import {Schedule} from "./Schedule";
 
 export class Project {
   uuid: string;
@@ -30,6 +31,7 @@ export class Project {
   applicationPolicy: string;
   documentations: Documentation[];
   extractTechnicalDetails: ExtractTechnicalDetails;
+  schedule: Schedule;
 
   getDisplayItems(): any[] {
     return [

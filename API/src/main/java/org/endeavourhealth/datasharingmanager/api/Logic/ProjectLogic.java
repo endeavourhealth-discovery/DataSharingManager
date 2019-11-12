@@ -5,14 +5,12 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.databa
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonExtractTechnicalDetails;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProjectSchedule;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.ProjectCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.UserCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
 import org.endeavourhealth.common.security.usermanagermodel.models.json.JsonUser;
-import org.endeavourhealth.datasharingmanager.api.DAL.DocumentationDAL;
-import org.endeavourhealth.datasharingmanager.api.DAL.ExtractTechnicalDetailsDAL;
-import org.endeavourhealth.datasharingmanager.api.DAL.MasterMappingDAL;
-import org.endeavourhealth.datasharingmanager.api.DAL.ProjectDAL;
+import org.endeavourhealth.datasharingmanager.api.DAL.*;
 
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -70,6 +68,18 @@ public class ProjectLogic {
         } else {
             details.setUuid(UUID.randomUUID().toString());
             new ExtractTechnicalDetailsDAL().saveExtractTechnicalDetails(details);
+        }
+
+        JsonProjectSchedule schedule = project.getSchedule();
+        if (schedule != null) {
+            if (schedule.getUuid() != null) {
+                new ProjectScheduleDAL().update(schedule);
+            } else {
+                schedule.setUuid(UUID.randomUUID().toString());
+                new ProjectScheduleDAL().save(schedule);
+            }
+        } else {
+            
         }
 
         new MasterMappingDAL().saveProjectMappings(project);

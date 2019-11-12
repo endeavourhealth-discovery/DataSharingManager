@@ -39,6 +39,29 @@ public class MasterMappingDAL {
         }
     }
 
+    public void deleteChildMappings(String childUuid, String parentUuid) throws Exception {
+        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+
+        try {
+            entityManager.getTransaction().begin();
+            Query query = entityManager.createQuery(
+                    "DELETE from MasterMappingEntity m " +
+                            "where m.childUuid = :childUuid " +
+                            "and m.parentUuid = :parentUuid");
+            query.setParameter("childUuid", childUuid);
+            query.setParameter("parentUuid", parentUuid);
+
+            int deletedCount = query.executeUpdate();
+
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
+    }
+
     public void saveParentMappings(Map<UUID, String> parents, Short parentMapTypeId, String childUuid, Short childMapTypeId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
@@ -359,6 +382,14 @@ public class MasterMappingDAL {
             saveChildMappings(details, MapType.EXTRACTTECHNICALDETAILS.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
 
+        if (project.getSchedule() != null) {
+            Map<UUID, String> schedule = new HashMap<>();
+            String uuid = project.getSchedule().getUuid();
+            schedule.put(UUID.fromString(uuid), uuid);
+            saveChildMappings(schedule, MapType.SCHEDULE.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
+        } else {
+
+        }
     }
 
     public void saveDataExchangeMappings(JsonDataExchange dataExchange) throws Exception {

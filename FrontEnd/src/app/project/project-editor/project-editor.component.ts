@@ -60,6 +60,7 @@ export class ProjectEditorComponent implements OnInit {
   pdfSrc: any;
 
   //Schedule components
+  showSchedule: boolean;
   selectedFrequency: string;
   frequencyValues = [
     {num: 0, name: 'Daily'},
@@ -198,7 +199,6 @@ export class ProjectEditorComponent implements OnInit {
     //TODO get schedule from DB
     const vm = this;
     vm.schedule = new Schedule();
-    vm.schedule.projectUuid = this.activeProject.id;
   }
 
   getAvailableApplicationPolicies() {
@@ -324,6 +324,12 @@ export class ProjectEditorComponent implements OnInit {
     // Populate extract technical details before save
     vm.project.extractTechnicalDetails = null;
     vm.project.extractTechnicalDetails = vm.extractTechnicalDetails;
+
+    if (vm.showSchedule) {
+      vm.project.schedule = vm.schedule;
+    } else {
+      vm.project.schedule = null;
+    }
 
     vm.projectService.saveProject(vm.project)
       .subscribe(saved => {
