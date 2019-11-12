@@ -61,7 +61,7 @@ export class ProjectEditorComponent implements OnInit {
 
   //Schedule components
   showSchedule: boolean;
-  selectedFrequency: string;
+  selectedFrequency: number;
   frequencyValues = [
     {num: 0, name: 'Daily'},
     {num: 1, name: 'Weekly'},
@@ -196,9 +196,16 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   getSchedule() {
-    //TODO get schedule from DB
     const vm = this;
-    vm.schedule = new Schedule();
+    vm.projectService.getLinkedSchedule(vm.project.uuid)
+      .subscribe(
+        result => {
+          vm.schedule = result
+          vm.selectedFrequency = vm.schedule.frequency;
+          vm.showSchedule = true;
+        },
+        error => vm.log.error('The associated schedule could not be loaded. Please try again.', error, 'Load associated schedule')
+      );
   }
 
   getAvailableApplicationPolicies() {
@@ -340,6 +347,14 @@ export class ProjectEditorComponent implements OnInit {
         },
         error => vm.log.error('The project could not be saved. Please try again.', error, 'Save project')
       );
+  }
+
+  private tickShowSchedule(value: boolean) {
+    if (value) {
+      this.showSchedule = true;
+    } else {
+      this.showSchedule = false;
+    }
   }
 
   close() {

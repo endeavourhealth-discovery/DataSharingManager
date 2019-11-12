@@ -162,6 +162,22 @@ public class ProjectEndpoint extends AbstractEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.ProjectEndpoint.getLinkedScheduleForProject")
+    @Path("/schedule")
+    @ApiOperation(value = "Returns the schedule that is linked to the project. Accepts a UUID of a project.")
+    public Response getLinkedScheduleForProject(@Context SecurityContext sc,
+                                            @ApiParam(value = "UUID of project") @QueryParam("uuid") String uuid) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "Schedule",
+                "Project UUID", uuid);
+
+        return new ProjectLogic().getLinkedSchedule(uuid);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.ProjectEndpoint.getBasePopulations")
     @Path("/basePopulations")
     @ApiOperation(value = "Returns a list of Json representations of cohorts that are linked " +

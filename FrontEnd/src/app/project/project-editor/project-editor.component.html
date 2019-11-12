@@ -363,7 +363,7 @@
                   <div class="form-group">
                     <label class="form-control-label">Frequency</label>
                     <select class="form-control" [(ngModel)]="selectedFrequency" name="selectedFrequency" (change)="schedule.frequency = selectedFrequency">
-                      <option *ngFor="let freq of frequencyValues" [ngValue]="freq">{{freq.name}}</option>
+                      <option *ngFor="let freq of frequencyValues" [ngValue]="freq.num">{{freq.name}}</option>
                     </select>
                   </div>
                   <div class="form-group">

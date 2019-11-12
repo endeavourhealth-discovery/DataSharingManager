@@ -1,7 +1,10 @@
 package org.endeavourhealth.datasharingmanager.api.Logic;
 
+import org.apache.commons.lang3.StringUtils;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectDAL;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectScheduleDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonExtractTechnicalDetails;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
@@ -13,6 +16,7 @@ import org.endeavourhealth.common.security.usermanagermodel.models.json.JsonUser
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 
 import javax.ws.rs.core.Response;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,14 +76,12 @@ public class ProjectLogic {
 
         JsonProjectSchedule schedule = project.getSchedule();
         if (schedule != null) {
-            if (schedule.getUuid() != null) {
-                new ProjectScheduleDAL().update(schedule);
+            if (StringUtils.isNotEmpty(schedule.getUuid())) {
+                new SecurityProjectScheduleDAL().update(schedule);
             } else {
                 schedule.setUuid(UUID.randomUUID().toString());
-                new ProjectScheduleDAL().save(schedule);
+                new SecurityProjectScheduleDAL().save(schedule);
             }
-        } else {
-            
         }
 
         new MasterMappingDAL().saveProjectMappings(project);
@@ -136,6 +138,33 @@ public class ProjectLogic {
         return Response
                 .ok()
                 .entity(ret)
+                .build();
+    }
+
+    public Response getLinkedSchedule(String projectId) throws Exception {
+
+        ProjectScheduleEntity scheduleEntity =
+                new SecurityProjectDAL().getLinkedSchedule(projectId, MapType.SCHEDULE.getMapType());
+
+        JsonProjectSchedule schedule = new JsonProjectSchedule();
+        if (scheduleEntity != null) {
+            schedule.setUuid(scheduleEntity.getUuid());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            schedule.setStarts(sdf.format(scheduleEntity.getStarts()));
+            schedule.setEnds(sdf.format(scheduleEntity.getEnds()));
+            schedule.setFrequency((short) scheduleEntity.getFrequency());
+            schedule.setWeeks(scheduleEntity.getWeeks());
+            schedule.setMonday(scheduleEntity.getIsMonday() == 1);
+            schedule.setTuesday(scheduleEntity.getIsTuesday() == 1);
+            schedule.setWednesday(scheduleEntity.getIsWednesday() == 1);
+            schedule.setThursday(scheduleEntity.getIsThursday() == 1);
+            schedule.setFriday(scheduleEntity.getIsFriday() == 1);
+            schedule.setSaturday(scheduleEntity.getIsSaturday() == 1);
+            schedule.setSunday(scheduleEntity.getIsSunday() == 1);
+        }
+        return Response
+                .ok()
+                .entity(schedule)
                 .build();
     }
 

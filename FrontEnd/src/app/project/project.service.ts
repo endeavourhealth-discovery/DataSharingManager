@@ -10,6 +10,7 @@ import {ProjectApplicationPolicy} from "./models/ProjectApplicationPolicy";
 import {ApplicationPolicy} from "./models/ApplicationPolicy";
 import {User} from "eds-angular4/dist/security/models/User";
 import {AuthorityToShare} from "./models/AuthorityToShare";
+import {Schedule} from "./models/Schedule";
 
 @Injectable()
 export class ProjectService {
@@ -61,6 +62,14 @@ export class ProjectService {
     const params = new URLSearchParams();
     params.set('uuid', uuid);
     return vm.http.get('api/project/dsas', { search : params })
+      .map((response) => response.json());
+  }
+
+  getLinkedSchedule(uuid: string):  Observable<Schedule> {
+    const vm = this;
+    const params = new URLSearchParams();
+    params.set('uuid', uuid);
+    return vm.http.get('api/project/schedule', { search : params })
       .map((response) => response.json());
   }
 
