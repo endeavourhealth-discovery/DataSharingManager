@@ -326,17 +326,38 @@
             <ng-template ngbTabTitle><span class="tab-title">Extract technical details </span></ng-template>
             <ng-template ngbTabContent>
               <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label class="control-label required-field">Name</label>
-                    <input type="text" class="form-control" placeholder="Name" [(ngModel)]="extractTechnicalDetails.name" name="extractTechnicalDetailsName">
-                    <small class="required-field-note"></small>
-                  </div>
-                  <div class="form-group">
-                    <label class="control-label required-field">SFTP host name</label>
-                    <input type="text" class="form-control" placeholder="SFTP host name" [(ngModel)]="extractTechnicalDetails.sftpHostName" name="sftpHostName">
-                    <small class="required-field-note"></small>
-                  </div>
+                <div class="form-group col-md-10">
+                  <label class="form-control-label required-field">Name</label>
+                  <input type="text" class="form-control" placeholder="Name" [(ngModel)]="extractTechnicalDetails.name" name="extractTechnicalDetailsName">
+                  <small class="required-field-note"></small>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-4">
+                  <label class="form-control-label required-field">SFTP host name</label>
+                  <input type="text" class="form-control" placeholder="SFTP host name" [(ngModel)]="extractTechnicalDetails.sftpHostName" name="sftpHostName">
+                  <small class="required-field-note"></small>
+                </div>
+                <div class="form-group col-md-4">
+                  <label class="form-control-label required-field">SFTP host directory</label>
+                  <input type="text" class="form-control" placeholder="SFTP host directory, typically /ftp/" [(ngModel)]="extractTechnicalDetails.sftpHostDirectory" name="sftpHostDirectory">
+                  <small class="required-field-note"></small>
+                </div>
+                <div class="form-group col-md-2">
+                  <label class="form-control-label required-field">SFTP host port</label>
+                  <input type="text" class="form-control" placeholder="SFTP host port" [(ngModel)]="extractTechnicalDetails.sftpHostPort" name="sftpHostPort">
+                  <small class="required-field-note"></small>
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group col-md-4">
+                  <label class="form-control-label required-field">SFTP client username</label>
+                  <input type="text" class="form-control" placeholder="SFTP client username" [(ngModel)]="extractTechnicalDetails.sftpClientUsername" name="sftpClientUsername">
+                  <small class="required-field-note"></small>
+                </div>
+                <div class="form-group col-md-4">
+                  <label class="form-control-label">SFTP client private key password</label>
+                  <input type="text" class="form-control" placeholder="SFTP client private key password, rarely used" [(ngModel)]="extractTechnicalDetails.sftpClientPrivateKeyPassword" name="sftpClientPrivateKeyPassword">
                 </div>
               </div>
             </ng-template>
