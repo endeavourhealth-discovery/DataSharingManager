@@ -49,7 +49,13 @@ public class ProjectLogic {
 
     public Response postProject(JsonProject project) throws Exception {
 
+        String scheduleUUID = "";
         if (project.getUuid() != null) {
+            ProjectScheduleEntity scheduleEntity =
+                    new SecurityProjectDAL().getLinkedSchedule(project.getUuid(), MapType.SCHEDULE.getMapType());
+            if (scheduleEntity != null) {
+                scheduleUUID = scheduleEntity.getUuid();
+            }
             new MasterMappingDAL().deleteAllMappings(project.getUuid());
             new ProjectDAL().updateProject(project);
         } else {
@@ -81,6 +87,10 @@ public class ProjectLogic {
             } else {
                 schedule.setUuid(UUID.randomUUID().toString());
                 new SecurityProjectScheduleDAL().save(schedule);
+            }
+        } else {
+            if (StringUtils.isNotEmpty(scheduleUUID)) {
+                new SecurityProjectScheduleDAL().delete(scheduleUUID);
             }
         }
 
@@ -148,19 +158,7 @@ public class ProjectLogic {
 
         JsonProjectSchedule schedule = new JsonProjectSchedule();
         if (scheduleEntity != null) {
-            schedule.setUuid(scheduleEntity.getUuid());
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            schedule.setStarts(sdf.format(scheduleEntity.getStarts()));
-            schedule.setEnds(sdf.format(scheduleEntity.getEnds()));
-            schedule.setFrequency((short) scheduleEntity.getFrequency());
-            schedule.setWeeks(scheduleEntity.getWeeks());
-            schedule.setMonday(scheduleEntity.getIsMonday() == 1);
-            schedule.setTuesday(scheduleEntity.getIsTuesday() == 1);
-            schedule.setWednesday(scheduleEntity.getIsWednesday() == 1);
-            schedule.setThursday(scheduleEntity.getIsThursday() == 1);
-            schedule.setFriday(scheduleEntity.getIsFriday() == 1);
-            schedule.setSaturday(scheduleEntity.getIsSaturday() == 1);
-            schedule.setSunday(scheduleEntity.getIsSunday() == 1);
+            schedule = SecurityProjectDAL.setJsonProjectSchedule(scheduleEntity);
         }
         return Response
                 .ok()

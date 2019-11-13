@@ -199,11 +199,15 @@ export class ProjectEditorComponent implements OnInit {
     vm.projectService.getLinkedSchedule(vm.project.uuid)
       .subscribe(
         result => {
-          vm.schedule = result;
-          vm.selectedFrequency = vm.schedule.frequency;
-          vm.showSchedule = true;
+          vm.schedule = result
+          if (vm.schedule.uuid != null) {
+            vm.selectedFrequency = vm.schedule.frequency;
+            vm.showSchedule = true;
+          } else {
+            vm.schedule = new Schedule();
+            vm.showSchedule = false;
+          }
         },
-        error => vm.log.error('The associated schedule could not be loaded. Please try again.', error, 'Load associated schedule')
       );
   }
 
@@ -342,6 +346,7 @@ export class ProjectEditorComponent implements OnInit {
           vm.log.success('Project saved', vm.project, 'Save project');
           vm.saveApplicationPolicy();
           vm.getAssociatedExtractTechnicalDetails();
+          vm.getSchedule();
           if (close) { vm.close(); }
         },
         error => vm.log.error('The project could not be saved. Please try again.', error, 'Save project')
