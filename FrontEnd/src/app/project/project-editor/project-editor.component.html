@@ -360,6 +360,36 @@
                   <input type="text" class="form-control" placeholder="SFTP client private key password, rarely used" [(ngModel)]="extractTechnicalDetails.sftpClientPrivateKeyPassword" name="sftpClientPrivateKeyPassword">
                 </div>
               </div>
+
+              <div *ngIf="allowEdit" class="row">
+                <div class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-header">Upload SFTP host public key</div>
+                    <div class="card-body">
+                      <form class="container-fluid">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <label class="form-control-label required-field">SFTP host public key</label>
+                            <input type="text" disabled class="form-control" placeholder="SFTP host public key, rarely used" [(ngModel)]="extractTechnicalDetails.sftpHostPublicKeyFilename" name="sftpHostPublicKeyFilename">
+                            <small class="required-field-note"></small>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="form-group col-md-12">
+                            <button for="fileUpload" id="sftpHostPublicKeyFileUpload" class="btn btn-warning" (click)="fileUploader.click()">Select file</button>
+                            <input #fileUploader type="file" (click)="fileUploader.value = null" (change)="sftpHostPublicKeyFileChange($event)" accept="*">
+                            <label class="control-label" for="fileUpload" *ngIf="!sftpHostPublicKeyFile">No file selected</label>
+                            <label class="control-label" for="fileUpload" *ngIf="sftpHostPublicKeyFile">{{sftpHostPublicKeyFile.name}}</label>
+                            <button type="button" class="btn btn-danger" (click)="uploadSftpHostPublicKeyFileCancel()">Cancel</button>
+                            <button type="button" class="btn btn-success" (click)="uploadSftpHostPublicKeyFileUpload()" [disabled]="!sftpHostPublicKeyFile">Upload</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </ng-template>
           </ngb-tab>
           <ngb-tab>

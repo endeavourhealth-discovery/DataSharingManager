@@ -33,6 +33,8 @@ public class ExtractTechnicalDetailsDAL {
             extractTechnicalDetailsEntity.setSftpHostPort(extractTechnicalDetails.getSftpHostPort());
             extractTechnicalDetailsEntity.setSftpClientUsername(extractTechnicalDetails.getSftpClientUsername());
             extractTechnicalDetailsEntity.setSftpClientPrivateKeyPassword(extractTechnicalDetails.getSftpClientPrivateKeyPassword());
+            extractTechnicalDetailsEntity.setSftpHostPublicKeyFilename(extractTechnicalDetails.getSftpHostPublicKeyFilename());
+            extractTechnicalDetailsEntity.setSftpHostPublicKeyFileData(extractTechnicalDetails.getSftpHostPublicKeyFileData());
             entityManager.getTransaction().begin();
             entityManager.persist(extractTechnicalDetailsEntity);
             entityManager.getTransaction().commit();
@@ -56,6 +58,8 @@ public class ExtractTechnicalDetailsDAL {
             extractTechnicalDetailsEntity.setSftpHostPort(extractTechnicalDetails.getSftpHostPort());
             extractTechnicalDetailsEntity.setSftpClientUsername(extractTechnicalDetails.getSftpClientUsername());
             extractTechnicalDetailsEntity.setSftpClientPrivateKeyPassword(extractTechnicalDetails.getSftpClientPrivateKeyPassword());
+            extractTechnicalDetailsEntity.setSftpHostPublicKeyFilename(extractTechnicalDetails.getSftpHostPublicKeyFilename());
+            extractTechnicalDetailsEntity.setSftpHostPublicKeyFileData(extractTechnicalDetails.getSftpHostPublicKeyFileData());
             entityManager.getTransaction().commit();
 
         } catch (Exception e) {

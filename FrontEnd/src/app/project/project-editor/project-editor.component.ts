@@ -59,6 +59,9 @@ export class ProjectEditorComponent implements OnInit {
   file: File;
   pdfSrc: any;
 
+  sftpHostPublicKeyFile: File;
+  sftpHostPublicKeyFileSrc: any;
+
   //Schedule components
   showSchedule: boolean;
   selectedFrequency: number;
@@ -68,7 +71,6 @@ export class ProjectEditorComponent implements OnInit {
     {num: 2, name: 'Monthly'},
     {num: 3, name: 'Yearly'}
   ];
-
 
   public activeProject: UserProject;
 
@@ -583,6 +585,37 @@ export class ProjectEditorComponent implements OnInit {
 
   cancel() {
     this.file = null;
+  }
+
+  sftpHostPublicKeyFileChange(event) {
+    const fileList: FileList = event.target.files;
+    if (fileList.length > 0) {
+      this.sftpHostPublicKeyFile = fileList[0];
+    } else {
+      this.sftpHostPublicKeyFile = null;
+    }
+  }
+
+  private uploadSftpHostPublicKeyFile() {
+    const vm = this;
+    const myReader: FileReader = new FileReader();
+
+    myReader.onloadend = function(e){
+      vm.log.success('Uploading complete', null, 'Upload SFTP host public key file');
+      vm.sftpHostPublicKeyFileSrc = myReader.result;
+      vm.extractTechnicalDetails.sftpHostPublicKeyFileData = myReader.result;
+      vm.extractTechnicalDetails.sftpHostPublicKeyFilename = vm.sftpHostPublicKeyFile.name;
+    }
+
+    myReader.readAsDataURL(vm.sftpHostPublicKeyFile);
+  }
+
+  uploadSftpHostPublicKeyFileUpload() {
+    this.uploadSftpHostPublicKeyFile();
+  }
+
+  uploadSftpHostPublicKeyFileCancel() {
+    this.sftpHostPublicKeyFile = null;
   }
 
 }

@@ -3,9 +3,11 @@ export class ExtractTechnicalDetails {
   name: string;
   sftpHostName: string;
   sftpHostDirectory: string;
-  sftpHostPort: number;
+  sftpHostPort: string;
   sftpClientUsername: string;
   sftpClientPrivateKeyPassword: string;
+  sftpHostPublicKeyFilename: string;
+  sftpHostPublicKeyFileData: string;
 
   getDisplayItems(): any[] {
     return [
@@ -15,6 +17,8 @@ export class ExtractTechnicalDetails {
       {label: 'SFTP host port', property: 'sftpHostPort'},
       {label: 'SFTP client username', property: 'sftpClientUsername'},
       {label: 'SFTP client private key password', property: 'sftpClientPrivateKeyPassword'},
+      {label: 'SFTP host public key filename', property: 'sftpHostPublicKeyFilename'},
+      {label: 'SFTP host public key file data', property: 'sftpHostPublicKeyFileData'},
     ];
   }
 
