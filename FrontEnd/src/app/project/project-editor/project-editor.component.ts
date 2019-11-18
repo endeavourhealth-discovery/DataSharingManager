@@ -61,6 +61,8 @@ export class ProjectEditorComponent implements OnInit {
 
   sftpHostPublicKeyFile: File;
   sftpHostPublicKeyFileSrc: any;
+  sftpClientPrivateKeyFile: File;
+  sftpClientPrivateKeySrc: any;
 
   //Schedule components
   showSchedule: boolean;
@@ -587,35 +589,128 @@ export class ProjectEditorComponent implements OnInit {
     this.file = null;
   }
 
-  sftpHostPublicKeyFileChange(event) {
-    const fileList: FileList = event.target.files;
-    if (fileList.length > 0) {
-      this.sftpHostPublicKeyFile = fileList[0];
+  extractTechnicalDetailsWhichFileSelect(event, whichFile) {
+    switch (whichFile) {
+      case 1:
+        const sftpHostPublicKeyFileList: FileList = event.target.files;
+        if (sftpHostPublicKeyFileList.length > 0) {
+          this.sftpHostPublicKeyFile = sftpHostPublicKeyFileList[0];
+        } else {
+          this.sftpHostPublicKeyFile = null;
+        };
+        break;
+
+      case 2:
+        const sftpClientPrivateKeyFileList: FileList = event.target.files;
+        if (sftpClientPrivateKeyFileList.length > 0) {
+          this.sftpClientPrivateKeyFile = sftpClientPrivateKeyFileList[0];
+        } else {
+          this.sftpClientPrivateKeyFile = null;
+        };
+        break;
+    }
+  }
+
+  extractTechnicalDetailsSftpHostPublicKeyFileSelect(event) {
+    const vm = this;
+    vm.log.info("Event: ", event);
+    const sftpHostPublicKeyFileList: FileList = event.target.files;
+    vm.log.info("sftpHostPublicKeyList: ", sftpHostPublicKeyFileList);
+    if (sftpHostPublicKeyFileList.length > 0) {
+      vm.log.info("Position 0: ", sftpHostPublicKeyFileList[0]);
+      this.sftpHostPublicKeyFile = sftpHostPublicKeyFileList[0];
+      vm.log.info("sftpHostPublicKeyFile: ", this.sftpHostPublicKeyFile);
     } else {
       this.sftpHostPublicKeyFile = null;
+      vm.log.info("sftpHostPublicKeyFile is null!");
     }
   }
 
-  private uploadSftpHostPublicKeyFile() {
+  extractTechnicalDetailsSftpClientPrivateKeyFileSelect(event) {
     const vm = this;
-    const myReader: FileReader = new FileReader();
-
-    myReader.onloadend = function(e){
-      vm.log.success('Uploading complete', null, 'Upload SFTP host public key file');
-      vm.sftpHostPublicKeyFileSrc = myReader.result;
-      vm.extractTechnicalDetails.sftpHostPublicKeyFileData = myReader.result;
-      vm.extractTechnicalDetails.sftpHostPublicKeyFilename = vm.sftpHostPublicKeyFile.name;
+    vm.log.info("Event: ", event);
+    const sftpClientPrivateKeyFileList: FileList = event.target.files;
+    vm.log.info("sftpClientPrivateKeyFileList: ", sftpClientPrivateKeyFileList);
+    if (sftpClientPrivateKeyFileList.length > 0) {
+      vm.log.info("Position 0: ", sftpClientPrivateKeyFileList[0]);
+      this.sftpClientPrivateKeyFile = sftpClientPrivateKeyFileList[0];
+      vm.log.info("sftpClientPrivateKeyFile: ", this.sftpClientPrivateKeyFile);
+    } else {
+      this.sftpClientPrivateKeyFile = null;
+      vm.log.info("sftpClientPrivateKeyFile is null!");
     }
-
-    myReader.readAsDataURL(vm.sftpHostPublicKeyFile);
   }
 
-  uploadSftpHostPublicKeyFileUpload() {
-    this.uploadSftpHostPublicKeyFile();
+  extractTechnicalDetailsWhichFileCancel(whichFile) {
+    switch (whichFile) {
+      case 1:
+        this.sftpHostPublicKeyFile = null;
+        break;
+
+      case 2:
+        this.sftpClientPrivateKeyFile = null;
+        break;
+    }
   }
 
-  uploadSftpHostPublicKeyFileCancel() {
-    this.sftpHostPublicKeyFile = null;
+  private extractTechnicalDetailsWhichFileUpload(whichFile) {
+    const vm = this;
+
+    switch (whichFile) {
+      case 1:
+        const mySftpHostPublicKeyReader: FileReader = new FileReader();
+
+        mySftpHostPublicKeyReader.onloadend = function (e) {
+          vm.log.success('Uploading complete', null, 'Upload SFTP host public key file');
+          vm.sftpHostPublicKeyFileSrc = mySftpHostPublicKeyReader.result;
+          vm.extractTechnicalDetails.sftpHostPublicKeyFileData = mySftpHostPublicKeyReader.result;
+          vm.extractTechnicalDetails.sftpHostPublicKeyFilename = vm.sftpHostPublicKeyFile.name;
+        };
+        mySftpHostPublicKeyReader.readAsDataURL(vm.sftpHostPublicKeyFile);
+        break;
+
+      case 2:
+        const mySftpClientPrivateKeyReader: FileReader = new FileReader();
+
+        mySftpClientPrivateKeyReader.onloadend = function (e) {
+          vm.log.success('Uploading complete', null, 'Upload SFTP client private key file');
+          vm.sftpClientPrivateKeySrc = mySftpClientPrivateKeyReader.result;
+          vm.extractTechnicalDetails.sftpClientPrivateKeyFileData = mySftpClientPrivateKeyReader.result;
+          vm.extractTechnicalDetails.sftpClientPrivateKeyFilename = vm.sftpClientPrivateKeyFile.name;
+        };
+        mySftpClientPrivateKeyReader.readAsDataURL(vm.sftpClientPrivateKeyFile);
+        break;
+    }
   }
+
+  /*
+  private extractTechnicalDetailsSftpHostPublicKeyFileUpload() {
+    const vm = this;
+
+    const mySftpHostPublicKeyReader: FileReader = new FileReader();
+
+    mySftpHostPublicKeyReader.onloadend = function (e) {
+      vm.log.success('Uploading complete', null, 'Upload SFTP host public key file');
+      vm.sftpHostPublicKeyFileSrc = mySftpHostPublicKeyReader.result;
+      vm.extractTechnicalDetails.sftpHostPublicKeyFileData = mySftpHostPublicKeyReader.result;
+      vm.extractTechnicalDetails.sftpHostPublicKeyFilename = vm.sftpHostPublicKeyFile.name;
+    };
+    mySftpHostPublicKeyReader.readAsDataURL(vm.sftpHostPublicKeyFile);
+  }
+
+  private extractTechnicalDetailsSftpClientPrivateFileUpload() {
+    const vm = this;
+
+    const mySftpClientPrivateKeyReader: FileReader = new FileReader();
+
+    mySftpClientPrivateKeyReader.onloadend = function (e) {
+      vm.log.success('Uploading complete', null, 'Upload SFTP client private key file');
+      vm.sftpClientPrivateKeySrc = mySftpClientPrivateKeyReader.result;
+      vm.extractTechnicalDetails.sftpClientPrivateKeyFileData = mySftpClientPrivateKeyReader.result;
+      vm.extractTechnicalDetails.sftpClientPrivateKeyFilename = vm.sftpClientPrivateKeyFile.name;
+    };
+    mySftpClientPrivateKeyReader.readAsDataURL(vm.sftpClientPrivateKeyFile);
+  }
+   */
 
 }

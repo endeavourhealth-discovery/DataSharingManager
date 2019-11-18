@@ -481,10 +481,11 @@ create table data_sharing_manager.extract_technical_details (
     sftp_client_private_key_password varchar(100) COMMENT 'SFTP client private key password, rarely used',
     sftp_host_public_key_filename varchar(100) COMMENT 'Filename for the SFTP host public key, rarely used (.pub)',
     sftp_host_public_key_fileData mediumtext COMMENT 'Base64 encoded file data for the SFTP host public key, rarely used (.pub)',
+    sftp_client_private_key_filename varchar(100) COMMENT 'Filename for the SFTP client private key file (.ppk)',
+    sftp_client_private_key_fileData mediumtext COMMENT 'Base64 encoded file data for the SFTP client private key (.ppk)',
 
     -- for now, a subset of all required fields, while doing further development
 
-    -- `sftp_client_private_key` mediumtext NOT NULL COMMENT 'Base64 encoded file data for the SFTP client private key (.ppk)',
     -- `pgp_customer_public_key` mediumtext NOT NULL COMMENT 'Base64 encoded file data for the customer pgp public key (.cer)',
     -- `pgp_internal_public_key` mediumtext NOT NULL COMMENT 'Base64 encoded file data for the internal pgp public key (.cer)',
 
