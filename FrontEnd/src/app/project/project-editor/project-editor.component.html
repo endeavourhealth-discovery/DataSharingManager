@@ -322,7 +322,6 @@
               </div>
             </ng-template>
           </ngb-tab>
-
           <ngb-tab>
             <ng-template ngbTabTitle><span class="tab-title">Extract technical details </span></ng-template>
             <ng-template ngbTabContent>
@@ -362,24 +361,23 @@
                   <small>Not required</small>
                 </div>
               </div>
-
               <div class="row">
                 <div class="col-md-6">
                   <div class="card h-100">
-                    <div class="card-header">Upload SFTP client private key</div>
+                    <div class="card-header">Upload SFTP client private key (.ppk)</div>
                     <div class="card-body">
                       <form class="container-fluid">
                         <div class="row">
                           <div class="col-md-12">
                             <label class="form-control-label required-field">SFTP client private key</label>
-                            <input type="text" disabled class="form-control" placeholder="SFTP client private key" [(ngModel)]="extractTechnicalDetails.sftpClientPrivateKeyFilename" name="sftpClientPrivateKeyFilename">
+                            <input type="text" disabled class="form-control" placeholder="SFTP client private key, typically .ppk" [(ngModel)]="extractTechnicalDetails.sftpClientPrivateKeyFilename" name="sftpClientPrivateKeyFilename">
                             <small class="required-field-note"></small>
                           </div>
                         </div>
                         <div class="row">
                           <div class="form-group col-md-12">
-                            <button for="sftpClientPrivateKeyFileUpload" id="sftpClientPrivateKeyFileUpload" class="btn btn-warning" (click)="fileUploader.click()">Select file</button>
-                            <input #fileUploader type="file" for="sftpClientPrivateKeyFileUpload" (click)="fileUploader.value = null" (change)="extractTechnicalDetailsSftpClientPrivateKeyFileSelect($event)" accept="*">
+                            <button for="sftpClientPrivateKeyFileUpload" id="sftpClientPrivateKeyFileUpload" class="btn btn-warning" (click)="sftpClientPrivateKeyFileUploader.click()">Select file</button>
+                            <input #sftpClientPrivateKeyFileUploader type="file" for="sftpClientPrivateKeyFileUpload" (click)="sftpClientPrivateKeyFileUploader.value = null" (change)="extractTechnicalDetailsWhichFileSelect($event,2)" accept="*">
                             <label class="control-label" for="sftpClientPrivateKeyFileUpload" *ngIf="!sftpClientPrivateKeyFile">No file selected</label>
                             <label class="control-label" for="sftpClientPrivateKeyFileUpload" *ngIf="sftpClientPrivateKeyFile">{{sftpClientPrivateKeyFile.name}}</label>
                             <button type="button" for="sftpClientPrivateKeyFileUpload" class="btn btn-danger" (click)="extractTechnicalDetailsWhichFileCancel(2)">Cancel</button>
@@ -392,7 +390,7 @@
                 </div>
                 <div class="col-md-6">
                   <div class="card h-100">
-                    <div class="card-header">Upload SFTP host public key</div>
+                    <div class="card-header">Upload SFTP host public key (.pub)</div>
                     <div class="card-body">
                       <form class="container-fluid">
                         <div class="row">
@@ -404,8 +402,8 @@
                         </div>
                         <div class="row">
                           <div class="form-group col-md-12">
-                            <button for="sftpHostPublicKeyFileUpload" id="sftpHostPublicKeyFileUpload" class="btn btn-warning" (click)="fileUploader.click()">Select file</button>
-                            <input #fileUploader type="file" for="sftpHostPublicKeyFileUpload" (click)="fileUploader.value = null" (change)="extractTechnicalDetailsSftpHostPublicKeyFileSelect($event)" accept="*">
+                            <button for="sftpHostPublicKeyFileUpload" id="sftpHostPublicKeyFileUpload" class="btn btn-warning" (click)="sftpHostPublicKeyFileUploader.click()">Select file</button>
+                            <input #sftpHostPublicKeyFileUploader type="file" for="sftpHostPublicKeyFileUpload" (click)="sftpHostPublicKeyFileUploader.value = null" (change)="extractTechnicalDetailsWhichFileSelect($event,1)" accept="*">
                             <label class="control-label" for="sftpHostPublicKeyFileUpload" *ngIf="!sftpHostPublicKeyFile">No file selected</label>
                             <label class="control-label" for="sftpHostPublicKeyFileUpload" *ngIf="sftpHostPublicKeyFile">{{sftpHostPublicKeyFile.name}}</label>
                             <button type="button" for="sftpHostPublicKeyFileUpload" class="btn btn-danger" (click)="extractTechnicalDetailsWhichFileCancel(1)">Cancel</button>
@@ -417,10 +415,62 @@
                   </div>
                 </div>
               </div>
-
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-header">Upload PGP customer public key (.cer)</div>
+                    <div class="card-body">
+                      <form class="container-fluid">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <label class="form-control-label required-field">PGP customer public key</label>
+                            <input type="text" disabled class="form-control" placeholder="PGP customer public key, typically .cer" [(ngModel)]="extractTechnicalDetails.pgpCustomerPublicKeyFilename" name="pgpCustomerPublicKeyFilename">
+                            <small class="required-field-note"></small>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="form-group col-md-12">
+                            <button for="pgpCustomerPublicKeyFileUpload" id="pgpCustomerPublicKeyFileUpload" class="btn btn-warning" (click)="pgpCustomerPublicKeyFileUploader.click()">Select file</button>
+                            <input #pgpCustomerPublicKeyFileUploader type="file" for="pgpCustomerPublicKeyFileUpload" (click)="pgpCustomerPublicKeyFileUploader.value = null" (change)="extractTechnicalDetailsWhichFileSelect($event,3)" accept="*">
+                            <label class="control-label" for="pgpCustomerPublicKeyFileUpload" *ngIf="!pgpCustomerPublicKeyFile">No file selected</label>
+                            <label class="control-label" for="pgpCustomerPublicKeyFileUpload" *ngIf="pgpCustomerPublicKeyFile">{{pgpCustomerPublicKeyFile.name}}</label>
+                            <button type="button" for="pgpCustomerPublicKeyFileUpload" class="btn btn-danger" (click)="extractTechnicalDetailsWhichFileCancel(3)">Cancel</button>
+                            <button type="button" for="pgpCustomerPublicKeyFileUpload" class="btn btn-success" (click)="extractTechnicalDetailsWhichFileUpload(3)" [disabled]="!pgpCustomerPublicKeyFile">Upload</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-header">Upload PGP internal public key (.cer)</div>
+                    <div class="card-body">
+                      <form class="container-fluid">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <label class="form-control-label required-field">PGP internal public key</label>
+                            <input type="text" disabled class="form-control" placeholder="PGP internal public key, typically .cer" [(ngModel)]="extractTechnicalDetails.pgpInternalPublicKeyFilename" name="pgpInternalPublicKeyFilename">
+                            <small class="required-field-note"></small>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="form-group col-md-12">
+                            <button for="pgpInternalPublicKeyFileUpload" id="pgpInternalPublicKeyFileUpload" class="btn btn-warning" (click)="pgpInternalPublicKeyFileUploader.click()">Select file</button>
+                            <input #pgpInternalPublicKeyFileUploader type="file" for="pgpInternalPublicKeyFileUpload" (click)="pgpInternalPublicKeyFileUploader.value = null" (change)="extractTechnicalDetailsWhichFileSelect($event,4)" accept="*">
+                            <label class="control-label" for="pgpInternalPublicKeyFileUpload" *ngIf="!pgpInternalPublicKeyFile">No file selected</label>
+                            <label class="control-label" for="pgpInternalPublicKeyFileUpload" *ngIf="pgpInternalPublicKeyFile">{{pgpInternalPublicKeyFile.name}}</label>
+                            <button type="button" for="pgpInternalPublicKeyFileUpload" class="btn btn-danger" (click)="extractTechnicalDetailsWhichFileCancel(4)">Cancel</button>
+                            <button type="button" for="pgpInternalPublicKeyFileUpload" class="btn btn-success" (click)="extractTechnicalDetailsWhichFileUpload(4)" [disabled]="!pgpInternalPublicKeyFile">Upload</button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </ng-template>
           </ngb-tab>
-
           <ngb-tab>
             <ng-template ngbTabTitle><span class="tab-title">Scheduler </span></ng-template>
             <ng-template ngbTabContent>

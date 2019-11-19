@@ -37,6 +37,10 @@ public class ExtractTechnicalDetailsDAL {
             extractTechnicalDetailsEntity.setSftpHostPublicKeyFileData(extractTechnicalDetails.getSftpHostPublicKeyFileData());
             extractTechnicalDetailsEntity.setSftpClientPrivateKeyFilename(extractTechnicalDetails.getSftpClientPrivateKeyFilename());
             extractTechnicalDetailsEntity.setSftpClientPrivateKeyFileData(extractTechnicalDetails.getSftpClientPrivateKeyFileData());
+            extractTechnicalDetailsEntity.setPgpCustomerPublicKeyFilename(extractTechnicalDetails.getPgpCustomerPublicKeyFilename());
+            extractTechnicalDetailsEntity.setPgpCustomerPublicKeyFileData(extractTechnicalDetails.getPgpCustomerPublicKeyFileData());
+            extractTechnicalDetailsEntity.setPgpInternalPublicKeyFilename(extractTechnicalDetails.getPgpInternalPublicKeyFilename());
+            extractTechnicalDetailsEntity.setPgpInternalPublicKeyFileData(extractTechnicalDetails.getPgpInternalPublicKeyFileData());
             entityManager.getTransaction().begin();
             entityManager.persist(extractTechnicalDetailsEntity);
             entityManager.getTransaction().commit();
@@ -64,6 +68,10 @@ public class ExtractTechnicalDetailsDAL {
             extractTechnicalDetailsEntity.setSftpHostPublicKeyFileData(extractTechnicalDetails.getSftpHostPublicKeyFileData());
             extractTechnicalDetailsEntity.setSftpClientPrivateKeyFilename(extractTechnicalDetails.getSftpClientPrivateKeyFilename());
             extractTechnicalDetailsEntity.setSftpClientPrivateKeyFileData(extractTechnicalDetails.getSftpClientPrivateKeyFileData());
+            extractTechnicalDetailsEntity.setPgpCustomerPublicKeyFilename(extractTechnicalDetails.getPgpCustomerPublicKeyFilename());
+            extractTechnicalDetailsEntity.setPgpCustomerPublicKeyFileData(extractTechnicalDetails.getPgpCustomerPublicKeyFileData());
+            extractTechnicalDetailsEntity.setPgpInternalPublicKeyFilename(extractTechnicalDetails.getPgpInternalPublicKeyFilename());
+            extractTechnicalDetailsEntity.setPgpInternalPublicKeyFileData(extractTechnicalDetails.getPgpInternalPublicKeyFileData());
             entityManager.getTransaction().commit();
 
         } catch (Exception e) {

@@ -471,29 +471,27 @@ CREATE TABLE data_sharing_manager.project_application_policy
 
 
 create table data_sharing_manager.extract_technical_details (
-
     uuid char(36) NOT NULL COMMENT 'Unique identifier for the extract technical details',
     `name` varchar(200) COMMENT 'Name of the extract technical details',
     sftp_host_name varchar(100) COMMENT 'SFTP host name',
     sftp_host_directory varchar(100) COMMENT 'SFTP host directory, typically /ftp/',
-    sftp_host_port int(3) COMMENT 'SFTP host port',
+    sftp_host_port varchar(10) COMMENT 'SFTP host port',
     sftp_client_username varchar(100) COMMENT 'SFTP client username',
     sftp_client_private_key_password varchar(100) COMMENT 'SFTP client private key password, rarely used',
     sftp_host_public_key_filename varchar(100) COMMENT 'Filename for the SFTP host public key, rarely used (.pub)',
     sftp_host_public_key_fileData mediumtext COMMENT 'Base64 encoded file data for the SFTP host public key, rarely used (.pub)',
-    sftp_client_private_key_filename varchar(100) COMMENT 'Filename for the SFTP client private key file (.ppk)',
+    sftp_client_private_key_filename varchar(100) COMMENT 'Filename for the SFTP client private key (.ppk)',
     sftp_client_private_key_fileData mediumtext COMMENT 'Base64 encoded file data for the SFTP client private key (.ppk)',
-
-    -- for now, a subset of all required fields, while doing further development
-
-    -- `pgp_customer_public_key` mediumtext NOT NULL COMMENT 'Base64 encoded file data for the customer pgp public key (.cer)',
-    -- `pgp_internal_public_key` mediumtext NOT NULL COMMENT 'Base64 encoded file data for the internal pgp public key (.cer)',
+    pgp_customer_public_key_filename varchar(100) COMMENT 'Filename for the PGP customer public key (.cer)',
+    pgp_customer_public_key_fileData mediumtext NOT NULL COMMENT 'Base64 encoded file data for the PGP customer public key (.cer)',
+    pgp_internal_public_key_filename varchar(100) COMMENT 'Filename for the PGP internal public key (.cer)',
+    pgp_internal_public_key_fileData mediumtext NOT NULL COMMENT 'Base64 encoded file data for the PGP internal public key (.cer)',
 
     primary key data_sharing_manager_extract_technical_details_uuid (uuid)
 ) comment 'Hold extract technical details';
 
-create table `project_schedule` (
 
+create table `project_schedule` (
     uuid char(36) NOT NULL COMMENT 'Unique identifier for the schedule',
 	starts date COMMENT 'Starting date when reports will be sent',
 	ends date COMMENT 'Ending date when reports will no longer be sent',
@@ -506,5 +504,6 @@ create table `project_schedule` (
 	is_friday tinyint(1) COMMENT '1 if report is to be sent on Fridays',
 	is_saturday tinyint(1) COMMENT '1 if report is to be sent on Saturdays',
 	is_sunday tinyint(1) COMMENT '1 if report is to be sent on Sundays',
+
     primary key data_sharing_manager_schedule_uuid (uuid)
 ) comment 'Information regarding project schedule';

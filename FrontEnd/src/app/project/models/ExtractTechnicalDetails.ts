@@ -10,6 +10,10 @@ export class ExtractTechnicalDetails {
   sftpHostPublicKeyFileData: string;
   sftpClientPrivateKeyFilename: string;
   sftpClientPrivateKeyFileData: string;
+  pgpCustomerPublicKeyFilename: string
+  pgpCustomerPublicKeyFileData: string;
+  pgpInternalPublicKeyFilename: string;
+  pgpInternalPublicKeyFileData: string;
 
   getDisplayItems(): any[] {
     return [
@@ -23,6 +27,10 @@ export class ExtractTechnicalDetails {
       {label: 'SFTP host public key file data', property: 'sftpHostPublicKeyFileData'},
       {label: 'SFTP client private key filename', property: 'sftpClientPrivateKeyFilename'},
       {label: 'SFTP client private key file data', property: 'sftpClientPrivateKeyFileData'},
+      {label: 'PGP customer public key filename', property: 'pgpCustomerPublicKeyFilename'},
+      {label: 'PGP customer public key file data', property: 'pgpCustomerPublicKeyFileData'},
+      {label: 'PGP internal public key filename', property: 'pgpInternalPublicKeyFilename'},
+      {label: 'PGP internal public key file data', property: 'pgpInternalPublicKeyFileData'},
     ];
   }
 

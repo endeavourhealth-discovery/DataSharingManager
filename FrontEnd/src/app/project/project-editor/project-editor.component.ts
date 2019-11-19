@@ -59,10 +59,15 @@ export class ProjectEditorComponent implements OnInit {
   file: File;
   pdfSrc: any;
 
+  // Extract technical details
   sftpHostPublicKeyFile: File;
   sftpHostPublicKeyFileSrc: any;
   sftpClientPrivateKeyFile: File;
   sftpClientPrivateKeySrc: any;
+  pgpCustomerPublicKeyFile: File;
+  pgpCustomerPublicKeyFileSrc: any;
+  pgpInternalPublicKeyFile: File;
+  pgpInternalPublicKeyFileSrc: any;
 
   //Schedule components
   showSchedule: boolean;
@@ -498,23 +503,6 @@ export class ProjectEditorComponent implements OnInit {
       );
   }
 
-  private getAssociatedExtractTechnicalDetails() {
-    const vm = this;
-    vm.getAssociatedExtractTechDetails().subscribe(
-        result => vm.extractTechnicalDetails = result,
-        error => vm.log.error('The associated extract technical details could not be loaded. Please try again.', error, 'Load associated extract technical details')
-    );
-  }
-
-  private getAssociatedExtractTechDetails(): Observable<ExtractTechnicalDetails> {
-    const vm = this;
-    const params = new URLSearchParams();
-    params.set('parentUuid', vm.project.uuid);
-    params.set('parentType', '14');
-    return vm.http.get('api/extractTechnicalDetails/associated', { search : params })
-      .map((response) => response.json());
-  }
-
   changeUserApplicationPolicy(policyId: string) {
     const vm = this;
     let changedPolicy = new ProjectApplicationPolicy();
@@ -589,6 +577,23 @@ export class ProjectEditorComponent implements OnInit {
     this.file = null;
   }
 
+  private getAssociatedExtractTechnicalDetails() {
+    const vm = this;
+    vm.getAssociatedExtractTechDetails().subscribe(
+      result => vm.extractTechnicalDetails = result,
+      error => vm.log.error('The associated extract technical details could not be loaded. Please try again.', error, 'Load associated extract technical details')
+    );
+  }
+
+  private getAssociatedExtractTechDetails(): Observable<ExtractTechnicalDetails> {
+    const vm = this;
+    const params = new URLSearchParams();
+    params.set('parentUuid', vm.project.uuid);
+    params.set('parentType', '14');
+    return vm.http.get('api/extractTechnicalDetails/associated', { search : params })
+      .map((response) => response.json());
+  }
+
   extractTechnicalDetailsWhichFileSelect(event, whichFile) {
     switch (whichFile) {
       case 1:
@@ -608,36 +613,24 @@ export class ProjectEditorComponent implements OnInit {
           this.sftpClientPrivateKeyFile = null;
         };
         break;
-    }
-  }
 
-  extractTechnicalDetailsSftpHostPublicKeyFileSelect(event) {
-    const vm = this;
-    vm.log.info("Event: ", event);
-    const sftpHostPublicKeyFileList: FileList = event.target.files;
-    vm.log.info("sftpHostPublicKeyList: ", sftpHostPublicKeyFileList);
-    if (sftpHostPublicKeyFileList.length > 0) {
-      vm.log.info("Position 0: ", sftpHostPublicKeyFileList[0]);
-      this.sftpHostPublicKeyFile = sftpHostPublicKeyFileList[0];
-      vm.log.info("sftpHostPublicKeyFile: ", this.sftpHostPublicKeyFile);
-    } else {
-      this.sftpHostPublicKeyFile = null;
-      vm.log.info("sftpHostPublicKeyFile is null!");
-    }
-  }
+      case 3:
+        const pgpCustomerPublicKeyFileList: FileList = event.target.files;
+        if (pgpCustomerPublicKeyFileList.length > 0) {
+          this.pgpCustomerPublicKeyFile = pgpCustomerPublicKeyFileList[0];
+        } else {
+          this.pgpCustomerPublicKeyFile = null;
+        };
+        break;
 
-  extractTechnicalDetailsSftpClientPrivateKeyFileSelect(event) {
-    const vm = this;
-    vm.log.info("Event: ", event);
-    const sftpClientPrivateKeyFileList: FileList = event.target.files;
-    vm.log.info("sftpClientPrivateKeyFileList: ", sftpClientPrivateKeyFileList);
-    if (sftpClientPrivateKeyFileList.length > 0) {
-      vm.log.info("Position 0: ", sftpClientPrivateKeyFileList[0]);
-      this.sftpClientPrivateKeyFile = sftpClientPrivateKeyFileList[0];
-      vm.log.info("sftpClientPrivateKeyFile: ", this.sftpClientPrivateKeyFile);
-    } else {
-      this.sftpClientPrivateKeyFile = null;
-      vm.log.info("sftpClientPrivateKeyFile is null!");
+      case 4:
+        const pgpInternalPublicKeyFileList: FileList = event.target.files;
+        if (pgpInternalPublicKeyFileList.length > 0) {
+          this.pgpInternalPublicKeyFile = pgpInternalPublicKeyFileList[0];
+        } else {
+          this.pgpInternalPublicKeyFile = null;
+        };
+        break;
     }
   }
 
@@ -650,67 +643,68 @@ export class ProjectEditorComponent implements OnInit {
       case 2:
         this.sftpClientPrivateKeyFile = null;
         break;
+
+      case 3:
+        this.pgpCustomerPublicKeyFile = null;
+        break;
+
+      case 4:
+        this.pgpInternalPublicKeyFile = null;
+        break;
     }
   }
 
-  private extractTechnicalDetailsWhichFileUpload(whichFile) {
+  extractTechnicalDetailsWhichFileUpload(whichFile) {
     const vm = this;
-
     switch (whichFile) {
       case 1:
-        const mySftpHostPublicKeyReader: FileReader = new FileReader();
+        const mySftpHostPublicKeyFileReader: FileReader = new FileReader();
 
-        mySftpHostPublicKeyReader.onloadend = function (e) {
+        mySftpHostPublicKeyFileReader.onloadend = function (e) {
           vm.log.success('Uploading complete', null, 'Upload SFTP host public key file');
-          vm.sftpHostPublicKeyFileSrc = mySftpHostPublicKeyReader.result;
-          vm.extractTechnicalDetails.sftpHostPublicKeyFileData = mySftpHostPublicKeyReader.result;
+          vm.sftpHostPublicKeyFileSrc = mySftpHostPublicKeyFileReader.result;
+          vm.extractTechnicalDetails.sftpHostPublicKeyFileData = mySftpHostPublicKeyFileReader.result;
           vm.extractTechnicalDetails.sftpHostPublicKeyFilename = vm.sftpHostPublicKeyFile.name;
         };
-        mySftpHostPublicKeyReader.readAsDataURL(vm.sftpHostPublicKeyFile);
+        mySftpHostPublicKeyFileReader.readAsDataURL(vm.sftpHostPublicKeyFile);
         break;
 
       case 2:
-        const mySftpClientPrivateKeyReader: FileReader = new FileReader();
+        const mySftpClientPrivateKeyFileReader: FileReader = new FileReader();
 
-        mySftpClientPrivateKeyReader.onloadend = function (e) {
+        mySftpClientPrivateKeyFileReader.onloadend = function (e) {
           vm.log.success('Uploading complete', null, 'Upload SFTP client private key file');
-          vm.sftpClientPrivateKeySrc = mySftpClientPrivateKeyReader.result;
-          vm.extractTechnicalDetails.sftpClientPrivateKeyFileData = mySftpClientPrivateKeyReader.result;
+          vm.sftpClientPrivateKeySrc = mySftpClientPrivateKeyFileReader.result;
+          vm.extractTechnicalDetails.sftpClientPrivateKeyFileData = mySftpClientPrivateKeyFileReader.result;
           vm.extractTechnicalDetails.sftpClientPrivateKeyFilename = vm.sftpClientPrivateKeyFile.name;
         };
-        mySftpClientPrivateKeyReader.readAsDataURL(vm.sftpClientPrivateKeyFile);
+        mySftpClientPrivateKeyFileReader.readAsDataURL(vm.sftpClientPrivateKeyFile);
+        break;
+
+      case 3:
+        const myPpgCustomerPublicKeyFileReader: FileReader = new FileReader();
+
+        myPpgCustomerPublicKeyFileReader.onloadend = function (e) {
+          vm.log.success('Uploading complete', null, 'Upload PGP customer public key file');
+          vm.pgpCustomerPublicKeyFileSrc = myPpgCustomerPublicKeyFileReader.result;
+          vm.extractTechnicalDetails.pgpCustomerPublicKeyFileData = myPpgCustomerPublicKeyFileReader.result;
+          vm.extractTechnicalDetails.pgpCustomerPublicKeyFilename = vm.pgpCustomerPublicKeyFile.name;
+        };
+        myPpgCustomerPublicKeyFileReader.readAsDataURL(vm.pgpCustomerPublicKeyFile);
+        break;
+
+      case 4:
+        const myPpgInternalPublicKeyFileReader: FileReader = new FileReader();
+
+        myPpgInternalPublicKeyFileReader.onloadend = function (e) {
+          vm.log.success('Uploading complete', null, 'Upload PGP internal public key file');
+          vm.pgpInternalPublicKeyFileSrc = myPpgInternalPublicKeyFileReader.result;
+          vm.extractTechnicalDetails.pgpInternalPublicKeyFileData = myPpgInternalPublicKeyFileReader.result;
+          vm.extractTechnicalDetails.pgpInternalPublicKeyFilename = vm.pgpInternalPublicKeyFile.name;
+        };
+        myPpgInternalPublicKeyFileReader.readAsDataURL(vm.pgpInternalPublicKeyFile);
         break;
     }
   }
-
-  /*
-  private extractTechnicalDetailsSftpHostPublicKeyFileUpload() {
-    const vm = this;
-
-    const mySftpHostPublicKeyReader: FileReader = new FileReader();
-
-    mySftpHostPublicKeyReader.onloadend = function (e) {
-      vm.log.success('Uploading complete', null, 'Upload SFTP host public key file');
-      vm.sftpHostPublicKeyFileSrc = mySftpHostPublicKeyReader.result;
-      vm.extractTechnicalDetails.sftpHostPublicKeyFileData = mySftpHostPublicKeyReader.result;
-      vm.extractTechnicalDetails.sftpHostPublicKeyFilename = vm.sftpHostPublicKeyFile.name;
-    };
-    mySftpHostPublicKeyReader.readAsDataURL(vm.sftpHostPublicKeyFile);
-  }
-
-  private extractTechnicalDetailsSftpClientPrivateFileUpload() {
-    const vm = this;
-
-    const mySftpClientPrivateKeyReader: FileReader = new FileReader();
-
-    mySftpClientPrivateKeyReader.onloadend = function (e) {
-      vm.log.success('Uploading complete', null, 'Upload SFTP client private key file');
-      vm.sftpClientPrivateKeySrc = mySftpClientPrivateKeyReader.result;
-      vm.extractTechnicalDetails.sftpClientPrivateKeyFileData = mySftpClientPrivateKeyReader.result;
-      vm.extractTechnicalDetails.sftpClientPrivateKeyFilename = vm.sftpClientPrivateKeyFile.name;
-    };
-    mySftpClientPrivateKeyReader.readAsDataURL(vm.sftpClientPrivateKeyFile);
-  }
-   */
 
 }
