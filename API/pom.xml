@@ -31,6 +31,11 @@
             <artifactId>security</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.endeavourhealth.UI-AuditTrail</groupId>
+            <artifactId>API</artifactId>
+        </dependency>
+
         <!-- Driver for config -->
         <dependency>
             <groupId>mysql</groupId>

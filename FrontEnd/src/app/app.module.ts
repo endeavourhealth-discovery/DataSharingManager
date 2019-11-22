@@ -24,6 +24,7 @@ import {DataExchangeModule} from "./data-exchange/data-exchange.module";
 import {ProjectModule} from "./project/project.module";
 import {ConfigModule} from "./config/config.module";
 import {ReportingModule} from "./reporting/reporting.module";
+import {AuditModule} from "./audit/audit.module";
 
 
 @NgModule({
@@ -46,6 +47,7 @@ import {ReportingModule} from "./reporting/reporting.module";
     ProjectModule,
     ConfigModule,
     ReportingModule,
+    AuditModule,
     RouterModule.forRoot(AppMenuService.getRoutes(), {useHash: true}),
     NgbModule.forRoot(),
     ToastModule.forRoot()

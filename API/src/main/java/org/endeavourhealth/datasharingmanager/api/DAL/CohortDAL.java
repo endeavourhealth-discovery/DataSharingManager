@@ -3,6 +3,10 @@ package org.endeavourhealth.datasharingmanager.api.DAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.CohortEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonCohort;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
+import org.endeavourhealth.uiaudit.enums.AuditAction;
+import org.endeavourhealth.uiaudit.enums.ItemType;
+import org.endeavourhealth.uiaudit.logic.AuditCompareLogic;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -45,17 +49,22 @@ public class CohortDAL {
         }
     }
 
-    public void updateCohort(JsonCohort cohort) throws Exception {
+    public void updateCohort(JsonCohort cohort, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+
+        CohortEntity newCohort = new CohortEntity(cohort);
+
+        CohortEntity oldCohortEntity = entityManager.find(CohortEntity.class, cohort.getUuid());
+
+        String auditJson = new AuditCompareLogic().getAuditJson("Cohort Edited", oldCohortEntity, newCohort);
 
         try {
 
-            CohortEntity cohortEntity = entityManager.find(CohortEntity.class, cohort.getUuid());
             entityManager.getTransaction().begin();
-            cohortEntity.setName(cohort.getName());
-            cohortEntity.setConsentModelId(cohort.getConsentModelId());
-            cohortEntity.setTechnicalDefinition(cohort.getTechnicalDefinition());
-            cohortEntity.setDescription(cohort.getDescription());
+            oldCohortEntity.setName(cohort.getName());
+            oldCohortEntity.setConsentModelId(cohort.getConsentModelId());
+            oldCohortEntity.setTechnicalDefinition(cohort.getTechnicalDefinition());
+            oldCohortEntity.setDescription(cohort.getDescription());
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
@@ -63,6 +72,9 @@ public class CohortDAL {
         } finally {
             entityManager.close();
         }
+
+        new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                AuditAction.EDIT, ItemType.COHORT, null, null, auditJson);
     }
 
     public void saveCohort(JsonCohort cohort) throws Exception {

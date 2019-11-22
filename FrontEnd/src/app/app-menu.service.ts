@@ -27,6 +27,7 @@ import {ProjectComponent} from "./project/project/project.component";
 import {ProjectEditorComponent} from "./project/project-editor/project-editor.component";
 import {ConfigComponent} from "./config/config/config.component";
 import {ReportsComponent} from "./reporting/reports/reports.component";
+import {AuditComponent} from "./audit/audit/audit.component";
 
 @Injectable()
 export class AppMenuService implements  AbstractMenuProvider  {
@@ -58,6 +59,7 @@ export class AppMenuService implements  AbstractMenuProvider  {
       { path: 'project/:id/:mode', component: ProjectEditorComponent},
       { path: 'configuration', component: ConfigComponent},
       { path: 'reporting', component: ReportsComponent},
+      { path: 'audit', component: AuditComponent},
     ];
   }
 
@@ -83,7 +85,8 @@ export class AppMenuService implements  AbstractMenuProvider  {
       {caption: 'Data sets', state: 'dataSets', icon: 'fa fa-table', role: 'Viewer'},
       {caption: 'Cohorts', state: 'cohorts', icon: 'fa fa-users', role: 'Viewer'},
       {caption: 'Configuration', state: 'configuration', icon: 'fa-cogs', role: 'Config'},
-      {caption: 'Reporting', state: 'reporting', icon: 'fa-line-chart', role: 'Config'}
+      {caption: 'Reporting', state: 'reporting', icon: 'fa-line-chart', role: 'Config'},
+      {caption: 'Audit', state: 'audit', icon: 'fa fa-list-ul', role: 'Admin'}
     ];
   }
 }

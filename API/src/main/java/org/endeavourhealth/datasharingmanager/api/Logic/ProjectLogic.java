@@ -16,7 +16,6 @@ import org.endeavourhealth.common.security.usermanagermodel.models.json.JsonUser
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 
 import javax.ws.rs.core.Response;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
 

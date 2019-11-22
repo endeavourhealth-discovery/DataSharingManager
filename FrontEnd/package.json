@@ -25,6 +25,7 @@
     "bootstrap": "4.3.1",
     "core-js": "^2.4.1",
     "eds-angular4": "https://github.com/endeavourhealth-discovery/Angular4/raw/BS-4.1.3/eds-angular4-1.1.14.tgz",
+    "eds-audittrail": "https://github.com/endeavourhealth-discovery/UI-AuditTrail/blob/master/Frontend/eds-audittrail-1.0.0.tgz?raw=true",
     "export-to-csv": "^0.2.1",
     "font-awesome": "^4.7.0",
     "keycloak-js": "^3.1.0",

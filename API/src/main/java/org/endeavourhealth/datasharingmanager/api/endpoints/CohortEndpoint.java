@@ -83,6 +83,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
             "of a cohort.")
     @RequiresAdmin
     public Response postCohort(@Context SecurityContext sc,
+                               @HeaderParam("userProjectId") String userProjectId,
                                @ApiParam(value = "Json representation of cohort to save or update") JsonCohort cohort
     ) throws Exception {
         super.setLogbackMarkers(sc);
@@ -92,7 +93,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
 
         if (cohort.getUuid() != null) {
             new MasterMappingDAL().deleteAllMappings(cohort.getUuid());
-            new CohortDAL().updateCohort(cohort);
+            new CohortDAL().updateCohort(cohort, userProjectId);
         } else {
             cohort.setUuid(UUID.randomUUID().toString());
             new CohortDAL().saveCohort(cohort);
