@@ -77,7 +77,7 @@ public class CohortDAL {
                 AuditAction.EDIT, ItemType.COHORT, null, null, auditJson);
     }
 
-    public void saveCohort(JsonCohort cohort) throws Exception {
+    public void saveCohort(JsonCohort cohort, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
         try {
@@ -88,7 +88,14 @@ public class CohortDAL {
             cohortEntity.setDescription(cohort.getDescription());
             cohortEntity.setTechnicalDefinition(cohort.getTechnicalDefinition());
             cohortEntity.setUuid(cohort.getUuid());
+
+            String auditJson = new AuditCompareLogic().getAuditJson("Cohort Created", null, cohortEntity);
+
             entityManager.persist(cohortEntity);
+
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                    AuditAction.ADD, ItemType.COHORT, null, null, auditJson);
+
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
@@ -98,14 +105,22 @@ public class CohortDAL {
         }
     }
 
-    public void deleteCohort(String uuid) throws Exception {
+    public void deleteCohort(String uuid, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
         try {
+            CohortEntity oldCohortEntity = entityManager.find(CohortEntity.class, uuid);
+            String auditJson = new AuditCompareLogic().getAuditJson("Cohort Deleted", oldCohortEntity, null);
+
             CohortEntity cohortEntity = entityManager.find(CohortEntity.class, uuid);
             entityManager.getTransaction().begin();
             entityManager.remove(cohortEntity);
+
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                    AuditAction.DELETE, ItemType.COHORT, null, null, auditJson);
+
             entityManager.getTransaction().commit();
+            // Any reason for lack of catch/rollback?
         } finally {
             entityManager.close();
         }
