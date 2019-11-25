@@ -65,6 +65,10 @@ public class CohortDAL {
             oldCohortEntity.setConsentModelId(cohort.getConsentModelId());
             oldCohortEntity.setTechnicalDefinition(cohort.getTechnicalDefinition());
             oldCohortEntity.setDescription(cohort.getDescription());
+
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                    AuditAction.EDIT, ItemType.COHORT, null, null, auditJson);
+
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
@@ -72,9 +76,6 @@ public class CohortDAL {
         } finally {
             entityManager.close();
         }
-
-        new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                AuditAction.EDIT, ItemType.COHORT, null, null, auditJson);
     }
 
     public void saveCohort(JsonCohort cohort, String userProjectId) throws Exception {
