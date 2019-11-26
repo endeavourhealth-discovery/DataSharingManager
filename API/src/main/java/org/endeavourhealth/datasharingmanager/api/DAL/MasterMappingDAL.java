@@ -73,10 +73,10 @@ public class MasterMappingDAL {
     }
 
 
-    public void deleteParentMappings(EntityManager entityManager, List<String> parentsToDelete, Short parentMapTypeId, UUID childUuid, Short childMapTypeId) throws Exception {
+    public void deleteParentMappings(EntityManager entityManager, List<String> parentsToDelete, Short parentMapTypeId, String childUuid, Short childMapTypeId) throws Exception {
         parentsToDelete.forEach((p) -> {
             MasterMappingEntity mme = new MasterMappingEntity();
-            mme.setChildUuid(childUuid.toString());
+            mme.setChildUuid(childUuid);
             mme.setChildMapTypeId(childMapTypeId);
             mme.setParentUuid(p);
             mme.setParentMapTypeId(parentMapTypeId);
@@ -462,46 +462,43 @@ public class MasterMappingDAL {
         }
     }
 
-    public void saveCohortMappings(JsonCohort cohort, String userProjectId) throws Exception {
+    public void updateCohortMappings(JsonCohort cohort, String userProjectId) throws Exception {
         List<String> oldCohortDpas = new SecurityMasterMappingDAL().getParentMappings(cohort.getUuid(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
 
         Map<UUID, String> newCohortDpaUuids = cohort.getDpas();
         List<String> newCohortDpas = new ArrayList<String>();
         newCohortDpaUuids.forEach((k, v) -> newCohortDpas.add(k.toString()));
 
-        // Are there any DPAs which have been removed?
-        ArrayList<String> removedCohortDpas = new ArrayList<String>();
-        for (String oldCohortDpa : oldCohortDpas) {
-            if (!newCohortDpas.contains(oldCohortDpa)) {
-                removedCohortDpas.add(oldCohortDpa);
+        updateParentMappings(cohort.getUuid(), oldCohortDpas, newCohortDpas, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), userProjectId);
+    }
+
+    public void updateParentMappings(String child, List<String> oldParents, List<String> newParents, Short childMapTypeId, Short parentMapTypeId, String userProjectId) throws  Exception {
+        ArrayList<String> removedParents = new ArrayList<String>();
+        for (String oldParent : oldParents) {
+            if (!newParents.contains(oldParent)) {
+                removedParents.add(oldParent);
             }
         }
 
-        // Are there any DPAs which have been added?
-        ArrayList<String> addedCohortDpas = new ArrayList<String>();
-        for (String newCohortDpa : newCohortDpas) {
-            if (!oldCohortDpas.contains(newCohortDpa)) {
-                addedCohortDpas.add(newCohortDpa);
+        ArrayList<String> addedParents = new ArrayList<String>();
+        for (String newParent : newParents) {
+            if (!oldParents.contains(newParent)) {
+                addedParents.add(newParent);
             }
         }
 
-        if (!removedCohortDpas.isEmpty() || !newCohortDpas.isEmpty()) {
+        if (!removedParents.isEmpty() || !addedParents.isEmpty()) {
             EntityManager entityManager = ConnectionManager.getDsmEntityManager();
             try {
                 entityManager.getTransaction().begin();
 
-                if (!removedCohortDpas.isEmpty()) {
-                    deleteParentMappings(entityManager, removedCohortDpas, MapType.DATAPROCESSINGAGREEMENT.getMapType(), UUID.fromString(cohort.getUuid()), MapType.COHORT.getMapType());
+                if (!removedParents.isEmpty()) {
+                    deleteParentMappings(entityManager, removedParents, parentMapTypeId, child, childMapTypeId);
                 }
 
-                if (!addedCohortDpas.isEmpty()) {
-                    saveParentMappings(entityManager, addedCohortDpas, MapType.DATAPROCESSINGAGREEMENT.getMapType(), cohort.getUuid(), MapType.COHORT.getMapType());
+                if (!addedParents.isEmpty()) {
+                    saveParentMappings(entityManager, addedParents, parentMapTypeId, child, childMapTypeId);
                 }
-
-                String auditJson = new AuditCompareLogic().getAuditJson("Cohort mappings edited", oldCohortDpas, newCohortDpas);
-
-                new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                        AuditAction.EDIT, ItemType.COHORT, null, null, auditJson);
 
                 entityManager.getTransaction().commit();
             } catch (Exception e) {

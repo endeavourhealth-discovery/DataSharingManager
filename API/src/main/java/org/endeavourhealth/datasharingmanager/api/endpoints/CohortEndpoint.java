@@ -99,7 +99,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
             new CohortDAL().saveCohort(cohort, userProjectId);
         }
 
-        new MasterMappingDAL().saveCohortMappings(cohort, userProjectId);
+        new MasterMappingDAL().updateCohortMappings(cohort, userProjectId);
 
         clearLogbackMarkers();
 
