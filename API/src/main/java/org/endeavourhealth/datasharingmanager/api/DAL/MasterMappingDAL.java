@@ -1,17 +1,17 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataProcessingAgreementEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.MasterMappingEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.*;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -40,15 +40,22 @@ public class MasterMappingDAL {
     }
 
     public void saveParentMappings(Map<UUID, String> parents, Short parentMapTypeId, String childUuid, Short childMapTypeId) throws Exception {
+        // Convert to List
+        List<String> parentUuids = new ArrayList<String>();
+        parents.forEach((k, v) -> parentUuids.add(k.toString()));
+        saveParentMappings(parentUuids, parentMapTypeId, childUuid, childMapTypeId);
+    }
+
+    public void saveParentMappings(List<String> parents, Short parentMapTypeId, String childUuid, Short childMapTypeId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
         try {
-            parents.forEach((k, v) -> {
+            parents.forEach((p) -> { // What happens if one has been removed?
                 MasterMappingEntity mme = new MasterMappingEntity();
                 entityManager.getTransaction().begin();
                 mme.setChildUuid(childUuid);
                 mme.setChildMapTypeId(childMapTypeId);
-                mme.setParentUuid(k.toString());
+                mme.setParentUuid(p);
                 mme.setParentMapTypeId(parentMapTypeId);
                 entityManager.persist(mme);
                 entityManager.getTransaction().commit();
@@ -60,6 +67,29 @@ public class MasterMappingDAL {
             entityManager.close();
         }
     }
+
+
+    public void deleteParentMappings(List<String> parentsToDelete, Short parentMapTypeId, UUID childUuid, Short childMapTypeId) throws Exception {
+        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+        entityManager.getTransaction().begin();
+        try {
+            parentsToDelete.forEach((p) -> {
+                MasterMappingEntity mme = new MasterMappingEntity();
+                mme.setChildUuid(childUuid.toString());
+                mme.setChildMapTypeId(childMapTypeId);
+                mme.setParentUuid(p);
+                mme.setParentMapTypeId(parentMapTypeId);
+                entityManager.remove(entityManager.merge(mme));
+            });
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
+    }
+
 
     public void saveChildMappings(Map<UUID, String> children, Short childMapTypeId, String parentUuid, Short parentMapTypeId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
@@ -439,10 +469,28 @@ public class MasterMappingDAL {
     }
 
     public void saveCohortMappings(JsonCohort cohort) throws Exception {
+        List<String> oldCohortDpas = new SecurityMasterMappingDAL().getParentMappings(cohort.getUuid(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
 
-        if (cohort.getDpas() != null) {
-            Map<UUID, String> dataDpas = cohort.getDpas();
-            saveParentMappings(dataDpas, MapType.DATAPROCESSINGAGREEMENT.getMapType(), cohort.getUuid(), MapType.COHORT.getMapType());
+        Map<UUID, String> newCohortDpaUuids = cohort.getDpas();
+        List<String> newCohortDpas = new ArrayList<String>();
+        newCohortDpaUuids.forEach((k, v) -> newCohortDpas.add(k.toString()));
+
+        // Are there any DPAs which have been removed?
+        ArrayList<String> removedCohortDpas = new ArrayList<String>();
+        for (String oldCohortDpa : oldCohortDpas) {
+            if (!newCohortDpas.contains(oldCohortDpa)) {
+                removedCohortDpas.add(oldCohortDpa);
+            }
+        }
+        if (!removedCohortDpas.isEmpty()) {
+            deleteParentMappings(removedCohortDpas, MapType.DATAPROCESSINGAGREEMENT.getMapType(), UUID.fromString(cohort.getUuid()), MapType.COHORT.getMapType());
+        }
+
+        // Strip out any DPAs already associated with this Cohort
+        newCohortDpas.removeIf(n -> oldCohortDpas.contains(n));
+
+        if (!newCohortDpas.isEmpty()) {
+            saveParentMappings(newCohortDpas, MapType.DATAPROCESSINGAGREEMENT.getMapType(), cohort.getUuid(), MapType.COHORT.getMapType());
         }
     }
 
