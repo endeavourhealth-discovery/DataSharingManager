@@ -7,6 +7,10 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.*;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
+import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
+import org.endeavourhealth.uiaudit.enums.AuditAction;
+import org.endeavourhealth.uiaudit.enums.ItemType;
+import org.endeavourhealth.uiaudit.logic.AuditCompareLogic;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -43,44 +47,11 @@ public class MasterMappingDAL {
         // Convert to List
         List<String> parentUuids = new ArrayList<String>();
         parents.forEach((k, v) -> parentUuids.add(k.toString()));
-        saveParentMappings(parentUuids, parentMapTypeId, childUuid, childMapTypeId);
-    }
 
-    public void saveParentMappings(List<String> parents, Short parentMapTypeId, String childUuid, Short childMapTypeId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            parents.forEach((p) -> { // What happens if one has been removed?
-                MasterMappingEntity mme = new MasterMappingEntity();
-                entityManager.getTransaction().begin();
-                mme.setChildUuid(childUuid);
-                mme.setChildMapTypeId(childMapTypeId);
-                mme.setParentUuid(p);
-                mme.setParentMapTypeId(parentMapTypeId);
-                entityManager.persist(mme);
-                entityManager.getTransaction().commit();
-            });
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw e;
-        } finally {
-            entityManager.close();
-        }
-    }
-
-
-    public void deleteParentMappings(List<String> parentsToDelete, Short parentMapTypeId, UUID childUuid, Short childMapTypeId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-        entityManager.getTransaction().begin();
-        try {
-            parentsToDelete.forEach((p) -> {
-                MasterMappingEntity mme = new MasterMappingEntity();
-                mme.setChildUuid(childUuid.toString());
-                mme.setChildMapTypeId(childMapTypeId);
-                mme.setParentUuid(p);
-                mme.setParentMapTypeId(parentMapTypeId);
-                entityManager.remove(entityManager.merge(mme));
-            });
+            entityManager.getTransaction().begin();
+            saveParentMappings(entityManager, parentUuids, parentMapTypeId, childUuid, childMapTypeId);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
@@ -88,6 +59,29 @@ public class MasterMappingDAL {
         } finally {
             entityManager.close();
         }
+    }
+
+    public void saveParentMappings(EntityManager entityManager, List<String> parentsToAdd, Short parentMapTypeId, String childUuid, Short childMapTypeId) throws Exception {
+        parentsToAdd.forEach((p) -> { // What happens if one has been removed?
+            MasterMappingEntity mme = new MasterMappingEntity();
+            mme.setChildUuid(childUuid);
+            mme.setChildMapTypeId(childMapTypeId);
+            mme.setParentUuid(p);
+            mme.setParentMapTypeId(parentMapTypeId);
+            entityManager.persist(mme);
+        });
+    }
+
+
+    public void deleteParentMappings(EntityManager entityManager, List<String> parentsToDelete, Short parentMapTypeId, UUID childUuid, Short childMapTypeId) throws Exception {
+        parentsToDelete.forEach((p) -> {
+            MasterMappingEntity mme = new MasterMappingEntity();
+            mme.setChildUuid(childUuid.toString());
+            mme.setChildMapTypeId(childMapTypeId);
+            mme.setParentUuid(p);
+            mme.setParentMapTypeId(parentMapTypeId);
+            entityManager.remove(entityManager.merge(mme));
+        });
     }
 
 
@@ -282,7 +276,7 @@ public class MasterMappingDAL {
 
         if (dsa.getDocumentations() != null) {
             Map<UUID, String> documentation = new HashMap<>();
-            List<JsonDocumentation> jsonDocumentations =  dsa.getDocumentations();
+            List<JsonDocumentation> jsonDocumentations = dsa.getDocumentations();
             for (JsonDocumentation doc : jsonDocumentations) {
                 documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
             }
@@ -291,7 +285,7 @@ public class MasterMappingDAL {
 
         if (dsa.getPurposes() != null) {
             Map<UUID, String> purposes = new HashMap<>();
-            List<JsonPurpose> jsonPurposes =  dsa.getPurposes();
+            List<JsonPurpose> jsonPurposes = dsa.getPurposes();
             for (JsonPurpose purp : jsonPurposes) {
                 purposes.put(UUID.fromString(purp.getUuid()), purp.getTitle());
             }
@@ -300,7 +294,7 @@ public class MasterMappingDAL {
 
         if (dsa.getBenefits() != null) {
             Map<UUID, String> benefits = new HashMap<>();
-            List<JsonPurpose> jsonBenefits =  dsa.getBenefits();
+            List<JsonPurpose> jsonBenefits = dsa.getBenefits();
             for (JsonPurpose benef : jsonBenefits) {
                 benefits.put(UUID.fromString(benef.getUuid()), benef.getTitle());
             }
@@ -312,7 +306,7 @@ public class MasterMappingDAL {
 
         if (dataFlow.getDsas() != null) {
             Map<UUID, String> dsas = dataFlow.getDsas();
-            saveParentMappings(dsas, MapType.DATASHARINGAGREEMENT.getMapType(),  dataFlow.getUuid(), MapType.DATAFLOW.getMapType());
+            saveParentMappings(dsas, MapType.DATASHARINGAGREEMENT.getMapType(), dataFlow.getUuid(), MapType.DATAFLOW.getMapType());
         }
 
         if (dataFlow.getDpas() != null) {
@@ -337,7 +331,7 @@ public class MasterMappingDAL {
 
         if (dataFlow.getDocumentations() != null) {
             Map<UUID, String> documentation = new HashMap<>();
-            List<JsonDocumentation> jsonDocumentations =  dataFlow.getDocumentations();
+            List<JsonDocumentation> jsonDocumentations = dataFlow.getDocumentations();
             for (JsonDocumentation doc : jsonDocumentations) {
                 documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
             }
@@ -359,7 +353,7 @@ public class MasterMappingDAL {
 
         if (project.getBasePopulation() != null) {
             Map<UUID, String> dsas = project.getBasePopulation();
-            saveChildMappings(dsas, MapType.COHORT.getMapType(),  project.getUuid(), MapType.PROJECT.getMapType());
+            saveChildMappings(dsas, MapType.COHORT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
 
         if (project.getDataSet() != null) {
@@ -374,7 +368,7 @@ public class MasterMappingDAL {
 
         if (project.getDocumentations() != null) {
             Map<UUID, String> documentation = new HashMap<>();
-            List<JsonDocumentation> jsonDocumentations =  project.getDocumentations();
+            List<JsonDocumentation> jsonDocumentations = project.getDocumentations();
             for (JsonDocumentation doc : jsonDocumentations) {
                 documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
             }
@@ -401,7 +395,7 @@ public class MasterMappingDAL {
 
         if (dataExchange.getDataFlows() != null) {
             Map<UUID, String> dataFlows = dataExchange.getDataFlows();
-            saveParentMappings(dataFlows, MapType.DATAFLOW.getMapType(),  dataExchange.getUuid(), MapType.DATAEXCHANGE.getMapType());
+            saveParentMappings(dataFlows, MapType.DATAFLOW.getMapType(), dataExchange.getUuid(), MapType.DATAEXCHANGE.getMapType());
         }
     }
 
@@ -429,7 +423,7 @@ public class MasterMappingDAL {
 
         if (dpa.getDocumentations() != null) {
             Map<UUID, String> documentation = new HashMap<>();
-            List<JsonDocumentation> jsonDocumentations =  dpa.getDocumentations();
+            List<JsonDocumentation> jsonDocumentations = dpa.getDocumentations();
             for (JsonDocumentation doc : jsonDocumentations) {
                 documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
             }
@@ -451,7 +445,7 @@ public class MasterMappingDAL {
 
         if (dpa.getPurposes() != null) {
             Map<UUID, String> purposes = new HashMap<>();
-            List<JsonPurpose> jsonPurposes =  dpa.getPurposes();
+            List<JsonPurpose> jsonPurposes = dpa.getPurposes();
             for (JsonPurpose purp : jsonPurposes) {
                 purposes.put(UUID.fromString(purp.getUuid()), purp.getTitle());
             }
@@ -460,7 +454,7 @@ public class MasterMappingDAL {
 
         if (dpa.getBenefits() != null) {
             Map<UUID, String> benefits = new HashMap<>();
-            List<JsonPurpose> jsonBenefits =  dpa.getBenefits();
+            List<JsonPurpose> jsonBenefits = dpa.getBenefits();
             for (JsonPurpose benef : jsonBenefits) {
                 benefits.put(UUID.fromString(benef.getUuid()), benef.getTitle());
             }
@@ -468,7 +462,7 @@ public class MasterMappingDAL {
         }
     }
 
-    public void saveCohortMappings(JsonCohort cohort) throws Exception {
+    public void saveCohortMappings(JsonCohort cohort, String userProjectId) throws Exception {
         List<String> oldCohortDpas = new SecurityMasterMappingDAL().getParentMappings(cohort.getUuid(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
 
         Map<UUID, String> newCohortDpaUuids = cohort.getDpas();
@@ -482,17 +476,44 @@ public class MasterMappingDAL {
                 removedCohortDpas.add(oldCohortDpa);
             }
         }
-        if (!removedCohortDpas.isEmpty()) {
-            deleteParentMappings(removedCohortDpas, MapType.DATAPROCESSINGAGREEMENT.getMapType(), UUID.fromString(cohort.getUuid()), MapType.COHORT.getMapType());
+
+        // Are there any DPAs which have been added?
+        ArrayList<String> addedCohortDpas = new ArrayList<String>();
+        for (String newCohortDpa : newCohortDpas) {
+            if (!oldCohortDpas.contains(newCohortDpa)) {
+                addedCohortDpas.add(newCohortDpa);
+            }
         }
 
-        // Strip out any DPAs already associated with this Cohort
-        newCohortDpas.removeIf(n -> oldCohortDpas.contains(n));
+        if (!removedCohortDpas.isEmpty() || !newCohortDpas.isEmpty()) {
+            EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+            try {
+                entityManager.getTransaction().begin();
 
-        if (!newCohortDpas.isEmpty()) {
-            saveParentMappings(newCohortDpas, MapType.DATAPROCESSINGAGREEMENT.getMapType(), cohort.getUuid(), MapType.COHORT.getMapType());
+                if (!removedCohortDpas.isEmpty()) {
+                    deleteParentMappings(entityManager, removedCohortDpas, MapType.DATAPROCESSINGAGREEMENT.getMapType(), UUID.fromString(cohort.getUuid()), MapType.COHORT.getMapType());
+                }
+
+                if (!addedCohortDpas.isEmpty()) {
+                    saveParentMappings(entityManager, addedCohortDpas, MapType.DATAPROCESSINGAGREEMENT.getMapType(), cohort.getUuid(), MapType.COHORT.getMapType());
+                }
+
+                String auditJson = new AuditCompareLogic().getAuditJson("Cohort mappings edited", oldCohortDpas, newCohortDpas);
+
+                new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                        AuditAction.EDIT, ItemType.COHORT, null, null, auditJson);
+
+                entityManager.getTransaction().commit();
+            } catch (Exception e) {
+                entityManager.getTransaction().rollback();
+                throw e;
+            } finally {
+                entityManager.close();
+            }
         }
     }
+
+
 
     public void saveDataSetMappings(JsonDataSet dataset) throws Exception {
 
