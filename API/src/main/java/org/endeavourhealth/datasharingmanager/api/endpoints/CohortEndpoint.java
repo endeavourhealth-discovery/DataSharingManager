@@ -105,6 +105,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
 
         return Response
                 .ok()
+                .entity(cohort.getUuid())
                 .build();
     }
 
