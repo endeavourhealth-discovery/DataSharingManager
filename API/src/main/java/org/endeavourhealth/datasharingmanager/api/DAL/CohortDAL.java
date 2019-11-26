@@ -66,6 +66,8 @@ public class CohortDAL {
             oldCohortEntity.setTechnicalDefinition(cohort.getTechnicalDefinition());
             oldCohortEntity.setDescription(cohort.getDescription());
 
+            new MasterMappingDAL().updateCohortMappings(cohort, userProjectId);
+
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.EDIT, ItemType.COHORT, null, null, auditJson);
 
@@ -93,6 +95,8 @@ public class CohortDAL {
             String auditJson = new AuditCompareLogic().getAuditJson("Cohort Created", null, cohortEntity);
 
             entityManager.persist(cohortEntity);
+
+            new MasterMappingDAL().updateCohortMappings(cohort, userProjectId);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.ADD, ItemType.COHORT, null, null, auditJson);
