@@ -102,6 +102,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
 
         return Response
                 .ok()
+                .entity(dataSet.getUuid())
                 .build();
     }
 
