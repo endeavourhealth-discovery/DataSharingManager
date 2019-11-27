@@ -92,14 +92,11 @@ public final class CohortEndpoint extends AbstractEndpoint {
                 "Cohort", cohort);
 
         if (cohort.getUuid() != null) {
-            //new MasterMappingDAL().deleteAllMappings(cohort.getUuid());
             new CohortDAL().updateCohort(cohort, userProjectId);
         } else {
             cohort.setUuid(UUID.randomUUID().toString());
             new CohortDAL().saveCohort(cohort, userProjectId);
         }
-
-        //new MasterMappingDAL().updateCohortMappings(cohort, userProjectId);
 
         clearLogbackMarkers();
 
