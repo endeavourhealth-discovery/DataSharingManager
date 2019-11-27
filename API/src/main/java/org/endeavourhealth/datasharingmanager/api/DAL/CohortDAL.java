@@ -1,6 +1,8 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.CohortEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonCohort;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
 import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
@@ -55,6 +57,7 @@ public class CohortDAL {
         CohortEntity newCohort = new CohortEntity(cohort);
 
         CohortEntity oldCohortEntity = entityManager.find(CohortEntity.class, cohort.getUuid());
+        oldCohortEntity.setDpas(new SecurityMasterMappingDAL().getParentMappings(cohort.getUuid(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType()));
 
         String auditJson = new AuditCompareLogic().getAuditJson("Cohort Edited", oldCohortEntity, newCohort);
 
@@ -66,7 +69,7 @@ public class CohortDAL {
             oldCohortEntity.setTechnicalDefinition(cohort.getTechnicalDefinition());
             oldCohortEntity.setDescription(cohort.getDescription());
 
-            new MasterMappingDAL().updateCohortMappings(cohort, userProjectId);
+            new MasterMappingDAL().updateCohortMappings(cohort, oldCohortEntity.getDpas(), userProjectId);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.EDIT, ItemType.COHORT, null, null, auditJson);
@@ -96,7 +99,7 @@ public class CohortDAL {
 
             entityManager.persist(cohortEntity);
 
-            new MasterMappingDAL().updateCohortMappings(cohort, userProjectId);
+            new MasterMappingDAL().updateCohortMappings(cohort, null, userProjectId);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.ADD, ItemType.COHORT, null, null, auditJson);
