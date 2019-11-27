@@ -92,14 +92,11 @@ public final class CohortEndpoint extends AbstractEndpoint {
                 "Cohort", cohort);
 
         if (cohort.getUuid() != null) {
-            new MasterMappingDAL().deleteAllMappings(cohort.getUuid());
             new CohortDAL().updateCohort(cohort, userProjectId);
         } else {
             cohort.setUuid(UUID.randomUUID().toString());
-            new CohortDAL().saveCohort(cohort);
+            new CohortDAL().saveCohort(cohort, userProjectId);
         }
-
-        new MasterMappingDAL().saveCohortMappings(cohort);
 
         clearLogbackMarkers();
 
@@ -117,6 +114,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Delete a cohort based on UUID that is passed to the API.  Warning! This is permanent.")
     @RequiresAdmin
     public Response deleteCohort(@Context SecurityContext sc,
+                                 @HeaderParam("userProjectId") String userProjectId,
                                  @ApiParam(value = "UUID of the cohort to be deleted") @QueryParam("uuid") String uuid
     ) throws Exception {
         super.setLogbackMarkers(sc);
@@ -124,7 +122,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
                 COHORT,
                 COHORT_ID, uuid);
 
-        new CohortDAL().deleteCohort(uuid);
+        new CohortDAL().deleteCohort(uuid, userProjectId);
 
         clearLogbackMarkers();
         return Response
