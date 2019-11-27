@@ -124,7 +124,9 @@ public class CohortDAL {
                     AuditAction.DELETE, ItemType.COHORT, null, null, auditJson);
 
             entityManager.getTransaction().commit();
-            // Any reason for lack of catch/rollback?
+        } catch (Exception e) {
+            entityManager.getTransaction().rollback();
+            throw e;
         } finally {
             entityManager.close();
         }
