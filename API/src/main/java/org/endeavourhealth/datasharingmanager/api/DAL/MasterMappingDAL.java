@@ -106,17 +106,11 @@ public class MasterMappingDAL {
 
     private void saveMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToAdd, Short thisMapTypeId, Short otherMapTypeId, EntityManager entityManager) throws Exception {
         mappingsToAdd.forEach((mapping) -> {
-            MasterMappingEntity mme = new MasterMappingEntity();
+            MasterMappingEntity mme;
             if (thisItemIsChild) {
-                mme.setChildUuid(thisItem);
-                mme.setChildMapTypeId(thisMapTypeId);
-                mme.setParentUuid(mapping);
-                mme.setParentMapTypeId(otherMapTypeId);
+                mme = new MasterMappingEntity(thisItem, thisMapTypeId, mapping, otherMapTypeId);
             } else {
-                mme.setParentUuid(thisItem);
-                mme.setParentMapTypeId(thisMapTypeId);
-                mme.setChildUuid(mapping);
-                mme.setChildMapTypeId(otherMapTypeId);
+                mme = new MasterMappingEntity(mapping, otherMapTypeId, thisItem, thisMapTypeId);
             }
             entityManager.persist(mme);
         });
@@ -125,17 +119,11 @@ public class MasterMappingDAL {
 
     private void deleteMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToDelete, Short thisMapTypeId, Short otherMapTypeId, EntityManager entityManager) throws Exception {
         mappingsToDelete.forEach((mapping) -> {
-            MasterMappingEntity mme = new MasterMappingEntity();
+            MasterMappingEntity mme;
             if (thisItemIsChild) {
-                mme.setChildUuid(thisItem);
-                mme.setChildMapTypeId(thisMapTypeId);
-                mme.setParentUuid(mapping);
-                mme.setParentMapTypeId(otherMapTypeId);
+                mme = new MasterMappingEntity(thisItem, thisMapTypeId, mapping, otherMapTypeId);
             } else {
-                mme.setParentUuid(thisItem);
-                mme.setParentMapTypeId(thisMapTypeId);
-                mme.setChildUuid(mapping);
-                mme.setChildMapTypeId(otherMapTypeId);
+                mme = new MasterMappingEntity(mapping, otherMapTypeId, thisItem, thisMapTypeId);
             }
             entityManager.remove(entityManager.merge(mme));
         });
