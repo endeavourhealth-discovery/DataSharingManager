@@ -56,15 +56,23 @@ public class MasterMappingDAL {
         }
     }
 
-    public void updateCohortMappings(JsonCohort updatedCohort, List<String> oldCohortDpas, String userProjectId) throws Exception {
+    public void updateDataSetMappings(JsonDataSet updatedDataSet, List<String> oldDataSetDpas) throws Exception {
+        // Convert Map<UUID, String> to List<String>
+        List<String> updatedCohortDpas = new ArrayList<String>();
+        updatedDataSet.getDpas().forEach((k, v) -> updatedCohortDpas.add(k.toString()));
+
+        updateMappings(true, updatedDataSet.getUuid(), oldDataSetDpas, updatedCohortDpas, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+    }
+
+    public void updateCohortMappings(JsonCohort updatedCohort, List<String> oldCohortDpas) throws Exception {
         // Convert Map<UUID, String> to List<String>
         List<String> updatedCohortDpas = new ArrayList<String>();
         updatedCohort.getDpas().forEach((k, v) -> updatedCohortDpas.add(k.toString()));
 
-        updateMappings(true, updatedCohort.getUuid(), oldCohortDpas, updatedCohortDpas, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), userProjectId);
+        updateMappings(true, updatedCohort.getUuid(), oldCohortDpas, updatedCohortDpas, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
     }
 
-    private void updateMappings(boolean thisItemIsChild, String thisItem, List<String> oldMappings, List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId, String userProjectId) throws  Exception {
+    private void updateMappings(boolean thisItemIsChild, String thisItem, List<String> oldMappings, List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId) throws  Exception {
         ArrayList<String> removedMappings = new ArrayList<String>();
         for (String oldMapping : oldMappings) {
             if (!updatedMappings.contains(oldMapping)) {
@@ -504,18 +512,6 @@ public class MasterMappingDAL {
                 benefits.put(UUID.fromString(benef.getUuid()), benef.getTitle());
             }
             saveChildMappings(benefits, MapType.BENEFIT.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-    }
-
-
-
-
-
-    public void saveDataSetMappings(JsonDataSet dataset) throws Exception {
-
-        if (dataset.getDpas() != null) {
-            Map<UUID, String> dataDpas = dataset.getDpas();
-            saveParentMappings(dataDpas, MapType.DATAPROCESSINGAGREEMENT.getMapType(), dataset.getUuid(), MapType.DATASET.getMapType());
         }
     }
 
