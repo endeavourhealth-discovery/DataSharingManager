@@ -1,6 +1,7 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.CohortEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataProcessingAgreementEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.MasterMappingEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
@@ -462,28 +463,26 @@ public class MasterMappingDAL {
         }
     }
 
-    public void updateCohortMappings(JsonCohort cohort, String userProjectId) throws Exception {
-        List<String> oldCohortDpas = new SecurityMasterMappingDAL().getParentMappings(cohort.getUuid(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+    public void updateCohortMappings(JsonCohort updatedCohort, List<String> oldCohortDpas, String userProjectId) throws Exception {
+        // Convert Map<UUID, String> to List<String>
+        List<String> updatedCohortDpas = new ArrayList<String>();
+        updatedCohort.getDpas().forEach((k, v) -> updatedCohortDpas.add(k.toString()));
 
-        Map<UUID, String> newCohortDpaUuids = cohort.getDpas();
-        List<String> newCohortDpas = new ArrayList<String>();
-        newCohortDpaUuids.forEach((k, v) -> newCohortDpas.add(k.toString()));
-
-        updateParentMappings(cohort.getUuid(), oldCohortDpas, newCohortDpas, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), userProjectId);
+        updateParentMappings(updatedCohort.getUuid(), oldCohortDpas, updatedCohortDpas, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), userProjectId);
     }
 
-    public void updateParentMappings(String child, List<String> oldParents, List<String> newParents, Short childMapTypeId, Short parentMapTypeId, String userProjectId) throws  Exception {
+    public void updateParentMappings(String child, List<String> oldParents, List<String> updatedParents, Short childMapTypeId, Short parentMapTypeId, String userProjectId) throws  Exception {
         ArrayList<String> removedParents = new ArrayList<String>();
         for (String oldParent : oldParents) {
-            if (!newParents.contains(oldParent)) {
+            if (!updatedParents.contains(oldParent)) {
                 removedParents.add(oldParent);
             }
         }
 
         ArrayList<String> addedParents = new ArrayList<String>();
-        for (String newParent : newParents) {
-            if (!oldParents.contains(newParent)) {
-                addedParents.add(newParent);
+        for (String updatedParent : updatedParents) {
+            if (!oldParents.contains(updatedParent)) {
+                addedParents.add(updatedParent);
             }
         }
 
