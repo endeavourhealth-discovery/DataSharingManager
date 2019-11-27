@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class MasterMappingDAL {
 
+    // This method should be removed, and calls redirected to updateParentMappings / updateChildMappings (to be written)
     public void deleteAllMappings(String uuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
@@ -44,6 +45,7 @@ public class MasterMappingDAL {
         }
     }
 
+    // This method should be removed, and calls redirected to updateParentMappings
     public void saveParentMappings(Map<UUID, String> parents, Short parentMapTypeId, String childUuid, Short childMapTypeId) throws Exception {
         // Convert to List
         List<String> parentUuids = new ArrayList<String>();
@@ -62,8 +64,56 @@ public class MasterMappingDAL {
         }
     }
 
-    public void saveParentMappings(EntityManager entityManager, List<String> parentsToAdd, Short parentMapTypeId, String childUuid, Short childMapTypeId) throws Exception {
-        parentsToAdd.forEach((p) -> { // What happens if one has been removed?
+    public void updateCohortMappings(JsonCohort updatedCohort, List<String> oldCohortDpas, String userProjectId) throws Exception {
+        // Convert Map<UUID, String> to List<String>
+        List<String> updatedCohortDpas = new ArrayList<String>();
+        updatedCohort.getDpas().forEach((k, v) -> updatedCohortDpas.add(k.toString()));
+
+        updateParentMappings(updatedCohort.getUuid(), oldCohortDpas, updatedCohortDpas, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), userProjectId);
+    }
+
+    private void updateParentMappings(String child, List<String> oldParents, List<String> updatedParents, Short childMapTypeId, Short parentMapTypeId, String userProjectId) throws  Exception {
+        ArrayList<String> removedParents = new ArrayList<String>();
+        for (String oldParent : oldParents) {
+            if (!updatedParents.contains(oldParent)) {
+                removedParents.add(oldParent);
+            }
+        }
+
+        ArrayList<String> addedParents = new ArrayList<String>();
+        for (String updatedParent : updatedParents) {
+            if (!oldParents.contains(updatedParent)) {
+                addedParents.add(updatedParent);
+            }
+        }
+
+        if (!removedParents.isEmpty() || !addedParents.isEmpty()) {
+            EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+            try {
+                entityManager.getTransaction().begin();
+
+                if (!removedParents.isEmpty()) {
+                    deleteParentMappings(entityManager, removedParents, parentMapTypeId, child, childMapTypeId);
+                }
+
+                if (!addedParents.isEmpty()) {
+                    saveParentMappings(entityManager, addedParents, parentMapTypeId, child, childMapTypeId);
+                }
+
+                entityManager.getTransaction().commit();
+            } catch (Exception e) {
+                entityManager.getTransaction().rollback();
+                throw e;
+            } finally {
+                entityManager.close();
+            }
+        }
+    }
+
+
+
+    private void saveParentMappings(EntityManager entityManager, List<String> parentsToAdd, Short parentMapTypeId, String childUuid, Short childMapTypeId) throws Exception {
+        parentsToAdd.forEach((p) -> {
             MasterMappingEntity mme = new MasterMappingEntity();
             mme.setChildUuid(childUuid);
             mme.setChildMapTypeId(childMapTypeId);
@@ -74,7 +124,7 @@ public class MasterMappingDAL {
     }
 
 
-    public void deleteParentMappings(EntityManager entityManager, List<String> parentsToDelete, Short parentMapTypeId, String childUuid, Short childMapTypeId) throws Exception {
+    private void deleteParentMappings(EntityManager entityManager, List<String> parentsToDelete, Short parentMapTypeId, String childUuid, Short childMapTypeId) throws Exception {
         parentsToDelete.forEach((p) -> {
             MasterMappingEntity mme = new MasterMappingEntity();
             mme.setChildUuid(childUuid);
@@ -86,7 +136,7 @@ public class MasterMappingDAL {
     }
 
 
-    public void saveChildMappings(Map<UUID, String> children, Short childMapTypeId, String parentUuid, Short parentMapTypeId) throws Exception {
+    private void saveChildMappings(Map<UUID, String> children, Short childMapTypeId, String parentUuid, Short parentMapTypeId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
         try {
@@ -463,51 +513,7 @@ public class MasterMappingDAL {
         }
     }
 
-    public void updateCohortMappings(JsonCohort updatedCohort, List<String> oldCohortDpas, String userProjectId) throws Exception {
-        // Convert Map<UUID, String> to List<String>
-        List<String> updatedCohortDpas = new ArrayList<String>();
-        updatedCohort.getDpas().forEach((k, v) -> updatedCohortDpas.add(k.toString()));
 
-        updateParentMappings(updatedCohort.getUuid(), oldCohortDpas, updatedCohortDpas, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), userProjectId);
-    }
-
-    public void updateParentMappings(String child, List<String> oldParents, List<String> updatedParents, Short childMapTypeId, Short parentMapTypeId, String userProjectId) throws  Exception {
-        ArrayList<String> removedParents = new ArrayList<String>();
-        for (String oldParent : oldParents) {
-            if (!updatedParents.contains(oldParent)) {
-                removedParents.add(oldParent);
-            }
-        }
-
-        ArrayList<String> addedParents = new ArrayList<String>();
-        for (String updatedParent : updatedParents) {
-            if (!oldParents.contains(updatedParent)) {
-                addedParents.add(updatedParent);
-            }
-        }
-
-        if (!removedParents.isEmpty() || !addedParents.isEmpty()) {
-            EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-            try {
-                entityManager.getTransaction().begin();
-
-                if (!removedParents.isEmpty()) {
-                    deleteParentMappings(entityManager, removedParents, parentMapTypeId, child, childMapTypeId);
-                }
-
-                if (!addedParents.isEmpty()) {
-                    saveParentMappings(entityManager, addedParents, parentMapTypeId, child, childMapTypeId);
-                }
-
-                entityManager.getTransaction().commit();
-            } catch (Exception e) {
-                entityManager.getTransaction().rollback();
-                throw e;
-            } finally {
-                entityManager.close();
-            }
-        }
-    }
 
 
 
