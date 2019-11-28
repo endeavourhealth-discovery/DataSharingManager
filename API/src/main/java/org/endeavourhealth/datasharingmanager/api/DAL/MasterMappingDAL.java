@@ -1,9 +1,13 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.CohortEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DatasetEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.MasterMappingEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.*;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.uiaudit.logic.AuditCompareLogic;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -56,31 +60,52 @@ public class MasterMappingDAL {
         }
     }
 
-    public void updateDataSetMappings(JsonDataSet updatedDataSet, List<String> oldDataSetDpas) throws Exception {
+    public void updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset) throws Exception {
         // Convert Map<UUID, String> to List<String>
-        List<String> updatedCohortDpas = new ArrayList<String>();
-        updatedDataSet.getDpas().forEach((k, v) -> updatedCohortDpas.add(k.toString()));
+        List<String> updatedDatasetDPAs = new ArrayList<String>();
+        updatedDataSet.getDpas().forEach((k, v) -> updatedDatasetDPAs.add(k.toString()));
 
-        updateMappings(true, updatedDataSet.getUuid(), oldDataSetDpas, updatedCohortDpas, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        List<String> removedMappings = new ArrayList<>();
+        List<String> addedMappings = new ArrayList<>();
+
+        updateMappings(true, updatedDataSet.getUuid(), oldDataset.getDpas(), updatedDatasetDPAs, MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), removedMappings, addedMappings);
     }
 
-    public void updateCohortMappings(JsonCohort updatedCohort, List<String> oldCohortDpas) throws Exception {
+    public JsonNode updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson) throws Exception {
         // Convert Map<UUID, String> to List<String>
         List<String> updatedCohortDpas = new ArrayList<String>();
         updatedCohort.getDpas().forEach((k, v) -> updatedCohortDpas.add(k.toString()));
 
-        updateMappings(true, updatedCohort.getUuid(), oldCohortDpas, updatedCohortDpas, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        List<String> removedMappings = new ArrayList<>();
+        List<String> addedMappings = new ArrayList<>();
+
+        updateMappings(true, updatedCohort.getUuid(), oldCohort.getDpas(), updatedCohortDpas, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), removedMappings, addedMappings);
+
+        auditJson = appendToJson("RemovedDPAs", removedMappings, auditJson);
+        auditJson = appendToJson("AddedDPAs", addedMappings, auditJson);
+
+        return auditJson;
+
     }
 
-    private void updateMappings(boolean thisItemIsChild, String thisItem, List<String> oldMappings, List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId) throws  Exception {
-        ArrayList<String> removedMappings = new ArrayList<String>();
+    private JsonNode appendToJson(String fieldName, List<String> mappings, JsonNode auditJson) throws Exception {
+        if (!mappings.isEmpty()) {
+            return new AuditCompareLogic().generateListDifferenceAuditJson(auditJson, fieldName, mappings, "dpa");
+        }
+
+        return auditJson;
+    }
+
+    private void updateMappings(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
+                                List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId,
+                                List<String> removedMappings, List<String> addedMappings) throws  Exception {
+
         for (String oldMapping : oldMappings) {
             if (!updatedMappings.contains(oldMapping)) {
                 removedMappings.add(oldMapping);
             }
         }
 
-        ArrayList<String> addedMappings = new ArrayList<String>();
         for (String updatedMapping : updatedMappings) {
             if (!oldMappings.contains(updatedMapping)) {
                 addedMappings.add(updatedMapping);

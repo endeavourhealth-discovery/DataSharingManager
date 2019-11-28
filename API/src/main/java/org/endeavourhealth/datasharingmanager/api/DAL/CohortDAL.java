@@ -1,5 +1,6 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.CohortEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
@@ -58,7 +59,7 @@ public class CohortDAL {
         CohortEntity oldCohortEntity = entityManager.find(CohortEntity.class, cohort.getUuid());
         oldCohortEntity.setDpas(new SecurityMasterMappingDAL().getParentMappings(cohort.getUuid(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType()));
         CohortEntity newCohort = new CohortEntity(cohort);
-        String auditJson = new AuditCompareLogic().getAuditJson("Cohort edited", oldCohortEntity, newCohort);
+        JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Cohort edited", oldCohortEntity, newCohort);
 
         try {
             entityManager.getTransaction().begin();
@@ -67,7 +68,7 @@ public class CohortDAL {
             oldCohortEntity.setDescription(cohort.getDescription());
             oldCohortEntity.setTechnicalDefinition(cohort.getTechnicalDefinition());
 
-            new MasterMappingDAL().updateCohortMappings(cohort, oldCohortEntity.getDpas());
+            auditJson = new MasterMappingDAL().updateCohortMappings(cohort, oldCohortEntity, auditJson);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.EDIT, ItemType.COHORT, null, null, auditJson);
@@ -93,9 +94,10 @@ public class CohortDAL {
             cohortEntity.setTechnicalDefinition(cohort.getTechnicalDefinition());
             cohortEntity.setUuid(cohort.getUuid());
 
-            new MasterMappingDAL().updateCohortMappings(cohort, null);
+            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Cohort Created", null, cohortEntity);
 
-            String auditJson = new AuditCompareLogic().getAuditJson("Cohort Created", null, cohortEntity);
+            new MasterMappingDAL().updateCohortMappings(cohort, null, auditJson);
+
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.ADD, ItemType.COHORT, null, null, auditJson);
 
@@ -114,7 +116,7 @@ public class CohortDAL {
 
         try {
             CohortEntity oldCohortEntity = entityManager.find(CohortEntity.class, uuid);
-            String auditJson = new AuditCompareLogic().getAuditJson("Cohort deleted", oldCohortEntity, null);
+            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Cohort deleted", oldCohortEntity, null);
 
             CohortEntity cohortEntity = entityManager.find(CohortEntity.class, uuid);
             entityManager.getTransaction().begin();
