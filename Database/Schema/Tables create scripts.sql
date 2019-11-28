@@ -483,27 +483,9 @@ create table data_sharing_manager.extract_technical_details (
     sftp_client_private_key_filename varchar(100) COMMENT 'Filename for the SFTP client private key (.ppk)',
     sftp_client_private_key_fileData mediumtext COMMENT 'Base64 encoded file data for the SFTP client private key (.ppk)',
     pgp_customer_public_key_filename varchar(100) COMMENT 'Filename for the PGP customer public key (.cer)',
-    pgp_customer_public_key_fileData mediumtext NOT NULL COMMENT 'Base64 encoded file data for the PGP customer public key (.cer)',
+    pgp_customer_public_key_fileData mediumtext COMMENT 'Base64 encoded file data for the PGP customer public key (.cer)',
     pgp_internal_public_key_filename varchar(100) COMMENT 'Filename for the PGP internal public key (.cer)',
-    pgp_internal_public_key_fileData mediumtext NOT NULL COMMENT 'Base64 encoded file data for the PGP internal public key (.cer)',
+    pgp_internal_public_key_fileData mediumtext COMMENT 'Base64 encoded file data for the PGP internal public key (.cer)',
 
     primary key data_sharing_manager_extract_technical_details_uuid (uuid)
 ) comment 'Hold extract technical details';
-
-
-create table `project_schedule` (
-    uuid char(36) NOT NULL COMMENT 'Unique identifier for the schedule',
-	starts date COMMENT 'Starting date when reports will be sent',
-	ends date COMMENT 'Ending date when reports will no longer be sent',
-	frequency smallint COMMENT 'Frequency of report sending. 0-Daily, 1-Weekly, 2-Monthly, 3-Yearly',
-	weeks char(7) COMMENT 'Comma separated week setting. i.e. 1,2,3,4',
-	is_monday tinyint(1) COMMENT '1 if report is to be sent on Mondays',
-	is_tuesday tinyint(1) COMMENT '1 if report is to be sent on Tuesdays',
-	is_wednesday tinyint(1) COMMENT '1 if report is to be sent on Wednesdays',
-	is_thursday tinyint(1) COMMENT '1 if report is to be sent on Thursdays',
-	is_friday tinyint(1) COMMENT '1 if report is to be sent on Fridays',
-	is_saturday tinyint(1) COMMENT '1 if report is to be sent on Saturdays',
-	is_sunday tinyint(1) COMMENT '1 if report is to be sent on Sundays',
-
-    primary key data_sharing_manager_schedule_uuid (uuid)
-) comment 'Information regarding project schedule';
