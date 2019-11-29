@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.CohortEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DatasetEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.MasterMappingEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.ProjectEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.*;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
@@ -60,29 +61,19 @@ public class MasterMappingDAL {
         }
     }
 
-    public void updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset) throws Exception {
-        // Convert Map<UUID, String> to List<String>
-        List<String> updatedDatasetDPAs = new ArrayList<String>();
-        updatedDataSet.getDpas().forEach((k, v) -> updatedDatasetDPAs.add(k.toString()));
+    public JsonNode updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson) throws Exception {
+        // DPAs
+        auditJson = updateMappingsAndGetAudit(true, updatedDataSet.getUuid(), oldDataset.getDpas(),
+                updatedDataSet.getDpas(), MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
 
-        List<String> removedMappings = new ArrayList<>();
-        List<String> addedMappings = new ArrayList<>();
-
-        updateMappings(true, updatedDataSet.getUuid(), oldDataset.getDpas(), updatedDatasetDPAs, MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), removedMappings, addedMappings);
+        return auditJson;
     }
 
     public JsonNode updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson) throws Exception {
-        // Convert Map<UUID, String> to List<String>
-        List<String> updatedCohortDpas = new ArrayList<String>();
-        updatedCohort.getDpas().forEach((k, v) -> updatedCohortDpas.add(k.toString()));
 
-        List<String> removedMappings = new ArrayList<>();
-        List<String> addedMappings = new ArrayList<>();
-
-        updateMappings(true, updatedCohort.getUuid(), oldCohort.getDpas(), updatedCohortDpas, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), removedMappings, addedMappings);
-
-        auditJson = appendToJson("RemovedDPAs", removedMappings, auditJson);
-        auditJson = appendToJson("AddedDPAs", addedMappings, auditJson);
+        // DPAs
+        auditJson = updateMappingsAndGetAudit(true, updatedCohort.getUuid(), oldCohort.getDpas(),
+                updatedCohort.getDpas(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
 
         return auditJson;
 
@@ -134,8 +125,6 @@ public class MasterMappingDAL {
             }
         }
     }
-
-
 
     private void saveMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToAdd, Short thisMapTypeId, Short otherMapTypeId, EntityManager entityManager) throws Exception {
         mappingsToAdd.forEach((mapping) -> {
@@ -415,6 +404,49 @@ public class MasterMappingDAL {
             }
             saveChildMappings(documentation, MapType.DOCUMENT.getMapType(), dataFlow.getUuid(), MapType.DATAFLOW.getMapType());
         }
+    }
+
+    public JsonNode updateProjectMappings(JsonProject updatedProject, ProjectEntity oldProject, JsonNode auditJson) throws Exception {
+        // Publishers
+        auditJson = updateMappingsAndGetAudit(true, updatedProject.getUuid(), oldProject.getPublishers(),
+                updatedProject.getPublishers(), MapType.PROJECT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson);
+
+        // Subscriber
+        auditJson = updateMappingsAndGetAudit(true, updatedProject.getUuid(), oldProject.getSubscribers(),
+                updatedProject.getSubscribers(), MapType.PROJECT.getMapType(), MapType.SUBSCRIBER.getMapType(), auditJson);
+
+        // Cohorts
+        auditJson = updateMappingsAndGetAudit(true, updatedProject.getUuid(), oldProject.getCohorts(),
+                updatedProject.getBasePopulation(), MapType.PROJECT.getMapType(), MapType.COHORT.getMapType(), auditJson);
+
+        // DataSets
+        auditJson = updateMappingsAndGetAudit(true, updatedProject.getUuid(), oldProject.getDataSets(),
+                updatedProject.getDataSet(), MapType.PROJECT.getMapType(), MapType.DATASET.getMapType(), auditJson);
+
+        // DSA
+        auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getDsas(),
+                updatedProject.getDsas(), MapType.PROJECT.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
+
+        return auditJson;
+
+    }
+
+    private JsonNode updateMappingsAndGetAudit(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
+                                               Map<UUID, String> updatedMap, Short thisMapTypeId, Short otherMapTypeId,
+                                               JsonNode auditJson) throws Exception {
+
+        List<String> updatedMappings = new ArrayList<String>();
+        List<String> removedMappings = new ArrayList<>();
+        List<String> addedMappings = new ArrayList<>();
+        updatedMap.forEach((k, v) -> updatedMappings.add(k.toString()));
+
+        updateMappings(true, thisItem, oldMappings, updatedMappings,
+                thisMapTypeId, otherMapTypeId, removedMappings, addedMappings);
+
+        auditJson = appendToJson("Removed" + MapType.valueOfTypeId(otherMapTypeId), removedMappings, auditJson);
+        auditJson = appendToJson("Added" + MapType.valueOfTypeId(otherMapTypeId), addedMappings, auditJson);
+
+        return auditJson;
     }
 
     public void saveProjectMappings(JsonProject project) throws Exception {

@@ -6,6 +6,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.databa
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonCohort;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.CohortCache;
 import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
 import org.endeavourhealth.uiaudit.enums.AuditAction;
 import org.endeavourhealth.uiaudit.enums.ItemType;
@@ -21,6 +22,10 @@ import java.util.List;
 
 public class CohortDAL {
 
+    private void clearCohortCache(String cohortId) throws Exception {
+        CohortCache.clearCohortCache(cohortId);
+    }
+
     public List<CohortEntity> getAllCohorts() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
@@ -32,19 +37,6 @@ public class CohortDAL {
             CriteriaQuery<CohortEntity> all = cq.select(rootEntry);
             TypedQuery<CohortEntity> allQuery = entityManager.createQuery(all);
             List<CohortEntity> ret = allQuery.getResultList();
-
-            return ret;
-        } finally {
-            entityManager.close();
-        }
-    }
-
-    public CohortEntity getCohort(String uuid) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-
-            CohortEntity ret = entityManager.find(CohortEntity.class, uuid);
 
             return ret;
         } finally {
@@ -80,6 +72,8 @@ public class CohortDAL {
         } finally {
             entityManager.close();
         }
+
+        clearCohortCache(cohort.getUuid());
     }
 
     public void saveCohort(JsonCohort cohort, String userProjectId) throws Exception {
@@ -96,7 +90,7 @@ public class CohortDAL {
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Cohort Created", null, cohortEntity);
 
-            new MasterMappingDAL().updateCohortMappings(cohort, null, auditJson);
+            auditJson = new MasterMappingDAL().updateCohortMappings(cohort, null, auditJson);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.ADD, ItemType.COHORT, null, null, auditJson);
@@ -109,6 +103,8 @@ public class CohortDAL {
         } finally {
             entityManager.close();
         }
+
+        clearCohortCache(cohort.getUuid());
     }
 
     public void deleteCohort(String uuid, String userProjectId) throws Exception {
@@ -122,6 +118,8 @@ public class CohortDAL {
             entityManager.getTransaction().begin();
             entityManager.remove(cohortEntity);
 
+            auditJson = new MasterMappingDAL().updateCohortMappings(null, oldCohortEntity, auditJson);
+
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.DELETE, ItemType.COHORT, null, null, auditJson);
 
@@ -132,6 +130,8 @@ public class CohortDAL {
         } finally {
             entityManager.close();
         }
+
+        clearCohortCache(uuid);
     }
 
     public List<CohortEntity> search(String expression) throws Exception {
