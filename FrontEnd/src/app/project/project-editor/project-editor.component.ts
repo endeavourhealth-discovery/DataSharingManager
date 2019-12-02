@@ -46,7 +46,7 @@ export class ProjectEditorComponent implements OnInit {
   dsas: Dsa[] = [];
   publishers: Organisation[] = [];
   subscribers: Organisation[] = [];
-  basePopulation: Cohort[] = [];
+  cohorts: Cohort[] = [];
   dataSet: DataSet[] = [];
   documentations: Documentation[] = [];
   extractTechnicalDetails: ExtractTechnicalDetails = <ExtractTechnicalDetails>{};
@@ -322,17 +322,17 @@ export class ProjectEditorComponent implements OnInit {
     }
 
     // Populate subscribers before save
-    vm.project.basePopulation = {};
-    for (let idx in this.basePopulation) {
-      const coh: Cohort = this.basePopulation[idx];
-      this.project.basePopulation[coh.uuid] = coh.name;
+    vm.project.cohorts = {};
+    for (let idx in this.cohorts) {
+      const coh: Cohort = this.cohorts[idx];
+      this.project.cohorts[coh.uuid] = coh.name;
     }
 
     // Populate subscribers before save
-    vm.project.dataSet = {};
+    vm.project.dataSets = {};
     for (let idx in this.dataSet) {
       const ds: DataSet = this.dataSet[idx];
-      this.project.dataSet[ds.uuid] = ds.name;
+      this.project.dataSets[ds.uuid] = ds.name;
     }
 
     // Populate documents before save
@@ -349,6 +349,7 @@ export class ProjectEditorComponent implements OnInit {
       vm.project.schedule = null;
     }
 
+    console.log(vm.project);
     vm.projectService.saveProject(vm.project)
       .subscribe(saved => {
           vm.project.uuid = saved;
@@ -417,9 +418,9 @@ export class ProjectEditorComponent implements OnInit {
 
   private editBasePopulations() {
     const vm = this;
-    CohortPickerComponent.open(vm.$modal, vm.basePopulation)
+    CohortPickerComponent.open(vm.$modal, vm.cohorts)
       .result.then(function
-      (result: Cohort[]) { vm.basePopulation= result; },
+      (result: Cohort[]) { vm.cohorts= result; },
       () => vm.log.info('Edit cohort cancelled')
     );
   }
@@ -464,7 +465,7 @@ export class ProjectEditorComponent implements OnInit {
     const vm = this;
     vm.projectService.getLinkedBasePopulation(vm.project.uuid)
       .subscribe(
-        result => vm.basePopulation = result,
+        result => vm.cohorts = result,
         error => vm.log.error('The associated cohort could not be loaded. Please try again.', error, 'Load associated cohort')
       );
   }
@@ -501,6 +502,13 @@ export class ProjectEditorComponent implements OnInit {
         result => vm.documentations = result,
         error => vm.log.error('The associated documentation could not be loaded. Please try again.', error, 'Load associated documentation')
       );
+  }
+
+  removeFromDocumentation(match: Documentation) {
+    const index = this.documentations.indexOf(match, 0);
+    if (index > -1) {
+      this.documentations.splice(index, 1);
+    }
   }
 
   changeUserApplicationPolicy(policyId: string) {

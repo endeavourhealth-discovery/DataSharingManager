@@ -1,9 +1,16 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.ProjectCache;
+import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
+import org.endeavourhealth.uiaudit.enums.AuditAction;
+import org.endeavourhealth.uiaudit.enums.ItemType;
+import org.endeavourhealth.uiaudit.logic.AuditCompareLogic;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -38,8 +45,20 @@ public class ProjectDAL {
 
     }
 
-    public void updateProject(JsonProject project) throws Exception {
+    public void updateProject(JsonProject project, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+
+        ProjectEntity oldProjectEntity = entityManager.find(ProjectEntity.class, project.getUuid());
+        oldProjectEntity.setDsas(new SecurityMasterMappingDAL().getParentMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType()));
+        oldProjectEntity.setPublishers(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.PUBLISHER.getMapType()));
+        oldProjectEntity.setSubscribers(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.SUBSCRIBER.getMapType()));
+        oldProjectEntity.setDocumentations(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.DOCUMENT.getMapType()));
+        oldProjectEntity.setCohorts(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.COHORT.getMapType()));
+        oldProjectEntity.setDataSets(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.DATASET.getMapType()));
+
+        ProjectEntity newProject = new ProjectEntity(project);
+
+        JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Project edited", oldProjectEntity, newProject);
 
         try {
             ProjectEntity projectEntity = entityManager.find(ProjectEntity.class, project.getUuid());
@@ -66,6 +85,12 @@ public class ProjectDAL {
             if (project.getEndDate() != null) {
                 projectEntity.setEndDate(Date.valueOf(project.getEndDate()));
             }
+
+            auditJson = new MasterMappingDAL().updateProjectMappings(project, oldProjectEntity, auditJson);
+
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                    AuditAction.EDIT, ItemType.PROJECT, null, null, auditJson);
+
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();

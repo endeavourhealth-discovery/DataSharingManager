@@ -24,8 +24,8 @@ export class Project {
   endDate: string;
   publishers: { [key: string]: string; };
   subscribers: { [key: string]: string; };
-  basePopulation: { [key: string]: string; };
-  dataSet: { [key: string]: string; };
+  cohorts: { [key: string]: string; };
+  dataSets: { [key: string]: string; };
   projectConfiguration: { [key: string]: string; };
   dsas: { [key: string]: string; };
   applicationPolicy: string;

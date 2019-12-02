@@ -3,7 +3,7 @@ package org.endeavourhealth.datasharingmanager.api.Logic;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DocumentationEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.datasharingmanager.api.DAL.DocumentationDAL;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DocumentationCache;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class DocumentationLogic {
         List<DocumentationEntity> ret = new ArrayList<>();
 
         if (!documentUuids.isEmpty())
-            ret = new DocumentationDAL().getDocumentsFromList(documentUuids);
+            ret = DocumentationCache.getDocumentDetails(documentUuids);
 
         return Response
                 .ok()

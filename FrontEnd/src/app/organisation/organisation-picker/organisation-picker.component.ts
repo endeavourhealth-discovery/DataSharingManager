@@ -238,10 +238,12 @@ export class OrganisationPickerComponent implements OnInit {
   }
 
   moveSelectedOrgsIntoResultData() {
-    for (let match of this.availableOrgs) {
-      if (match.selected) {
-        if (!this.resultData.some(x => x.uuid === match.uuid)) {
-          this.resultData.push(match);
+    if (this.availableOrgs) {
+      for (let match of this.availableOrgs) {
+        if (match.selected) {
+          if (!this.resultData.some(x => x.uuid === match.uuid)) {
+            this.resultData.push(match);
+          }
         }
       }
     }

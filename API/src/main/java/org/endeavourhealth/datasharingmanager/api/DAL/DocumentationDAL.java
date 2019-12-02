@@ -13,19 +13,6 @@ import java.util.List;
 
 public class DocumentationDAL {
 
-    public DocumentationEntity getDocument(String uuid) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-            DocumentationEntity ret = entityManager.find(DocumentationEntity.class, uuid);
-
-            return ret;
-        } finally {
-            entityManager.close();
-        }
-
-    }
-
     public void saveDocument(JsonDocumentation document) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
@@ -104,27 +91,5 @@ public class DocumentationDAL {
         } finally {
             entityManager.close();
         }
-    }
-
-    public List<DocumentationEntity> getDocumentsFromList(List<String> documents) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-            CriteriaQuery<DocumentationEntity> cq = cb.createQuery(DocumentationEntity.class);
-            Root<DocumentationEntity> rootEntry = cq.from(DocumentationEntity.class);
-
-            Predicate predicate = rootEntry.get("uuid").in(documents);
-
-            cq.where(predicate);
-            TypedQuery<DocumentationEntity> query = entityManager.createQuery(cq);
-
-            List<DocumentationEntity> ret = query.getResultList();
-
-            return ret;
-        } finally {
-            entityManager.close();
-        }
-
     }
 }

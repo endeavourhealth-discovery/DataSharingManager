@@ -73,7 +73,8 @@ public class ProjectEndpoint extends AbstractEndpoint {
             "of a project.")
     @RequiresAdmin
     public Response postProject(@Context SecurityContext sc,
-                                 @ApiParam(value = "Json representation of project to save or update") JsonProject project
+                                @HeaderParam("userProjectId") String userProjectId,
+                                @ApiParam(value = "Json representation of project to save or update") JsonProject project
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
@@ -82,7 +83,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
 
         clearLogbackMarkers();
 
-        return new ProjectLogic().postProject(project);
+        return new ProjectLogic().postProject(project, userProjectId);
     }
 
     @DELETE

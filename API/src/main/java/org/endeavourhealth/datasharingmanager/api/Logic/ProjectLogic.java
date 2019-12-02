@@ -46,7 +46,7 @@ public class ProjectLogic {
                 .build();
     }
 
-    public Response postProject(JsonProject project) throws Exception {
+    public Response postProject(JsonProject project, String userProjectId) throws Exception {
 
         String scheduleUUID = "";
         if (project.getUuid() != null) {
@@ -55,20 +55,11 @@ public class ProjectLogic {
             if (scheduleEntity != null) {
                 scheduleUUID = scheduleEntity.getUuid();
             }
-            new MasterMappingDAL().deleteAllMappings(project.getUuid());
-            new ProjectDAL().updateProject(project);
+            /*new MasterMappingDAL().deleteAllMappings(project.getUuid());*/
+            new ProjectDAL().updateProject(project, userProjectId);
         } else {
             project.setUuid(UUID.randomUUID().toString());
             new ProjectDAL().saveProject(project);
-        }
-
-        for (JsonDocumentation doc : project.getDocumentations()) {
-            if (doc.getUuid() != null) {
-                new DocumentationDAL().updateDocument(doc);
-            } else {
-                doc.setUuid(UUID.randomUUID().toString());
-                new DocumentationDAL().saveDocument(doc);
-            }
         }
 
         JsonExtractTechnicalDetails details = project.getExtractTechnicalDetails();

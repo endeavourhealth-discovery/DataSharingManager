@@ -255,11 +255,11 @@
             </ng-template>
           </ngb-tab>
           <ngb-tab>
-            <ng-template ngbTabTitle><span class="tab-title">Cohort </span><span class="badge badge-pill badge-primary">{{basePopulation?.length}}</span></ng-template>
+            <ng-template ngbTabTitle><span class="tab-title">Cohort </span><span class="badge badge-pill badge-primary">{{cohorts?.length}}</span></ng-template>
             <ng-template ngbTabContent>
               <entity-viewer
                 (onshowPicker)="editBasePopulations()"
-                [items]="basePopulation"
+                [items]="cohorts"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
                 [displayClass]="'region'"
@@ -285,7 +285,7 @@
                 [secondary]="'description'"
                 [secondaryOrderText]="'Description'"
                 [typeDescription]="'Data set'"
-                [model]="'dataSet'"
+                [model]="'dataSets'"
                 [detailsToShow]="dataSetDetailsToShow"
                 [allowEdit]="allowEdit"
                 [showEditButton]="allowEdit">

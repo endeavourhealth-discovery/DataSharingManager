@@ -79,9 +79,9 @@ public class MasterMappingDAL {
 
     }
 
-    private JsonNode appendToJson(String fieldName, List<String> mappings, JsonNode auditJson) throws Exception {
+    private JsonNode appendToJson(boolean added, List<String> mappings, String type, JsonNode auditJson) throws Exception {
         if (!mappings.isEmpty()) {
-            return new AuditCompareLogic().generateListDifferenceAuditJson(auditJson, fieldName, mappings, "dpa");
+            return new AuditCompareLogic().generateListDifferenceAuditJson(auditJson, added, mappings, type);
         }
 
         return auditJson;
@@ -408,24 +408,28 @@ public class MasterMappingDAL {
 
     public JsonNode updateProjectMappings(JsonProject updatedProject, ProjectEntity oldProject, JsonNode auditJson) throws Exception {
         // Publishers
-        auditJson = updateMappingsAndGetAudit(true, updatedProject.getUuid(), oldProject.getPublishers(),
+        auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getPublishers(),
                 updatedProject.getPublishers(), MapType.PROJECT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson);
 
         // Subscriber
-        auditJson = updateMappingsAndGetAudit(true, updatedProject.getUuid(), oldProject.getSubscribers(),
+        auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getSubscribers(),
                 updatedProject.getSubscribers(), MapType.PROJECT.getMapType(), MapType.SUBSCRIBER.getMapType(), auditJson);
 
         // Cohorts
-        auditJson = updateMappingsAndGetAudit(true, updatedProject.getUuid(), oldProject.getCohorts(),
-                updatedProject.getBasePopulation(), MapType.PROJECT.getMapType(), MapType.COHORT.getMapType(), auditJson);
+        auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getCohorts(),
+                updatedProject.getCohorts(), MapType.PROJECT.getMapType(), MapType.COHORT.getMapType(), auditJson);
 
         // DataSets
-        auditJson = updateMappingsAndGetAudit(true, updatedProject.getUuid(), oldProject.getDataSets(),
-                updatedProject.getDataSet(), MapType.PROJECT.getMapType(), MapType.DATASET.getMapType(), auditJson);
+        auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getDataSets(),
+                updatedProject.getDataSets(), MapType.PROJECT.getMapType(), MapType.DATASET.getMapType(), auditJson);
 
         // DSA
-        auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getDsas(),
+        auditJson = updateMappingsAndGetAudit(true, updatedProject.getUuid(), oldProject.getDsas(),
                 updatedProject.getDsas(), MapType.PROJECT.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
+
+        // Documents
+        auditJson = updateMappingsAndGetAuditForDocuments(updatedProject.getUuid(), oldProject.getDocumentations(),
+                updatedProject.getDocumentations(), MapType.PROJECT.getMapType(), auditJson);
 
         return auditJson;
 
@@ -440,18 +444,60 @@ public class MasterMappingDAL {
         List<String> addedMappings = new ArrayList<>();
         updatedMap.forEach((k, v) -> updatedMappings.add(k.toString()));
 
-        updateMappings(true, thisItem, oldMappings, updatedMappings,
+        updateMappings(thisItemIsChild, thisItem, oldMappings, updatedMappings,
                 thisMapTypeId, otherMapTypeId, removedMappings, addedMappings);
 
-        auditJson = appendToJson("Removed" + MapType.valueOfTypeId(otherMapTypeId), removedMappings, auditJson);
-        auditJson = appendToJson("Added" + MapType.valueOfTypeId(otherMapTypeId), addedMappings, auditJson);
+        auditJson = appendToJson(false, removedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
+        auditJson = appendToJson(true, addedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
 
         return auditJson;
     }
 
+    private JsonNode updateMappingsAndGetAuditForDocuments(String parentItem, List<String> oldDocuments,
+                                               List<JsonDocumentation> newDocuments, Short thisMapTypeId,
+                                               JsonNode auditJson) throws Exception {
+
+        List<String> updatedMappings = new ArrayList<String>();
+        List<String> removedMappings = new ArrayList<>();
+        List<String> addedMappings = new ArrayList<>();
+        newDocuments.forEach((k) -> updatedMappings.add(k.getUuid()));
+
+        Short documentMapType = MapType.DOCUMENT.getMapType();
+
+        updateMappings(false, parentItem, oldDocuments, updatedMappings,
+                thisMapTypeId, documentMapType, removedMappings, addedMappings);
+
+        deleteDocuments(removedMappings);
+        saveDocuments(addedMappings, newDocuments);
+
+        auditJson = appendToJson(false, removedMappings, MapType.valueOfTypeId(documentMapType), auditJson);
+        auditJson = appendToJson(true, addedMappings, MapType.valueOfTypeId(documentMapType), auditJson);
+
+        return auditJson;
+    }
+
+    private void deleteDocuments(List<String> deletedDocuments) throws Exception {
+        for (String uuid : deletedDocuments) {
+            new DocumentationDAL().deleteDocument(uuid);
+        }
+    }
+
+    private void saveDocuments(List<String> addedDocuments, List<JsonDocumentation> documents) throws Exception {
+        for (JsonDocumentation doc : documents) {
+            if (addedDocuments.contains(doc.getUuid())) {
+                if (doc.getUuid() != null) {
+                    new DocumentationDAL().updateDocument(doc);
+                } else {
+                    doc.setUuid(UUID.randomUUID().toString());
+                    new DocumentationDAL().saveDocument(doc);
+                }
+            }
+        }
+    }
+
     public void saveProjectMappings(JsonProject project) throws Exception {
 
-        if (project.getPublishers() != null) {
+        /*if (project.getPublishers() != null) {
             Map<UUID, String> publishers = project.getPublishers();
             saveChildMappings(publishers, MapType.PUBLISHER.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
@@ -461,13 +507,13 @@ public class MasterMappingDAL {
             saveChildMappings(subscribers, MapType.SUBSCRIBER.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
 
-        if (project.getBasePopulation() != null) {
-            Map<UUID, String> dsas = project.getBasePopulation();
+        if (project.getCohorts() != null) {
+            Map<UUID, String> dsas = project.getCohorts();
             saveChildMappings(dsas, MapType.COHORT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
 
-        if (project.getDataSet() != null) {
-            Map<UUID, String> dpas = project.getDataSet();
+        if (project.getDataSets() != null) {
+            Map<UUID, String> dpas = project.getDataSets();
             saveChildMappings(dpas, MapType.DATASET.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
 
@@ -483,7 +529,7 @@ public class MasterMappingDAL {
                 documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
             }
             saveChildMappings(documentation, MapType.DOCUMENT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
+        }*/
 
         if (project.getExtractTechnicalDetails() != null) {
 
