@@ -1,0 +1,397 @@
+<div class="modal-header">
+  <h4 class="modal-title">Set Schedule</h4>
+  <div class="pull-right">
+    <button type="button" class="close" (click)="cancel()" aria-hidden="true">&times;</button>
+  </div>
+</div>
+<div class="modal-body">
+  <form>
+    <div class="row">
+      <div class="form-group col-md-12">
+        <ngb-tabset #tabset="ngbTabset">
+          <ngb-tab id="Minutes">
+            <ng-template ngbTabTitle>
+              <div (click)="setMinutesTabCron()">Minutes</div>
+            </ng-template>
+            <ng-template ngbTabContent>
+              <div class="row align-items-center">
+                <div>
+                  <label class="control-label">&nbsp;&nbsp;&nbsp;Every&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyMinuteMinuteTab" name="everyMinuteMinuteTab" (change)="setMinutesTabCron()" [value]=0>
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="control-label">&nbsp;minute(s) on second&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everySecondMinuteTab" name="onSecondMinuteTab" (change)="setMinutesTabCron()" [value]=0>
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab id="Hourly">
+            <ng-template ngbTabTitle>
+              <div (click)="setHourlyTabCron()">Hourly</div>
+            </ng-template>
+            <ng-template ngbTabContent>
+              <div class="row align-items-center">
+                <div>
+                  <label class="control-label">&nbsp;&nbsp;&nbsp;Every&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyHourHourlyTab" name="everyHourHourlyTab" (change)="setHourlyTabCron()">
+                    <option *ngFor="let increment of zeroTo23" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="control-label">&nbsp;hour(s) on minute&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyMinuteHourlyTab" name="everyMinuteHourlyTab" (change)="setHourlyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="control-label">&nbsp;and second&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everySecondHourlyTab" name="onSecondHourlyTab" (change)="setHourlyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab id="Daily">
+            <ng-template ngbTabTitle>
+              <div (click)="setDailyTabCron()">Daily</div>
+            </ng-template>
+            <ng-template ngbTabContent>
+              <div class="row align-items-center">
+                <div class="custom-radio">
+                  <label class="control-label">&nbsp;&nbsp;</label>
+                  <input type="radio" (change)="toggleDaily()" [(ngModel)]="dailyRadio" [value]="true" id="dailyRadio1" name="dailyRadio1">
+                  <label class="control-label">&nbsp;Every&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyDayDailyTab" name="everyDayDailyTab" [disabled]="dailyRow1" (change)="setDailyTabCron()">
+                    <option *ngFor="let increment of oneTo31" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="control-label">&nbsp;day(s) at&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyHour1DailyTab" name="everyHour1DailyTab" [disabled]="dailyRow1" (change)="setDailyTabCron()">
+                    <option *ngFor="let increment of zeroTo23" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyMinute1DailyTab" name="everyMinute1DailyTab" [disabled]="dailyRow1" (change)="setDailyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everySecond1DailyTab" name="everySecond1DailyTab" [disabled]="dailyRow1" (change)="setDailyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row align-items-center">
+                <div>
+                  <label class="control-label">&nbsp;</label>
+                </div>
+              </div>
+              <div class="row align-items-center">
+                <div class="custom-radio">
+                  <label class="control-label">&nbsp;&nbsp;</label>
+                  <input type="radio" (change)="toggleDaily()" [(ngModel)]="dailyRadio" [value]="false" id="dailyRadio2" name="dailyRadio2">
+                  <label class="control-label">&nbsp;Every working day at&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyHour2DailyTab" name="everyHour2DailyTab" [disabled]="dailyRow2" (change)="setDailyTabCron()">
+                    <option *ngFor="let increment of zeroTo23" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyMinute2DailyTab" name="everyMinute2DailyTab" [disabled]="dailyRow2" (change)="setDailyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everySecond2DailyTab" name="everySecond2DailyTab" [disabled]="dailyRow2" (change)="setDailyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab id="Weekly">
+            <ng-template ngbTabTitle>
+              <div (click)="setWeeklyTabCron()">Weekly</div>
+            </ng-template>
+            <ng-template ngbTabContent>
+              <div class="row align-items-center">
+                <div>
+                  <label class="control-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                </div>
+                <div class="weekDays-selector">
+                  <input type="checkbox" id="weekday-mon" name="weekday-mon" class="weekday" [(ngModel)]="monday" (change)="setWeeklyTabCron()"/>
+                  <label for="weekday-mon">M</label>
+                  <input type="checkbox" id="weekday-tue" name="weekday-tue" class="weekday" [(ngModel)]="tuesday" (change)="setWeeklyTabCron()"/>
+                  <label for="weekday-tue">T</label>
+                  <input type="checkbox" id="weekday-wed" name="weekday-wed"class="weekday" [(ngModel)]="wednesday" (change)="setWeeklyTabCron()"/>
+                  <label for="weekday-wed">W</label>
+                  <input type="checkbox" id="weekday-thu" name="weekday-thu" class="weekday" [(ngModel)]="thursday" (change)="setWeeklyTabCron()"/>
+                  <label for="weekday-thu">T</label>
+                  <input type="checkbox" id="weekday-fri" name="weekday-fri"class="weekday" [(ngModel)]="friday" (change)="setWeeklyTabCron()"/>
+                  <label for="weekday-fri">F</label>
+                  <input type="checkbox" id="weekday-sat" name="weekday-sat" class="weekday" [(ngModel)]="saturday" (change)="setWeeklyTabCron()"/>
+                  <label for="weekday-sat">S</label>
+                  <input type="checkbox" id="weekday-sun" name="weekday-sun"class="weekday" [(ngModel)]="sunday" (change)="setWeeklyTabCron()"/>
+                  <label for="weekday-sun">S</label>
+                </div>
+              </div>
+              <div class="row align-items-center">
+                <div>
+                  <label class="control-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;at&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyHourWeeklyTab" name="everyHourWeeklyTab" (change)="setWeeklyTabCron()">
+                    <option *ngFor="let increment of zeroTo23" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyMinuteWeeklyTab" name="everyMinuteWeeklyTab" (change)="setWeeklyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everySecondWeeklyTab" name="everySecondWeeklyTab" (change)="setWeeklyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab id="Monthly">
+            <ng-template ngbTabTitle>
+              <div (click)="setMonthlyTabCron()">Monthly</div>
+            </ng-template>
+            <ng-template ngbTabContent>
+              <div class="row align-items-center">
+                <div class="custom-radio">
+                  <label class="control-label">&nbsp;&nbsp;</label>
+                  <input type="radio" (change)="toggleMonthly()" [(ngModel)]="monthlyRadio" [value]="true" id="monthlyRadio1" name="monthlyRadio1">
+                  <label class="control-label">&nbsp;On the&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyDay1MonthlyTab" name="everyDay1MonthlyTab" [disabled]="monthlyRow1" (change)="setMonthlyTabCron()">
+                    <option *ngFor="let increment of days" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="control-label">&nbsp;of every&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyMonth1MonthlyTab" name="everyMonth1MonthlyTab" [disabled]="monthlyRow1" (change)="setMonthlyTabCron()">
+                    <option *ngFor="let increment of months" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="control-label">&nbsp;month(s) at&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyHour1MonthlyTab" name="everyHour1MonthlyTab" [disabled]="monthlyRow1" (change)="setMonthlyTabCron()">
+                    <option *ngFor="let increment of zeroTo23" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyMinute1MonthlyTab" name="everyMinute1MonthlyTab" [disabled]="monthlyRow1" (change)="setMonthlyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everySecond1MonthlyTab" name="everySecond1MonthlyTab" [disabled]="monthlyRow1" (change)="setMonthlyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row align-items-center">
+                <div>
+                  <label class="control-label">&nbsp;</label>
+                </div>
+              </div>
+              <div class="row align-items-center">
+                <div class="custom-radio">
+                  <label class="control-label">&nbsp;&nbsp;</label>
+                  <input type="radio" (change)="toggleMonthly()" [(ngModel)]="monthlyRadio" [value]="false" id="monthlyRadio2" name="monthlyRadio2">
+                  <label class="control-label">&nbsp;On the&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyWeekMonthlyTab" name="everyWeekMonthlyTab" [disabled]="monthlyRow2" (change)="setMonthlyTabCron()">
+                    <option *ngFor="let increment of week" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyDayMonthlyTab" name="everyDayMonthlyTab" [disabled]="monthlyRow2" (change)="setMonthlyTabCron()">
+                    <option *ngFor="let increment of weekdays" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="control-label">&nbsp;of every&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyMonthMonthlyTab" name="everyMonthMonthlyTab" [disabled]="monthlyRow2" (change)="setMonthlyTabCron()">
+                    <option *ngFor="let increment of months" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="control-label">&nbsp;month(s) at&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyHour2MonthlyTab" name="everyHour2MonthlyTab" [disabled]="monthlyRow2" (change)="setMonthlyTabCron()">
+                    <option *ngFor="let increment of zeroTo23" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyMinute2MonthlyTab" name="everyMinute2MonthlyTab" [disabled]="monthlyRow2" (change)="setMonthlyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everySecond2MonthlyTab" name="everySecond2MonthlyTab" [disabled]="monthlyRow2" (change)="setMonthlyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab id="Yearly">
+            <ng-template ngbTabTitle>
+              <div (click)="setYearlyTabCron()">Yearly</div>
+            </ng-template>
+            <ng-template ngbTabContent>
+              <div class="row align-items-center">
+                <div class="custom-radio">
+                  <label class="control-label">&nbsp;&nbsp;</label>
+                  <input type="radio" (change)="toggleYearly()" [(ngModel)]="yearlyRadio" [value]="true" id="yearlyRadio1" name="yearlyRadio1">
+                  <label class="control-label">&nbsp;Every&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyMonth1YearlyTab" name="everyMonth1YearlyTab" [disabled]="yearlyRow1" (change)="setYearlyTabCron()">
+                    <option *ngFor="let increment of monthsLabelled" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="control-label">&nbsp;on the&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyDay1YearlyTab" name="everyDay1YearlyTab" [disabled]="yearlyRow1" (change)="setYearlyTabCron()">
+                    <option *ngFor="let increment of days" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="control-label">&nbsp;at&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyHour1YearlyTab" name="everyHour1YearlyTab" [disabled]="yearlyRow1" (change)="setYearlyTabCron()">
+                    <option *ngFor="let increment of zeroTo23" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyMinute1YearlyTab" name="everyMinute1YearlyTab" [disabled]="yearlyRow1" (change)="setYearlyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everySecond1YearlyTab" name="everySecond1YearlyTab" [disabled]="yearlyRow1" (change)="setYearlyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row align-items-center">
+                <div>
+                  <label class="control-label">&nbsp;</label>
+                </div>
+              </div>
+              <div class="row align-items-center">
+                <div class="custom-radio">
+                  <label class="control-label">&nbsp;&nbsp;</label>
+                  <input type="radio" (change)="toggleYearly()" [(ngModel)]="yearlyRadio" [value]="false" id="yearlyRadio2" name="yearlyRadio2">
+                  <label class="control-label">&nbsp;On the&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyWeekYearlyTab" name="everyWeekYearlyTab" [disabled]="yearlyRow2" (change)="setYearlyTabCron()">
+                    <option *ngFor="let increment of week" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyDayYearlyTab" name="everyDayYearlyTab" [disabled]="yearlyRow2" (change)="setYearlyTabCron()">
+                    <option *ngFor="let increment of weekdays" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="control-label">&nbsp;of&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyMonthYearlyTab" name="everyMonthYearlyTab" [disabled]="yearlyRow2" (change)="setYearlyTabCron()">
+                    <option *ngFor="let increment of monthsLabelled" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="control-label">&nbsp;at&nbsp;</label>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyHour2YearlyTab" name="everyHour2YearlyTab" [disabled]="yearlyRow2" (change)="setYearlyTabCron()">
+                    <option *ngFor="let increment of zeroTo23" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everyMinute2YearlyTab" name="everyMinute2YearlyTab" [disabled]="yearlyRow2" (change)="setYearlyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="form-control" [(ngModel)]="everySecond2YearlyTab" name="everySecond2YearlyTab" [disabled]="yearlyRow2" (change)="setYearlyTabCron()">
+                    <option *ngFor="let increment of zeroTo59" [ngValue]="increment.value">{{increment.display}}</option>
+                  </select>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab id="Advanced">
+            <ng-template ngbTabTitle>
+              <div (click)="setAdvancedTabCron()">Advanced</div>
+            </ng-template>
+            <ng-template ngbTabContent>
+              <div class="row align-items-center">
+                <div>
+                  <label class="control-label">&nbsp;&nbsp;&nbsp;Cron expression&nbsp;</label>
+                </div>
+                <div>
+                  <input class="form-control" type="text" placeholder="Cron expression" [(ngModel)]="cronManual" name="cronManual" (change)="setAdvancedTabCron()">
+                </div>
+              </div>
+            </ng-template>
+          </ngb-tab>
+        </ngb-tabset>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-md-12">
+        <input type="text" class="form-control cron" placeholder="Cron expression" [(ngModel)]="cron" name="cron" readonly>
+        <input type="text" class="form-control expression" placeholder="Cron description" [(ngModel)]="cronExpression" name="cronExpression" readonly>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" (click)="ok();">OK</button>
+  <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+</div>

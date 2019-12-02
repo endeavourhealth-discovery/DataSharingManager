@@ -10,6 +10,7 @@
             <param-name>jersey.config.server.provider.packages</param-name>
             <param-value>io.swagger.jaxrs.listing,org.endeavourhealth.coreui.endpoints,
                 org.endeavourhealth.datasharingmanager.api.endpoints,
+                org.endeavourhealth.scheduler.api.endpoints,
                 org.endeavourhealth.uiaudit.endpoints
             </param-value>
         </init-param>

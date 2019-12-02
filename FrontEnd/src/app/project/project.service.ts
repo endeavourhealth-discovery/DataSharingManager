@@ -10,7 +10,7 @@ import {ProjectApplicationPolicy} from "./models/ProjectApplicationPolicy";
 import {ApplicationPolicy} from "./models/ApplicationPolicy";
 import {User} from "eds-angular4/dist/security/models/User";
 import {AuthorityToShare} from "./models/AuthorityToShare";
-import {Schedule} from "./models/Schedule";
+import {Schedule} from "../scheduler/models/Schedule";
 
 @Injectable()
 export class ProjectService {

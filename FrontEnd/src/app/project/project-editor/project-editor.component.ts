@@ -27,10 +27,11 @@ import {AuthorityToShare} from "../models/AuthorityToShare";
 import { DatePipe } from '@angular/common';
 import {Documentation} from "../../documentation/models/Documentation";
 import {DocumentationService} from "../../documentation/documentation.service";
-import {Schedule} from "../models/Schedule";
 import {ExtractTechnicalDetails} from "../models/ExtractTechnicalDetails";
 import {Observable} from "rxjs";
 import {Http, URLSearchParams} from "@angular/http";
+import {Schedule} from "../../scheduler/models/Schedule";
+import {SchedulerPickerComponent} from "../../scheduler/scheduler-picker/scheduler-picker.component";
 
 @Component({
   selector: 'app-project-editor',
@@ -69,20 +70,10 @@ export class ProjectEditorComponent implements OnInit {
   pgpInternalPublicKeyFile: File;
   pgpInternalPublicKeyFileSrc: any;
 
-  //Schedule components
-  showSchedule: boolean;
-  selectedFrequency: number;
-  frequencyValues = [
-    {num: 0, name: 'Daily'},
-    {num: 1, name: 'Weekly'},
-    {num: 2, name: 'Monthly'},
-    {num: 3, name: 'Yearly'}
-  ];
-
   public activeProject: UserProject;
 
   projectApplicationPolicy: ProjectApplicationPolicy;
-  schedule: Schedule;
+  schedules: Schedule[] = [];
   availablePolicies: ApplicationPolicy[];
   selectedApplicationPolicy: ApplicationPolicy;
 
@@ -205,19 +196,6 @@ export class ProjectEditorComponent implements OnInit {
 
   getSchedule() {
     const vm = this;
-    vm.projectService.getLinkedSchedule(vm.project.uuid)
-      .subscribe(
-        result => {
-          vm.schedule = result
-          if (vm.schedule.uuid != null) {
-            vm.selectedFrequency = vm.schedule.frequency;
-            vm.showSchedule = true;
-          } else {
-            vm.schedule = new Schedule();
-            vm.showSchedule = false;
-          }
-        },
-      );
   }
 
   getAvailableApplicationPolicies() {
@@ -343,12 +321,6 @@ export class ProjectEditorComponent implements OnInit {
     vm.project.extractTechnicalDetails = null;
     vm.project.extractTechnicalDetails = vm.extractTechnicalDetails;
 
-    if (vm.showSchedule) {
-      vm.project.schedule = vm.schedule;
-    } else {
-      vm.project.schedule = null;
-    }
-
     console.log(vm.project);
     vm.projectService.saveProject(vm.project)
       .subscribe(saved => {
@@ -361,14 +333,6 @@ export class ProjectEditorComponent implements OnInit {
         },
         error => vm.log.error('The project could not be saved. Please try again.', error, 'Save project')
       );
-  }
-
-  private tickShowSchedule(value: boolean) {
-    if (value) {
-      this.showSchedule = true;
-    } else {
-      this.showSchedule = false;
-    }
   }
 
   close() {
@@ -715,4 +679,41 @@ export class ProjectEditorComponent implements OnInit {
     }
   }
 
+  private editSchedules() {
+    const vm = this;
+    SchedulerPickerComponent.open(vm.$modal, vm.schedules)
+      .result.then(function
+      (result: Schedule[]) {
+        vm.schedules = result;
+      },
+      () => vm.log.info('Set schedule cancelled')
+    );
+  }
+
+  delete(schedule: Schedule) {
+    const vm = this;
+    MessageBoxDialog.open(vm.$modal, 'Delete schedule', 'Are you sure that you want to delete <b>' + schedule.cronDescription + '</b>?', 'Delete schedule', 'Cancel')
+      .result.then(
+      () => vm.doDelete(schedule),
+      () => vm.log.info('Delete cancelled')
+    );
+  }
+
+  doDelete(schedule: Schedule) {
+    const vm = this;
+    const index = vm.schedules.indexOf(schedule);
+    vm.schedules.splice(index, 1);
+    vm.log.success('Schedule deleted', schedule, 'Delete schedule');
+    /*
+    vm.projectService.deleteProject(item.uuid)
+      .subscribe(
+        () => {
+          const index = vm.projects.indexOf(item);
+          vm.projects.splice(index, 1);
+          vm.log.success('Project deleted', item, 'Delete project');
+        },
+        (error) => vm.log.error('The project could not be deleted. Please try again.', error, 'Delete project')
+      );
+    */
+  }
 }

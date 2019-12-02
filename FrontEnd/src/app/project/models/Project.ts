@@ -1,6 +1,6 @@
 import {Documentation} from "../../documentation/models/Documentation";
 import {ExtractTechnicalDetails} from "../../extract-technical-details/models/ExtractTechnicalDetails";
-import {Schedule} from "./Schedule";
+import {Schedule} from "../../scheduler/models/Schedule";
 
 export class Project {
   uuid: string;
