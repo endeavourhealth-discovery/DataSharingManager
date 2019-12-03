@@ -60,10 +60,10 @@ public class DatasetDAL {
             oldDataSetEntity.setDescription(dataset.getDescription());
             oldDataSetEntity.setTechnicalDefinition(dataset.getTechnicalDefinition());
 
-            auditJson = new MasterMappingDAL().updateDataSetMappings(dataset, oldDataSetEntity, auditJson);
+            auditJson = new MasterMappingDAL().updateDataSetMappings(dataset, oldDataSetEntity, auditJson, entityManager);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.EDIT, ItemType.DATASET, null, null, auditJson);
+                    AuditAction.EDIT, ItemType.DATASET, "bd285adbc36842d7a27088e93c36c13e29ed69fa63a6", null, auditJson);
 
             entityManager.getTransaction().commit();
         } catch (Exception e) {
@@ -90,7 +90,7 @@ public class DatasetDAL {
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data set created", null, dataSetEntity);
 
-            auditJson = new MasterMappingDAL().updateDataSetMappings(dataset, null, auditJson);
+            auditJson = new MasterMappingDAL().updateDataSetMappings(dataset, null, auditJson, entityManager);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.ADD, ItemType.DATASET, null, null, auditJson);
@@ -118,7 +118,7 @@ public class DatasetDAL {
             entityManager.getTransaction().begin();
             entityManager.remove(oldDataSetEntity);
 
-            auditJson = new MasterMappingDAL().updateDataSetMappings(null, oldDataSetEntity, auditJson);
+            auditJson = new MasterMappingDAL().updateDataSetMappings(null, oldDataSetEntity, auditJson, entityManager);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.DELETE, ItemType.DATASET, null, null, auditJson);

@@ -61,19 +61,21 @@ public class MasterMappingDAL {
         }
     }
 
-    public JsonNode updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson) throws Exception {
+    public JsonNode updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson, EntityManager entityManager) throws Exception {
+
+        String test = MapType.valueOfTypeId((short)55);
         // DPAs
         auditJson = updateMappingsAndGetAudit(true, updatedDataSet.getUuid(), oldDataset.getDpas(),
-                updatedDataSet.getDpas(), MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
+                updatedDataSet.getDpas(), MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
 
         return auditJson;
     }
 
-    public JsonNode updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson) throws Exception {
+    public JsonNode updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson, EntityManager entityManager) throws Exception {
 
         // DPAs
         auditJson = updateMappingsAndGetAudit(true, updatedCohort.getUuid(), oldCohort.getDpas(),
-                updatedCohort.getDpas(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
+                updatedCohort.getDpas(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
 
         return auditJson;
 
@@ -89,7 +91,7 @@ public class MasterMappingDAL {
 
     private void updateMappings(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
                                 List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId,
-                                List<String> removedMappings, List<String> addedMappings) throws  Exception {
+                                List<String> removedMappings, List<String> addedMappings, EntityManager entityManager) throws  Exception {
 
         for (String oldMapping : oldMappings) {
             if (!updatedMappings.contains(oldMapping)) {
@@ -104,9 +106,7 @@ public class MasterMappingDAL {
         }
 
         if (!removedMappings.isEmpty() || !addedMappings.isEmpty()) {
-            EntityManager entityManager = ConnectionManager.getDsmEntityManager();
             try {
-                entityManager.getTransaction().begin();
 
                 if (!removedMappings.isEmpty()) {
                     deleteMappings(thisItemIsChild, thisItem, removedMappings, thisMapTypeId, otherMapTypeId, entityManager);
@@ -116,13 +116,12 @@ public class MasterMappingDAL {
                     saveMappings(thisItemIsChild, thisItem, addedMappings, thisMapTypeId, otherMapTypeId, entityManager);
                 }
 
-                entityManager.getTransaction().commit();
             } catch (Exception e) {
-                entityManager.getTransaction().rollback();
+                // entityManager.getTransaction().rollback();
                 throw e;
-            } finally {
+            } /*finally {
                 entityManager.close();
-            }
+            }*/
         }
     }
 
@@ -406,30 +405,30 @@ public class MasterMappingDAL {
         }
     }
 
-    public JsonNode updateProjectMappings(JsonProject updatedProject, ProjectEntity oldProject, JsonNode auditJson) throws Exception {
+    public JsonNode updateProjectMappings(JsonProject updatedProject, ProjectEntity oldProject, JsonNode auditJson, EntityManager entityManager) throws Exception {
         // Publishers
         auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getPublishers(),
-                updatedProject.getPublishers(), MapType.PROJECT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson);
+                updatedProject.getPublishers(), MapType.PROJECT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson, entityManager);
 
         // Subscriber
         auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getSubscribers(),
-                updatedProject.getSubscribers(), MapType.PROJECT.getMapType(), MapType.SUBSCRIBER.getMapType(), auditJson);
+                updatedProject.getSubscribers(), MapType.PROJECT.getMapType(), MapType.SUBSCRIBER.getMapType(), auditJson, entityManager);
 
         // Cohorts
         auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getCohorts(),
-                updatedProject.getCohorts(), MapType.PROJECT.getMapType(), MapType.COHORT.getMapType(), auditJson);
+                updatedProject.getCohorts(), MapType.PROJECT.getMapType(), MapType.COHORT.getMapType(), auditJson, entityManager);
 
         // DataSets
         auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getDataSets(),
-                updatedProject.getDataSets(), MapType.PROJECT.getMapType(), MapType.DATASET.getMapType(), auditJson);
+                updatedProject.getDataSets(), MapType.PROJECT.getMapType(), MapType.DATASET.getMapType(), auditJson, entityManager);
 
         // DSA
         auditJson = updateMappingsAndGetAudit(true, updatedProject.getUuid(), oldProject.getDsas(),
-                updatedProject.getDsas(), MapType.PROJECT.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
+                updatedProject.getDsas(), MapType.PROJECT.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson, entityManager);
 
         // Documents
         auditJson = updateMappingsAndGetAuditForDocuments(updatedProject.getUuid(), oldProject.getDocumentations(),
-                updatedProject.getDocumentations(), MapType.PROJECT.getMapType(), auditJson);
+                updatedProject.getDocumentations(), MapType.PROJECT.getMapType(), auditJson, entityManager);
 
         return auditJson;
 
@@ -437,7 +436,7 @@ public class MasterMappingDAL {
 
     private JsonNode updateMappingsAndGetAudit(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
                                                Map<UUID, String> updatedMap, Short thisMapTypeId, Short otherMapTypeId,
-                                               JsonNode auditJson) throws Exception {
+                                               JsonNode auditJson, EntityManager entityManager) throws Exception {
 
         List<String> updatedMappings = new ArrayList<String>();
         List<String> removedMappings = new ArrayList<>();
@@ -445,7 +444,7 @@ public class MasterMappingDAL {
         updatedMap.forEach((k, v) -> updatedMappings.add(k.toString()));
 
         updateMappings(thisItemIsChild, thisItem, oldMappings, updatedMappings,
-                thisMapTypeId, otherMapTypeId, removedMappings, addedMappings);
+                thisMapTypeId, otherMapTypeId, removedMappings, addedMappings, entityManager);
 
         auditJson = appendToJson(false, removedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
         auditJson = appendToJson(true, addedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
@@ -455,7 +454,7 @@ public class MasterMappingDAL {
 
     private JsonNode updateMappingsAndGetAuditForDocuments(String parentItem, List<String> oldDocuments,
                                                List<JsonDocumentation> newDocuments, Short thisMapTypeId,
-                                               JsonNode auditJson) throws Exception {
+                                               JsonNode auditJson, EntityManager entityManager) throws Exception {
 
         List<String> updatedMappings = new ArrayList<String>();
         List<String> removedMappings = new ArrayList<>();
@@ -465,7 +464,7 @@ public class MasterMappingDAL {
         Short documentMapType = MapType.DOCUMENT.getMapType();
 
         updateMappings(false, parentItem, oldDocuments, updatedMappings,
-                thisMapTypeId, documentMapType, removedMappings, addedMappings);
+                thisMapTypeId, documentMapType, removedMappings, addedMappings, entityManager);
 
         deleteDocuments(removedMappings);
         saveDocuments(addedMappings, newDocuments);
