@@ -1,6 +1,7 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.CohortEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DatasetEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.MasterMappingEntity;
@@ -430,6 +431,10 @@ public class MasterMappingDAL {
         auditJson = updateMappingsAndGetAuditForDocuments(updatedProject.getUuid(), oldProject.getDocumentations(),
                 updatedProject.getDocumentations(), MapType.PROJECT.getMapType(), auditJson, entityManager);
 
+        //Schedules
+        //auditJson = updateMappingsAndGetAudit(true, updatedProject.getUuid(), oldProject.getSchedules(),
+        //        updatedProject.getSchedules(), MapType.PROJECT.getMapType(), MapType.SCHEDULE.getMapType(), auditJson, entityManager);
+
         return auditJson;
 
     }
@@ -539,10 +544,14 @@ public class MasterMappingDAL {
         }
 
         if (project.getSchedule() != null) {
-            Map<UUID, String> schedule = new HashMap<>();
-            String uuid = project.getSchedule().getUuid();
-            schedule.put(UUID.fromString(uuid), uuid);
-            saveChildMappings(schedule, MapType.SCHEDULE.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
+            List<String> schedUUIDs = new SecurityMasterMappingDAL().getChildMappings(
+                    project.getUuid(), MapType.PROJECT.getMapType(), MapType.SCHEDULE.getMapType());
+            if (schedUUIDs.size() == 0) {
+                Map<UUID, String> schedule = new HashMap<>();
+                String uuid = project.getSchedule().getUuid();
+                schedule.put(UUID.fromString(uuid), uuid);
+                saveChildMappings(schedule, MapType.SCHEDULE.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
+            }
         }
     }
 

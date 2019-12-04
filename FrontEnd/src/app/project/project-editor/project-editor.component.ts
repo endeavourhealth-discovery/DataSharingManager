@@ -196,6 +196,10 @@ export class ProjectEditorComponent implements OnInit {
 
   getSchedule() {
     const vm = this;
+    vm.projectService.getLinkedSchedule(vm.project.uuid)
+      .subscribe(
+        result => vm.schedules[0] = result
+      );
   }
 
   getAvailableApplicationPolicies() {
@@ -320,6 +324,15 @@ export class ProjectEditorComponent implements OnInit {
     // Populate extract technical details before save
     vm.project.extractTechnicalDetails = null;
     vm.project.extractTechnicalDetails = vm.extractTechnicalDetails;
+
+    // Populate schedule before save
+    if (vm.schedules[0]) {
+      vm.project.schedule = vm.schedules[0];
+      vm.project.schedules = {};
+      if (vm.project.schedule.uuid) {
+        this.project.schedules[vm.project.schedule.uuid] = vm.project.schedule.cronDescription;
+      }
+    }
 
     console.log(vm.project);
     vm.projectService.saveProject(vm.project)

@@ -180,7 +180,7 @@ export class SchedulerPickerComponent implements OnInit, AfterViewInit {
     if (schedule) {
       vm.cron = vm.cronLabel + schedule.cronExpression;
       vm.cronExpression = vm.descriptionLabel + schedule.cronDescription;
-      let split = schedule.schedulerSettings.split(":");
+      let split = schedule.cronSettings.split(":");
       tab = split[0];
     }
 
@@ -269,7 +269,7 @@ export class SchedulerPickerComponent implements OnInit, AfterViewInit {
     const vm = this;
     let schedule = vm.resultData[0];
     if (schedule) {
-      let split = schedule.schedulerSettings.split(":");
+      let split = schedule.cronSettings.split(":");
       vm.tabset.select(split[0]);
       if (split[0] == "Minutes") {
         vm.everyMinuteMinuteTab = parseInt(split[2]);
@@ -597,7 +597,7 @@ export class SchedulerPickerComponent implements OnInit, AfterViewInit {
     }
     vm.resultData[0].cronExpression = vm.cron.substring(17, vm.cron.length);
     vm.resultData[0].cronDescription = vm.cronExpression.substring(18, vm.cronExpression.length);
-    vm.resultData[0].schedulerSettings = vm.cronSettings;
+    vm.resultData[0].cronSettings = vm.cronSettings;
     vm.activeModal.close(vm.resultData);
   }
 

@@ -32,6 +32,7 @@ export class Project {
   documentations: Documentation[];
   extractTechnicalDetails: ExtractTechnicalDetails;
   schedule: Schedule;
+  schedules: { [key: string]: string; };
 
   getDisplayItems(): any[] {
     return [

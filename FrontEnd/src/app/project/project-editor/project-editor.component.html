@@ -472,7 +472,7 @@
             </ng-template>
           </ngb-tab>
           <ngb-tab>
-            <ng-template ngbTabTitle><span class="tab-title">Scheduler</span></ng-template>
+            <ng-template ngbTabTitle><span class="tab-title">Scheduler</span><span class="badge badge-pill badge-primary">{{schedules?.length}}</span></ng-template>
             <ng-template ngbTabContent>
               <entity-viewer
                 (deleted)="delete($event)"

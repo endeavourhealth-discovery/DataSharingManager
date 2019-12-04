@@ -146,7 +146,7 @@ public class ProjectLogic {
         ProjectScheduleEntity scheduleEntity =
                 new SecurityProjectDAL().getLinkedSchedule(projectId, MapType.SCHEDULE.getMapType());
 
-        JsonProjectSchedule schedule = new JsonProjectSchedule();
+        JsonProjectSchedule schedule = null;
         if (scheduleEntity != null) {
             schedule = SecurityProjectDAL.setJsonProjectSchedule(scheduleEntity);
         }

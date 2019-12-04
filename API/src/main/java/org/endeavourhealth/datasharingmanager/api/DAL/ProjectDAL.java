@@ -55,6 +55,7 @@ public class ProjectDAL {
         oldProjectEntity.setDocumentations(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.DOCUMENT.getMapType()));
         oldProjectEntity.setCohorts(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.COHORT.getMapType()));
         oldProjectEntity.setDataSets(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.DATASET.getMapType()));
+        oldProjectEntity.setSchedules(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.SCHEDULE.getMapType()));
 
         ProjectEntity newProject = new ProjectEntity(project);
 
