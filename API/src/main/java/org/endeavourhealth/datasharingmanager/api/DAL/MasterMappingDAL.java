@@ -2,10 +2,7 @@ package org.endeavourhealth.datasharingmanager.api.DAL;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.CohortEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DatasetEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.MasterMappingEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.ProjectEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.*;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
@@ -92,7 +89,7 @@ public class MasterMappingDAL {
 
     private void updateMappings(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
                                 List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId,
-                                List<String> removedMappings, List<String> addedMappings, EntityManager entityManager) throws  Exception {
+                                List<String> removedMappings, List<String> addedMappings, EntityManager entityManager) throws Exception {
 
         for (String oldMapping : oldMappings) {
             if (!updatedMappings.contains(oldMapping)) {
@@ -431,6 +428,10 @@ public class MasterMappingDAL {
         auditJson = updateMappingsAndGetAuditForDocuments(updatedProject.getUuid(), oldProject.getDocumentations(),
                 updatedProject.getDocumentations(), MapType.PROJECT.getMapType(), auditJson, entityManager);
 
+        // Extract Technical Details
+        auditJson = updateMappingsAndGetAuditForExtractTechnicalDetails(updatedProject.getUuid(), oldProject.getExtractTechnicalDetails(),
+                updatedProject.getExtractTechnicalDetails(), MapType.PROJECT.getMapType(), auditJson, entityManager);
+
         //Schedules
         //auditJson = updateMappingsAndGetAudit(true, updatedProject.getUuid(), oldProject.getSchedules(),
         //        updatedProject.getSchedules(), MapType.PROJECT.getMapType(), MapType.SCHEDULE.getMapType(), auditJson, entityManager);
@@ -499,6 +500,54 @@ public class MasterMappingDAL {
         }
     }
 
+    private JsonNode updateMappingsAndGetAuditForExtractTechnicalDetails(String parentItem, ExtractTechnicalDetailsEntity oldExtractTechDetails,
+                                                                         JsonExtractTechnicalDetails newExtractTechDetails, Short thisMapTypeId,
+                                                                         JsonNode auditJson, EntityManager entityManager) throws Exception {
+
+        List<String> updatedMappings = new ArrayList<>();
+        updatedMappings.add(newExtractTechDetails.getUuid());
+        List<String> oldExtractTechDetailsList = new ArrayList<>();
+        oldExtractTechDetailsList.add(oldExtractTechDetails.getUuid());
+        List<JsonExtractTechnicalDetails> newExtractTechDetailsList = new ArrayList<>();
+        newExtractTechDetailsList.add(newExtractTechDetails);
+
+        List<String> removedMappings = new ArrayList<>();
+        List<String> addedMappings = new ArrayList<>();
+
+        Short extractTechDetailsMapType = MapType.EXTRACTTECHNICALDETAILS.getMapType();
+
+        updateMappings(true, parentItem, oldExtractTechDetailsList, updatedMappings,
+                thisMapTypeId, extractTechDetailsMapType, removedMappings, addedMappings, entityManager);
+
+        deleteExtractTechnicalDetails(removedMappings);
+        saveExtractTechnicalDetails(addedMappings, newExtractTechDetailsList);
+
+        auditJson = appendToJson(false, removedMappings, MapType.valueOfTypeId(extractTechDetailsMapType), auditJson);
+        auditJson = appendToJson(true, addedMappings, MapType.valueOfTypeId(extractTechDetailsMapType), auditJson);
+
+        return auditJson;
+    }
+
+    private void deleteExtractTechnicalDetails(List<String> deletedExtractTechDetails) throws Exception {
+        for (String uuid : deletedExtractTechDetails) {
+            new ExtractTechnicalDetailsDAL().deleteExtractTechnicalDetails(uuid);
+        }
+    }
+
+    private void saveExtractTechnicalDetails(List<String> addedExtractTechDetails,
+                                             List<JsonExtractTechnicalDetails> extractTechDetails) throws Exception {
+        for (JsonExtractTechnicalDetails details : extractTechDetails) {
+            if (addedExtractTechDetails.contains(details.getUuid())) {
+                if (details.getUuid() != null) {
+                    new ExtractTechnicalDetailsDAL().updateExtractTechnicalDetails(details);
+                } else {
+                    details.setUuid(UUID.randomUUID().toString());
+                    new ExtractTechnicalDetailsDAL().saveExtractTechnicalDetails(details);
+                }
+            }
+        }
+    }
+
     public void saveProjectMappings(JsonProject project) throws Exception {
 
         /*if (project.getPublishers() != null) {
@@ -533,7 +582,7 @@ public class MasterMappingDAL {
                 documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
             }
             saveChildMappings(documentation, MapType.DOCUMENT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }*/
+        }
 
         if (project.getExtractTechnicalDetails() != null) {
 
@@ -541,7 +590,7 @@ public class MasterMappingDAL {
             details.put(UUID.fromString(project.getExtractTechnicalDetails().getUuid()),
                     project.getExtractTechnicalDetails().getName());
             saveChildMappings(details, MapType.EXTRACTTECHNICALDETAILS.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
+        }*/
 
         if (project.getSchedule() != null) {
             List<String> schedUUIDs = new SecurityMasterMappingDAL().getChildMappings(

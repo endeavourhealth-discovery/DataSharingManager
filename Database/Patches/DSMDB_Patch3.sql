@@ -29,7 +29,7 @@ DELIMITER //
 CREATE PROCEDURE CreateProjectSchedulesTable()
 BEGIN
     -- (ADD WHAT YOU WANT TO DO FOR YOUR PATCH PROCEDURE HERE)
-	CREATE TABLE `project_schedule` (
+	CREATE TABLE IF NOT EXISTS `project_schedule` (
 	  `uuid` char(36) NOT NULL COMMENT 'Unique identifier for the schedule',
 	  `cron_expression` varchar(200) DEFAULT NULL,
 	  `cron_description` varchar(250) DEFAULT NULL,

@@ -7,6 +7,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.ProjectCache;
+import org.endeavourhealth.datasharingmanager.api.Logic.ExtractTechnicalDetailsLogic;
 import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
 import org.endeavourhealth.uiaudit.enums.AuditAction;
 import org.endeavourhealth.uiaudit.enums.ItemType;
@@ -56,6 +57,7 @@ public class ProjectDAL {
         oldProjectEntity.setCohorts(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.COHORT.getMapType()));
         oldProjectEntity.setDataSets(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.DATASET.getMapType()));
         oldProjectEntity.setSchedules(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.SCHEDULE.getMapType()));
+        oldProjectEntity.setExtractTechnicalDetails(new ExtractTechnicalDetailsLogic().getAssociatedExtractTechnicalDetails(project.getUuid(), MapType.PROJECT.getMapType()));
 
         ProjectEntity newProject = new ProjectEntity(project);
 
