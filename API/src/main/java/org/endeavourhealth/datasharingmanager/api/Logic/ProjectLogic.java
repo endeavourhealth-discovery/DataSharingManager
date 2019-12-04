@@ -5,7 +5,6 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.Se
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectScheduleDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonExtractTechnicalDetails;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProjectSchedule;
@@ -62,6 +61,7 @@ public class ProjectLogic {
             new ProjectDAL().saveProject(project);
         }
 
+        //TODO Maybe remove later
         JsonExtractTechnicalDetails details = project.getExtractTechnicalDetails();
         if (details.getUuid() != null) {
             new ExtractTechnicalDetailsDAL().updateExtractTechnicalDetails(details);

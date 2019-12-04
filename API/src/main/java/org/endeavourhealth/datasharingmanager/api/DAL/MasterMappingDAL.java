@@ -516,7 +516,8 @@ public class MasterMappingDAL {
 
         Short extractTechDetailsMapType = MapType.EXTRACTTECHNICALDETAILS.getMapType();
 
-        updateMappings(true, parentItem, oldExtractTechDetailsList, updatedMappings,
+        //TODO Get this to work
+        updateMappings(false, parentItem, oldExtractTechDetailsList, updatedMappings,
                 thisMapTypeId, extractTechDetailsMapType, removedMappings, addedMappings, entityManager);
 
         deleteExtractTechnicalDetails(removedMappings);
@@ -582,15 +583,16 @@ public class MasterMappingDAL {
                 documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
             }
             saveChildMappings(documentation, MapType.DOCUMENT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
+        }*/
 
+        //TODO Remove later
         if (project.getExtractTechnicalDetails() != null) {
 
             Map<UUID, String> details = new HashMap<>();
             details.put(UUID.fromString(project.getExtractTechnicalDetails().getUuid()),
                     project.getExtractTechnicalDetails().getName());
             saveChildMappings(details, MapType.EXTRACTTECHNICALDETAILS.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }*/
+        }
 
         if (project.getSchedule() != null) {
             List<String> schedUUIDs = new SecurityMasterMappingDAL().getChildMappings(
