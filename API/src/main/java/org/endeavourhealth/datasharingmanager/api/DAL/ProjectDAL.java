@@ -2,6 +2,7 @@ package org.endeavourhealth.datasharingmanager.api.DAL;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
@@ -56,7 +57,7 @@ public class ProjectDAL {
         oldProjectEntity.setDocumentations(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.DOCUMENT.getMapType()));
         oldProjectEntity.setCohorts(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.COHORT.getMapType()));
         oldProjectEntity.setDataSets(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.DATASET.getMapType()));
-        oldProjectEntity.setSchedules(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.SCHEDULE.getMapType()));
+        oldProjectEntity.setSchedule(new SecurityProjectDAL().getLinkedSchedule(project.getUuid(), MapType.SCHEDULE.getMapType()));
         oldProjectEntity.setExtractTechnicalDetails(new ExtractTechnicalDetailsLogic().getAssociatedExtractTechnicalDetails(project.getUuid(), MapType.PROJECT.getMapType()));
 
         ProjectEntity newProject = new ProjectEntity(project);
