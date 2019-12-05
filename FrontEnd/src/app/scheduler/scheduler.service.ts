@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {Observable} from "rxjs";
 import {Http} from "@angular/http";
 import {Cron} from "./models/Cron";
+import {Schedule} from "./models/Schedule";
 
 @Injectable()
 export class SchedulerService {
@@ -10,11 +11,9 @@ export class SchedulerService {
 
   constructor(private http: Http) { }
 
-  cronDescription(cron: string): Observable<string> {
+  cronDescription(schedule: Schedule): Observable<Schedule> {
     const vm = this;
-    vm.cronObject = new Cron();
-    vm.cronObject.cron = cron;
-    return vm.http.post('api/scheduler/description', vm.cronObject)
-      .map((response) => response.text());
+    return vm.http.post('api/scheduler/description', schedule)
+      .map((response) => response.json());
   }
 }

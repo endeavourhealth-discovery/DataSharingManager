@@ -716,17 +716,7 @@ export class ProjectEditorComponent implements OnInit {
     const vm = this;
     const index = vm.schedules.indexOf(schedule);
     vm.schedules.splice(index, 1);
+    vm.project.schedule = null;
     vm.log.success('Schedule deleted', schedule, 'Delete schedule');
-    /*
-    vm.projectService.deleteProject(item.uuid)
-      .subscribe(
-        () => {
-          const index = vm.projects.indexOf(item);
-          vm.projects.splice(index, 1);
-          vm.log.success('Project deleted', item, 'Delete project');
-        },
-        (error) => vm.log.error('The project could not be deleted. Please try again.', error, 'Delete project')
-      );
-    */
   }
 }

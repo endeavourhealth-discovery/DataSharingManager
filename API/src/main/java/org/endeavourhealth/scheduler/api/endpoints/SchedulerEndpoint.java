@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.scheduler.api.json.JsonCron;
+import org.endeavourhealth.scheduler.api.json.JsonSchedule;
 import org.endeavourhealth.scheduler.api.logic.SchedulerLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +32,11 @@ public class SchedulerEndpoint extends AbstractEndpoint {
     @Path("/description")
     @ApiOperation(value = "Returns the descriptive Quartz Cron definition of the cron expression")
     public Response getDescription(@Context SecurityContext sc,
-                                   @ApiParam(value = "Json representation of the cron expression") JsonCron cron) throws Exception {
+                                   @ApiParam(value = "Scheduler object") JsonSchedule schedule) throws Exception {
 
         super.setLogbackMarkers(sc);
 
-        return new SchedulerLogic().getDescription(cron.getCron());
+        return new SchedulerLogic().getDescription(schedule);
     }
 
 }

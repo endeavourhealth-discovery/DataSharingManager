@@ -182,6 +182,9 @@ export class SchedulerPickerComponent implements OnInit, AfterViewInit {
       vm.cronExpression = vm.descriptionLabel + schedule.cronDescription;
       let split = schedule.cronSettings.split(":");
       tab = split[0];
+    } else {
+      let schedule = new Schedule();
+      vm.resultData.push(schedule);
     }
 
 
@@ -580,21 +583,19 @@ export class SchedulerPickerComponent implements OnInit, AfterViewInit {
 
   validateCron() {
     const vm = this;
-    vm.schedulerService.cronDescription(vm.cron.substring(17, vm.cron.length))
+    vm.resultData[0].cronExpression = vm.cron.substring(17, vm.cron.length);
+    console.log(vm.resultData[0])
+    vm.schedulerService.cronDescription(vm.resultData[0])
       .subscribe(
         (response) => {
-          vm.cronExpression = vm.descriptionLabel + response;
-        },
-        (error) => vm.log.error('Cron expression is invalid.', error, 'Describe cron expression.')
+          vm.resultData[0] = response;
+          vm.cronExpression = vm.descriptionLabel + vm.resultData[0].cronDescription;
+        }
       );
   }
 
   ok() {
     const vm = this;
-    if (!vm.resultData[0]) {
-      let schedule = new Schedule();
-      vm.resultData.push(schedule);
-    }
     vm.resultData[0].cronExpression = vm.cron.substring(17, vm.cron.length);
     vm.resultData[0].cronDescription = vm.cronExpression.substring(18, vm.cronExpression.length);
     vm.resultData[0].cronSettings = vm.cronSettings;

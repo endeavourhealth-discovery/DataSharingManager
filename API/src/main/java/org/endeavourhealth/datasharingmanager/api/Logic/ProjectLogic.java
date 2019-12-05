@@ -47,13 +47,7 @@ public class ProjectLogic {
 
     public Response postProject(JsonProject project, String userProjectId) throws Exception {
 
-        String scheduleUUID = "";
         if (project.getUuid() != null) {
-            ProjectScheduleEntity scheduleEntity =
-                    new SecurityProjectDAL().getLinkedSchedule(project.getUuid(), MapType.SCHEDULE.getMapType());
-            if (scheduleEntity != null) {
-                scheduleUUID = scheduleEntity.getUuid();
-            }
             /*new MasterMappingDAL().deleteAllMappings(project.getUuid());*/
             new ProjectDAL().updateProject(project, userProjectId);
         } else {
@@ -68,20 +62,6 @@ public class ProjectLogic {
         } else {
             details.setUuid(UUID.randomUUID().toString());
             new ExtractTechnicalDetailsDAL().saveExtractTechnicalDetails(details);
-        }
-
-        JsonProjectSchedule schedule = project.getSchedule();
-        if (schedule != null) {
-            if (StringUtils.isNotEmpty(schedule.getUuid())) {
-                new SecurityProjectScheduleDAL().update(schedule);
-            } else {
-                schedule.setUuid(UUID.randomUUID().toString());
-                new SecurityProjectScheduleDAL().save(schedule);
-            }
-        } else {
-            if (StringUtils.isNotEmpty(scheduleUUID)) {
-                new SecurityProjectScheduleDAL().delete(scheduleUUID);
-            }
         }
 
         new MasterMappingDAL().saveProjectMappings(project);
