@@ -727,6 +727,12 @@ public class MasterMappingDAL {
                 //Schedule was just updated, no need to do anything with the mappings
                 if (scheduleEntity.getUuid().equals(scheduleJson.getUuid())) {
                     dal.update(scheduleJson);
+                    ((ObjectNode)auditJson).put("RemovedSCHEDULE",
+                            StringUtils.join(scheduleEntity.getCronDescription() + " ("+scheduleEntity.getUuid()+")",
+                                    System.getProperty("line.separator")));
+                    ((ObjectNode)auditJson).put("AddedSCHEDULE",
+                            StringUtils.join(scheduleJson.getCronDescription() + " ("+scheduleJson.getUuid()+")",
+                                    System.getProperty("line.separator")));
                 } else {
                     //Previous schedule was deleted then a new one was added
                     dal.delete(scheduleEntity.getUuid());
