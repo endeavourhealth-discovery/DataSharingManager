@@ -694,7 +694,7 @@ export class ProjectEditorComponent implements OnInit {
 
   private editSchedules() {
     const vm = this;
-    SchedulerPickerComponent.open(vm.$modal, vm.schedules)
+    SchedulerPickerComponent.open(vm.$modal, vm.schedules, false)
       .result.then(function
       (result: Schedule[]) {
         vm.schedules = result;

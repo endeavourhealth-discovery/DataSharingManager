@@ -3,6 +3,7 @@ import {SchedulerService} from '../scheduler.service';
 import {LoggerService} from "eds-angular4";
 import {NgbModal, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {Schedule} from "../models/Schedule";
+import {el} from "@angular/platform-browser/testing/src/browser_util";
 
 @Component({
   selector: 'app-scheduler-picker',
@@ -12,10 +13,11 @@ import {Schedule} from "../models/Schedule";
 export class SchedulerPickerComponent implements OnInit, AfterViewInit {
 
   @Input() resultData: Schedule[];
+  @Input() allowTime: boolean;
   @ViewChild('tabset') tabset;
 
   cron: string;
-  cronExpression: string;
+  cronDescription: string;
   cronSettings: string;
   cronLabel: string;
   descriptionLabel: string;
@@ -161,12 +163,12 @@ export class SchedulerPickerComponent implements OnInit, AfterViewInit {
               private log: LoggerService,
               protected schedulerService: SchedulerService) { }
 
-  public static open(modalService: NgbModal, schedule: Schedule[]) {
+  public static open(modalService: NgbModal, schedule: Schedule[], allowTime: boolean) {
     const modalRef = modalService.open(SchedulerPickerComponent, { backdrop : 'static'});
     modalRef.componentInstance.resultData = Object.assign([], schedule);
+    modalRef.componentInstance.allowTime = allowTime;
     return modalRef;
   }
-
 
   ngOnInit() {
     const vm = this;
@@ -179,14 +181,13 @@ export class SchedulerPickerComponent implements OnInit, AfterViewInit {
     let tab = "";
     if (schedule) {
       vm.cron = vm.cronLabel + schedule.cronExpression;
-      vm.cronExpression = vm.descriptionLabel + schedule.cronDescription;
+      vm.cronDescription = vm.descriptionLabel + schedule.cronDescription;
       let split = schedule.cronSettings.split(":");
       tab = split[0];
     } else {
       let schedule = new Schedule();
       vm.resultData.push(schedule);
     }
-
 
     if (tab != "Minutes") {
       vm.everyMinuteMinuteTab = 1;
@@ -262,16 +263,12 @@ export class SchedulerPickerComponent implements OnInit, AfterViewInit {
     if (tab != "Advanced") {
       vm.cronManual = "";
     }
-
-    if (!vm.resultData[0]) {
-      vm.setMinutesTabCron();
-    }
   }
 
   ngAfterViewInit() {
     const vm = this;
     let schedule = vm.resultData[0];
-    if (schedule) {
+    if (schedule.uuid) {
       let split = schedule.cronSettings.split(":");
       vm.tabset.select(split[0]);
       if (split[0] == "Minutes") {
@@ -402,6 +399,12 @@ export class SchedulerPickerComponent implements OnInit, AfterViewInit {
 
       } else {
         vm.setMinutesTabCron();
+      }
+    } else {
+      if (vm.allowTime) {
+        vm.setMinutesTabCron();
+      } else {
+        vm.setDailyTabCron();
       }
     }
   }
@@ -571,7 +574,7 @@ export class SchedulerPickerComponent implements OnInit, AfterViewInit {
   setAdvancedTabCron() {
     const vm = this;
     vm.cron = "";
-    vm.cronExpression = "";
+    vm.cronDescription = "";
     if (vm.cronManual != "") {
       if (vm.cronManual != vm.cron) {
         vm.cron = vm.cronLabel + vm.cronManual;
@@ -584,21 +587,33 @@ export class SchedulerPickerComponent implements OnInit, AfterViewInit {
   validateCron() {
     const vm = this;
     vm.resultData[0].cronExpression = vm.cron.substring(17, vm.cron.length);
-    console.log(vm.resultData[0])
     vm.schedulerService.cronDescription(vm.resultData[0])
       .subscribe(
         (response) => {
           vm.resultData[0] = response;
-          vm.cronExpression = vm.descriptionLabel + vm.resultData[0].cronDescription;
+          vm.cronDescription = vm.descriptionLabel + vm.resultData[0].cronDescription;
         }
       );
   }
 
   ok() {
     const vm = this;
+    vm.validateCron();
+    if (vm.cron.length == 0) {
+      alert("Cannot set an invalid cron schedule.");
+      return;
+    }
+    if (vm.allowTime == false && vm.cron.substring(17, vm.cron.length).startsWith("0 0 0") == false) {
+      alert("Cannot set time component. Cron must start with 0 0 0.");
+      return;
+    }
     vm.resultData[0].cronExpression = vm.cron.substring(17, vm.cron.length);
-    vm.resultData[0].cronDescription = vm.cronExpression.substring(18, vm.cronExpression.length);
+    vm.resultData[0].cronDescription = vm.cronDescription.substring(18, vm.cronDescription.length);
     vm.resultData[0].cronSettings = vm.cronSettings;
+    if (vm.resultData[0].cronDescription.toLowerCase().search("invalid") != -1) {
+      alert("Cannot set an invalid cron schedule.");
+      return;
+    }
     vm.activeModal.close(vm.resultData);
   }
 
