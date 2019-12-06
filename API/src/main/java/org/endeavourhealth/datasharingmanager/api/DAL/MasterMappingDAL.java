@@ -712,14 +712,14 @@ public class MasterMappingDAL {
 
         SecurityProjectScheduleDAL dal = new SecurityProjectScheduleDAL();
         //schedule was set
+        List<String> parent = new ArrayList<>();
+        parent.add(projectUuid);
         if (scheduleJson != null) {
             //No existing schedule
             if (scheduleEntity == null) {
                 dal.save(scheduleJson);
-                Map<UUID, String> children = new HashMap<>();
-                String uuid = scheduleJson.getUuid();
-                children.put(UUID.fromString(uuid), uuid);
-                saveChildMappings(children, MapType.SCHEDULE.getMapType(), projectUuid, MapType.PROJECT.getMapType());
+                saveMappings(true, scheduleJson.getUuid(), parent, MapType.SCHEDULE.getMapType(),
+                        MapType.PROJECT.getMapType(), entityManager);
                 ((ObjectNode)auditJson).put("AddedSCHEDULE",
                         StringUtils.join(scheduleJson.getCronDescription() + " ("+scheduleJson.getUuid()+")",
                                 System.getProperty("line.separator")));
@@ -736,8 +736,6 @@ public class MasterMappingDAL {
                 } else {
                     //Previous schedule was deleted then a new one was added
                     dal.delete(scheduleEntity.getUuid());
-                    List<String> parent = new ArrayList<>();
-                    parent.add(projectUuid);
                     deleteMappings(true, scheduleEntity.getUuid(), parent, MapType.SCHEDULE.getMapType(),
                             thisMapTypeId, entityManager);
                     ((ObjectNode)auditJson).put("RemovedSCHEDULE",
@@ -745,10 +743,8 @@ public class MasterMappingDAL {
                                     System.getProperty("line.separator")));
 
                     dal.save(scheduleJson);
-                    Map<UUID, String> children = new HashMap<>();
-                    String uuid = scheduleJson.getUuid();
-                    children.put(UUID.fromString(uuid), uuid);
-                    saveChildMappings(children, MapType.SCHEDULE.getMapType(), projectUuid, MapType.PROJECT.getMapType());
+                    saveMappings(true, scheduleJson.getUuid(), parent, MapType.SCHEDULE.getMapType(),
+                            MapType.PROJECT.getMapType(), entityManager);
                     ((ObjectNode)auditJson).put("AddedSCHEDULE",
                             StringUtils.join(scheduleJson.getCronDescription() + " ("+scheduleJson.getUuid()+")",
                                     System.getProperty("line.separator")));
@@ -757,8 +753,6 @@ public class MasterMappingDAL {
         } else if (scheduleEntity != null) {
             //schedule was deleted
             dal.delete(scheduleEntity.getUuid());
-            List<String> parent = new ArrayList<>();
-            parent.add(projectUuid);
             deleteMappings(true, scheduleEntity.getUuid(), parent, MapType.SCHEDULE.getMapType(),
                     thisMapTypeId, entityManager);
             ((ObjectNode)auditJson).put("RemovedSCHEDULE",
