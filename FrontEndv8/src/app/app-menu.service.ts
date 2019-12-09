@@ -8,7 +8,7 @@ export class AppMenuService implements  AbstractMenuProvider {
   static getRoutes(): Routes {
     return [
       { path: '', redirectTo : '/organisations/organisations', pathMatch: 'full' }, // Default route
-      { path: 'organisations/organisations', component: OrganisationComponent, data: {role: 'Viewer'}}
+      { path: 'organisations/:mode', component: OrganisationComponent, data: {role: 'Viewer'}}
     ];
   }
 

@@ -16,6 +16,7 @@ import {
 import {FlexModule} from "@angular/flex-layout";
 import {RouterModule} from "@angular/router";
 import {CoreModule} from "dds-angular8";
+import {GenericTableComponent} from "../generic-table/generic-table.component";
 
 @NgModule({
   imports: [
@@ -43,7 +44,8 @@ import {CoreModule} from "dds-angular8";
     MatProgressBarModule
   ],
   declarations: [
-    OrganisationComponent
+    OrganisationComponent,
+    GenericTableComponent
   ],
   entryComponents : [
   ],
