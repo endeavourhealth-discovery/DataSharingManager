@@ -58,7 +58,7 @@ public class ProjectDAL {
         oldProjectEntity.setCohorts(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.COHORT.getMapType()));
         oldProjectEntity.setDataSets(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.DATASET.getMapType()));
         oldProjectEntity.setSchedule(new SecurityProjectDAL().getLinkedSchedule(project.getUuid(), MapType.SCHEDULE.getMapType()));
-        oldProjectEntity.setExtractTechnicalDetails(new ExtractTechnicalDetailsLogic().getAssociatedExtractTechnicalDetails(project.getUuid(), MapType.PROJECT.getMapType()));
+        oldProjectEntity.setExtractTechnicalDetails(new SecurityProjectDAL().getLinkedExtractTechnicalDetails(project.getUuid(), MapType.EXTRACTTECHNICALDETAILS.getMapType()));
 
         ProjectEntity newProject = new ProjectEntity(project);
 

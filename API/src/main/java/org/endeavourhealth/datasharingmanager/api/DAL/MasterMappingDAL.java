@@ -502,55 +502,6 @@ public class MasterMappingDAL {
         }
     }
 
-    private JsonNode updateMappingsAndGetAuditForExtractTechnicalDetails(String parentItem, ExtractTechnicalDetailsEntity oldExtractTechDetails,
-                                                                         JsonExtractTechnicalDetails newExtractTechDetails, Short thisMapTypeId,
-                                                                         JsonNode auditJson, EntityManager entityManager) throws Exception {
-
-        List<String> updatedMappings = new ArrayList<>();
-        updatedMappings.add(newExtractTechDetails.getUuid());
-        List<String> oldExtractTechDetailsList = new ArrayList<>();
-        oldExtractTechDetailsList.add(oldExtractTechDetails.getUuid());
-        List<JsonExtractTechnicalDetails> newExtractTechDetailsList = new ArrayList<>();
-        newExtractTechDetailsList.add(newExtractTechDetails);
-
-        List<String> removedMappings = new ArrayList<>();
-        List<String> addedMappings = new ArrayList<>();
-
-        Short extractTechDetailsMapType = MapType.EXTRACTTECHNICALDETAILS.getMapType();
-
-        //TODO Get this to work
-        updateMappings(false, parentItem, oldExtractTechDetailsList, updatedMappings,
-                thisMapTypeId, extractTechDetailsMapType, removedMappings, addedMappings, entityManager);
-
-        deleteExtractTechnicalDetails(removedMappings);
-        saveExtractTechnicalDetails(addedMappings, newExtractTechDetailsList);
-
-        auditJson = appendToJson(false, removedMappings, MapType.valueOfTypeId(extractTechDetailsMapType), auditJson);
-        auditJson = appendToJson(true, addedMappings, MapType.valueOfTypeId(extractTechDetailsMapType), auditJson);
-
-        return auditJson;
-    }
-
-    private void deleteExtractTechnicalDetails(List<String> deletedExtractTechDetails) throws Exception {
-        for (String uuid : deletedExtractTechDetails) {
-            new ExtractTechnicalDetailsDAL().deleteExtractTechnicalDetails(uuid);
-        }
-    }
-
-    private void saveExtractTechnicalDetails(List<String> addedExtractTechDetails,
-                                             List<JsonExtractTechnicalDetails> extractTechDetails) throws Exception {
-        for (JsonExtractTechnicalDetails details : extractTechDetails) {
-            if (addedExtractTechDetails.contains(details.getUuid())) {
-                if (details.getUuid() != null) {
-                    new ExtractTechnicalDetailsDAL().updateExtractTechnicalDetails(details);
-                } else {
-                    details.setUuid(UUID.randomUUID().toString());
-                    new ExtractTechnicalDetailsDAL().saveExtractTechnicalDetails(details);
-                }
-            }
-        }
-    }
-
     public void saveProjectMappings(JsonProject project) throws Exception {
 
         /*if (project.getPublishers() != null) {
@@ -585,9 +536,8 @@ public class MasterMappingDAL {
                 documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
             }
             saveChildMappings(documentation, MapType.DOCUMENT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }*/
+        }
 
-        //TODO Remove later
         if (project.getExtractTechnicalDetails() != null) {
 
             Map<UUID, String> details = new HashMap<>();
@@ -596,7 +546,6 @@ public class MasterMappingDAL {
             saveChildMappings(details, MapType.EXTRACTTECHNICALDETAILS.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
 
-        /*
         if (project.getSchedule() != null) {
             List<String> schedUUIDs = new SecurityMasterMappingDAL().getChildMappings(
                     project.getUuid(), MapType.PROJECT.getMapType(), MapType.SCHEDULE.getMapType());
@@ -606,8 +555,8 @@ public class MasterMappingDAL {
                 schedule.put(UUID.fromString(uuid), uuid);
                 saveChildMappings(schedule, MapType.SCHEDULE.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
             }
-        }
-        */
+        }*/
+
     }
 
     public void saveDataExchangeMappings(JsonDataExchange dataExchange) throws Exception {
@@ -757,6 +706,64 @@ public class MasterMappingDAL {
                     thisMapTypeId, entityManager);
             ((ObjectNode)auditJson).put("RemovedSCHEDULE",
                     StringUtils.join(scheduleEntity.getCronDescription() + " ("+scheduleEntity.getUuid()+")",
+                            System.getProperty("line.separator")));
+        }
+        return auditJson;
+    }
+
+    private JsonNode updateMappingsAndGetAuditForExtractTechnicalDetails(String projectUuid, ExtractTechnicalDetailsEntity detailsEntity,
+                                                          JsonExtractTechnicalDetails detailsJson, Short thisMapTypeId,
+                                                          JsonNode auditJson, EntityManager entityManager) throws Exception {
+
+        ExtractTechnicalDetailsDAL dal = new ExtractTechnicalDetailsDAL();
+        //details were set
+        List<String> parent = new ArrayList<>();
+        parent.add(projectUuid);
+        if (detailsJson != null) {
+            //No existing details
+            if (detailsEntity == null) {
+                if (detailsJson.getUuid() == null) {
+                    detailsJson.setUuid(UUID.randomUUID().toString());
+                }
+                dal.saveExtractTechnicalDetails(detailsJson);
+                saveMappings(true, detailsJson.getUuid(), parent, MapType.EXTRACTTECHNICALDETAILS.getMapType(),
+                        MapType.PROJECT.getMapType(), entityManager);
+                ((ObjectNode)auditJson).put("AddedEXTRACTTECHNICALDETAILS",
+                        StringUtils.join(detailsJson.getName() + " ("+detailsJson.getUuid()+")",
+                                System.getProperty("line.separator")));
+            } else {
+                //Details were just updated, no need to do anything with the mappings
+                if (detailsEntity.getUuid().equals(detailsJson.getUuid())) {
+                    dal.updateExtractTechnicalDetails(detailsJson);
+                    ((ObjectNode)auditJson).put("RemovedEXTRACTTECHINICALDETAILS",
+                            StringUtils.join(detailsEntity.getName() + " ("+detailsEntity.getUuid()+")",
+                                    System.getProperty("line.separator")));
+                    ((ObjectNode)auditJson).put("AddedEXTRACTTECHNICALDETAILS",
+                            StringUtils.join(detailsJson.getName() + " ("+detailsJson.getUuid()+")",
+                                    System.getProperty("line.separator")));
+                } else {
+                    //Previous details were deleted then new ones were added
+                    dal.deleteExtractTechnicalDetails(detailsEntity.getUuid());
+                    deleteMappings(true, detailsEntity.getUuid(), parent, MapType.EXTRACTTECHNICALDETAILS.getMapType(),
+                            thisMapTypeId, entityManager);
+                    ((ObjectNode)auditJson).put("RemovedEXTRACTTECHNICALDETAILS",
+                            StringUtils.join(detailsEntity.getName() + " ("+detailsEntity.getUuid()+")",
+                                    System.getProperty("line.separator")));
+                    dal.saveExtractTechnicalDetails(detailsJson);
+                    saveMappings(true, detailsJson.getUuid(), parent, MapType.EXTRACTTECHNICALDETAILS.getMapType(),
+                            MapType.PROJECT.getMapType(), entityManager);
+                    ((ObjectNode)auditJson).put("AddedEXTRACTTECHNICALDETAILS",
+                            StringUtils.join(detailsJson.getName() + " ("+detailsJson.getUuid()+")",
+                                    System.getProperty("line.separator")));
+                }
+            }
+        } else if (detailsEntity != null) {
+            //details were deleted
+            dal.deleteExtractTechnicalDetails(detailsEntity.getUuid());
+            deleteMappings(true, detailsEntity.getUuid(), parent, MapType.EXTRACTTECHNICALDETAILS.getMapType(),
+                    thisMapTypeId, entityManager);
+            ((ObjectNode)auditJson).put("RemovedEXTRACTTECHNICALDETAILS",
+                    StringUtils.join(detailsEntity.getName() + " ("+detailsEntity.getUuid()+")",
                             System.getProperty("line.separator")));
         }
         return auditJson;

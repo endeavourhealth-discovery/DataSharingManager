@@ -54,17 +54,7 @@ public class ProjectLogic {
             project.setUuid(UUID.randomUUID().toString());
             new ProjectDAL().saveProject(project);
         }
-
-        //TODO Maybe remove later
-        JsonExtractTechnicalDetails details = project.getExtractTechnicalDetails();
-        if (details.getUuid() != null) {
-            new ExtractTechnicalDetailsDAL().updateExtractTechnicalDetails(details);
-        } else {
-            details.setUuid(UUID.randomUUID().toString());
-            new ExtractTechnicalDetailsDAL().saveExtractTechnicalDetails(details);
-        }
-
-        new MasterMappingDAL().saveProjectMappings(project);
+        /*new MasterMappingDAL().saveProjectMappings(project);*/
 
         return Response
                 .ok()
@@ -133,6 +123,21 @@ public class ProjectLogic {
         return Response
                 .ok()
                 .entity(schedule)
+                .build();
+    }
+
+    public Response getLinkedExtractTechnicalDetails(String projectId) throws Exception {
+
+        ExtractTechnicalDetailsEntity detailsEntity =
+                new SecurityProjectDAL().getLinkedExtractTechnicalDetails(projectId, MapType.EXTRACTTECHNICALDETAILS.getMapType());
+
+        JsonExtractTechnicalDetails details = null;
+        if (detailsEntity != null) {
+            details = SecurityProjectDAL.setJsonExtractTechnicalDetails(detailsEntity);
+        }
+        return Response
+                .ok()
+                .entity(details)
                 .build();
     }
 
