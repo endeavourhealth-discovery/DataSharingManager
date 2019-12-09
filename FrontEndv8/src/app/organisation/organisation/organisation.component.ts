@@ -28,17 +28,10 @@ export class OrganisationComponent implements OnInit {
   public activeProject: UserProject;
 
   ngOnInit() {
-
-    this.search();
-    this.getTotalOrganisationCount();
-    console.log('here');
     this.userManagerNotificationService.onProjectChange.subscribe(active => {
       this.activeProject = active;
-      console.log(active);
       this.roleChanged();
     });
-
-
   }
 
   roleChanged() {
@@ -50,12 +43,13 @@ export class OrganisationComponent implements OnInit {
       vm.allowEdit = false;
     }
 
-    console.log(vm.allowEdit);
-
     this.paramSubscriber = this.route.params.subscribe(
       params => {
         this.performAction(params['mode']);
       });
+
+    this.search();
+    this.getTotalOrganisationCount();
   }
 
   constructor(private organisationService: OrganisationService,
@@ -140,13 +134,11 @@ export class OrganisationComponent implements OnInit {
   }
 
   private search() {
-    console.log('searching');
     const vm = this;
     vm.loadingComplete = false;
     vm.organisationService.search(vm.searchData, vm.searchType, vm.pageNumber, vm.pageSize, vm.orderColumn, vm.descending)
       .subscribe(result => {
           vm.organisations = result;
-          console.log(result);
           vm.loadingComplete = true;
         },
         error => {

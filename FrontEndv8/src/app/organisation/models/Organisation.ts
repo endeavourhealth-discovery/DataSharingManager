@@ -27,12 +27,8 @@ export class Organisation {
 
     getDisplayItems(): any[] {
         return [
-            {label: 'ODS code', property: 'odsCode'},
-            {label: 'Alternative name', property: 'alternativeName'},
-            {label: 'ICO code', property: 'icoCode'},
-            {label: 'IG toolkit status', property: 'igToolkitStatus'},
-            {label: 'Date of registration', property: 'dateOfRegistration'},
-            {label: 'Type', property: 'type'}
+            {label: 'Name', property: 'name'},
+            {label: 'ODS code', property: 'odsCode'}
         ];
     }
 }
