@@ -1,0 +1,126 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar>
+      <mat-icon>alarm</mat-icon>
+    </div>
+    <mat-card-title>Scheduler</mat-card-title>
+    <mat-card-subtitle>Create a Quartz Cron Expression</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-tab-group (selectedTabChange)="setTab($event)">
+      <mat-tab label="Minutes">
+        <br>
+        <mat-form-field appearance="outline">
+          <mat-label>every minute(s)</mat-label>
+          <mat-select [(value)]="everyMinuteMinuteTab" (selectionChange)="setMinutesTabCron()">
+            <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>at second(s)</mat-label>
+          <mat-select [(value)]="everySecondMinuteTab" (selectionChange)="setMinutesTabCron()">
+            <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-tab>
+      <mat-tab label="Hourly">
+        <br>
+        <mat-form-field appearance="outline">
+          <mat-label>every hour(s)</mat-label>
+          <mat-select [(value)]="everyHourHourlyTab" (selectionChange)="setHourlyTabCron()">
+            <mat-option *ngFor="let item of zeroTo23" value="{{item.value}}">{{item.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>at minute(s)</mat-label>
+          <mat-select [(value)]="everyMinuteHourlyTab" (selectionChange)="setHourlyTabCron()">
+            <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>at second(s)</mat-label>
+          <mat-select [(value)]="everySecondHourlyTab" (selectionChange)="setHourlyTabCron()">
+            <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-tab>
+      <mat-tab label="Daily">
+        <br>
+        <mat-radio-group [(ngModel)]="dailyRadio" (change)="toggleDaily()">
+          <mat-label>&nbsp;&nbsp;&nbsp;</mat-label>
+          <mat-radio-button [value]="rows[0]"></mat-radio-button>
+          <mat-form-field appearance="outline">
+            <mat-label>every day(s)</mat-label>
+            <mat-select [(value)]="everyDayDailyTab" [disabled]="dailyRow1" (selectionChange)="setDailyTabCron()">
+              <mat-option *ngFor="let item of oneTo31" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>hh</mat-label>
+            <mat-select [(value)]="everyHour1DailyTab" [disabled]="dailyRow1" (selectionChange)="setDailyTabCron()">
+              <mat-option *ngFor="let item of zeroTo23" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>mm</mat-label>
+            <mat-select [(value)]="everyMinute1DailyTab" [disabled]="dailyRow1" (selectionChange)="setDailyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>ss</mat-label>
+            <mat-select [(value)]="everySecond1DailyTab" [disabled]="dailyRow1" (selectionChange)="setDailyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br>
+          <mat-label>&nbsp;&nbsp;&nbsp;</mat-label>
+          <mat-radio-button [value]="rows[1]"></mat-radio-button>
+          <mat-label>&nbsp;Every working day&nbsp;&nbsp;</mat-label>
+          <mat-form-field appearance="outline">
+            <mat-label>hh</mat-label>
+            <mat-select [(value)]="everyHour2DailyTab" [disabled]="dailyRow2" (selectionChange)="setDailyTabCron()">
+              <mat-option *ngFor="let item of zeroTo23" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>mm</mat-label>
+            <mat-select [(value)]="everyMinute2DailyTab" [disabled]="dailyRow2" (selectionChange)="setDailyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>ss</mat-label>
+            <mat-select [(value)]="everySecond2DailyTab" [disabled]="dailyRow2" (selectionChange)="setDailyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-radio-group>
+      </mat-tab>
+      <mat-tab label="Weekly">
+      </mat-tab>
+      <mat-tab label="Monthly">
+      </mat-tab>
+      <mat-tab label="Yearly">
+      </mat-tab>
+      <mat-tab label="Advanced">
+      </mat-tab>
+    </mat-tab-group>
+    <br>
+    <br>
+    <div class="full">
+      <mat-form-field appearance="outline">
+        <mat-label>Cron expression</mat-label>
+        <input matInput class="cron" placeholder="Cron expression" value="{{cron}}" readonly>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Cron description</mat-label>
+        <input matInput class="description" placeholder="Cron description" value="{{cronDescription}}" readonly>
+      </mat-form-field>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-raised-button>Cancel</button>
+      <button mat-raised-button>Ok</button>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,18 @@
+.full {
+  display: flex;
+  flex-direction: column;
+}
+
+.full > * {
+  width: 100%;
+}
+
+.cron {
+  font-size: 26px;
+  text-align: center;
+}
+
+.description {
+  font-size: 13px;
+  text-align: center;
+}
