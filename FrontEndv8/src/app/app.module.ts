@@ -7,6 +7,7 @@ import {HttpClientModule} from '@angular/common/http';
 import {AbstractMenuProvider, LayoutComponent, LayoutModule, LoggerModule, SecurityModule, UserManagerModule} from 'dds-angular8';
 import {InstanceModule} from './instance/instance.module';
 import {OrganisationModule} from "./organisation/organisation.module";
+import {SchedulerModule} from "./scheduler/scheduler.module";
 
 const keycloakService = new KeycloakService();
 
@@ -20,6 +21,7 @@ const keycloakService = new KeycloakService();
     LoggerModule,
     UserManagerModule,
     OrganisationModule,
+    SchedulerModule,
 
     ConceptModule,
     InstanceModule,
