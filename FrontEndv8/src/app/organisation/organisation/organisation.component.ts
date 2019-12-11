@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {Organisation} from '../models/Organisation';
+import {Organisation} from '../../models/Organisation';
 import {OrganisationService} from '../organisation.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
@@ -47,9 +47,6 @@ export class OrganisationComponent implements OnInit {
       params => {
         this.performAction(params['mode']);
       });
-
-    this.search();
-    this.getTotalOrganisationCount();
   }
 
   constructor(private organisationService: OrganisationService,
@@ -82,6 +79,7 @@ export class OrganisationComponent implements OnInit {
       .subscribe(
         (result) => {
           vm.totalItems = result;
+          console.log(result);
         },
         (error) => console.log(error)
       );
@@ -99,8 +97,9 @@ export class OrganisationComponent implements OnInit {
     this.router.navigate(['/organisation', item.uuid, 'edit']);
   }
 
-  delete(item: Organisation) {
+  delete(items: Organisation[]) {
     const vm = this;
+    console.log(items);
     /*MessageBoxDialog.open(vm.$modal, 'Delete organisation', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete organisation', 'Cancel')
       .result.then(
       () => vm.doDelete(item),
@@ -108,8 +107,8 @@ export class OrganisationComponent implements OnInit {
     );*/
   }
 
- /* doDelete(item: Organisation) {
-    const vm = this;
+  doDelete(item: Organisation) {
+    /*const vm = this;
     vm.organisationService.deleteOrganisation(item.uuid)
       .subscribe(
         () => {
@@ -117,8 +116,8 @@ export class OrganisationComponent implements OnInit {
           vm.log.success('Organisation deleted')/!*, item, 'Delete organisation')*!/;
         },
         (error) => vm.log.error('The organisation could not be deleted. Please try again.'/!*, error, 'Delete organisation'*!/)
-      );
-  }*/
+      );*/
+  }
 
   close() {
     this.router.navigate(['/overview']);
@@ -136,9 +135,11 @@ export class OrganisationComponent implements OnInit {
   private search() {
     const vm = this;
     vm.loadingComplete = false;
+    console.log('searching', this.pageNumber);
     vm.organisationService.search(vm.searchData, vm.searchType, vm.pageNumber, vm.pageSize, vm.orderColumn, vm.descending)
       .subscribe(result => {
           vm.organisations = result;
+          console.log(result);
           vm.loadingComplete = true;
         },
         error => {
@@ -148,22 +149,19 @@ export class OrganisationComponent implements OnInit {
       );
   }
 
-  pageChange($event) {
-    const vm = this;
-    vm.pageNumber = $event;
-    vm.search();
+  itemClicked(org: Organisation) {
+    console.log(org);
   }
 
-  pageSizeChange($event) {
-    const vm = this;
-    vm.pageSize = $event;
-    vm.search();
+  pageChange($event) {
+    this.pageNumber = $event.pageIndex + 1; // pagination index starts at 0, mySQL is 1
+    this.pageSize = $event.pageSize;
+    this.search();
   }
 
   onOrderChange($event) {
-    const vm = this;
-    vm.orderColumn = $event.column;
-    vm.descending = $event.descending;
-    vm.search();
+    this.orderColumn = $event.active;
+    this.descending = $event.direction == 'desc' ? true : false;
+    this.search();
   }
 }

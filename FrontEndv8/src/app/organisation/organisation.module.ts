@@ -17,9 +17,14 @@ import {FlexModule} from "@angular/flex-layout";
 import {RouterModule} from "@angular/router";
 import {CoreModule} from "dds-angular8";
 import {GenericTableComponent} from "../generic-table/generic-table.component";
+import {GenericTableSspComponent} from "../generic-table-ssp/generic-table-ssp.component";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {BrowserModule} from "@angular/platform-browser";
 
 @NgModule({
   imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
     CommonModule,
     FormsModule,
     MatCardModule,
@@ -45,7 +50,8 @@ import {GenericTableComponent} from "../generic-table/generic-table.component";
   ],
   declarations: [
     OrganisationComponent,
-    GenericTableComponent
+    GenericTableComponent,
+    GenericTableSspComponent
   ],
   entryComponents : [
   ],
