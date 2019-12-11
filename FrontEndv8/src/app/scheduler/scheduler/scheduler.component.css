@@ -4,7 +4,7 @@
 }
 
 .full > * {
-  width: 100%;
+  width: 80%;
 }
 
 .cron {
@@ -15,4 +15,23 @@
 .description {
   font-size: 13px;
   text-align: center;
+}
+
+.regular {
+  width: 180px;
+}
+
+.time {
+  width: 75px;
+}
+
+.days-section {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  height: 60px;
+}
+
+.days-margin {
+  margin: 0 10px;
 }
