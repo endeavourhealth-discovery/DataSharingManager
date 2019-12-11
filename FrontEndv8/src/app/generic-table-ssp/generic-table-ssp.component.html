@@ -1,7 +1,7 @@
 
 <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
   <mat-form-field>
-    <input matInput [(ngModel)]="filterText" (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    <input matInput [(ngModel)]="filterText" (keyup.enter)="applyFilter($event.target.value)" placeholder="Filter">
     <mat-icon matSuffix (click)="clear()" style="cursor: pointer">clear</mat-icon>
   </mat-form-field>
 
@@ -12,7 +12,8 @@
     <mat-icon [matMenuTriggerFor]="itemActionMenu">more_vert</mat-icon>
   </div>
 
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 mat-table-compact" fxFlex="100" fxFill matSort>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 mat-table-compact"
+         fxFlex="100" fxFill matSort matSortActive="created" matSortDisableClear matSortDirection="asc">
 
     <ng-container *ngFor="let disCol of detailsToShow;" matColumnDef="{{disCol.property}}">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{disCol.label}}</th>
@@ -44,6 +45,8 @@
   <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"
                  [showFirstLastButtons]="true"
                  [pageSize]="pageSize"
+                 [length]="totalItems"
+                 (page)="changePage($event)"
                  fxFlex="100"
                  fxFill></mat-paginator>
 </div>
