@@ -1,0 +1,400 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar><mat-icon>lightbulb_outline</mat-icon></div>
+    <mat-card-title>{{orgType}} details</mat-card-title>
+    <mat-card-subtitle>{{organisation.name}}</mat-card-subtitle>
+    <div fxFlex></div>
+    <mat-menu #visualiseMenu="matMenu">
+      <button *ngIf="(organisation.isService === 0) && (organisation.uuid) && (allowEdit)" mat-menu-item (click)="createServiceFromOrg(false)">Create service</button>
+      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(false)">Save</button>
+      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(true)">Save & close</button>
+    </mat-menu>
+    <div fxLayoutAlign="center" class="mat-action" matRipple>
+      <mat-icon [matMenuTriggerFor]="visualiseMenu">more_vert</mat-icon>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="form" #f="ngForm" novalidate>
+      <div class="form-group" #fgName="ngModelGroup" ngModelGroup="organisation" [class.has-error]="!fgName.valid">
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>{{orgType}} name</mat-label>
+            <input required matInput [(ngModel)]="organisation.name" placeholder="Organisation name" name="name">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Alternative name</mat-label>
+            <input matInput [(ngModel)]="organisation.alternativeName" placeholder="Alternative name" name="alternativeName">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>ODS code</mat-label>
+            <input required matInput [(ngModel)]="organisation.odsCode" placeholder="ODS Code" name="odsCode">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>ICO code</mat-label>
+            <input matInput [(ngModel)]="organisation.icoCode" placeholder="ICO code" name="icoCode">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>IG toolkit status</mat-label>
+            <input matInput [(ngModel)]="organisation.igToolkitStatus" placeholder="IG toolkit status" name="igToolkitStatus">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Date of registration</mat-label>
+            <input matInput type="date" [(ngModel)]="organisation.dateOfRegistration" placeholder="Date Of registration" name="dateOfRegistration">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50">
+            <mat-label>Organisation type</mat-label>
+            <mat-select matInput name="status" [(ngModel)]="organisation.type" name="type">
+              <mat-option *ngFor="let ot of organisationTypes" [value]="ot.id">{{ot.organisationType}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <br>
+        <button *ngIf="allowEdit && organisation.isService === 0" mat-raised-button color="primary" (click)="addAddress()">Add address</button>
+        <div *ngFor="let orgAddress of addresses; let index = index">
+          <button *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
+          <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+            <mat-form-field appearance="outline" fxFlex="33" fxFill>
+              <mat-label>Building name</mat-label>
+              <input matInput [(ngModel)]="orgAddress.buildingName" placeholder="Building name" name="buildingName{{index}}">
+            </mat-form-field>
+            <mat-form-field appearance="outline" fxFlex="33" fxFill>
+              <mat-label>Number and street</mat-label>
+              <input matInput [(ngModel)]="orgAddress.numberAndStreet" placeholder="Number and street" name="numberAndStreet{{index}}">
+            </mat-form-field>
+            <mat-form-field appearance="outline" fxFlex="33" fxFill>
+              <mat-label>Locality</mat-label>
+              <input matInput [(ngModel)]="orgAddress.locality" placeholder="Locality" name="locality{{index}}">
+            </mat-form-field>
+            <mat-form-field appearance="outline" fxFlex="33" fxFill>
+              <mat-label>City</mat-label>
+              <input matInput [(ngModel)]="orgAddress.city" placeholder="City" name="city{{index}}">
+            </mat-form-field>
+            <mat-form-field appearance="outline" fxFlex="33" fxFill>
+              <mat-label>County</mat-label>
+              <input matInput [(ngModel)]="orgAddress.county" placeholder="County" name="county{{index}}">
+            </mat-form-field>
+            <mat-form-field appearance="outline" fxFlex="33" fxFill>
+              <mat-label>Postcode</mat-label>
+              <input matInput [(ngModel)]="orgAddress.postcode" placeholder="Postcode" name="postcode{{index}}">
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <mat-tab-group dynamicHeight>
+      <mat-tab *ngIf="organisation.isService === 0">
+        <ng-template mat-tab-label>
+          <span matBadge="{{regions?.length}}" matBadgeOverlap="false">Regions</span>
+        </ng-template>
+        <app-generic-table
+          [items]="regions"
+          [detailsToShow]="regionDetailsToShow"
+          [allowDelete]="allowEdit"></app-generic-table>
+      </mat-tab>
+      <mat-tab *ngIf="organisation.isService === 0">
+        <ng-template mat-tab-label>
+          <span matBadge="{{dpaPublishing?.length}}" matBadgeOverlap="false">DPA publishing to</span>
+        </ng-template>
+        <app-generic-table
+          [items]="dpaPublishing"
+          [detailsToShow]="dpaDetailsToShow"
+          [allowDelete]="allowEdit"></app-generic-table>
+      </mat-tab>
+      <mat-tab *ngIf="organisation.isService === 0">
+        <ng-template mat-tab-label>
+          <span matBadge="{{dsaPublishing?.length}}" matBadgeOverlap="false">DSA Publishing to</span>
+        </ng-template>
+        <app-generic-table
+          [items]="dsaPublishing"
+          [detailsToShow]="dsaDetailsToShow"
+          [allowDelete]="allowEdit"></app-generic-table>
+      </mat-tab>
+      <mat-tab *ngIf="organisation.isService === 0">
+        <ng-template mat-tab-label>
+          <span matBadge="{{dsaSubscribing?.length}}" matBadgeOverlap="false">DSA subscribing to</span>
+        </ng-template>
+        <app-generic-table
+          [items]="dsaSubscribing"
+          [detailsToShow]="dsaDetailsToShow"
+          [allowDelete]="allowEdit"></app-generic-table>
+      </mat-tab>
+      <mat-tab *ngIf="organisation.isService === 0">
+        <ng-template mat-tab-label>
+          <span matBadge="{{childOrganisations?.length}}" matBadgeOverlap="false">Child organisations</span>
+        </ng-template>
+        <app-generic-table
+          [items]="childOrganisations"
+          [detailsToShow]="orgDetailsToShow"
+          [allowDelete]="allowEdit"></app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{parentOrganisations?.length}}" matBadgeOverlap="false">Parent organisations</span>
+        </ng-template>
+        <app-generic-table
+          [items]="parentOrganisations"
+          [detailsToShow]="orgDetailsToShow"
+          [allowDelete]="allowEdit"></app-generic-table>
+      </mat-tab>
+      <mat-tab *ngIf="organisation.isService === 0">
+        <ng-template mat-tab-label>
+          <span matBadge="{{services?.length}}" matBadgeOverlap="false">Services</span>
+        </ng-template>
+        <app-generic-table
+          [items]="services"
+          [detailsToShow]="orgDetailsToShow"
+          [allowDelete]="allowEdit"></app-generic-table>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+
+<!--<div class="module">
+  <div class="container-fluid">
+    <div class="module-heading">
+      {{orgType}} details
+      <div class="pull-right">
+        <button *ngIf="(organisation.isService === 0) && (organisation.uuid) && (allowEdit)" type="button" class="btn btn-sm btn-success" (click)="createServiceFromOrg(false)">Create service</button>
+        <button *ngIf="allowEdit" [disabled]="!f.valid" type="button" class="btn btn-sm btn-success" (click)="save(false)">Save</button>
+        <button *ngIf="allowEdit" [disabled]="!f.valid" type="button" class="btn btn-sm btn-warning" (click)="save(true)">Save & close</button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="close()">Cancel</button>
+      </div>
+    </div>
+    <div class="module-body">
+      <form class="form" #f="ngForm" novalidate>
+        <div class="form-group" #fgName="ngModelGroup" ngModelGroup="organisation" [class.has-error]="!fgName.valid">
+          <fieldset [disabled]="!allowEdit">
+            <legend>Organisation</legend>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label required-field">{{orgType}} name</label>
+                <input required type="text" class="form-control" placeholder="Organisation name" [(ngModel)]="organisation.name" name="name">
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">Alternative name</label>
+                <input type="text" class="form-control" placeholder="Alternative Name" [(ngModel)]="organisation.alternativeName" name="alternativeName">
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label required-field">ODS code</label>
+                <input required type="text" class="form-control" placeholder="ODS code" [(ngModel)]="organisation.odsCode" name="odsCode">
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">ICO code</label>
+                <input type="text" class="form-control" placeholder="ICO code" [(ngModel)]="organisation.icoCode" name="icoCode">
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label">IG toolkit status</label>
+                <input type="text" class="form-control" placeholder="IG toolkit status" [(ngModel)]="organisation.igToolkitStatus" name="igToolkitStatus">
+              </div>
+              <div class="form-group col-md-6">
+                <label class="control-label">Date of registration</label>
+                <input type="date" class="form-control" placeholder="Date Of registration" [(ngModel)]="organisation.dateOfRegistration" name="dateOfRegistration">
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="control-label required-field">Organisation type</label>
+                <div class="input-group">
+                  <select required class="form-control" [(ngModel)]="organisation.type" name="type">
+                    <option *ngFor="let ot of organisationTypes" [ngValue]="ot.id">{{ot.organisationType}}</option>
+                  </select>
+                </div>
+                <small class="required-field-note"></small>
+              </div>
+              &lt;!&ndash;<div class="form-group col-md-6">
+                <label class="control-label">Evidence of registration</label>
+                <input type="text" class="form-control" placeholder="Evidence of registration" [(ngModel)]="organisation.evidenceOfRegistration" name="evidenceOfRegistration">
+              </div>&ndash;&gt;
+            </div>
+
+            <button *ngIf="allowEdit && organisation.isService === 0" type="button" class="btn btn-sm btn-success" (click)="addAddress()">Add address</button>
+            <div *ngFor="let orgAddress of addresses;let index = index;">
+              <div class="card">
+                <div class="card-body">
+                  <div class="row">
+                      <p><em *ngIf="allowEdit" (click)="deleteAddress(orgAddress)" class="fa fa-trash delete-endeavour-button-top" aria-hidden="true" style="color:red"></em></p>
+                  </div>
+
+                  <div class="row">
+                    <div class="form-group col-md-4">
+                      <label class="control-label">Building name</label>
+                      <input type="text" class="form-control" placeholder="Building name" [(ngModel)]="orgAddress.buildingName" name="buildingName{{index}}">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label class="control-label">Number and street</label>
+                      <input type="text" class="form-control" placeholder="Number and street" [(ngModel)]="orgAddress.numberAndStreet" name="numberAndStreet{{index}}">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label class="control-label">Locality</label>
+                      <input type="text" class="form-control" placeholder="Locality" [(ngModel)]="orgAddress.locality" name="locality{{index}}">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="form-group col-md-4">
+                      <label class="control-label">City</label>
+                      <input type="text" class="form-control" placeholder="City" [(ngModel)]="orgAddress.city" name="city{{index}}">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label class="control-label">County</label>
+                      <input type="text" class="form-control" placeholder="County" [(ngModel)]="orgAddress.county" name="county{{index}}">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label class="control-label">Postcode</label>
+                      <input type="text" class="form-control" placeholder="Postcode" [(ngModel)]="orgAddress.postcode" name="postcode{{index}}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+          </fieldset>
+        </div>
+
+        <ngb-tabset>
+          <ngb-tab *ngIf="organisation.isService === 0">
+            <ng-template ngbTabTitle><span class="tab-title">Regions </span><span class="badge badge-pill badge-primary">{{regions?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
+              <entity-viewer
+                (onshowPicker)="editRegions()"
+                [items]="regions"
+                [primary]="'name'"
+                [primaryOrderText]="'Name'"
+                [displayClass]="'region'"
+                [secondary]="'description'"
+                [secondaryOrderText]="'Description'"
+                [typeDescription]="'Region'"
+                [model]="'region'"
+                [detailsToShow]="regionDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
+              </entity-viewer>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab *ngIf="organisation.isService === 0">
+            <ng-template ngbTabTitle><span class="tab-title">DPA publishing to </span><span class="badge badge-pill badge-primary">{{dpaPublishing?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
+              <entity-viewer
+                (onshowPicker)="editDPAPublishing()"
+                [items]="dpaPublishing"
+                [primary]="'name'"
+                [primaryOrderText]="'Name'"
+                [displayClass]="'region'"
+                [secondary]="'description'"
+                [secondaryOrderText]="'Description'"
+                [typeDescription]="'Data processing agreement'"
+                [model]="'dpa'"
+                [detailsToShow]="dpaDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
+              </entity-viewer>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab *ngIf="organisation.isService === 0">
+            <ng-template ngbTabTitle><span class="tab-title">DSA Publishing to </span><span class="badge badge-pill badge-primary">{{dsaPublishing?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
+              <entity-viewer
+                (onshowPicker)="editDSASubscribing()"
+                [items]="dsaPublishing"
+                [primary]="'name'"
+                [primaryOrderText]="'Name'"
+                [displayClass]="'region'"
+                [secondary]="'description'"
+                [secondaryOrderText]="'Description'"
+                [typeDescription]="'Data sharing agreement'"
+                [model]="'dsa'"
+                [detailsToShow]="dsaDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
+              </entity-viewer>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab *ngIf="organisation.isService === 0">
+            <ng-template ngbTabTitle><span class="tab-title">DSA subscribing to </span><span class="badge badge-pill badge-primary">{{dsaSubscribing?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
+              <entity-viewer
+                (onshowPicker)="editDSASubscribing()"
+                [items]="dsaSubscribing"
+                [primary]="'name'"
+                [primaryOrderText]="'Name'"
+                [displayClass]="'region'"
+                [secondary]="'description'"
+                [secondaryOrderText]="'Description'"
+                [typeDescription]="'Data sharing agreement'"
+                [model]="'dsa'"
+                [detailsToShow]="dsaDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
+              </entity-viewer>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab *ngIf="organisation.isService === 0">
+            <ng-template ngbTabTitle><span class="tab-title">Child organisations </span><span class="badge badge-pill badge-primary">{{childOrganisations?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
+              <entity-viewer
+                (onshowPicker)="editChildOrganisations()"
+                [items]="childOrganisations"
+                [primary]="'name'"
+                [primaryOrderText]="'Name'"
+                [displayClass]="'region'"
+                [secondary]="'odsCode'"
+                [secondaryOrderText]="'ODS Code'"
+                [typeDescription]="'Child organisation'"
+                [model]="'organisation'"
+                [detailsToShow]="orgDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
+              </entity-viewer>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Parent organisations </span><span class="badge badge-pill badge-primary">{{parentOrganisations?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
+              <entity-viewer
+                (onshowPicker)="editParentOrganisations()"
+                [items]="parentOrganisations"
+                [primary]="'name'"
+                [primaryOrderText]="'Name'"
+                [displayClass]="'region'"
+                [secondary]="'odsCode'"
+                [secondaryOrderText]="'ODS Code'"
+                [typeDescription]="'Parent organisation'"
+                [model]="'organisation'"
+                [detailsToShow]="orgDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
+              </entity-viewer>
+            </ng-template>
+          </ngb-tab>
+          <ngb-tab *ngIf="organisation.isService === 0">
+            <ng-template ngbTabTitle><span class="tab-title">Services </span><span class="badge badge-pill badge-primary">{{services?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
+              <entity-viewer
+                (onshowPicker)="editServices()"
+                [items]="services"
+                [primary]="'name'"
+                [primaryOrderText]="'Name'"
+                [displayClass]="'region'"
+                [secondary]="'odsCode'"
+                [secondaryOrderText]="'ODS Code'"
+                [typeDescription]="'Service'"
+                [model]="'organisation'"
+                [detailsToShow]="orgDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
+              </entity-viewer>
+            </ng-template>
+          </ngb-tab>
+        </ngb-tabset>
+
+      </form>
+      <br>
+      <br>
+    </div>
+  </div>
+</div>-->

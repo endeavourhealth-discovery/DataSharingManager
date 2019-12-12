@@ -35,12 +35,12 @@ export class OrganisationComponent implements OnInit {
   }
 
   roleChanged() {
-    const vm = this;
 
-    if (vm.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
-      vm.allowEdit = true;
+
+    if (this.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+      this.allowEdit = true;
     } else {
-      vm.allowEdit = false;
+      this.allowEdit = false;
     }
 
     this.paramSubscriber = this.route.params.subscribe(
@@ -74,11 +74,11 @@ export class OrganisationComponent implements OnInit {
   }
 
   getTotalOrganisationCount() {
-    const vm = this;
-    vm.organisationService.getTotalCount(vm.searchData, vm.searchType)
+
+    this.organisationService.getTotalCount(this.searchData, this.searchType)
       .subscribe(
         (result) => {
-          vm.totalItems = result;
+          this.totalItems = result;
           console.log(result);
         },
         (error) => console.log(error)
@@ -98,24 +98,24 @@ export class OrganisationComponent implements OnInit {
   }
 
   delete(items: Organisation[]) {
-    const vm = this;
+
     console.log(items);
-    /*MessageBoxDialog.open(vm.$modal, 'Delete organisation', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete organisation', 'Cancel')
+    /*MessageBoxDialog.open(this.$modal, 'Delete organisation', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete organisation', 'Cancel')
       .result.then(
-      () => vm.doDelete(item),
-      () => vm.log.info('Delete cancelled')
+      () => this.doDelete(item),
+      () => this.log.info('Delete cancelled')
     );*/
   }
 
   doDelete(item: Organisation) {
-    /*const vm = this;
-    vm.organisationService.deleteOrganisation(item.uuid)
+    /*
+    this.organisationService.deleteOrganisation(item.uuid)
       .subscribe(
         () => {
-          vm.search();
-          vm.log.success('Organisation deleted')/!*, item, 'Delete organisation')*!/;
+          this.search();
+          this.log.success('Organisation deleted')/!*, item, 'Delete organisation')*!/;
         },
-        (error) => vm.log.error('The organisation could not be deleted. Please try again.'/!*, error, 'Delete organisation'*!/)
+        (error) => this.log.error('The organisation could not be deleted. Please try again.'/!*, error, 'Delete organisation'*!/)
       );*/
   }
 
@@ -124,33 +124,34 @@ export class OrganisationComponent implements OnInit {
   }
 
   onSearch($event) {
-    const vm = this;
-    vm.searchData = $event;
-    vm.pageNumber = 1;
-    vm.organisations = [];
-    vm.search();
-    vm.getTotalOrganisationCount();
+
+    this.searchData = $event;
+    this.pageNumber = 1;
+    this.organisations = [];
+    this.search();
+    this.getTotalOrganisationCount();
   }
 
   private search() {
-    const vm = this;
-    vm.loadingComplete = false;
+
+    this.loadingComplete = false;
     console.log('searching', this.pageNumber);
-    vm.organisationService.search(vm.searchData, vm.searchType, vm.pageNumber, vm.pageSize, vm.orderColumn, vm.descending)
+    this.organisationService.search(this.searchData, this.searchType, this.pageNumber, this.pageSize, this.orderColumn, this.descending)
       .subscribe(result => {
-          vm.organisations = result;
+          this.organisations = result;
           console.log(result);
-          vm.loadingComplete = true;
+          this.loadingComplete = true;
         },
         error => {
-          vm.log.error('The organisation could not be loaded. Please try again.'/*, error, 'Load organisations'*/);
-          vm.loadingComplete = true;
+          this.log.error('The organisation could not be loaded. Please try again.'/*, error, 'Load organisations'*/);
+          this.loadingComplete = true;
         }
       );
   }
 
   itemClicked(org: Organisation) {
     console.log(org);
+    this.router.navigate(['/organisation', org.uuid, 'edit']);
   }
 
   pageChange($event) {

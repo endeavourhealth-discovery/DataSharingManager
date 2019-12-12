@@ -1,15 +1,14 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild} from '@angular/core';
-import {SelectionModel} from "@angular/cdk/collections";
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {MatPaginator, MatSort, MatTableDataSource} from "@angular/material";
+import {SelectionModel} from "@angular/cdk/collections";
 
 @Component({
-  selector: 'app-generic-table-ssp',
-  templateUrl: './generic-table-ssp.component.html',
-  styleUrls: ['./generic-table-ssp.component.scss']
+  selector: 'app-generic-table',
+  templateUrl: './generic-table.component.html',
+  styleUrls: ['./generic-table.component.scss']
 })
-export class GenericTableSspComponent implements OnInit, AfterViewInit, OnChanges {
+export class GenericTableComponent implements OnInit {
   @Input() items : any[] = [];
-  @Input() totalItems : number;
   @Input() typeDescription : string = '';
   @Input() model : string = '';
   @Input() primary : string = 'name';
@@ -28,10 +27,6 @@ export class GenericTableSspComponent implements OnInit, AfterViewInit, OnChange
   @Output() deleted: EventEmitter<any[]> = new EventEmitter<any[]>();
   @Output() clicked: EventEmitter<any> = new EventEmitter<any>();
   @Output() onshowPicker: EventEmitter<string> = new EventEmitter<string>();
-  @Output() onPageChange: EventEmitter<number> = new EventEmitter<number>();
-  @Output() onPageSizeChange: EventEmitter<number> = new EventEmitter<number>();
-  @Output() search: EventEmitter<string> = new EventEmitter<string>();
-  @Output() onOrderChange: EventEmitter<any> = new EventEmitter<any>();
 
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -50,26 +45,17 @@ export class GenericTableSspComponent implements OnInit, AfterViewInit, OnChange
     this.propertiesToShow = this.detailsToShow.map(x => x.property);
   }
 
-  ngAfterViewInit() {
+  ngOnChanges(changes) {
+    this.dataSource = new MatTableDataSource(this.items);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
-
-    this.sort.sortChange.subscribe(order => {
-      this.onOrderChange.emit(order);
-    })
-  }
-
-  ngOnChanges(changes) {
-    console.log('total items changed', this.totalItems);
-
-    this.dataSource = new MatTableDataSource(this.items);
 
     var selectIndex: number = this.propertiesToShow.indexOf('select');
 
     // only allow items to be selected if user has admin rights
     if (this.allowDelete) {
       if (selectIndex < 0) {
-        this.propertiesToShow.push('select');
+        this.propertiesToShow.unshift('select');
       }
     } else {
       if (selectIndex > -1) {
@@ -78,12 +64,8 @@ export class GenericTableSspComponent implements OnInit, AfterViewInit, OnChange
     }
   }
 
-  changePage($event) {
-    this.onPageChange.emit($event);
-  }
-
   applyFilter(filterValue: string) {
-    this.search.emit(filterValue.trim().toLowerCase());
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();

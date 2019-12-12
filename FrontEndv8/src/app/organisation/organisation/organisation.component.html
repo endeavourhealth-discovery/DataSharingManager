@@ -15,29 +15,6 @@
     </div>
   </mat-card-header>
   <mat-card-content>
-    <!--<table mat-table [dataSource]="organisations" class="mat-elevation-z8 mat-table-compact" *ngIf="organisations" fxFlex="100" fxFill>
-      &lt;!&ndash; Name Column &ndash;&gt;
-      &lt;!&ndash;<ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name</th>
-        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-      </ng-container>
-
-      &lt;!&ndash; Symbol Column &ndash;&gt;
-      <ng-container matColumnDef="odsCode">
-        <th mat-header-cell *matHeaderCellDef> ODS code</th>
-        <td mat-cell *matCellDef="let element"> {{element.odsCode}} </td>
-      </ng-container>&ndash;&gt;
-
-      <ng-container *ngFor="let disCol of orgDeetsToShow;" matColumnDef="{{disCol.property}}">
-        <th mat-header-cell *matHeaderCellDef> {{disCol.label}}</th>
-        <td mat-cell *matCellDef="let element"> {{element[disCol.property]}} </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="orgDetailsToShow"></tr>
-      <tr mat-row *matRowDef="let row; columns: orgDetailsToShow;"
-          [routerLink]="'/organisations/' + row.id"
-      ></tr>
-    </table>-->
     <app-generic-table-ssp
       [items]="organisations"
       [totalItems]="totalItems"

@@ -11,6 +11,7 @@ export class Region {
 
     getDisplayItems(): any[] {
         return [
+            {label: 'Name', property: 'name'},
             {label: 'Description', property: 'description'},
         ];
     }

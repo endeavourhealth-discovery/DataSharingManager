@@ -4,22 +4,24 @@ import {FormsModule} from '@angular/forms';
 import { OrganisationComponent } from './organisation/organisation.component';
 import { OrganisationService } from './organisation.service';
 import {
+  MatBadgeModule,
   MatButtonModule,
-  MatCardModule, MatCheckboxModule, MatDialogModule,
+  MatCardModule, MatCheckboxModule, MatDialogModule, MatDividerModule,
   MatFormFieldModule,
   MatIconModule,
   MatInputModule, MatMenuModule,
   MatPaginatorModule, MatProgressBarModule, MatProgressSpinnerModule, MatSelectModule, MatSnackBarModule,
   MatSortModule,
-  MatTableModule, MatTreeModule
+  MatTableModule, MatTabsModule, MatTreeModule
 } from '@angular/material';
 import {FlexModule} from "@angular/flex-layout";
 import {RouterModule} from "@angular/router";
 import {CoreModule} from "dds-angular8";
-import {GenericTableComponent} from "../generic-table/generic-table.component";
-import {GenericTableSspComponent} from "../generic-table-ssp/generic-table-ssp.component";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BrowserModule} from "@angular/platform-browser";
+import {GenericTableSspComponent} from "../generic-table/generic-table-ssp/generic-table-ssp.component";
+import {GenericTableComponent} from "../generic-table/generic-table/generic-table.component";
+import {OrganisationEditorComponent} from "./organisation-editor/organisation-editor.component";
 
 @NgModule({
   imports: [
@@ -46,12 +48,16 @@ import {BrowserModule} from "@angular/platform-browser";
     CoreModule,
     MatButtonModule,
     MatTreeModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatDividerModule,
+    MatTabsModule,
+    MatBadgeModule
   ],
   declarations: [
     OrganisationComponent,
-    GenericTableComponent,
-    GenericTableSspComponent
+    OrganisationEditorComponent,
+    GenericTableSspComponent,
+    GenericTableComponent
   ],
   entryComponents : [
   ],

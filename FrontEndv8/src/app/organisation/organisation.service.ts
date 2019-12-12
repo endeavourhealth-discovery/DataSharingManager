@@ -58,8 +58,8 @@ export class OrganisationService  {
 
   getParentOrganisations(uuid: string, isService: number):  Observable<Organisation[]> {
     let params = new HttpParams();
-    if (uuid) params = params.append('uuid', uuid);
-    if (isService) params = params.append('isService', isService.toString());
+    params = params.append('uuid', uuid);
+    params = params.append('isService', isService.toString());
     return this.http.get<Organisation[]>('api/organisation/parentOrganisations', {params});
   }
 
