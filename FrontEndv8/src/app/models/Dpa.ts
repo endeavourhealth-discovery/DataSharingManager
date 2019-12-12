@@ -24,13 +24,8 @@ export class Dpa {
 
   getDisplayItems(): any[] {
       return [
-          {label: 'Description', property: 'description'},
-          {label: 'Derivation', property: 'derivation'},
-          {label: 'Publisher information', property: 'publisherInformation'},
-          {label: 'Publisher contract information', property: 'publisherContractInformation'},
-          {label: 'Publisher data set', property: 'publisherDataSet'},
-          {label: 'DSA status id', property: 'dsaStatusId'},
-          {label: 'Return to sender policy', property: 'returnToSenderPolicy'}
+          {label: 'Name', property: 'name'},
+          {label: 'Description', property: 'description'}
       ];
   }
 }
