@@ -1,21 +1,27 @@
-import {AfterViewInit, Component, Inject} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {LoggerService} from 'dds-angular8';
 import {SchedulerService} from "../scheduler.service";
 import {Schedule} from "../models/Schedule";
+
+export interface DialogData {
+  schedule: Schedule;
+  allowTime: boolean;
+}
 
 @Component({
   selector: 'app-scheduler',
   templateUrl: './scheduler.component.html',
   styleUrls: ['./scheduler.component.css']
 })
-export class SchedulerComponent implements AfterViewInit {
+export class SchedulerComponent implements OnInit {
 
   allowTime: boolean;
   schedule: Schedule;
   cron: string;
   cronDescription: string;
   cronSettings: string;
+  formIsInvalid: boolean;
 
   zeroTo59 = [
     {value: '0', display: '00'},
@@ -158,20 +164,27 @@ export class SchedulerComponent implements AfterViewInit {
   //Advanced Tab
   cronManual: string;
 
-  constructor(private schedulerService: SchedulerService,
-              private log: LoggerService) { }
+  constructor(
+    public dialogRef: MatDialogRef<SchedulerComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private schedulerService: SchedulerService,
+    private log: LoggerService) {
 
-  ngAfterViewInit() {
+    this.schedule = data.schedule;
+    this.allowTime = data.allowTime;
+  }
 
+  ngOnInit() {
+
+    this.formIsInvalid = false;
     let tab = "";
     this.selectedTab = 0;
-    this.allowTime = true;
-
     if (this.schedule) {
       this.cron = this.schedule.cronExpression;
       this.cronDescription = this.schedule.cronDescription;
-      //let split = this.schedule.cronSettings.split(":");
-      //tab = split[0];
+      let split = this.schedule.cronSettings.split(":");
+      this.populateFields(split);
+      tab = split[0];
     }
 
     if (tab != "Minutes") {
@@ -249,24 +262,199 @@ export class SchedulerComponent implements AfterViewInit {
       this.cronManual = "";
     }
 
-    this.setMinutesTabCron();
+    if (tab == "") {
+      if (this.allowTime) {
+        this.setMinutesTabCron();
+      } else {
+        this.setDailyTabCron();
+      }
+    }
+  }
+
+  populateFields(split: string[]) {
+    if (split[0] == "Minutes") {
+      this.everyMinuteMinuteTab = split[2];
+      this.everySecondMinuteTab = split[1];
+      this.setMinutesTabCron();
+      this.selectedTab = 0;
+
+    } else if (split[0] == "Hourly") {
+      this.everyHourHourlyTab = split[3];
+      this.everyMinuteHourlyTab = split[2];
+      this.everySecondHourlyTab = split[1];
+      this.setHourlyTabCron();
+      this.selectedTab = 1;
+
+    } else if (split[0] == "Daily") {
+      if (split[1]=="1") {
+        this.dailyRadio = "1";
+        this.everyDayDailyTab = split[5];
+        this.everyHour1DailyTab = split[4];
+        this.everyMinute1DailyTab = split[3];
+        this.everySecond1DailyTab = split[2];
+        this.everyHour2DailyTab = "0";
+        this.everyMinute2DailyTab = "0";
+        this.everySecond2DailyTab = "0";
+      } else {
+        this.dailyRadio = "2";
+        this.everyHour2DailyTab = split[4];
+        this.everyMinute2DailyTab = split[3];
+        this.everySecond2DailyTab = split[2];
+        this.everyDayDailyTab = "1";
+        this.everyHour1DailyTab = "0";
+        this.everyMinute1DailyTab = "0";
+        this.everySecond1DailyTab = "0";
+      }
+      this.toggleDaily();
+      if (this.allowTime) {
+        this.selectedTab = 2;
+      } else {
+        this.selectedTab = 0;
+      }
+    } else if (split[0] == "Weekly") {
+      this.everyHourWeeklyTab = split[3];
+      this.everyMinuteWeeklyTab = split[2];
+      this.everySecondWeeklyTab = split[1];
+      for (var i = 4; i < split.length; i++) {
+        if (split[i] == "MON") {
+          this.monday = true;
+        }
+        if (split[i] == "TUE") {
+          this.tuesday = true;
+        }
+        if (split[i] == "WED") {
+          this.wednesday = true;
+        }
+        if (split[i] == "THU") {
+          this.thursday = true;
+        }
+        if (split[i] == "FRI") {
+          this.friday = true;
+        }
+        if (split[i] == "SAT") {
+          this.saturday = true;
+        }
+        if (split[i] == "SUN") {
+          this.sunday = true;
+        }
+      }
+      this.setWeeklyTabCron();
+      if (this.allowTime) {
+        this.selectedTab = 3;
+      } else {
+        this.selectedTab = 1;
+      }
+
+    } else if (split[0] == "Monthly") {
+      if (split[1] == "1") {
+        this.monthlyRadio = "1";
+        this.everyDay1MonthlyTab = split[5];
+        this.everyMonth1MonthlyTab = split[6];
+        this.everyHour1MonthlyTab = split[4];
+        this.everyMinute1MonthlyTab = split[3];
+        this.everySecond1MonthlyTab = split[2];
+        this.everyWeekMonthlyTab = "#1";
+        this.everyDayMonthlyTab = "MON";
+        this.everyMonthMonthlyTab = "1";
+        this.everyHour2MonthlyTab = "0";
+        this.everyMinute2MonthlyTab = "0";
+        this.everySecond2MonthlyTab = "0";
+      } else {
+        this.monthlyRadio = "2";
+        this.everyWeekMonthlyTab = split[7];
+        this.everyDayMonthlyTab = split[6];
+        this.everyMonthMonthlyTab = split[5];
+        this.everyHour2MonthlyTab = split[4];
+        this.everyMinute2MonthlyTab = split[3];
+        this.everySecond2MonthlyTab = split[2];
+        this.everyDay1MonthlyTab = "1";
+        this.everyMonth1MonthlyTab = "1";
+        this.everyHour1MonthlyTab = "0";
+        this.everyMinute1MonthlyTab = "0";
+        this.everySecond1MonthlyTab = "0";
+      }
+      this.toggleMonthly();
+      if (this.allowTime) {
+        this.selectedTab = 4;
+      } else {
+        this.selectedTab = 2;
+      }
+
+    } else if (split[0] == "Yearly") {
+      if (split[1] == "1") {
+        this.yearlyRadio = "1";
+        this.everyDay1YearlyTab = split[5];
+        this.everyMonth1YearlyTab = split[6]
+        this.everyHour1YearlyTab = split[4];
+        this.everyMinute1YearlyTab = split[3];
+        this.everySecond1YearlyTab = split[2];
+        this.everyWeekYearlyTab = "#1";
+        this.everyDayYearlyTab = "MON";
+        this.everyMonthYearlyTab = "1";
+        this.everyHour2YearlyTab = "0";
+        this.everyMinute2YearlyTab = "0";
+        this.everySecond2YearlyTab = "0";
+      } else {
+        this.yearlyRadio = "2";
+        this.everyWeekYearlyTab = split[7];
+        this.everyDayYearlyTab = split[6];
+        this.everyMonthYearlyTab = split[5];
+        this.everyHour2YearlyTab = split[4];
+        this.everyMinute2YearlyTab = split[3];
+        this.everySecond2YearlyTab = split[2];
+        this.everyDay1YearlyTab = "1";
+        this.everyMonth1YearlyTab = "1";
+        this.everyHour1YearlyTab = "0";
+        this.everyMinute1YearlyTab = "0";
+        this.everySecond1YearlyTab = "0";
+      }
+      this.toggleYearly();
+      if (this.allowTime) {
+        this.selectedTab = 5;
+      } else {
+        this.selectedTab = 3;
+      }
+
+    } else if (split[0] == "Advanced") {
+      this.cronManual = this.schedule.cronExpression;
+      this.setAdvancedTabCron();
+      if (this.allowTime) {
+        this.selectedTab = 6;
+      } else {
+        this.selectedTab = 4;
+      }
+    }
   }
 
   setTab($event){
-    if ($event.index == 0) {
-      this.setMinutesTabCron();
-    } else if ($event.index == 1) {
-      this.setHourlyTabCron();
-    } else if ($event.index == 2) {
-      this.setDailyTabCron();
-    } else if ($event.index == 3) {
-      this.setWeeklyTabCron();
-    } else if ($event.index == 4) {
-      this.setMonthlyTabCron();
-    } else if ($event.index == 5) {
-      this.setYearlyTabCron();
-    } else if ($event.index == 6) {
-      this.setAdvancedTabCron();
+    if (this.allowTime) {
+      if ($event.index == 0) {
+        this.setMinutesTabCron();
+      } else if ($event.index == 1) {
+        this.setHourlyTabCron();
+      } else if ($event.index == 2) {
+        this.setDailyTabCron();
+      } else if ($event.index == 3) {
+        this.setWeeklyTabCron();
+      } else if ($event.index == 4) {
+        this.setMonthlyTabCron();
+      } else if ($event.index == 5) {
+        this.setYearlyTabCron();
+      } else if ($event.index == 6) {
+        this.setAdvancedTabCron();
+      }
+    } else {
+      if ($event.index == 0) {
+        this.setDailyTabCron();
+      } else if ($event.index == 1) {
+        this.setWeeklyTabCron();
+      } else if ($event.index == 2) {
+        this.setMonthlyTabCron();
+      } else if ($event.index == 3) {
+        this.setYearlyTabCron();
+      } else if ($event.index == 4) {
+        this.setAdvancedTabCron();
+      }
     }
   }
 
@@ -398,6 +586,8 @@ export class SchedulerComponent implements AfterViewInit {
         this.cronSettings = "Advanced";
         this.validateCron();
       }
+    } else {
+      this.formIsInvalid = true;
     }
   }
 
@@ -424,7 +614,7 @@ export class SchedulerComponent implements AfterViewInit {
   }
 
   toggleYearly() {
-    if (this.yearlyRadio) {
+    if (this.yearlyRadio == "1") {
       this.yearlyRow1 = false;
       this.yearlyRow2 = true;
     } else {
@@ -444,38 +634,29 @@ export class SchedulerComponent implements AfterViewInit {
       this.schedule.cronExpression = this.cron;
       this.schedule.cronSettings = this.cronSettings;
     }
+
     this.schedulerService.cronDescription(this.schedule)
       .subscribe(
         (result) => {
           this.schedule = result;
           this.cronDescription = this.schedule.cronDescription;
-        },
-        (error) => { this.log.error(error) }
+          if (this.allowTime == false && this.schedule.cronExpression.startsWith("0 0 0") == false) {
+            alert("Cannot set time component. Cron must start with 0 0 0.");
+            this.formIsInvalid = true;
+            return;
+          }
+          this.schedule.cronSettings = this.cronSettings;
+          if (this.schedule.cronDescription.toLowerCase().search("invalid") != -1) {
+            alert("Cannot set an invalid cron schedule.");
+            this.formIsInvalid = true;
+            return;
+          }
+          this.formIsInvalid = false;
+        }
       );
   }
 
   cancel() {
-
-  }
-
-  ok() {
-    this.validateCron();
-    /*
-    if (this.cron.length == 0) {
-      alert("Cannot set an invalid cron schedule.");
-      return;
-    }
-    if (this.allowTime == false && this.cron.startsWith("0 0 0") == false) {
-      alert("Cannot set time component. Cron must start with 0 0 0.");
-      return;
-    }
-    this.schedule.cronExpression = this.cron;
-    this.schedule.cronDescription = this.cronDescription;
-    this.schedule.cronSettings = this.cronSettings;
-    if (this.schedule.cronDescription.toLowerCase().search("invalid") != -1) {
-      alert("Cannot set an invalid cron schedule.");
-      return;
-    }
-    */
+    this.dialogRef.close();
   }
 }

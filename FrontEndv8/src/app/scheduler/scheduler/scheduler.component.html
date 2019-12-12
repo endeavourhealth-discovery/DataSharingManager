@@ -22,6 +22,11 @@
             <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
           </mat-select>
         </mat-form-field>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
       </mat-tab>
       <mat-tab label="Hourly" *ngIf="allowTime">
         <br>
@@ -43,12 +48,17 @@
             <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
           </mat-select>
         </mat-form-field>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
       </mat-tab>
       <mat-tab label="Daily">
         <br>
         <mat-radio-group [(ngModel)]="dailyRadio" (change)="toggleDaily()">
           <mat-label>&nbsp;&nbsp;&nbsp;</mat-label>
-          <mat-radio-button [value]="rows[0]"></mat-radio-button>
+          <mat-radio-button [value]="rows[0]" [checked]="dailyRadio=='1'"></mat-radio-button>
           <mat-form-field appearance="outline" class="regular">
             <mat-label>every day(s)</mat-label>
             <mat-select [(value)]="everyDayDailyTab" [disabled]="dailyRow1" (selectionChange)="setDailyTabCron()">
@@ -98,9 +108,10 @@
         </mat-radio-group>
         <br *ngIf="!allowTime">
         <br *ngIf="!allowTime">
+        <br *ngIf="!allowTime">
+        <br *ngIf="!allowTime">
       </mat-tab>
       <mat-tab label="Weekly">
-        <br>
         <section class="days-section">
           <mat-checkbox class="days-margin" [(ngModel)]="monday" (change)="setWeeklyTabCron()">MON</mat-checkbox>
           <mat-checkbox class="days-margin" [(ngModel)]="tuesday" (change)="setWeeklyTabCron()">TUE</mat-checkbox>
@@ -128,6 +139,12 @@
             <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
           </mat-select>
         </mat-form-field>
+        <br>
+        <br>
+        <br>
+        <br *ngIf="!allowTime">
+        <br *ngIf="!allowTime">
+        <br *ngIf="!allowTime">
       </mat-tab>
       <mat-tab label="Monthly">
         <br>
@@ -242,7 +259,7 @@
           </mat-form-field>
           <br>
           <mat-label>&nbsp;&nbsp;&nbsp;</mat-label>
-          <mat-radio-button [value]="rows[2]"></mat-radio-button>
+          <mat-radio-button [value]="rows[1]"></mat-radio-button>
           <mat-form-field appearance="outline" class="regular">
             <mat-label>on the</mat-label>
             <mat-select [(value)]="everyWeekYearlyTab" [disabled]="yearlyRow2" (selectionChange)="setYearlyTabCron()">
@@ -287,6 +304,11 @@
           <mat-label>manual cron expression</mat-label>
           <input matInput placeholder="Cron expression" [(ngModel)]="cronManual" (change)="setAdvancedTabCron()">
         </mat-form-field>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
       </mat-tab>
     </mat-tab-group>
     <div class="full">
@@ -301,12 +323,7 @@
     </div>
     <div mat-dialog-actions>
       <button mat-raised-button (click)="cancel()">Cancel</button>
-      <button mat-raised-button (click)="ok()">Ok</button>
+      <button mat-raised-button [disabled]="formIsInvalid" [mat-dialog-close]="schedule">Ok</button>
     </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <mat-checkbox [(ngModel)]="allowTime" (change)="selectedTab = 0" checked="allowTime">Allow Time</mat-checkbox>
   </mat-card-content>
 </mat-card>

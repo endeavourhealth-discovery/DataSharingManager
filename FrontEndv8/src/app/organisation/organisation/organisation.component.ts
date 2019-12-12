@@ -5,6 +5,12 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {LoggerService, UserManagerService} from "dds-angular8";
 
+//TODO remove temp code -start
+import {MatDialog} from "@angular/material/dialog";
+import {SchedulerComponent} from "../../scheduler/scheduler/scheduler.component";
+import {Schedule} from "../../scheduler/models/Schedule";
+//TODO remove temp code -end
+
 @Component({
   selector: 'app-organisation',
   templateUrl: './organisation.component.html',
@@ -24,6 +30,10 @@ export class OrganisationComponent implements OnInit {
   allowEdit = false;
   orgDetailsToShow = new Organisation().getDisplayItems();
   loadingComplete = false;
+
+  //TODO remove temp code -start
+  schedule: Schedule;
+  //TODO remove temp code -end
 
   public activeProject: UserProject;
 
@@ -53,7 +63,8 @@ export class OrganisationComponent implements OnInit {
               private router: Router,
               private route: ActivatedRoute,
               private userManagerNotificationService: UserManagerService,
-              private log: LoggerService,) {
+              private log: LoggerService,
+              public dialog: MatDialog) {
   }
 
   protected performAction(mode: string) {
@@ -165,4 +176,20 @@ export class OrganisationComponent implements OnInit {
     this.descending = $event.direction == 'desc' ? true : false;
     this.search();
   }
+
+  //TODO remove temp code -start
+  setSchedule() {
+    const dialogRef = this.dialog.open(SchedulerComponent, {
+      height: '610px',
+      width: '1200px',
+      data: {schedule: this.schedule, allowTime: true},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.schedule = result;
+      }
+    });
+  }
+  //TODO remove temp code -end
 }

@@ -22,6 +22,9 @@ import {BrowserModule} from "@angular/platform-browser";
 import {GenericTableSspComponent} from "../generic-table/generic-table-ssp/generic-table-ssp.component";
 import {GenericTableComponent} from "../generic-table/generic-table/generic-table.component";
 import {OrganisationEditorComponent} from "./organisation-editor/organisation-editor.component";
+//TODO remove temp code -start
+import {SchedulerComponent} from "../scheduler/scheduler/scheduler.component";
+//TODO remove temp code -end
 
 @NgModule({
   imports: [
@@ -60,6 +63,9 @@ import {OrganisationEditorComponent} from "./organisation-editor/organisation-ed
     GenericTableComponent
   ],
   entryComponents : [
+    //TODO remove temp code -start
+    SchedulerComponent
+    //TODO remove temp code -end
   ],
   providers: [
     OrganisationService,
