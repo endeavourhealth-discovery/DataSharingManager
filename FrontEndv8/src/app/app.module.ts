@@ -6,6 +6,8 @@ import {HttpClientModule} from '@angular/common/http';
 import {AbstractMenuProvider, LayoutComponent, LayoutModule, LoggerModule, SecurityModule, UserManagerModule} from 'dds-angular8';
 import {OrganisationModule} from "./organisation/organisation.module";
 import {SchedulerModule} from "./scheduler/scheduler.module";
+import {ValueSetsModule} from "./value-sets/value-sets.module";
+
 
 const keycloakService = new KeycloakService();
 
@@ -20,6 +22,7 @@ const keycloakService = new KeycloakService();
     UserManagerModule,
     OrganisationModule,
     SchedulerModule,
+    ValueSetsModule,
 
     RouterModule.forRoot(AppMenuService.getRoutes(), {useHash: true}),
   ],
