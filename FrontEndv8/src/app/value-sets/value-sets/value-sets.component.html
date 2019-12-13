@@ -1,0 +1,28 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar>
+      <mat-icon>lightbulb_outline</mat-icon>
+    </div>
+    <mat-card-title>Value Sets</mat-card-title>
+    <mat-card-subtitle>Available value sets</mat-card-subtitle>
+    <div fxFlex></div>
+    <mat-menu #visualiseMenu="matMenu">
+      <button *ngIf="allowEdit" mat-menu-item (click)="add()">Add value set</button>
+      <button mat-menu-item (click)="close()">Cancel</button>
+    </mat-menu>
+    <div fxLayoutAlign="center" class="mat-action" matRipple>
+      <mat-icon [matMenuTriggerFor]="visualiseMenu">more_vert</mat-icon>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+
+  </mat-card-content>
+  <!--TODO: remove temporary Scheduler caller start -->
+  <br>
+  <br>
+  <br>
+  <button mat-raised-button (click)="setSchedule()">Set Schedule</button>
+  <br>
+  <br>
+  <!--TODO: remove temporary Scheduler caller end -->
+</mat-card>
