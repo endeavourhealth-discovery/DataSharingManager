@@ -1,6 +1,6 @@
 import {Documentation} from "../../documentation/models/Documentation";
 import {ExtractTechnicalDetails} from "../../extract-technical-details/models/ExtractTechnicalDetails";
-import {Schedule} from "./Schedule";
+import {Schedule} from "../../scheduler/models/Schedule";
 
 export class Project {
   uuid: string;
@@ -24,14 +24,15 @@ export class Project {
   endDate: string;
   publishers: { [key: string]: string; };
   subscribers: { [key: string]: string; };
-  basePopulation: { [key: string]: string; };
-  dataSet: { [key: string]: string; };
+  cohorts: { [key: string]: string; };
+  dataSets: { [key: string]: string; };
   projectConfiguration: { [key: string]: string; };
   dsas: { [key: string]: string; };
   applicationPolicy: string;
   documentations: Documentation[];
   extractTechnicalDetails: ExtractTechnicalDetails;
   schedule: Schedule;
+  schedules: { [key: string]: string; };
 
   getDisplayItems(): any[] {
     return [

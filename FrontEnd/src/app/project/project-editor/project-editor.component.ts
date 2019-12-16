@@ -27,10 +27,11 @@ import {AuthorityToShare} from "../models/AuthorityToShare";
 import { DatePipe } from '@angular/common';
 import {Documentation} from "../../documentation/models/Documentation";
 import {DocumentationService} from "../../documentation/documentation.service";
-import {Schedule} from "../models/Schedule";
 import {ExtractTechnicalDetails} from "../models/ExtractTechnicalDetails";
 import {Observable} from "rxjs";
 import {Http, URLSearchParams} from "@angular/http";
+import {Schedule} from "../../scheduler/models/Schedule";
+import {SchedulerPickerComponent} from "../../scheduler/scheduler-picker/scheduler-picker.component";
 
 @Component({
   selector: 'app-project-editor',
@@ -46,7 +47,7 @@ export class ProjectEditorComponent implements OnInit {
   dsas: Dsa[] = [];
   publishers: Organisation[] = [];
   subscribers: Organisation[] = [];
-  basePopulation: Cohort[] = [];
+  cohorts: Cohort[] = [];
   dataSet: DataSet[] = [];
   documentations: Documentation[] = [];
   extractTechnicalDetails: ExtractTechnicalDetails = <ExtractTechnicalDetails>{};
@@ -69,20 +70,10 @@ export class ProjectEditorComponent implements OnInit {
   pgpInternalPublicKeyFile: File;
   pgpInternalPublicKeyFileSrc: any;
 
-  //Schedule components
-  showSchedule: boolean;
-  selectedFrequency: number;
-  frequencyValues = [
-    {num: 0, name: 'Daily'},
-    {num: 1, name: 'Weekly'},
-    {num: 2, name: 'Monthly'},
-    {num: 3, name: 'Yearly'}
-  ];
-
   public activeProject: UserProject;
 
   projectApplicationPolicy: ProjectApplicationPolicy;
-  schedule: Schedule;
+  schedules: Schedule[] = [];
   availablePolicies: ApplicationPolicy[];
   selectedApplicationPolicy: ApplicationPolicy;
 
@@ -207,16 +198,7 @@ export class ProjectEditorComponent implements OnInit {
     const vm = this;
     vm.projectService.getLinkedSchedule(vm.project.uuid)
       .subscribe(
-        result => {
-          vm.schedule = result
-          if (vm.schedule.uuid != null) {
-            vm.selectedFrequency = vm.schedule.frequency;
-            vm.showSchedule = true;
-          } else {
-            vm.schedule = new Schedule();
-            vm.showSchedule = false;
-          }
-        },
+        result => vm.schedules[0] = result
       );
   }
 
@@ -322,17 +304,17 @@ export class ProjectEditorComponent implements OnInit {
     }
 
     // Populate subscribers before save
-    vm.project.basePopulation = {};
-    for (let idx in this.basePopulation) {
-      const coh: Cohort = this.basePopulation[idx];
-      this.project.basePopulation[coh.uuid] = coh.name;
+    vm.project.cohorts = {};
+    for (let idx in this.cohorts) {
+      const coh: Cohort = this.cohorts[idx];
+      this.project.cohorts[coh.uuid] = coh.name;
     }
 
     // Populate subscribers before save
-    vm.project.dataSet = {};
+    vm.project.dataSets = {};
     for (let idx in this.dataSet) {
       const ds: DataSet = this.dataSet[idx];
-      this.project.dataSet[ds.uuid] = ds.name;
+      this.project.dataSets[ds.uuid] = ds.name;
     }
 
     // Populate documents before save
@@ -343,12 +325,16 @@ export class ProjectEditorComponent implements OnInit {
     vm.project.extractTechnicalDetails = null;
     vm.project.extractTechnicalDetails = vm.extractTechnicalDetails;
 
-    if (vm.showSchedule) {
-      vm.project.schedule = vm.schedule;
-    } else {
-      vm.project.schedule = null;
+    // Populate schedule before save
+    if (vm.schedules[0]) {
+      vm.project.schedule = vm.schedules[0];
+      vm.project.schedules = {};
+      if (vm.project.schedule.uuid) {
+        this.project.schedules[vm.project.schedule.uuid] = vm.project.schedule.cronDescription;
+      }
     }
 
+    console.log(vm.project);
     vm.projectService.saveProject(vm.project)
       .subscribe(saved => {
           vm.project.uuid = saved;
@@ -360,14 +346,6 @@ export class ProjectEditorComponent implements OnInit {
         },
         error => vm.log.error('The project could not be saved. Please try again.', error, 'Save project')
       );
-  }
-
-  private tickShowSchedule(value: boolean) {
-    if (value) {
-      this.showSchedule = true;
-    } else {
-      this.showSchedule = false;
-    }
   }
 
   close() {
@@ -417,9 +395,9 @@ export class ProjectEditorComponent implements OnInit {
 
   private editBasePopulations() {
     const vm = this;
-    CohortPickerComponent.open(vm.$modal, vm.basePopulation)
+    CohortPickerComponent.open(vm.$modal, vm.cohorts)
       .result.then(function
-      (result: Cohort[]) { vm.basePopulation= result; },
+      (result: Cohort[]) { vm.cohorts= result; },
       () => vm.log.info('Edit cohort cancelled')
     );
   }
@@ -464,7 +442,7 @@ export class ProjectEditorComponent implements OnInit {
     const vm = this;
     vm.projectService.getLinkedBasePopulation(vm.project.uuid)
       .subscribe(
-        result => vm.basePopulation = result,
+        result => vm.cohorts = result,
         error => vm.log.error('The associated cohort could not be loaded. Please try again.', error, 'Load associated cohort')
       );
   }
@@ -501,6 +479,13 @@ export class ProjectEditorComponent implements OnInit {
         result => vm.documentations = result,
         error => vm.log.error('The associated documentation could not be loaded. Please try again.', error, 'Load associated documentation')
       );
+  }
+
+  removeFromDocumentation(match: Documentation) {
+    const index = this.documentations.indexOf(match, 0);
+    if (index > -1) {
+      this.documentations.splice(index, 1);
+    }
   }
 
   changeUserApplicationPolicy(policyId: string) {
@@ -707,4 +692,31 @@ export class ProjectEditorComponent implements OnInit {
     }
   }
 
+  private editSchedules() {
+    const vm = this;
+    SchedulerPickerComponent.open(vm.$modal, vm.schedules, false)
+      .result.then(function
+      (result: Schedule[]) {
+        vm.schedules = result;
+      },
+      () => vm.log.info('Set schedule cancelled')
+    );
+  }
+
+  delete(schedule: Schedule) {
+    const vm = this;
+    MessageBoxDialog.open(vm.$modal, 'Delete schedule', 'Are you sure that you want to delete <b>' + schedule.cronDescription + '</b>?', 'Delete schedule', 'Cancel')
+      .result.then(
+      () => vm.doDelete(schedule),
+      () => vm.log.info('Delete cancelled')
+    );
+  }
+
+  doDelete(schedule: Schedule) {
+    const vm = this;
+    const index = vm.schedules.indexOf(schedule);
+    vm.schedules.splice(index, 1);
+    vm.project.schedule = null;
+    vm.log.success('Schedule deleted', schedule, 'Delete schedule');
+  }
 }

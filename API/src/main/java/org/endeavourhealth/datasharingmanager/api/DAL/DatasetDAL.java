@@ -1,8 +1,16 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DatasetEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDataSet;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSetCache;
+import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
+import org.endeavourhealth.uiaudit.enums.AuditAction;
+import org.endeavourhealth.uiaudit.enums.ItemType;
+import org.endeavourhealth.uiaudit.logic.AuditCompareLogic;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -13,6 +21,10 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 public class DatasetDAL {
+
+    private void clearDataSetCache(String dataSetId) throws Exception {
+        DataSetCache.clearDataSetCache(dataSetId);
+    }
 
     public List<DatasetEntity> getAllDataSets() throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
@@ -33,28 +45,26 @@ public class DatasetDAL {
 
     }
 
-    public DatasetEntity getDataSet(String uuid) throws Exception {
+    public void updateDataSet(JsonDataSet dataset, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-        try {
-            DatasetEntity ret = entityManager.find(DatasetEntity.class, uuid);
+        DatasetEntity oldDataSetEntity = entityManager.find(DatasetEntity.class, dataset.getUuid());
+        oldDataSetEntity.setDpas(new SecurityMasterMappingDAL().getParentMappings(dataset.getUuid(), MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType()));
+        DatasetEntity newDataSet = new DatasetEntity(dataset);
 
-            return ret;
-        } finally {
-            entityManager.close();
-        }
-
-    }
-
-    public void updateDataSet(JsonDataSet dataset) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+        JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data set edited", oldDataSetEntity, newDataSet);
 
         try {
-            DatasetEntity dataSetEntity = entityManager.find(DatasetEntity.class, dataset.getUuid());
             entityManager.getTransaction().begin();
-            dataSetEntity.setName(dataset.getName());
-            dataSetEntity.setDescription(dataset.getDescription());
-            dataSetEntity.setTechnicalDefinition(dataset.getTechnicalDefinition());
+            oldDataSetEntity.setName(dataset.getName());
+            oldDataSetEntity.setDescription(dataset.getDescription());
+            oldDataSetEntity.setTechnicalDefinition(dataset.getTechnicalDefinition());
+
+            auditJson = new MasterMappingDAL().updateDataSetMappings(dataset, oldDataSetEntity, auditJson, entityManager);
+
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                    AuditAction.EDIT, ItemType.DATASET, null, null, auditJson);
+
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
@@ -62,18 +72,30 @@ public class DatasetDAL {
         } finally {
             entityManager.close();
         }
+
+        clearDataSetCache(dataset.getUuid());
     }
 
-    public void saveDataSet(JsonDataSet dataset) throws Exception {
+    public void saveDataSet(JsonDataSet dataset, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
+        DatasetEntity dataSetEntity = new DatasetEntity();
+
         try {
-            DatasetEntity dataSetEntity = new DatasetEntity();
             entityManager.getTransaction().begin();
             dataSetEntity.setUuid(dataset.getUuid());
             dataSetEntity.setName(dataset.getName());
             dataSetEntity.setDescription(dataset.getDescription());
             dataSetEntity.setTechnicalDefinition(dataset.getTechnicalDefinition());
+
+            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data set created", null, dataSetEntity);
+
+            auditJson = new MasterMappingDAL().updateDataSetMappings(dataset, null, auditJson, entityManager);
+
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                    AuditAction.ADD, ItemType.DATASET, null, null, auditJson);
+
+
             entityManager.persist(dataSetEntity);
             entityManager.getTransaction().commit();
 
@@ -83,15 +105,25 @@ public class DatasetDAL {
         } finally {
             entityManager.close();
         }
+
+        clearDataSetCache(dataset.getUuid());
     }
 
-    public void deleteDataSet(String uuid) throws Exception {
+    public void deleteDataSet(String uuid, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
         try {
-            DatasetEntity dataSetEntity = entityManager.find(DatasetEntity.class, uuid);
+            DatasetEntity oldDataSetEntity = entityManager.find(DatasetEntity.class, uuid);
+            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data set deleted", oldDataSetEntity, null);
             entityManager.getTransaction().begin();
-            entityManager.remove(dataSetEntity);
+            entityManager.remove(oldDataSetEntity);
+
+            auditJson = new MasterMappingDAL().updateDataSetMappings(null, oldDataSetEntity, auditJson, entityManager);
+
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                    AuditAction.DELETE, ItemType.DATASET, null, null, auditJson);
+
+
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
@@ -99,6 +131,8 @@ public class DatasetDAL {
         } finally {
             entityManager.close();
         }
+
+        clearDataSetCache(uuid);
     }
 
     public List<DatasetEntity> search(String expression) throws Exception {

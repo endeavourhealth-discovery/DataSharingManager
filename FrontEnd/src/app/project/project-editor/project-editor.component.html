@@ -255,11 +255,11 @@
             </ng-template>
           </ngb-tab>
           <ngb-tab>
-            <ng-template ngbTabTitle><span class="tab-title">Cohort </span><span class="badge badge-pill badge-primary">{{basePopulation?.length}}</span></ng-template>
+            <ng-template ngbTabTitle><span class="tab-title">Cohort </span><span class="badge badge-pill badge-primary">{{cohorts?.length}}</span></ng-template>
             <ng-template ngbTabContent>
               <entity-viewer
                 (onshowPicker)="editBasePopulations()"
-                [items]="basePopulation"
+                [items]="cohorts"
                 [primary]="'name'"
                 [primaryOrderText]="'Name'"
                 [displayClass]="'region'"
@@ -285,7 +285,7 @@
                 [secondary]="'description'"
                 [secondaryOrderText]="'Description'"
                 [typeDescription]="'Data set'"
-                [model]="'dataSet'"
+                [model]="'dataSets'"
                 [detailsToShow]="dataSetDetailsToShow"
                 [allowEdit]="allowEdit"
                 [showEditButton]="allowEdit">
@@ -472,57 +472,17 @@
             </ng-template>
           </ngb-tab>
           <ngb-tab>
-            <ng-template ngbTabTitle><span class="tab-title">Scheduler </span></ng-template>
+            <ng-template ngbTabTitle><span class="tab-title">Scheduler</span><span class="badge badge-pill badge-primary">{{schedules?.length}}</span></ng-template>
             <ng-template ngbTabContent>
-              <div class="row">
-                <div class="col-md-3">
-                  <div class="form-group">
-                    <label class="form-control-label">Set a schedule</label>
-                    <input type="checkbox" id="showSchedule" name="showSchedule" [(ngModel)]="showSchedule" (change)="tickShowSchedule(showSchedule)"/>
-                  </div>
-                </div>
-              </div>
-              <div class="row" *ngIf="showSchedule">
-                <div class="col-md-3">
-                  <div class="form-group">
-                    <label class="form-control-label">Starts</label>
-                    <input type="date" class="form-control" placeholder="Starts" [(ngModel)]="schedule.starts" name="starts">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-control-label">Ends</label>
-                    <input type="date" class="form-control" placeholder="Ends" [(ngModel)]="schedule.ends" name="ends">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-control-label">Frequency</label>
-                    <select class="form-control" [(ngModel)]="selectedFrequency" name="selectedFrequency" (change)="schedule.frequency = selectedFrequency">
-                      <option *ngFor="let freq of frequencyValues" [ngValue]="freq.num">{{freq.name}}</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-control-label">Week(s):</label>
-                    <input type="text" class="form-control" placeholder="0" [(ngModel)]="schedule.weeks" name="weeks">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-control-label">At Day(s):</label>
-                    <div class="weekDays-selector">
-                      <input type="checkbox" id="weekday-mon" name="weekday-mon" class="weekday" [(ngModel)]="schedule.monday"/>
-                      <label for="weekday-mon">M</label>
-                      <input type="checkbox" id="weekday-tue" name="weekday-tue" class="weekday" [(ngModel)]="schedule.tuesday"/>
-                      <label for="weekday-tue">T</label>
-                      <input type="checkbox" id="weekday-wed" name="weekday-wed"class="weekday" [(ngModel)]="schedule.wednesday"/>
-                      <label for="weekday-wed">W</label>
-                      <input type="checkbox" id="weekday-thu" name="weekday-thu" class="weekday" [(ngModel)]="schedule.thursday"/>
-                      <label for="weekday-thu">T</label>
-                      <input type="checkbox" id="weekday-fri" name="weekday-fri"class="weekday" [(ngModel)]="schedule.friday"/>
-                      <label for="weekday-fri">F</label>
-                      <input type="checkbox" id="weekday-sat" name="weekday-sat" class="weekday" [(ngModel)]="schedule.saturday"/>
-                      <label for="weekday-sat">S</label>
-                      <input type="checkbox" id="weekday-sun" name="weekday-sun"class="weekday" [(ngModel)]="schedule.sunday"/>
-                      <label for="weekday-sun">S</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <entity-viewer
+                (deleted)="delete($event)"
+                (onshowPicker)="editSchedules()"
+                [items]="schedules"
+                [typeDescription]="'Scheduler'"
+                [primary]="'cronDescription'"
+                [primaryOrderText]="'Description'"
+                [allowDelete]="allowEdit">
+              </entity-viewer>
             </ng-template>
           </ngb-tab>
         </ngb-tabset>

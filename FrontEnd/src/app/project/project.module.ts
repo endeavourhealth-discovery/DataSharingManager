@@ -10,6 +10,8 @@ import {ControlsModule} from "eds-angular4/dist/controls";
 import {EntityViewComponentsModule} from "eds-angular4/dist/entityViewer";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {ProjectService} from "./project.service";
+import {SchedulerPickerComponent} from "../scheduler/scheduler-picker/scheduler-picker.component";
+import {SchedulerService} from "../scheduler/scheduler.service";
 
 @NgModule({
   imports: [
@@ -24,15 +26,18 @@ import {ProjectService} from "./project.service";
   declarations: [
     ProjectComponent,
     ProjectPickerComponent,
-    ProjectEditorComponent
+    ProjectEditorComponent,
+    SchedulerPickerComponent
   ],
   entryComponents: [
-    ProjectPickerComponent
+    ProjectPickerComponent,
+    SchedulerPickerComponent
   ],
   providers: [
     ProjectService,
     LoggerService,
-    DatePipe
+    DatePipe,
+    SchedulerService
   ]
 })
 export class ProjectModule { }

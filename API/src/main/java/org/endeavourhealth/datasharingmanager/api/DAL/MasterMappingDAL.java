@@ -1,9 +1,15 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.MasterMappingEntity;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectScheduleDAL;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.*;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.uiaudit.logic.AuditCompareLogic;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -56,23 +62,44 @@ public class MasterMappingDAL {
         }
     }
 
-    public void updateCohortMappings(JsonCohort updatedCohort, List<String> oldCohortDpas, String userProjectId) throws Exception {
-        // Convert Map<UUID, String> to List<String>
-        List<String> updatedCohortDpas = new ArrayList<String>();
-        updatedCohort.getDpas().forEach((k, v) -> updatedCohortDpas.add(k.toString()));
+    public JsonNode updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson, EntityManager entityManager) throws Exception {
 
-        updateMappings(true, updatedCohort.getUuid(), oldCohortDpas, updatedCohortDpas, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), userProjectId);
+        String test = MapType.valueOfTypeId((short)55);
+        // DPAs
+        auditJson = updateMappingsAndGetAudit(true, updatedDataSet.getUuid(), oldDataset.getDpas(),
+                updatedDataSet.getDpas(), MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
+
+        return auditJson;
     }
 
-    private void updateMappings(boolean thisItemIsChild, String thisItem, List<String> oldMappings, List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId, String userProjectId) throws  Exception {
-        ArrayList<String> removedMappings = new ArrayList<String>();
+    public JsonNode updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson, EntityManager entityManager) throws Exception {
+
+        // DPAs
+        auditJson = updateMappingsAndGetAudit(true, updatedCohort.getUuid(), oldCohort.getDpas(),
+                updatedCohort.getDpas(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
+
+        return auditJson;
+
+    }
+
+    private JsonNode appendToJson(boolean added, List<String> mappings, String type, JsonNode auditJson) throws Exception {
+        if (!mappings.isEmpty()) {
+            return new AuditCompareLogic().generateListDifferenceAuditJson(auditJson, added, mappings, type);
+        }
+
+        return auditJson;
+    }
+
+    private void updateMappings(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
+                                List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId,
+                                List<String> removedMappings, List<String> addedMappings, EntityManager entityManager) throws Exception {
+
         for (String oldMapping : oldMappings) {
             if (!updatedMappings.contains(oldMapping)) {
                 removedMappings.add(oldMapping);
             }
         }
 
-        ArrayList<String> addedMappings = new ArrayList<String>();
         for (String updatedMapping : updatedMappings) {
             if (!oldMappings.contains(updatedMapping)) {
                 addedMappings.add(updatedMapping);
@@ -80,9 +107,7 @@ public class MasterMappingDAL {
         }
 
         if (!removedMappings.isEmpty() || !addedMappings.isEmpty()) {
-            EntityManager entityManager = ConnectionManager.getDsmEntityManager();
             try {
-                entityManager.getTransaction().begin();
 
                 if (!removedMappings.isEmpty()) {
                     deleteMappings(thisItemIsChild, thisItem, removedMappings, thisMapTypeId, otherMapTypeId, entityManager);
@@ -92,17 +117,14 @@ public class MasterMappingDAL {
                     saveMappings(thisItemIsChild, thisItem, addedMappings, thisMapTypeId, otherMapTypeId, entityManager);
                 }
 
-                entityManager.getTransaction().commit();
             } catch (Exception e) {
-                entityManager.getTransaction().rollback();
+                // entityManager.getTransaction().rollback();
                 throw e;
-            } finally {
+            } /*finally {
                 entityManager.close();
-            }
+            }*/
         }
     }
-
-
 
     private void saveMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToAdd, Short thisMapTypeId, Short otherMapTypeId, EntityManager entityManager) throws Exception {
         mappingsToAdd.forEach((mapping) -> {
@@ -384,9 +406,105 @@ public class MasterMappingDAL {
         }
     }
 
+    public JsonNode updateProjectMappings(JsonProject updatedProject, ProjectEntity oldProject, JsonNode auditJson, EntityManager entityManager) throws Exception {
+        // Publishers
+        auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getPublishers(),
+                updatedProject.getPublishers(), MapType.PROJECT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson, entityManager);
+
+        // Subscriber
+        auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getSubscribers(),
+                updatedProject.getSubscribers(), MapType.PROJECT.getMapType(), MapType.SUBSCRIBER.getMapType(), auditJson, entityManager);
+
+        // Cohorts
+        auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getCohorts(),
+                updatedProject.getCohorts(), MapType.PROJECT.getMapType(), MapType.COHORT.getMapType(), auditJson, entityManager);
+
+        // DataSets
+        auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getDataSets(),
+                updatedProject.getDataSets(), MapType.PROJECT.getMapType(), MapType.DATASET.getMapType(), auditJson, entityManager);
+
+        // DSA
+        auditJson = updateMappingsAndGetAudit(true, updatedProject.getUuid(), oldProject.getDsas(),
+                updatedProject.getDsas(), MapType.PROJECT.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson, entityManager);
+
+        // Documents
+        auditJson = updateMappingsAndGetAuditForDocuments(updatedProject.getUuid(), oldProject.getDocumentations(),
+                updatedProject.getDocumentations(), MapType.PROJECT.getMapType(), auditJson, entityManager);
+
+        // Extract Technical Details
+        auditJson = updateMappingsAndGetAuditForExtractTechnicalDetails(updatedProject.getUuid(), oldProject.getExtractTechnicalDetails(),
+                updatedProject.getExtractTechnicalDetails(), MapType.PROJECT.getMapType(), auditJson, entityManager);
+
+        //Schedules
+        auditJson = updateMappingsAndGetAuditForSchedule(updatedProject.getUuid(), oldProject.getSchedule(),
+                updatedProject.getSchedule(), MapType.PROJECT.getMapType(), auditJson, entityManager);
+
+        return auditJson;
+    }
+
+    private JsonNode updateMappingsAndGetAudit(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
+                                               Map<UUID, String> updatedMap, Short thisMapTypeId, Short otherMapTypeId,
+                                               JsonNode auditJson, EntityManager entityManager) throws Exception {
+
+        List<String> updatedMappings = new ArrayList<String>();
+        List<String> removedMappings = new ArrayList<>();
+        List<String> addedMappings = new ArrayList<>();
+        updatedMap.forEach((k, v) -> updatedMappings.add(k.toString()));
+
+        updateMappings(thisItemIsChild, thisItem, oldMappings, updatedMappings,
+                thisMapTypeId, otherMapTypeId, removedMappings, addedMappings, entityManager);
+
+        auditJson = appendToJson(false, removedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
+        auditJson = appendToJson(true, addedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
+
+        return auditJson;
+    }
+
+    private JsonNode updateMappingsAndGetAuditForDocuments(String parentItem, List<String> oldDocuments,
+                                               List<JsonDocumentation> newDocuments, Short thisMapTypeId,
+                                               JsonNode auditJson, EntityManager entityManager) throws Exception {
+
+        List<String> updatedMappings = new ArrayList<String>();
+        List<String> removedMappings = new ArrayList<>();
+        List<String> addedMappings = new ArrayList<>();
+        newDocuments.forEach((k) -> updatedMappings.add(k.getUuid()));
+
+        Short documentMapType = MapType.DOCUMENT.getMapType();
+
+        updateMappings(false, parentItem, oldDocuments, updatedMappings,
+                thisMapTypeId, documentMapType, removedMappings, addedMappings, entityManager);
+
+        deleteDocuments(removedMappings);
+        saveDocuments(addedMappings, newDocuments);
+
+        auditJson = appendToJson(false, removedMappings, MapType.valueOfTypeId(documentMapType), auditJson);
+        auditJson = appendToJson(true, addedMappings, MapType.valueOfTypeId(documentMapType), auditJson);
+
+        return auditJson;
+    }
+
+    private void deleteDocuments(List<String> deletedDocuments) throws Exception {
+        for (String uuid : deletedDocuments) {
+            new DocumentationDAL().deleteDocument(uuid);
+        }
+    }
+
+    private void saveDocuments(List<String> addedDocuments, List<JsonDocumentation> documents) throws Exception {
+        for (JsonDocumentation doc : documents) {
+            if (addedDocuments.contains(doc.getUuid())) {
+                if (doc.getUuid() != null) {
+                    new DocumentationDAL().updateDocument(doc);
+                } else {
+                    doc.setUuid(UUID.randomUUID().toString());
+                    new DocumentationDAL().saveDocument(doc);
+                }
+            }
+        }
+    }
+
     public void saveProjectMappings(JsonProject project) throws Exception {
 
-        if (project.getPublishers() != null) {
+        /*if (project.getPublishers() != null) {
             Map<UUID, String> publishers = project.getPublishers();
             saveChildMappings(publishers, MapType.PUBLISHER.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
@@ -396,13 +514,13 @@ public class MasterMappingDAL {
             saveChildMappings(subscribers, MapType.SUBSCRIBER.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
 
-        if (project.getBasePopulation() != null) {
-            Map<UUID, String> dsas = project.getBasePopulation();
+        if (project.getCohorts() != null) {
+            Map<UUID, String> dsas = project.getCohorts();
             saveChildMappings(dsas, MapType.COHORT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
 
-        if (project.getDataSet() != null) {
-            Map<UUID, String> dpas = project.getDataSet();
+        if (project.getDataSets() != null) {
+            Map<UUID, String> dpas = project.getDataSets();
             saveChildMappings(dpas, MapType.DATASET.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
         }
 
@@ -429,11 +547,16 @@ public class MasterMappingDAL {
         }
 
         if (project.getSchedule() != null) {
-            Map<UUID, String> schedule = new HashMap<>();
-            String uuid = project.getSchedule().getUuid();
-            schedule.put(UUID.fromString(uuid), uuid);
-            saveChildMappings(schedule, MapType.SCHEDULE.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
+            List<String> schedUUIDs = new SecurityMasterMappingDAL().getChildMappings(
+                    project.getUuid(), MapType.PROJECT.getMapType(), MapType.SCHEDULE.getMapType());
+            if (schedUUIDs.size() == 0) {
+                Map<UUID, String> schedule = new HashMap<>();
+                String uuid = project.getSchedule().getUuid();
+                schedule.put(UUID.fromString(uuid), uuid);
+                saveChildMappings(schedule, MapType.SCHEDULE.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
+            }
+        }*/
+
     }
 
     public void saveDataExchangeMappings(JsonDataExchange dataExchange) throws Exception {
@@ -507,18 +630,6 @@ public class MasterMappingDAL {
         }
     }
 
-
-
-
-
-    public void saveDataSetMappings(JsonDataSet dataset) throws Exception {
-
-        if (dataset.getDpas() != null) {
-            Map<UUID, String> dataDpas = dataset.getDpas();
-            saveParentMappings(dataDpas, MapType.DATAPROCESSINGAGREEMENT.getMapType(), dataset.getUuid(), MapType.DATASET.getMapType());
-        }
-    }
-
     public void bulkSaveMappings(List<MasterMappingEntity> mappings) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
@@ -542,5 +653,119 @@ public class MasterMappingDAL {
         } finally {
             entityManager.close();
         }
+    }
+
+    private JsonNode updateMappingsAndGetAuditForSchedule(String projectUuid, ProjectScheduleEntity scheduleEntity,
+                                                          JsonProjectSchedule scheduleJson, Short thisMapTypeId,
+                                                          JsonNode auditJson, EntityManager entityManager) throws Exception {
+
+        SecurityProjectScheduleDAL dal = new SecurityProjectScheduleDAL();
+        //schedule was set
+        List<String> parent = new ArrayList<>();
+        parent.add(projectUuid);
+        if (scheduleJson != null) {
+            //No existing schedule
+            if (scheduleEntity == null) {
+                dal.save(scheduleJson);
+                saveMappings(true, scheduleJson.getUuid(), parent, MapType.SCHEDULE.getMapType(),
+                        MapType.PROJECT.getMapType(), entityManager);
+                ((ObjectNode)auditJson).put("AddedSCHEDULE",
+                        StringUtils.join(scheduleJson.getCronDescription() + " ("+scheduleJson.getUuid()+")",
+                                System.getProperty("line.separator")));
+            } else {
+                //Schedule was just updated, no need to do anything with the mappings
+                if (scheduleEntity.getUuid().equals(scheduleJson.getUuid())) {
+                    dal.update(scheduleJson);
+                    ((ObjectNode)auditJson).put("RemovedSCHEDULE",
+                            StringUtils.join(scheduleEntity.getCronDescription() + " ("+scheduleEntity.getUuid()+")",
+                                    System.getProperty("line.separator")));
+                    ((ObjectNode)auditJson).put("AddedSCHEDULE",
+                            StringUtils.join(scheduleJson.getCronDescription() + " ("+scheduleJson.getUuid()+")",
+                                    System.getProperty("line.separator")));
+                } else {
+                    //Previous schedule was deleted then a new one was added
+                    dal.delete(scheduleEntity.getUuid());
+                    deleteMappings(true, scheduleEntity.getUuid(), parent, MapType.SCHEDULE.getMapType(),
+                            thisMapTypeId, entityManager);
+                    ((ObjectNode)auditJson).put("RemovedSCHEDULE",
+                            StringUtils.join(scheduleEntity.getCronDescription() + " ("+scheduleEntity.getUuid()+")",
+                                    System.getProperty("line.separator")));
+
+                    dal.save(scheduleJson);
+                    saveMappings(true, scheduleJson.getUuid(), parent, MapType.SCHEDULE.getMapType(),
+                            MapType.PROJECT.getMapType(), entityManager);
+                    ((ObjectNode)auditJson).put("AddedSCHEDULE",
+                            StringUtils.join(scheduleJson.getCronDescription() + " ("+scheduleJson.getUuid()+")",
+                                    System.getProperty("line.separator")));
+                }
+            }
+        } else if (scheduleEntity != null) {
+            //schedule was deleted
+            dal.delete(scheduleEntity.getUuid());
+            deleteMappings(true, scheduleEntity.getUuid(), parent, MapType.SCHEDULE.getMapType(),
+                    thisMapTypeId, entityManager);
+            ((ObjectNode)auditJson).put("RemovedSCHEDULE",
+                    StringUtils.join(scheduleEntity.getCronDescription() + " ("+scheduleEntity.getUuid()+")",
+                            System.getProperty("line.separator")));
+        }
+        return auditJson;
+    }
+
+    private JsonNode updateMappingsAndGetAuditForExtractTechnicalDetails(String projectUuid, ExtractTechnicalDetailsEntity detailsEntity,
+                                                          JsonExtractTechnicalDetails detailsJson, Short thisMapTypeId,
+                                                          JsonNode auditJson, EntityManager entityManager) throws Exception {
+
+        ExtractTechnicalDetailsDAL dal = new ExtractTechnicalDetailsDAL();
+        //details were set
+        List<String> parent = new ArrayList<>();
+        parent.add(projectUuid);
+        if (detailsJson != null) {
+            //No existing details
+            if (detailsEntity == null) {
+                if (detailsJson.getUuid() == null) {
+                    detailsJson.setUuid(UUID.randomUUID().toString());
+                }
+                dal.saveExtractTechnicalDetails(detailsJson);
+                saveMappings(true, detailsJson.getUuid(), parent, MapType.EXTRACTTECHNICALDETAILS.getMapType(),
+                        MapType.PROJECT.getMapType(), entityManager);
+                ((ObjectNode)auditJson).put("AddedEXTRACTTECHNICALDETAILS",
+                        StringUtils.join(detailsJson.getName() + " ("+detailsJson.getUuid()+")",
+                                System.getProperty("line.separator")));
+            } else {
+                //Details were just updated, no need to do anything with the mappings
+                if (detailsEntity.getUuid().equals(detailsJson.getUuid())) {
+                    dal.updateExtractTechnicalDetails(detailsJson);
+                    ((ObjectNode)auditJson).put("RemovedEXTRACTTECHINICALDETAILS",
+                            StringUtils.join(detailsEntity.getName() + " ("+detailsEntity.getUuid()+")",
+                                    System.getProperty("line.separator")));
+                    ((ObjectNode)auditJson).put("AddedEXTRACTTECHNICALDETAILS",
+                            StringUtils.join(detailsJson.getName() + " ("+detailsJson.getUuid()+")",
+                                    System.getProperty("line.separator")));
+                } else {
+                    //Previous details were deleted then new ones were added
+                    dal.deleteExtractTechnicalDetails(detailsEntity.getUuid());
+                    deleteMappings(true, detailsEntity.getUuid(), parent, MapType.EXTRACTTECHNICALDETAILS.getMapType(),
+                            thisMapTypeId, entityManager);
+                    ((ObjectNode)auditJson).put("RemovedEXTRACTTECHNICALDETAILS",
+                            StringUtils.join(detailsEntity.getName() + " ("+detailsEntity.getUuid()+")",
+                                    System.getProperty("line.separator")));
+                    dal.saveExtractTechnicalDetails(detailsJson);
+                    saveMappings(true, detailsJson.getUuid(), parent, MapType.EXTRACTTECHNICALDETAILS.getMapType(),
+                            MapType.PROJECT.getMapType(), entityManager);
+                    ((ObjectNode)auditJson).put("AddedEXTRACTTECHNICALDETAILS",
+                            StringUtils.join(detailsJson.getName() + " ("+detailsJson.getUuid()+")",
+                                    System.getProperty("line.separator")));
+                }
+            }
+        } else if (detailsEntity != null) {
+            //details were deleted
+            dal.deleteExtractTechnicalDetails(detailsEntity.getUuid());
+            deleteMappings(true, detailsEntity.getUuid(), parent, MapType.EXTRACTTECHNICALDETAILS.getMapType(),
+                    thisMapTypeId, entityManager);
+            ((ObjectNode)auditJson).put("RemovedEXTRACTTECHNICALDETAILS",
+                    StringUtils.join(detailsEntity.getName() + " ("+detailsEntity.getUuid()+")",
+                            System.getProperty("line.separator")));
+        }
+        return auditJson;
     }
 }

@@ -1,19 +1,63 @@
-create table `project_schedule` (
+-- DSMDB_Patch3
+-- CHANGE THE PATCH NUMBER TO THE NEXT NEW ONE AFTER THOSE STORED IN DSM REPO
 
-    uuid char(36) NOT NULL COMMENT 'Unique identifier for the schedule',
-	starts date COMMENT 'Starting date when reports will be sent',
-	ends date COMMENT 'Ending date when reports will no longer be sent',
-	frequency smallint COMMENT 'Frequency of report sending. 0-Daily, 1-Weekly, 2-Monthly, 3-Yearly',
-	weeks char(7) COMMENT 'Comma separated week setting. i.e. 1,2,3,4',
-	is_monday tinyint(1) COMMENT '1 if report is to be sent on Mondays',
-	is_tuesday tinyint(1) COMMENT '1 if report is to be sent on Tuesdays',
-	is_wednesday tinyint(1) COMMENT '1 if report is to be sent on Wednesdays',
-	is_thursday tinyint(1) COMMENT '1 if report is to be sent on Thursdays',
-	is_friday tinyint(1) COMMENT '1 if report is to be sent on Fridays',
-	is_saturday tinyint(1) COMMENT '1 if report is to be sent on Saturdays',
-	is_sunday tinyint(1) COMMENT '1 if report is to be sent on Sundays',
-    primary key data_sharing_manager_schedule_uuid (uuid)
-) comment 'Information regarding project schedule';
+USE data_sharing_manager;
 
-insert into data_sharing_manager.map_type (id, map_type)
-values (16, "Schedule");
+DROP PROCEDURE IF EXISTS RunPatchIfNotRunAlready;
+
+DELIMITER //
+CREATE PROCEDURE RunPatchIfNotRunAlready()
+BEGIN
+    -- (CHANGE THE PATCH NUMBER TO THE NEXT NEW ONE AFTER THOSE STORED IN DSM REPO, CHANGE IT BELOW HERE)
+    IF ((SELECT date_time_run FROM data_sharing_manager.patch_history WHERE patch_name = 'DSMDB_Patch3') IS NULL)
+
+    THEN
+        -- ADD YOUR PATCH PROCEDURE CALL(S) HERE
+        CALL CreateProjectSchedulesTable();
+        CALL AddScheduleMapType();
+
+        INSERT INTO data_sharing_manager.patch_history (patch_name, date_time_run)
+        VALUES ('DSMDB_Patch3', now());
+        -- (CHANGE PATCH NUMBER ABOVE)
+
+    END IF;
+
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE CreateProjectSchedulesTable()
+BEGIN
+    -- (ADD WHAT YOU WANT TO DO FOR YOUR PATCH PROCEDURE HERE)
+	CREATE TABLE IF NOT EXISTS `project_schedule` (
+	  `uuid` char(36) NOT NULL COMMENT 'Unique identifier for the schedule',
+	  `cron_expression` varchar(200) DEFAULT NULL,
+	  `cron_description` varchar(250) DEFAULT NULL,
+	  `cron_settings` varchar(100) DEFAULT NULL,
+	  PRIMARY KEY (`uuid`)
+	) COMMENT='Information regarding project schedule';
+
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE AddScheduleMapType()
+BEGIN
+    -- (ADD WHAT YOU WANT TO DO FOR YOUR PATCH PROCEDURE HERE)
+    IF ((SELECT map_type FROM data_sharing_manager.map_type WHERE id = 16) IS NULL)
+
+    THEN
+        INSERT INTO data_sharing_manager.map_type (id, map_type)
+        VALUES (16, "Schedule");
+
+    END IF;
+
+END //
+DELIMITER ;
+
+CALL RunPatchIfNotRunAlready();
+
+DROP PROCEDURE RunPatchIfNotRunAlready;
+-- (DROP YOUR PATCH PROCEDURE(S) BELOW HERE)
+DROP PROCEDURE CreateProjectSchedulesTable;
+DROP PROCEDURE AddScheduleMapType;

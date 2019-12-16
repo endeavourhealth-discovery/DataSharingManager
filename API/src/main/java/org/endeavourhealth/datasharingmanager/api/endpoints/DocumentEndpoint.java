@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DocumentationEntity;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DocumentationCache;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
@@ -48,7 +49,7 @@ public final class DocumentEndpoint extends AbstractEndpoint {
                 "Documents(s)",
                 "Document Id", uuid);
 
-        DocumentationEntity documentationEntity = new DocumentationDAL().getDocument(uuid);
+        DocumentationEntity documentationEntity = DocumentationCache.getDocumentDetails(uuid);
 
         return Response
                 .ok()

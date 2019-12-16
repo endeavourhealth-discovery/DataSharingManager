@@ -5,7 +5,6 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.Se
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectScheduleDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonExtractTechnicalDetails;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProjectSchedule;
@@ -46,54 +45,16 @@ public class ProjectLogic {
                 .build();
     }
 
-    public Response postProject(JsonProject project) throws Exception {
+    public Response postProject(JsonProject project, String userProjectId) throws Exception {
 
-        String scheduleUUID = "";
         if (project.getUuid() != null) {
-            ProjectScheduleEntity scheduleEntity =
-                    new SecurityProjectDAL().getLinkedSchedule(project.getUuid(), MapType.SCHEDULE.getMapType());
-            if (scheduleEntity != null) {
-                scheduleUUID = scheduleEntity.getUuid();
-            }
-            new MasterMappingDAL().deleteAllMappings(project.getUuid());
-            new ProjectDAL().updateProject(project);
+            /*new MasterMappingDAL().deleteAllMappings(project.getUuid());*/
+            new ProjectDAL().updateProject(project, userProjectId);
         } else {
             project.setUuid(UUID.randomUUID().toString());
             new ProjectDAL().saveProject(project);
         }
-
-        for (JsonDocumentation doc : project.getDocumentations()) {
-            if (doc.getUuid() != null) {
-                new DocumentationDAL().updateDocument(doc);
-            } else {
-                doc.setUuid(UUID.randomUUID().toString());
-                new DocumentationDAL().saveDocument(doc);
-            }
-        }
-
-        JsonExtractTechnicalDetails details = project.getExtractTechnicalDetails();
-        if (details.getUuid() != null) {
-            new ExtractTechnicalDetailsDAL().updateExtractTechnicalDetails(details);
-        } else {
-            details.setUuid(UUID.randomUUID().toString());
-            new ExtractTechnicalDetailsDAL().saveExtractTechnicalDetails(details);
-        }
-
-        JsonProjectSchedule schedule = project.getSchedule();
-        if (schedule != null) {
-            if (StringUtils.isNotEmpty(schedule.getUuid())) {
-                new SecurityProjectScheduleDAL().update(schedule);
-            } else {
-                schedule.setUuid(UUID.randomUUID().toString());
-                new SecurityProjectScheduleDAL().save(schedule);
-            }
-        } else {
-            if (StringUtils.isNotEmpty(scheduleUUID)) {
-                new SecurityProjectScheduleDAL().delete(scheduleUUID);
-            }
-        }
-
-        new MasterMappingDAL().saveProjectMappings(project);
+        /*new MasterMappingDAL().saveProjectMappings(project);*/
 
         return Response
                 .ok()
@@ -155,13 +116,28 @@ public class ProjectLogic {
         ProjectScheduleEntity scheduleEntity =
                 new SecurityProjectDAL().getLinkedSchedule(projectId, MapType.SCHEDULE.getMapType());
 
-        JsonProjectSchedule schedule = new JsonProjectSchedule();
+        JsonProjectSchedule schedule = null;
         if (scheduleEntity != null) {
             schedule = SecurityProjectDAL.setJsonProjectSchedule(scheduleEntity);
         }
         return Response
                 .ok()
                 .entity(schedule)
+                .build();
+    }
+
+    public Response getLinkedExtractTechnicalDetails(String projectId) throws Exception {
+
+        ExtractTechnicalDetailsEntity detailsEntity =
+                new SecurityProjectDAL().getLinkedExtractTechnicalDetails(projectId, MapType.EXTRACTTECHNICALDETAILS.getMapType());
+
+        JsonExtractTechnicalDetails details = null;
+        if (detailsEntity != null) {
+            details = SecurityProjectDAL.setJsonExtractTechnicalDetails(detailsEntity);
+        }
+        return Response
+                .ok()
+                .entity(details)
                 .build();
     }
 

@@ -13,12 +13,12 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.databa
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDataSet;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSetCache;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.DatasetDAL;
-import org.endeavourhealth.datasharingmanager.api.DAL.MasterMappingDAL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +81,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
             "of a cohort.")
     @RequiresAdmin
     public Response postDataSet(@Context SecurityContext sc,
+                                @HeaderParam("userProjectId") String userProjectId,
                                @ApiParam(value = "Json representation of data set to save or update") JsonDataSet dataSet
     ) throws Exception {
         super.setLogbackMarkers(sc);
@@ -89,14 +90,11 @@ public final class DataSetEndpoint extends AbstractEndpoint {
                 "Data set", dataSet);
 
         if (dataSet.getUuid() != null) {
-            new MasterMappingDAL().deleteAllMappings(dataSet.getUuid());
-            new DatasetDAL().updateDataSet(dataSet);
+            new DatasetDAL().updateDataSet(dataSet, userProjectId);
         } else {
             dataSet.setUuid(UUID.randomUUID().toString());
-            new DatasetDAL().saveDataSet(dataSet);
+            new DatasetDAL().saveDataSet(dataSet, userProjectId);
         }
-
-        new MasterMappingDAL().saveDataSetMappings(dataSet);
 
         clearLogbackMarkers();
 
@@ -114,6 +112,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Delete a data set based on UUID that is passed to the API.  Warning! This is permanent.")
     @RequiresAdmin
     public Response deleteDataSet(@Context SecurityContext sc,
+                                  @HeaderParam("userProjectId") String userProjectId,
                                  @ApiParam(value = "UUID of the data set to be deleted") @QueryParam("uuid") String uuid
     ) throws Exception {
         super.setLogbackMarkers(sc);
@@ -121,7 +120,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
                 "data set",
                 "data set Id", uuid);
 
-        new DatasetDAL().deleteDataSet(uuid);
+        new DatasetDAL().deleteDataSet(uuid, userProjectId);
 
         clearLogbackMarkers();
         return Response
@@ -159,7 +158,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
     }
 
     private Response getSingleDataSet(String uuid) throws Exception {
-        DatasetEntity dataSet = new DatasetDAL().getDataSet(uuid);
+        DatasetEntity dataSet = DataSetCache.getDataSetDetails(uuid);
 
         return Response
                 .ok()

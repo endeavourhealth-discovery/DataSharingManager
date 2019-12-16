@@ -73,7 +73,8 @@ public class ProjectEndpoint extends AbstractEndpoint {
             "of a project.")
     @RequiresAdmin
     public Response postProject(@Context SecurityContext sc,
-                                 @ApiParam(value = "Json representation of project to save or update") JsonProject project
+                                @HeaderParam("userProjectId") String userProjectId,
+                                @ApiParam(value = "Json representation of project to save or update") JsonProject project
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
@@ -82,7 +83,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
 
         clearLogbackMarkers();
 
-        return new ProjectLogic().postProject(project);
+        return new ProjectLogic().postProject(project, userProjectId);
     }
 
     @DELETE
@@ -173,6 +174,22 @@ public class ProjectEndpoint extends AbstractEndpoint {
                 "Project UUID", uuid);
 
         return new ProjectLogic().getLinkedSchedule(uuid);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.ProjectEndpoint.getLinkedExtractTechnicalDetailsForProject")
+    @Path("/extractTechnicalDetails")
+    @ApiOperation(value = "Returns the extract technical details linked to the project. Accepts a UUID of a project.")
+    public Response getLinkedExtractTechnicalDetailsForProject(@Context SecurityContext sc,
+                                                @ApiParam(value = "UUID of project") @QueryParam("uuid") String uuid) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "Schedule",
+                "Project UUID", uuid);
+
+        return new ProjectLogic().getLinkedExtractTechnicalDetails(uuid);
     }
 
     @GET
