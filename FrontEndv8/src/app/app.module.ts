@@ -7,6 +7,7 @@ import {AbstractMenuProvider, LayoutComponent, LayoutModule, LoggerModule, Secur
 import {OrganisationModule} from "./organisation/organisation.module";
 import {SchedulerModule} from "./scheduler/scheduler.module";
 import {ValueSetsModule} from "./value-sets/value-sets.module";
+import {GenericTableModule} from "./generic-table/generic-table.module";
 
 
 const keycloakService = new KeycloakService();
@@ -23,6 +24,7 @@ const keycloakService = new KeycloakService();
     OrganisationModule,
     SchedulerModule,
     ValueSetsModule,
+    GenericTableModule,
 
     RouterModule.forRoot(AppMenuService.getRoutes(), {useHash: true}),
   ],
