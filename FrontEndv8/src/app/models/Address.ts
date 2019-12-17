@@ -10,4 +10,15 @@ export class Address {
     lat: number;
     lng: number;
     geolocationReprocess: boolean;
+
+  getDisplayItems(): any[] {
+    return [
+      {label: 'Building name', property: 'buildingName'},
+      {label: 'Number and street', property: 'numberAndStreet'},
+      {label: 'Locality', property: 'locality'},
+      {label: 'City', property: 'city'},
+      {label: 'County', property: 'county'},
+      {label: 'Postcode', property: 'postcode'}
+    ];
+  }
 }

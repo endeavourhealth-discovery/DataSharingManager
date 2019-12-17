@@ -39,6 +39,7 @@ export class GenericTableSspComponent implements OnInit, AfterViewInit, OnChange
   propertiesToShow: string[] = [];
 
   public filterText : string = "";
+  filtered  = false;
   dataSource: any;
   selection = new SelectionModel<any>(true, []);
 
@@ -85,12 +86,15 @@ export class GenericTableSspComponent implements OnInit, AfterViewInit, OnChange
   applyFilter(filterValue: string) {
     this.search.emit(filterValue.trim().toLowerCase());
 
+    this.filtered = true;
+
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
 
   clear() {
+    this.filtered = false;
     this.filterText = '';
     this.applyFilter('');
   }
