@@ -78,7 +78,7 @@ public class DataProcessingAgreementDAL {
             auditJson = new MasterMappingDAL().updateDataProcessingAgreementMappings(dpa, oldDPAEntity, auditJson, entityManager);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.EDIT, ItemType.COHORT, null, null, auditJson);
+                    AuditAction.EDIT, ItemType.DPA, null, null, auditJson);
 
             entityManager.getTransaction().commit();
         } catch (Exception e) {
