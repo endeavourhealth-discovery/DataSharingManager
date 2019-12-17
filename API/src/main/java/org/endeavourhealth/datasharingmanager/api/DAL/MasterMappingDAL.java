@@ -519,7 +519,7 @@ public class MasterMappingDAL {
         return auditJson;
     }
 
-    private <T extends JsonObjectWithUuid> JsonNode updateMappingsAndGetAuditForObjList(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
+    private <T extends JsonItem> JsonNode updateMappingsAndGetAuditForObjList(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
                                                List<T> updatedObjectList, Short thisMapTypeId, Short otherMapTypeId,
                                                JsonNode auditJson, EntityManager entityManager) throws Exception {
         List<String> updatedMappings = new ArrayList<String>();
