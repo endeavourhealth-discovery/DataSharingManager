@@ -227,7 +227,7 @@ public class DataProcessingAgreementLogic {
                 .ok()
                 .entity(matchingDpa)
                 .build();
-    }
+    }/*
 
     /*public Response checkOrganisationAndSystemIsPartOfDPA(String odsCode, String systemName) throws Exception {
 
