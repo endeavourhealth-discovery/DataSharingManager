@@ -64,18 +64,23 @@ public class MasterMappingDAL {
 
     public JsonNode updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson, EntityManager entityManager) throws Exception {
 
+        String uuid = (updatedDataSet != null? updatedDataSet.getUuid(): oldDataset.getUuid());
+
         // DPAs
-        auditJson = updateMappingsAndGetAudit(true, updatedDataSet.getUuid(), (oldDataset == null ? null : oldDataset.getDpas()),
-                updatedDataSet.getDpas(), MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
+        auditJson = updateMappingsAndGetAudit(true, uuid, (oldDataset == null ? null : oldDataset.getDpas()),
+                (updatedDataSet == null ? null : updatedDataSet.getDpas()),
+                MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
 
         return auditJson;
     }
 
     public JsonNode updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson, EntityManager entityManager) throws Exception {
 
+        String uuid = (updatedCohort != null? updatedCohort.getUuid(): oldCohort.getUuid());
+
         // DPAs
-        auditJson = updateMappingsAndGetAudit(true, updatedCohort.getUuid(), (oldCohort == null ? null: oldCohort.getDpas()),
-                updatedCohort.getDpas(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
+        auditJson = updateMappingsAndGetAudit(true, uuid, (oldCohort == null ? null: oldCohort.getDpas()),
+                (updatedCohort == null ? null : updatedCohort.getDpas()), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
 
         return auditJson;
 
