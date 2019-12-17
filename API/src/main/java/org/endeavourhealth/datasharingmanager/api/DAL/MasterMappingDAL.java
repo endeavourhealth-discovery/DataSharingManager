@@ -66,7 +66,7 @@ public class MasterMappingDAL {
 
         String test = MapType.valueOfTypeId((short)55);
         // DPAs
-        auditJson = updateMappingsAndGetAudit(true, updatedDataSet.getUuid(), oldDataset.getDpas(),
+        auditJson = updateMappingsAndGetAudit(true, updatedDataSet.getUuid(), (oldDataset == null ? null : oldDataset.getDpas()),
                 updatedDataSet.getDpas(), MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
 
         return auditJson;
