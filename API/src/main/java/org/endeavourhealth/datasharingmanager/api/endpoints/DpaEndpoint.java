@@ -69,14 +69,15 @@ public final class DpaEndpoint extends AbstractEndpoint {
             "of a data processing agreement.")
     @RequiresAdmin
     public Response postDPA(@Context SecurityContext sc,
-                         @ApiParam(value = "Json representation of data processing agreement to save or update") JsonDPA dpa) throws Exception {
+                            @HeaderParam("userProjectId") String userProjectId,
+                            @ApiParam(value = "Json representation of data processing agreement to save or update") JsonDPA dpa) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
                 "DPA",
                 "DPA", dpa);
 
         clearLogbackMarkers();
-        return new DataProcessingAgreementLogic().postDPA(dpa);
+        return new DataProcessingAgreementLogic().postDPA(dpa, userProjectId);
     }
 
     @DELETE
@@ -87,14 +88,15 @@ public final class DpaEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Delete a data processing agreement based on UUID that is passed to the API.  Warning! This is permanent.")
     @RequiresAdmin
     public Response deleteDPA(@Context SecurityContext sc,
-                           @ApiParam(value = "UUID of the data processing agreement to be deleted") @QueryParam("uuid") String uuid
+                              @HeaderParam("userProjectId") String userProjectId,
+                              @ApiParam(value = "UUID of the data processing agreement to be deleted") @QueryParam("uuid") String uuid
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "DPA",
                 "DPA Id", uuid);
 
-        new DataProcessingAgreementDAL().deleteDPA(uuid);
+        new DataProcessingAgreementDAL().deleteDPA(uuid, userProjectId);
 
         clearLogbackMarkers();
         return Response
