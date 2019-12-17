@@ -33,7 +33,8 @@ export class GenericTableComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   propertiesToShow: string[] = [];
 
-  public filterText : string = "";
+  public filterText : string = '';
+  filtered  = false;
   dataSource: any;
   selection = new SelectionModel<any>(true, []);
 
@@ -67,6 +68,8 @@ export class GenericTableComponent implements OnInit {
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
 
+    this.filtered = true;
+
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -74,6 +77,7 @@ export class GenericTableComponent implements OnInit {
 
   clear() {
     this.filterText = '';
+    this.filtered = false;
     this.applyFilter('');
   }
 

@@ -43,6 +43,7 @@ export class OrganisationEditorComponent implements OnInit {
   regionDetailsToShow = new Region().getDisplayItems();
   dpaDetailsToShow = new Dpa().getDisplayItems();
   dsaDetailsToShow = new Dsa().getDisplayItems();
+  addressDetailsToShow = new Address().getDisplayItems();
 
   constructor(private log: LoggerService,
               private organisationService: OrganisationService,

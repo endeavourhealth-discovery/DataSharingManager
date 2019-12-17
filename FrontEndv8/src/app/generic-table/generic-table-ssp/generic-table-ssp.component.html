@@ -1,18 +1,24 @@
 
 <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-  <mat-form-field *ngIf="totalItems > pageSize" appearance="outline" fxFlex="50" fxFill>
+  <mat-form-field *ngIf="totalItems > pageSize || filtered" appearance="outline" fxFlex="50" fxFill>
     <mat-label>Search</mat-label>
     <input matInput [(ngModel)]="filterText" (keyup.enter)="applyFilter($event.target.value)" placeholder="Search">
     <button mat-button *ngIf="filterText" matSuffix mat-icon-button aria-label="Clear" (click)="clear()">
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
+</div>
+<div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
 
-  <mat-menu #itemActionMenu="matMenu">
-    <button mat-menu-item (click)="deleteItems()">Delete selected</button>
-  </mat-menu>
-  <div fxLayoutAlign="center" class="mat-action" matRipple>
-    <mat-icon [matMenuTriggerFor]="itemActionMenu">more_vert</mat-icon>
+  <div *ngIf="allowDelete" class="toolbarCheckbox">
+
+    <mat-checkbox class="toolbarOptions" (change)="$event ? masterToggle() : null"
+                  [checked]="selection.hasValue() && isAllSelected()"
+                  [indeterminate]="selection.hasValue() && !isAllSelected()"
+                  [aria-label]="checkboxLabel()">
+    </mat-checkbox>
+    <ng-content *ngIf="selection.selected.length > 0" select="button[role=selectionOnly]"></ng-content>
+    <ng-content></ng-content>
   </div>
 
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 mat-table-compact"
@@ -45,7 +51,7 @@
         (click)="clickItem(row)"></tr>
   </table>
 
-  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"
+  <mat-paginator *ngIf="dataSource?.length > pageSize" [pageSizeOptions]="[5, 10, 25, 100]"
                  [showFirstLastButtons]="true"
                  [pageSize]="pageSize"
                  [length]="totalItems"
