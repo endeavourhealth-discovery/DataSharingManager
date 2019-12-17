@@ -4,16 +4,18 @@ import { ValueSetsComponent } from './value-sets/value-sets.component';
 import {MatCardModule} from "@angular/material/card";
 import {MatIconModule} from "@angular/material/icon";
 import {MatMenuModule} from "@angular/material/menu";
-
-
+import {GenericTableModule} from "../generic-table/generic-table.module";
 
 @NgModule({
-  declarations: [ValueSetsComponent],
   imports: [
     CommonModule,
     MatCardModule,
     MatIconModule,
-    MatMenuModule
-  ]
+    MatMenuModule,
+    GenericTableModule,
+  ],
+  declarations: [
+    ValueSetsComponent,
+  ],
 })
 export class ValueSetsModule { }
