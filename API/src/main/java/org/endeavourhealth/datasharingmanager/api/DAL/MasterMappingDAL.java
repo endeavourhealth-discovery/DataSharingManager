@@ -75,7 +75,7 @@ public class MasterMappingDAL {
     public JsonNode updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson, EntityManager entityManager) throws Exception {
 
         // DPAs
-        auditJson = updateMappingsAndGetAudit(true, updatedCohort.getUuid(), oldCohort.getDpas(),
+        auditJson = updateMappingsAndGetAudit(true, updatedCohort.getUuid(), (oldCohort == null ? null: oldCohort.getDpas()),
                 updatedCohort.getDpas(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
 
         return auditJson;
@@ -94,15 +94,24 @@ public class MasterMappingDAL {
                                 List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId,
                                 List<String> removedMappings, List<String> addedMappings, EntityManager entityManager) throws Exception {
 
-        for (String oldMapping : oldMappings) {
-            if (!updatedMappings.contains(oldMapping)) {
-                removedMappings.add(oldMapping);
+        if (oldMappings == null || oldMappings.isEmpty()) {
+            // No old mappings; any that exist are new
+            addedMappings = updatedMappings;
+        } else if (updatedMappings == null || updatedMappings.isEmpty()) {
+            // No mappings in updated; any in old have been removed
+            removedMappings = oldMappings;
+        } else {
+            // old and updated mappings exist; check what has changed
+            for (String oldMapping : oldMappings) {
+                if (!updatedMappings.contains(oldMapping)) {
+                    removedMappings.add(oldMapping);
+                }
             }
-        }
 
-        for (String updatedMapping : updatedMappings) {
-            if (!oldMappings.contains(updatedMapping)) {
-                addedMappings.add(updatedMapping);
+            for (String updatedMapping : updatedMappings) {
+                if (!oldMappings.contains(updatedMapping)) {
+                    addedMappings.add(updatedMapping);
+                }
             }
         }
 
