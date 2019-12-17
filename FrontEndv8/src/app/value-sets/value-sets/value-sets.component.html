@@ -15,7 +15,19 @@
     </div>
   </mat-card-header>
   <mat-card-content>
-
+    <mat-card-content>
+      <app-generic-table-ssp
+        [items]="valueSets"
+        [totalItems]="totalItems"
+        [detailsToShow]="detailsToShow"
+        [pageSize]="20"
+        [allowDelete]="allowEdit"
+        (deleted)="delete($event)"
+        (clicked)="itemClicked($event)"
+        (onPageChange)="pageChange($event)"
+        (onOrderChange)="onOrderChange($event)"
+        (search)="onSearch($event)"></app-generic-table-ssp>
+    </mat-card-content>
   </mat-card-content>
   <!--TODO: remove temporary Scheduler caller start -->
   <br>
