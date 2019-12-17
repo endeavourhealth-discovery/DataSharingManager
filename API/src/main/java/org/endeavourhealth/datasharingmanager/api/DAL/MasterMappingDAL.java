@@ -64,7 +64,6 @@ public class MasterMappingDAL {
 
     public JsonNode updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson, EntityManager entityManager) throws Exception {
 
-        String test = MapType.valueOfTypeId((short)55);
         // DPAs
         auditJson = updateMappingsAndGetAudit(true, updatedDataSet.getUuid(), (oldDataset == null ? null : oldDataset.getDpas()),
                 updatedDataSet.getDpas(), MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
