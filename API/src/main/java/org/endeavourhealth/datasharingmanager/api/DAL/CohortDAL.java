@@ -113,6 +113,7 @@ public class CohortDAL {
             entityManager.getTransaction().begin();
 
             CohortEntity oldCohortEntity = entityManager.find(CohortEntity.class, uuid);
+            oldCohortEntity.setDpas(new SecurityMasterMappingDAL().getParentMappings(uuid, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType()));
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Cohort deleted", oldCohortEntity, null);
             auditJson = new MasterMappingDAL().updateCohortMappings(null, oldCohortEntity, auditJson, entityManager);
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
