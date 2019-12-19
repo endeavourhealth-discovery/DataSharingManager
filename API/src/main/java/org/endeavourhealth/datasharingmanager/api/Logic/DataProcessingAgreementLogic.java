@@ -102,20 +102,6 @@ public class DataProcessingAgreementLogic {
                 .build();
     }
 
-    public Response getLinkedDataFlows(String dpaUuid) throws Exception {
-
-        List<String> dataFlowUuids = new SecurityMasterMappingDAL().getChildMappings(dpaUuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.DATAFLOW.getMapType());
-        List<DataFlowEntity> ret = new ArrayList<>();
-
-        if (!dataFlowUuids.isEmpty())
-            ret = new DataFlowDAL().getDataFlowsFromList(dataFlowUuids);
-
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
     public Response getLinkedCohorts(String dpaUuid) throws Exception {
         List<String> cohorts = new SecurityMasterMappingDAL().getChildMappings(dpaUuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.COHORT.getMapType());
 

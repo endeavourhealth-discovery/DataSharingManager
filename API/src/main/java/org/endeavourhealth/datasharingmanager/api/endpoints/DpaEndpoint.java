@@ -107,24 +107,6 @@ public final class DpaEndpoint extends AbstractEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Timed(absolute = true, name="DataSharingManager.DpaEndpoint.GetDataFlows")
-    @Path("/dataflows")
-    @ApiOperation(value = "Returns a list of Json representations of data flow agreements that are linked " +
-            "to the data processing agreeement.  Accepts a UUID of a data processing agreement.")
-    public Response getLinkedDataFlowsForDPA(@Context SecurityContext sc,
-                                       @ApiParam(value = "UUID of data processing agreement") @QueryParam("uuid") String uuid
-    ) throws Exception {
-        super.setLogbackMarkers(sc);
-        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
-                "dataflows(s)",
-                "DPA Id", uuid);
-
-        return new DataProcessingAgreementLogic().getLinkedDataFlows(uuid);
-    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.DpaEndpoint.GetCohorts")
     @Path("/cohorts")
     @ApiOperation(value = "Returns a list of Json representations of cohorts that are linked " +

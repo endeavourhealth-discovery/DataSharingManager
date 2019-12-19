@@ -106,24 +106,6 @@ public final class DsaEndpoint extends AbstractEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Timed(absolute = true, name="DataSharingManager.DsaEndpoint.GetDataFlows")
-    @Path("/dataflows")
-    @ApiOperation(value = "Returns a list of Json representations of cohorts that are linked " +
-            "to the data sharing agreement.  Accepts a UUID of a data sharing agreement.")
-    public Response getLinkedDataflowsDSA(@Context SecurityContext sc,
-                                     @ApiParam(value = "UUID of data flow") @QueryParam("uuid") String uuid
-    ) throws Exception {
-        super.setLogbackMarkers(sc);
-        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
-                "dataflow(s)",
-                "DSA Id", uuid);
-
-        return new DataSharingAgreementLogic().getLinkedDataFlows(uuid);
-    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.DsaEndpoint.GetRegions")
     @Path("/regions")
     @ApiOperation(value = "Returns a list of Json representations of regions that are linked " +

@@ -114,21 +114,6 @@ public class DataSharingAgreementLogic {
         return purposes;
     }
 
-    public Response getLinkedDataFlows(String dsaUuid) throws Exception {
-
-        List<String> dataFlowUuids = new SecurityMasterMappingDAL().getChildMappings(dsaUuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.DATAFLOW.getMapType());
-
-        List<DataFlowEntity> ret = new ArrayList<>();
-
-        if (!dataFlowUuids.isEmpty())
-            ret = new DataFlowDAL().getDataFlowsFromList(dataFlowUuids);
-
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
-    }
-
     public Response getLinkedRegions(String dsaUuid, String userId) throws Exception {
 
         List<String> regionUuids = new SecurityMasterMappingDAL().getParentMappings(dsaUuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.REGION.getMapType());
