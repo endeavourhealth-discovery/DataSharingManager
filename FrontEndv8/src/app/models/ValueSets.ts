@@ -2,7 +2,7 @@ import {ValueSetCodes} from './ValueSetCodes';
 
 export class ValueSets {
 
-  id: number;
+  uuid: string;
   name: string;
   valueSetsCodes: ValueSetCodes[];
   read2ConceptIds: string;

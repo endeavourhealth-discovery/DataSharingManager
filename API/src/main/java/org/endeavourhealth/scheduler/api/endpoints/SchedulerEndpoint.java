@@ -6,7 +6,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
-import org.endeavourhealth.scheduler.api.json.JsonCron;
 import org.endeavourhealth.scheduler.api.json.JsonSchedule;
 import org.endeavourhealth.scheduler.api.logic.SchedulerLogic;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ public class SchedulerEndpoint extends AbstractEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.SchedulerEndpoint.getDescription")
     @Path("/description")
-    @ApiOperation(value = "Returns the descriptive Quartz Cron definition of the cron expression")
+    @ApiOperation(value = "Returns the the Scheduler object with the description.")
     public Response getDescription(@Context SecurityContext sc,
                                    @ApiParam(value = "Scheduler object") JsonSchedule schedule) throws Exception {
 

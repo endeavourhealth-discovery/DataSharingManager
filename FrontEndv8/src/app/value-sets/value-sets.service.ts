@@ -31,7 +31,7 @@ export class ValueSetsService {
   delete(valueSets?: ValueSets[]): Observable<any> {
     let params = new HttpParams();
     for(let i = 0; i < valueSets.length; i++){
-      params = params.append("ids", valueSets[i].id.toString());
+      params = params.append("ids", valueSets[i].uuid);
     }
     return this.http.delete<ValueSets[]>('api/value_sets/', {params});
   }

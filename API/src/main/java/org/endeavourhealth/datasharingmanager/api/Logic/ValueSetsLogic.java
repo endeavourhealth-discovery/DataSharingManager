@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ValueSetsLogic {
 
@@ -46,11 +47,11 @@ public class ValueSetsLogic {
         if (isEdit) {
 
             ValueSetsEntity entity = new ValueSetsEntity();
-            entity.setId(jsonValueSets.getId());
+            entity.setUuid(jsonValueSets.getUuid());
             entity.setName(jsonValueSets.getName());
 
             dal.updateValuesSets(entity);
-            dal.deleteValueSetsCodes(jsonValueSets.getId());
+            dal.deleteValueSetsCodes(jsonValueSets.getUuid());
             dal.createValueSetsCodes(parseCodeSetCodes(jsonValueSets.getValuesSetCodes()));
 
             return dal.parseEntityToJson(entity);
@@ -58,6 +59,7 @@ public class ValueSetsLogic {
         } else {
 
             ValueSetsEntity entity = new ValueSetsEntity();
+            entity.setUuid(UUID.randomUUID().toString());
             entity.setName(jsonValueSets.getName());
             entity = dal.createValuesSets(entity);
 
@@ -70,8 +72,8 @@ public class ValueSetsLogic {
     public void deleteCodeSet(List<String> ids) throws Exception {
         SecurityValueSetsDAL dal = new SecurityValueSetsDAL();
         for (String id : ids) {
-            dal.deleteValueSetsCodes(Integer.valueOf(id));
-            dal.deleteValuesSets(Integer.valueOf(id));
+            dal.deleteValueSetsCodes(id);
+            dal.deleteValuesSets(id);
         }
     }
 
@@ -88,7 +90,8 @@ public class ValueSetsLogic {
         ArrayList<ValueSetsCodesEntity> codeEntities = new ArrayList();
         for (JsonValueSetCodes code : codes) {
             ValueSetsCodesEntity codeEntity = new ValueSetsCodesEntity();
-            codeEntity.setValueSetsId(code.getValueSetId());
+            codeEntity.setUuid(UUID.randomUUID().toString());
+            codeEntity.setValueSetsUuid(code.getValueSetsUuid());
             codeEntity.setRead2ConceptId(code.getRead2ConceptId());
             codeEntity.setCtv3ConceptId(code.getCtv3ConceptId());
             codeEntity.setSctConceptId(code.getSctConceptId());
