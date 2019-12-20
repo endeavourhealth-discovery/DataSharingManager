@@ -49,6 +49,9 @@ public class DataProcessingAgreementDAL {
     public void updateDPA(JsonDPA dpa, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
+        dpa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getPurposes()));
+        dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits()));
+
         DataProcessingAgreementEntity oldDPAEntity = entityManager.find(DataProcessingAgreementEntity.class, dpa.getUuid());
         oldDPAEntity.setPurposes(new SecurityMasterMappingDAL().getParentMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType()));
         oldDPAEntity.setBenefits(new SecurityMasterMappingDAL().getParentMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType()));
@@ -95,6 +98,9 @@ public class DataProcessingAgreementDAL {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
         DataProcessingAgreementEntity dpaEntity = new DataProcessingAgreementEntity();
 
+        dpa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getPurposes()));
+        dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits()));
+
         try {
             entityManager.getTransaction().begin();
             dpaEntity.setName(dpa.getName());
@@ -139,6 +145,10 @@ public class DataProcessingAgreementDAL {
             entityManager.getTransaction().begin();
 
             DataProcessingAgreementEntity oldDPAEntity = entityManager.find(DataProcessingAgreementEntity.class, uuid);
+
+            oldDPAEntity.setPurposes(new SecurityMasterMappingDAL().getChildMappings(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType()));
+            oldDPAEntity.setBenefits(new SecurityMasterMappingDAL().getChildMappings(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType()));
+
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement deleted", oldDPAEntity, null);
             auditJson = new MasterMappingDAL().updateDataProcessingAgreementMappings(null, oldDPAEntity, auditJson, entityManager);
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,

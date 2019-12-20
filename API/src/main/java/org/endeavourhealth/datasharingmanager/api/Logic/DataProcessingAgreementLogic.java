@@ -45,8 +45,8 @@ public class DataProcessingAgreementLogic {
             }
         }
 
-        dpa.setPurposes(new DataSharingAgreementLogic().setUuidsAndSavePurpose(dpa.getPurposes()));
-        dpa.setBenefits(new DataSharingAgreementLogic().setUuidsAndSavePurpose(dpa.getBenefits()));
+        //dpa.setPurposes(new DataSharingAgreementLogic().setUuidsAndSavePurpose(dpa.getPurposes()));
+        //dpa.setBenefits(new DataSharingAgreementLogic().setUuidsAndSavePurpose(dpa.getBenefits()));
 
         if (dpa.getUuid() != null) {
             new DataProcessingAgreementDAL().updateDPA(dpa, userProjectID);
