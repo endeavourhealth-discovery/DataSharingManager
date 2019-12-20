@@ -27,6 +27,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Path("/dpa")
 @Metrics(registry = "EdsRegistry")
@@ -77,6 +78,17 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "DPA", dpa);
 
         clearLogbackMarkers();
+
+        if (dpa.getPublishers() != null) {
+            CompletableFuture.runAsync(() -> {
+                try {
+                    new AddressDAL().getGeoLocationsForOrganisations(new ArrayList<>(dpa.getPublishers().keySet()));
+                } catch (Exception e) {
+                    // ignore error;
+                }
+            });
+        }
+
         return new DataProcessingAgreementLogic().postDPA(dpa, userProjectId);
     }
 
