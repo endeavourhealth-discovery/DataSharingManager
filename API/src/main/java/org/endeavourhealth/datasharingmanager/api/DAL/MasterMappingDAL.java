@@ -115,11 +115,6 @@ public class MasterMappingDAL {
 
 
 /*
-        if (dpa.getDataFlows() != null) {
-            Map<UUID, String> dataFlows = dpa.getDataFlows();
-            saveChildMappings(dataFlows, MapType.DATAFLOW.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-
         if (dpa.getCohorts() != null) {
             Map<UUID, String> cohorts = dpa.getCohorts();
             saveChildMappings(cohorts, MapType.COHORT.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
@@ -130,18 +125,7 @@ public class MasterMappingDAL {
         }
 
 
-        if (dpa.getPublishers() != null) {
-            Map<UUID, String> publishers = dpa.getPublishers();
-            saveChildMappings(publishers, MapType.PUBLISHER.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-
-            CompletableFuture.runAsync(() -> {
-                try {
-                    new AddressDAL().getGeoLocationsForOrganisations(new ArrayList<>(publishers.keySet()));
-                } catch (Exception e) {
-                    // ignore error;
-                }
-            });
-        }*/
+*/
 
 
 
@@ -552,125 +536,6 @@ public class MasterMappingDAL {
         }
     }
 
-    public void saveProjectMappings(JsonProject project) throws Exception {
-
-        /*if (project.getPublishers() != null) {
-            Map<UUID, String> publishers = project.getPublishers();
-            saveChildMappings(publishers, MapType.PUBLISHER.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
-
-        if (project.getSubscribers() != null) {
-            Map<UUID, String> subscribers = project.getSubscribers();
-            saveChildMappings(subscribers, MapType.SUBSCRIBER.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
-
-        if (project.getCohorts() != null) {
-            Map<UUID, String> dsas = project.getCohorts();
-            saveChildMappings(dsas, MapType.COHORT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
-
-        if (project.getDataSets() != null) {
-            Map<UUID, String> dpas = project.getDataSets();
-            saveChildMappings(dpas, MapType.DATASET.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
-
-        if (project.getDsas() != null) {
-            Map<UUID, String> exchanges = project.getDsas();
-            saveParentMappings(exchanges, MapType.DATASHARINGAGREEMENT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
-
-        if (project.getDocumentations() != null) {
-            Map<UUID, String> documentation = new HashMap<>();
-            List<JsonDocumentation> jsonDocumentations = project.getDocumentations();
-            for (JsonDocumentation doc : jsonDocumentations) {
-                documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
-            }
-            saveChildMappings(documentation, MapType.DOCUMENT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
-
-        if (project.getExtractTechnicalDetails() != null) {
-
-            Map<UUID, String> details = new HashMap<>();
-            details.put(UUID.fromString(project.getExtractTechnicalDetails().getUuid()),
-                    project.getExtractTechnicalDetails().getName());
-            saveChildMappings(details, MapType.EXTRACTTECHNICALDETAILS.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
-
-        if (project.getSchedule() != null) {
-            List<String> schedUUIDs = new SecurityMasterMappingDAL().getChildMappings(
-                    project.getUuid(), MapType.PROJECT.getMapType(), MapType.SCHEDULE.getMapType());
-            if (schedUUIDs.size() == 0) {
-                Map<UUID, String> schedule = new HashMap<>();
-                String uuid = project.getSchedule().getUuid();
-                schedule.put(UUID.fromString(uuid), uuid);
-                saveChildMappings(schedule, MapType.SCHEDULE.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-            }
-        }*/
-
-    }
-
-    /*public void saveDataProcessingAgreementMappings(JsonDPA dpa) throws Exception {
-
-        if (dpa.getDataFlows() != null) {
-            Map<UUID, String> dataFlows = dpa.getDataFlows();
-            saveChildMappings(dataFlows, MapType.DATAFLOW.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-
-        if (dpa.getCohorts() != null) {
-            Map<UUID, String> cohorts = dpa.getCohorts();
-            saveChildMappings(cohorts, MapType.COHORT.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-
-        if (dpa.getRegions() != null) {
-            Map<UUID, String> regions = dpa.getRegions();
-            saveParentMappings(regions, MapType.REGION.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-
-        if (dpa.getDataSets() != null) {
-            Map<UUID, String> datasets = dpa.getDataSets();
-            saveChildMappings(datasets, MapType.DATASET.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-
-        if (dpa.getDocumentations() != null) {
-            Map<UUID, String> documentation = new HashMap<>();
-            List<JsonDocumentation> jsonDocumentations = dpa.getDocumentations();
-            for (JsonDocumentation doc : jsonDocumentations) {
-                documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
-            }
-            saveChildMappings(documentation, MapType.DOCUMENT.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-
-        if (dpa.getPublishers() != null) {
-            Map<UUID, String> publishers = dpa.getPublishers();
-            saveChildMappings(publishers, MapType.PUBLISHER.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-
-            CompletableFuture.runAsync(() -> {
-                try {
-                    new AddressDAL().getGeoLocationsForOrganisations(new ArrayList<>(publishers.keySet()));
-                } catch (Exception e) {
-                    // ignore error;
-                }
-            });
-        }
-
-        if (dpa.getPurposes() != null) {
-            Map<UUID, String> purposes = new HashMap<>();
-            List<JsonPurpose> jsonPurposes = dpa.getPurposes();
-            for (JsonPurpose purp : jsonPurposes) {
-                purposes.put(UUID.fromString(purp.getUuid()), purp.getTitle());
-            }
-            saveChildMappings(purposes, MapType.PURPOSE.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-
-        if (dpa.getBenefits() != null) {
-            Map<UUID, String> benefits = new HashMap<>();
-            List<JsonPurpose> jsonBenefits = dpa.getBenefits();
-            for (JsonPurpose benef : jsonBenefits) {
-                benefits.put(UUID.fromString(benef.getUuid()), benef.getTitle());
-            }
-            saveChildMappings(benefits, MapType.BENEFIT.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-    }*/
 
     public void bulkSaveMappings(List<MasterMappingEntity> mappings) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
