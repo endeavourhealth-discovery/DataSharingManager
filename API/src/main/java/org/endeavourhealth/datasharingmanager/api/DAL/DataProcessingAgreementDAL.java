@@ -64,22 +64,10 @@ public class DataProcessingAgreementDAL {
 
         try {
             entityManager.getTransaction().begin();
-            oldDPAEntity.setName(dpa.getName());
-            oldDPAEntity.setDescription(dpa.getDescription());
-            oldDPAEntity.setDerivation(dpa.getDerivation());
-            oldDPAEntity.setPublisherInformation(dpa.getPublisherInformation());
-            oldDPAEntity.setPublisherContractInformation(dpa.getPublisherContractInformation());
-            oldDPAEntity.setPublisherDataset(dpa.getPublisherDataset());
-            oldDPAEntity.setDsaStatusId(dpa.getDsaStatusId());
-            oldDPAEntity.setReturnToSenderPolicy(dpa.getReturnToSenderPolicy());
-            if (dpa.getStartDate() != null) {
-                oldDPAEntity.setStartDate(Date.valueOf(dpa.getStartDate()));
-            }
-            if (dpa.getEndDate() != null) {
-                oldDPAEntity.setEndDate(Date.valueOf(dpa.getEndDate()));
-            }
 
             auditJson = new MasterMappingDAL().updateDataProcessingAgreementMappings(dpa, oldDPAEntity, auditJson, entityManager);
+
+            oldDPAEntity.updateFromJson(dpa);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.EDIT, ItemType.DPA, null, null, auditJson);
@@ -97,28 +85,13 @@ public class DataProcessingAgreementDAL {
 
     public void saveDPA(JsonDPA dpa, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-        DataProcessingAgreementEntity dpaEntity = new DataProcessingAgreementEntity();
+        DataProcessingAgreementEntity dpaEntity = new DataProcessingAgreementEntity(dpa);
 
         dpa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getPurposes()));
         dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits()));
 
         try {
             entityManager.getTransaction().begin();
-            dpaEntity.setName(dpa.getName());
-            dpaEntity.setDescription(dpa.getDescription());
-            dpaEntity.setDerivation(dpa.getDerivation());
-            dpaEntity.setPublisherInformation(dpa.getPublisherInformation());
-            dpaEntity.setPublisherContractInformation(dpa.getPublisherContractInformation());
-            dpaEntity.setPublisherDataset(dpa.getPublisherDataset());
-            dpaEntity.setDsaStatusId(dpa.getDsaStatusId());
-            dpaEntity.setReturnToSenderPolicy(dpa.getReturnToSenderPolicy());
-            if (dpa.getStartDate() != null) {
-                dpaEntity.setStartDate(Date.valueOf(dpa.getStartDate()));
-            }
-            if (dpa.getEndDate() != null) {
-                dpaEntity.setEndDate(Date.valueOf(dpa.getEndDate()));
-            }
-            dpaEntity.setUuid(dpa.getUuid());
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement created", null, dpaEntity);
 
