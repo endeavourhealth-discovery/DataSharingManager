@@ -54,11 +54,8 @@ public class DataProcessingAgreementDAL {
         dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits()));
 
         DataProcessingAgreementEntity oldDPAEntity = entityManager.find(DataProcessingAgreementEntity.class, dpa.getUuid());
-        oldDPAEntity.setPurposes(new SecurityMasterMappingDAL().getChildMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType()));
-        oldDPAEntity.setBenefits(new SecurityMasterMappingDAL().getChildMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType()));
-        oldDPAEntity.setRegions(new SecurityMasterMappingDAL().getParentMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.REGION.getMapType()));
-        oldDPAEntity.setPublishers(new SecurityMasterMappingDAL().getChildMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType()));
-        oldDPAEntity.setDocumentations(new SecurityMasterMappingDAL().getChildMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.DOCUMENT.getMapType()));
+        oldDPAEntity.setMappingsFromDAL();
+
         DataProcessingAgreementEntity newDPA = new DataProcessingAgreementEntity(dpa);
         JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement edited", oldDPAEntity, newDPA);
 
@@ -119,12 +116,7 @@ public class DataProcessingAgreementDAL {
             entityManager.getTransaction().begin();
 
             DataProcessingAgreementEntity oldDPAEntity = entityManager.find(DataProcessingAgreementEntity.class, uuid);
-
-            oldDPAEntity.setPurposes(new SecurityMasterMappingDAL().getChildMappings(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType()));
-            oldDPAEntity.setBenefits(new SecurityMasterMappingDAL().getChildMappings(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType()));
-            oldDPAEntity.setRegions(new SecurityMasterMappingDAL().getParentMappings(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.REGION.getMapType()));
-            oldDPAEntity.setPublishers(new SecurityMasterMappingDAL().getChildMappings(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType()));
-            oldDPAEntity.setDocumentations(new SecurityMasterMappingDAL().getChildMappings(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.DOCUMENT.getMapType()));
+            oldDPAEntity.setMappingsFromDAL();
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement deleted", oldDPAEntity, null);
             auditJson = new MasterMappingDAL().updateDataProcessingAgreementMappings(null, oldDPAEntity, auditJson, entityManager);
