@@ -1,11 +1,10 @@
 <mat-card>
   <mat-card-header>
     <div mat-card-avatar><mat-icon>lightbulb_outline</mat-icon></div>
-    <mat-card-title>{{orgType}} details</mat-card-title>
-    <mat-card-subtitle>{{organisation.name}}</mat-card-subtitle>
+    <mat-card-title>Region details</mat-card-title>
+    <mat-card-subtitle>{{region.name}}</mat-card-subtitle>
     <div fxFlex></div>
     <mat-menu #visualiseMenu="matMenu">
-      <button *ngIf="(organisation.isService === 0) && (organisation.uuid) && (allowEdit)" mat-menu-item (click)="createServiceFromOrg(false)">Create service</button>
       <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(false)">Save</button>
       <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(true)">Save & close</button>
     </mat-menu>
@@ -17,35 +16,13 @@
     <form class="form" #f="ngForm" novalidate>
       <div class="form-group" #fgName="ngModelGroup" ngModelGroup="organisation" [class.has-error]="!fgName.valid">
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-          <mat-form-field appearance="outline" fxFlex="40" fxFill>
-            <mat-label>{{orgType}} name</mat-label>
-            <input required matInput [(ngModel)]="organisation.name" placeholder="Organisation name" name="name">
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Region name</mat-label>
+            <input required matInput [(ngModel)]="region.name" placeholder="Region name" name="name">
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="40" fxFill>
-            <mat-label>Alternative name</mat-label>
-            <input matInput [(ngModel)]="organisation.alternativeName" placeholder="Alternative name" name="alternativeName">
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="20" fxFill>
-            <mat-label>Date of registration</mat-label>
-            <input matInput type="date" [(ngModel)]="organisation.dateOfRegistration" placeholder="Date Of registration" name="dateOfRegistration">
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="20" fxFill>
-            <mat-label>ODS code</mat-label>
-            <input required matInput [(ngModel)]="organisation.odsCode" placeholder="ODS Code" name="odsCode">
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="20" fxFill>
-            <mat-label>ICO code</mat-label>
-            <input matInput [(ngModel)]="organisation.icoCode" placeholder="ICO code" name="icoCode">
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="40">
-            <mat-label>Organisation type</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="organisation.type" name="type">
-              <mat-option *ngFor="let ot of organisationTypes" [value]="ot.id">{{ot.organisationType}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="20" fxFill>
-            <mat-label>IG toolkit status</mat-label>
-            <input matInput [(ngModel)]="organisation.igToolkitStatus" placeholder="IG toolkit status" name="igToolkitStatus">
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Description</mat-label>
+            <input matInput [(ngModel)]="region.description" placeholder="Description" name="description">
           </mat-form-field>
         </div>
         <br>
@@ -54,129 +31,71 @@
     </form>
 
     <mat-tab-group dynamicHeight>
-      <!--<mat-tab *ngIf="organisation.isService === 0">
+      <mat-tab>
         <ng-template mat-tab-label>
-          <span matBadge="{{addresses?.length}}" matBadgeOverlap="false" [matBadgeHidden]="addresses?.length < 1">Addresses</span>
+          <span matBadge="{{sharingAgreements?.length}}" matBadgeOverlap="false" [matBadgeHidden]="sharingAgreements?.length < 1">Sharing agreements</span>
         </ng-template>
-        <app-generic-table
-          [items]="addresses"
-          [detailsToShow]="addressDetailsToShow"
-          [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
+        <app-generic-table #dsaTable
+          [items]="sharingAgreements"
+          [detailsToShow]="sharingAgreementsDetailsToShow"
+          [allowSelect]="allowEdit"
+          (clicked)="sharingAgreementClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDSAs()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
-        &lt;!&ndash;<mat-card *ngFor="let orgAddress of addresses; let index = index">
-          <mat-card-content>
-            <button *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon>Delete address</button>
-            <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-              <mat-form-field appearance="outline" fxFlex="33" fxFill>
-                <mat-label>Building name</mat-label>
-                <input matInput [(ngModel)]="orgAddress.buildingName" placeholder="Building name" name="buildingName{{index}}">
-              </mat-form-field>
-              <mat-form-field appearance="outline" fxFlex="33" fxFill>
-                <mat-label>Number and street</mat-label>
-                <input matInput [(ngModel)]="orgAddress.numberAndStreet" placeholder="Number and street" name="numberAndStreet{{index}}">
-              </mat-form-field>
-              <mat-form-field appearance="outline" fxFlex="33" fxFill>
-                <mat-label>Locality</mat-label>
-                <input matInput [(ngModel)]="orgAddress.locality" placeholder="Locality" name="locality{{index}}">
-              </mat-form-field>
-              <mat-form-field appearance="outline" fxFlex="33" fxFill>
-                <mat-label>City</mat-label>
-                <input matInput [(ngModel)]="orgAddress.city" placeholder="City" name="city{{index}}">
-              </mat-form-field>
-              <mat-form-field appearance="outline" fxFlex="33" fxFill>
-                <mat-label>County</mat-label>
-                <input matInput [(ngModel)]="orgAddress.county" placeholder="County" name="county{{index}}">
-              </mat-form-field>
-              <mat-form-field appearance="outline" fxFlex="33" fxFill>
-                <mat-label>Postcode</mat-label>
-                <input matInput [(ngModel)]="orgAddress.postcode" placeholder="Postcode" name="postcode{{index}}">
-              </mat-form-field>
-            </div>
-          </mat-card-content>
-        </mat-card>&ndash;&gt;
-      </mat-tab>-->
-      <!--<mat-tab *ngIf="organisation.isService === 0">
+      </mat-tab>
+      <mat-tab>
         <ng-template mat-tab-label>
-          <span matBadge="{{regions?.length}}" matBadgeOverlap="false" [matBadgeHidden]="regions?.length < 1">Regions</span>
+          <span matBadge="{{processingAgreements?.length}}" matBadgeOverlap="false" [matBadgeHidden]="processingAgreements?.length < 1">Processing agreements</span>
         </ng-template>
-        <app-generic-table
-          [items]="regions"
+        <app-generic-table #dpaTable
+          [items]="processingAgreements"
+          [detailsToShow]="processingAgreementsDetailsToShow"
+          [allowSelect]="allowEdit"
+          (clicked)="processingAgreementClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDPAs()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{parentRegions?.length}}" matBadgeOverlap="false" [matBadgeHidden]="parentRegions?.length < 1">Parent regions</span>
+        </ng-template>
+        <app-generic-table #parentRegionTable
+          [items]="parentRegions"
           [detailsToShow]="regionDetailsToShow"
-          [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
+          [allowSelect]="allowEdit"
+          (clicked)="regionClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteParentRegions()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
-      <mat-tab *ngIf="organisation.isService === 0">
+      <mat-tab>
         <ng-template mat-tab-label>
-          <span matBadge="{{dpaPublishing?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dpaPublishing?.length < 1">DPA publishing to</span>
+          <span matBadge="{{childRegions?.length}}" matBadgeOverlap="false" [matBadgeHidden]="childRegions?.length < 1">Child regions</span>
         </ng-template>
-        <app-generic-table
-          [items]="dpaPublishing"
-          [detailsToShow]="dpaDetailsToShow"
-          [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
+        <app-generic-table #childRegionTable
+          [items]="childRegions"
+          [detailsToShow]="regionDetailsToShow"
+          [allowSelect]="allowEdit"
+          (clicked)="regionClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteChildRegions()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
-      <mat-tab *ngIf="organisation.isService === 0">
+      <mat-tab>
         <ng-template mat-tab-label>
-          <span matBadge="{{dsaPublishing?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dsaPublishing?.length < 1">DSA Publishing to</span>
+          <span matBadge="{{organisations?.length}}" matBadgeOverlap="false" [matBadgeHidden]="organisations?.length < 1">Organisations</span>
         </ng-template>
-        <app-generic-table
-          [items]="dsaPublishing"
-          [detailsToShow]="dsaDetailsToShow"
-          [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button></app-generic-table>
-      </mat-tab>
-      <mat-tab *ngIf="organisation.isService === 0">
-        <ng-template mat-tab-label>
-          <span matBadge="{{dsaSubscribing?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dsaSubscribing?.length < 1">DSA subscribing to</span>
-        </ng-template>
-        <app-generic-table
-          [items]="dsaSubscribing"
-          [detailsToShow]="dsaDetailsToShow"
-          [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button></app-generic-table>
-      </mat-tab>-->
-      <mat-tab *ngIf="organisation.isService === 0">
-        <ng-template mat-tab-label>
-          <span matBadge="{{childOrganisations?.length}}" matBadgeOverlap="false" [matBadgeHidden]="childOrganisations?.length < 1">Child organisations</span>
-        </ng-template>
-        <app-generic-table #childOrg
-          [items]="childOrganisations"
+        <app-generic-table #orgTable
+          [items]="organisations"
           [detailsToShow]="orgDetailsToShow"
-          [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="editChildOrganisations()"><mat-icon>add</mat-icon></button></app-generic-table>
-      </mat-tab>
-      <!--<mat-tab>
-        <ng-template mat-tab-label>
-          <span matBadge="{{parentOrganisations?.length}}" matBadgeOverlap="false" [matBadgeHidden]="parentOrganisations?.length < 1">Parent organisations</span>
-        </ng-template>
-        <app-generic-table
-          [items]="parentOrganisations"
-          [detailsToShow]="orgDetailsToShow"
-          [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="editChildOrganisations()"><mat-icon>add</mat-icon></button></app-generic-table>
-      </mat-tab>
-      <mat-tab *ngIf="organisation.isService === 0">
-        <ng-template mat-tab-label>
-          <span matBadge="{{services?.length}}" matBadgeOverlap="false" [matBadgeHidden]="services?.length < 1">Services</span>
-        </ng-template>
-        <app-generic-table
-          [items]="services"
-          [detailsToShow]="orgDetailsToShow"
-          [allowSelect]="allowEdit">`1
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
+          [allowSelect]="allowEdit"
+          (clicked)="organisationClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteOrganisations()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
-      </mat-tab>-->
+      </mat-tab>
     </mat-tab-group>
   </mat-card-content>
 </mat-card>

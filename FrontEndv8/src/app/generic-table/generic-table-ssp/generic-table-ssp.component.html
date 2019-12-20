@@ -10,7 +10,7 @@
 </div>
 <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
 
-  <div *ngIf="allowDelete" class="toolbarCheckbox">
+  <div *ngIf="allowSelect" class="toolbarCheckbox">
 
     <mat-checkbox class="toolbarOptions" (change)="$event ? masterToggle() : null"
                   [checked]="selection.hasValue() && isAllSelected()"

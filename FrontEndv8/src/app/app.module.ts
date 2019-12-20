@@ -8,6 +8,7 @@ import {OrganisationModule} from "./organisation/organisation.module";
 import {SchedulerModule} from "./scheduler/scheduler.module";
 import {ValueSetsModule} from "./value-sets/value-sets.module";
 import {GenericTableModule} from "./generic-table/generic-table.module";
+import {RegionModule} from "./region/region.module";
 
 
 const keycloakService = new KeycloakService();
@@ -17,13 +18,15 @@ const keycloakService = new KeycloakService();
     KeycloakAngularModule,
     HttpClientModule,
 
+    OrganisationModule,
+    RegionModule,
+    SchedulerModule,
+    ValueSetsModule,
+
     LayoutModule,
     SecurityModule,
     LoggerModule,
     UserManagerModule,
-    OrganisationModule,
-    SchedulerModule,
-    ValueSetsModule,
     GenericTableModule,
 
     RouterModule.forRoot(AppMenuService.getRoutes(), {useHash: true}),

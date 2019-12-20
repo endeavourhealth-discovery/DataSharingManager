@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {OrganisationService} from '../organisation.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -10,6 +10,9 @@ import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {LoggerService, UserManagerService} from "dds-angular8";
 import {Organisation} from "../../models/Organisation";
 import {Address} from "../../models/Address";
+import {MatDialog} from '@angular/material/dialog';
+import {OrganisationPickerComponent} from "../organisation-picker/organisation-picker.component";
+import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
 
 @Component({
   selector: 'app-organisation-editor',
@@ -45,12 +48,16 @@ export class OrganisationEditorComponent implements OnInit {
   dsaDetailsToShow = new Dsa().getDisplayItems();
   addressDetailsToShow = new Address().getDisplayItems();
 
+
+  @ViewChild('childOrg', { static: false }) childOrgTable: GenericTableComponent;
+
   constructor(private log: LoggerService,
               private organisationService: OrganisationService,
               private router: Router,
               private route: ActivatedRoute,
               private userManagerNotificationService: UserManagerService,
-              private datePipe: DatePipe) { }
+              private datePipe: DatePipe,
+              public dialog: MatDialog) { }
 
   ngOnInit() {
 
@@ -244,16 +251,38 @@ export class OrganisationEditorComponent implements OnInit {
       .result.then(function (result: Region[]) {
       this.regions = result;
     });
-  }
+  }*/
 
   private editChildOrganisations() {
-    const vm = this;
-    OrganisationPickerComponent.open(this.$modal, this.childOrganisations, 'organisation', this.organisation.uuid )
+
+    console.log('lauch');
+
+    const dialogRef = this.dialog.open(OrganisationPickerComponent, {
+      width: '800px',
+      data: { searchType: 'organisation', uuid: this.organisation.uuid, regionUUID: '', dsaUUID: '' }
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+      for (let org of result) {
+        if (!this.childOrganisations.some(x => x.uuid === org.uuid)) {
+          console.log('adding', org);
+          this.childOrganisations.push(org);
+
+          this.childOrgTable.updateRows();
+
+
+        }
+      }
+    })
+
+    /*OrganisationPickerComponent.open(this.$modal, this.childOrganisations, 'organisation', this.organisation.uuid )
       .result.then(function (result: Organisation[]) {
       this.childOrganisations = result;
-    });
+    });*/
   }
 
+  /*
   private editParentOrganisations() {
     const vm = this;
     OrganisationPickerComponent.open(this.$modal, this.parentOrganisations, 'organisation', this.organisation.uuid )

@@ -23,6 +23,7 @@ import {OrganisationEditorComponent} from "./organisation-editor/organisation-ed
 //TODO remove temp code -start
 import {SchedulerComponent} from "../scheduler/scheduler/scheduler.component";
 import {GenericTableModule} from "../generic-table/generic-table.module";
+import { OrganisationPickerComponent } from './organisation-picker/organisation-picker.component';
 //TODO remove temp code -end
 
 @NgModule({
@@ -58,11 +59,13 @@ import {GenericTableModule} from "../generic-table/generic-table.module";
   ],
   declarations: [
     OrganisationComponent,
-    OrganisationEditorComponent
+    OrganisationEditorComponent,
+    OrganisationPickerComponent
   ],
   entryComponents : [
     //TODO remove temp code -start
-    SchedulerComponent
+    SchedulerComponent,
+    OrganisationPickerComponent
     //TODO remove temp code -end
   ],
   providers: [
