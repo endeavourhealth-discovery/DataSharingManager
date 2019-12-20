@@ -30,9 +30,12 @@ export class GenericTableComponent implements OnInit, OnChanges {
   }
 
   updateRows() {
-    console.log('updateing toews');
-
-    this.table.renderRows();
+    this.dataSource = new MatTableDataSource(this.items);
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    if (this.table) {
+      this.table.renderRows();
+    }
   }
 
   ngOnInit() {
@@ -40,10 +43,8 @@ export class GenericTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes) {
-    this.dataSource = new MatTableDataSource(this.items);
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
 
+    this.updateRows();
     var selectIndex: number = this.propertiesToShow.indexOf('select');
 
     // only allow items to be selected if user has admin rights

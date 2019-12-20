@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild} from '@angular/core';
 import {SelectionModel} from "@angular/cdk/collections";
-import {MatPaginator, MatSort, MatTableDataSource} from "@angular/material";
+import {MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 
 @Component({
   selector: 'app-generic-table-ssp',
@@ -22,6 +22,7 @@ export class GenericTableSspComponent implements OnInit, AfterViewInit, OnChange
   @Output() onOrderChange: EventEmitter<any> = new EventEmitter<any>();
 
 
+  @ViewChild(MatTable, { static: false }) table: MatTable<any>;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   propertiesToShow: string[] = [];
@@ -39,9 +40,17 @@ export class GenericTableSspComponent implements OnInit, AfterViewInit, OnChange
     this.propertiesToShow = this.detailsToShow.map(x => x.property);
   }
 
-  ngAfterViewInit() {
+  updateRows() {
+    this.dataSource = new MatTableDataSource(this.items);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
+    if (this.table) {
+      this.table.renderRows();
+    }
+  }
+
+  ngAfterViewInit() {
+    this.updateRows();
 
     this.sort.sortChange.subscribe(order => {
       this.onOrderChange.emit(order);
@@ -49,7 +58,6 @@ export class GenericTableSspComponent implements OnInit, AfterViewInit, OnChange
   }
 
   ngOnChanges(changes) {
-    console.log('total items changed', this.totalItems);
 
     this.dataSource = new MatTableDataSource(this.items);
 

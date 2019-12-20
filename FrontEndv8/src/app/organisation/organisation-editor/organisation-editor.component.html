@@ -54,7 +54,7 @@
     </form>
 
     <mat-tab-group dynamicHeight>
-      <!--<mat-tab *ngIf="organisation.isService === 0">
+      <mat-tab *ngIf="organisation.isService === 0">
         <ng-template mat-tab-label>
           <span matBadge="{{addresses?.length}}" matBadgeOverlap="false" [matBadgeHidden]="addresses?.length < 1">Addresses</span>
         </ng-template>
@@ -65,7 +65,7 @@
           <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
-        &lt;!&ndash;<mat-card *ngFor="let orgAddress of addresses; let index = index">
+        <!--<mat-card *ngFor="let orgAddress of addresses; let index = index">
           <mat-card-content>
             <button *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon>Delete address</button>
             <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
@@ -95,9 +95,9 @@
               </mat-form-field>
             </div>
           </mat-card-content>
-        </mat-card>&ndash;&gt;
-      </mat-tab>-->
-      <!--<mat-tab *ngIf="organisation.isService === 0">
+        </mat-card>-->
+      </mat-tab>
+      <mat-tab *ngIf="organisation.isService === 0">
         <ng-template mat-tab-label>
           <span matBadge="{{regions?.length}}" matBadgeOverlap="false" [matBadgeHidden]="regions?.length < 1">Regions</span>
         </ng-template>
@@ -142,7 +142,7 @@
           [allowSelect]="allowEdit">
           <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button></app-generic-table>
-      </mat-tab>-->
+      </mat-tab>
       <mat-tab *ngIf="organisation.isService === 0">
         <ng-template mat-tab-label>
           <span matBadge="{{childOrganisations?.length}}" matBadgeOverlap="false" [matBadgeHidden]="childOrganisations?.length < 1">Child organisations</span>
@@ -154,7 +154,7 @@
           <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="editChildOrganisations()"><mat-icon>add</mat-icon></button></app-generic-table>
       </mat-tab>
-      <!--<mat-tab>
+      <mat-tab>
         <ng-template mat-tab-label>
           <span matBadge="{{parentOrganisations?.length}}" matBadgeOverlap="false" [matBadgeHidden]="parentOrganisations?.length < 1">Parent organisations</span>
         </ng-template>
@@ -176,7 +176,7 @@
           <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
-      </mat-tab>-->
+      </mat-tab>
     </mat-tab-group>
   </mat-card-content>
 </mat-card>
