@@ -122,6 +122,9 @@ public class DataProcessingAgreementDAL {
 
             oldDPAEntity.setPurposes(new SecurityMasterMappingDAL().getChildMappings(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType()));
             oldDPAEntity.setBenefits(new SecurityMasterMappingDAL().getChildMappings(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType()));
+            oldDPAEntity.setRegions(new SecurityMasterMappingDAL().getParentMappings(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.REGION.getMapType()));
+            oldDPAEntity.setPublishers(new SecurityMasterMappingDAL().getChildMappings(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType()));
+            oldDPAEntity.setDocumentations(new SecurityMasterMappingDAL().getChildMappings(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.DOCUMENT.getMapType()));
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement deleted", oldDPAEntity, null);
             auditJson = new MasterMappingDAL().updateDataProcessingAgreementMappings(null, oldDPAEntity, auditJson, entityManager);
