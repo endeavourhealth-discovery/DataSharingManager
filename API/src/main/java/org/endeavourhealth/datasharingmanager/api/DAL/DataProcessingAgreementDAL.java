@@ -8,6 +8,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDPA;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
+import org.endeavourhealth.datasharingmanager.api.Logic.DataSharingAgreementLogic;
 import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
 import org.endeavourhealth.uiaudit.enums.AuditAction;
 import org.endeavourhealth.uiaudit.enums.ItemType;
