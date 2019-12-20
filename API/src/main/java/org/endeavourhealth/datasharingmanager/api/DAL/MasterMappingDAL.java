@@ -91,11 +91,11 @@ public class MasterMappingDAL {
         String uuid = (updatedDPA != null? updatedDPA.getUuid(): oldDPA.getUuid());
 
         // Purposes
-        auditJson = updateMappingsAndGetAuditForObjList(true, uuid, (oldDPA == null ? null : oldDPA.getPurposes()),
+        auditJson = updateMappingsAndGetAuditForObjList(false, uuid, (oldDPA == null ? null : oldDPA.getPurposes()),
                 (updatedDPA == null ? null : updatedDPA.getPurposes()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType(), auditJson, entityManager);
 
         // Benefits
-        auditJson = updateMappingsAndGetAuditForObjList(true, uuid, (oldDPA == null ? null : oldDPA.getBenefits()),
+        auditJson = updateMappingsAndGetAuditForObjList(false, uuid, (oldDPA == null ? null : oldDPA.getBenefits()),
                 (updatedDPA == null ? null : updatedDPA.getBenefits()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType(), auditJson, entityManager);
 
         // Regions
@@ -107,7 +107,7 @@ public class MasterMappingDAL {
                 (updatedDPA == null ? null : updatedDPA.getPublishers()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson, entityManager);
 
         // Documentation
-        auditJson = updateMappingsAndGetAuditForObjList(true, uuid, (oldDPA == null ? null : oldDPA.getDocumentations()),
+        auditJson = updateMappingsAndGetAuditForObjList(false, uuid, (oldDPA == null ? null : oldDPA.getDocumentations()),
                 (updatedDPA == null ? null : updatedDPA.getDocumentations()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.DOCUMENT.getMapType(), auditJson, entityManager);
 
 
