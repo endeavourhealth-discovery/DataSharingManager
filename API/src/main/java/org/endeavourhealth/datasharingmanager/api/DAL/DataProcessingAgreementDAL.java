@@ -53,11 +53,11 @@ public class DataProcessingAgreementDAL {
         dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits()));
 
         DataProcessingAgreementEntity oldDPAEntity = entityManager.find(DataProcessingAgreementEntity.class, dpa.getUuid());
-        oldDPAEntity.setPurposes(new SecurityMasterMappingDAL().getParentMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType()));
-        oldDPAEntity.setBenefits(new SecurityMasterMappingDAL().getParentMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType()));
+        oldDPAEntity.setPurposes(new SecurityMasterMappingDAL().getChildMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType()));
+        oldDPAEntity.setBenefits(new SecurityMasterMappingDAL().getChildMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType()));
         oldDPAEntity.setRegions(new SecurityMasterMappingDAL().getParentMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.REGION.getMapType()));
-        oldDPAEntity.setPublishers(new SecurityMasterMappingDAL().getParentMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType()));
-        oldDPAEntity.setDocumentations(new SecurityMasterMappingDAL().getParentMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.DOCUMENT.getMapType()));
+        oldDPAEntity.setPublishers(new SecurityMasterMappingDAL().getChildMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType()));
+        oldDPAEntity.setDocumentations(new SecurityMasterMappingDAL().getChildMappings(dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.DOCUMENT.getMapType()));
         DataProcessingAgreementEntity newDPA = new DataProcessingAgreementEntity(dpa);
         JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement edited", oldDPAEntity, newDPA);
 
