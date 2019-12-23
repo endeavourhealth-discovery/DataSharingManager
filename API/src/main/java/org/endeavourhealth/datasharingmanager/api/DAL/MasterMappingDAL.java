@@ -64,9 +64,8 @@ public class MasterMappingDAL {
 
     public JsonNode updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson, EntityManager entityManager) throws Exception {
 
-        String test = MapType.valueOfTypeId((short)55);
         // DPAs
-        auditJson = updateMappingsAndGetAudit(true, updatedDataSet.getUuid(), oldDataset.getDpas(),
+        auditJson = updateMappingsAndGetAudit(true, updatedDataSet.getUuid(), (oldDataset == null ? null : oldDataset.getDpas()),
                 updatedDataSet.getDpas(), MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
 
         return auditJson;
@@ -75,7 +74,7 @@ public class MasterMappingDAL {
     public JsonNode updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson, EntityManager entityManager) throws Exception {
 
         // DPAs
-        auditJson = updateMappingsAndGetAudit(true, updatedCohort.getUuid(), oldCohort.getDpas(),
+        auditJson = updateMappingsAndGetAudit(true, updatedCohort.getUuid(), (oldCohort == null ? null: oldCohort.getDpas()),
                 updatedCohort.getDpas(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
 
         return auditJson;
@@ -94,15 +93,24 @@ public class MasterMappingDAL {
                                 List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId,
                                 List<String> removedMappings, List<String> addedMappings, EntityManager entityManager) throws Exception {
 
-        for (String oldMapping : oldMappings) {
-            if (!updatedMappings.contains(oldMapping)) {
-                removedMappings.add(oldMapping);
+        if (oldMappings == null || oldMappings.isEmpty()) {
+            // No old mappings; any that exist are new
+            addedMappings = updatedMappings;
+        } else if (updatedMappings == null || updatedMappings.isEmpty()) {
+            // No mappings in updated; any in old have been removed
+            removedMappings = oldMappings;
+        } else {
+            // old and updated mappings exist; check what has changed
+            for (String oldMapping : oldMappings) {
+                if (!updatedMappings.contains(oldMapping)) {
+                    removedMappings.add(oldMapping);
+                }
             }
-        }
 
-        for (String updatedMapping : updatedMappings) {
-            if (!oldMappings.contains(updatedMapping)) {
-                addedMappings.add(updatedMapping);
+            for (String updatedMapping : updatedMappings) {
+                if (!oldMappings.contains(updatedMapping)) {
+                    addedMappings.add(updatedMapping);
+                }
             }
         }
 
