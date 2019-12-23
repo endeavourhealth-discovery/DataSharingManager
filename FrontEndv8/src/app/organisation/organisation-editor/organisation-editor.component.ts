@@ -13,6 +13,7 @@ import {Address} from "../../models/Address";
 import {MatDialog} from '@angular/material/dialog';
 import {OrganisationPickerComponent} from "../organisation-picker/organisation-picker.component";
 import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
+import {RegionPickerComponent} from "../../region/region-picker/region-picker.component";
 
 @Component({
   selector: 'app-organisation-editor',
@@ -50,6 +51,8 @@ export class OrganisationEditorComponent implements OnInit {
 
 
   @ViewChild('childOrg', { static: false }) childOrgTable: GenericTableComponent;
+  @ViewChild('parentOrg', { static: false }) parentOrgTable: GenericTableComponent;
+  @ViewChild('regionTable', { static: false }) regionTable: GenericTableComponent;
 
   constructor(private log: LoggerService,
               private organisationService: OrganisationService,
@@ -245,17 +248,26 @@ export class OrganisationEditorComponent implements OnInit {
 
   }
 
-  /*private editRegions() {
-    const vm = this;
-    RegionPickerComponent.open(this.$modal, this.regions)
-      .result.then(function (result: Region[]) {
-      this.regions = result;
-    });
-  }*/
+  private addRegion() {
+    const dialogRef = this.dialog.open(RegionPickerComponent, {
+      width: '800px',
+      data: { uuid: '', limit: 0, userId : this.activeProject.userId }
+    })
 
-  private editChildOrganisations() {
+    dialogRef.afterClosed().subscribe(result => {
+      for (let region of result) {
+        if (!this.regions.some(x => x.uuid === region.uuid)) {
+          this.regions.push(region);
 
-    console.log('lauch');
+          this.regionTable.updateRows();
+
+
+        }
+      }
+    })
+  }
+
+  private addChildOrganisations() {
 
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
       width: '800px',
@@ -263,10 +275,8 @@ export class OrganisationEditorComponent implements OnInit {
     })
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
       for (let org of result) {
         if (!this.childOrganisations.some(x => x.uuid === org.uuid)) {
-          console.log('adding', org);
           this.childOrganisations.push(org);
 
           this.childOrgTable.updateRows();
@@ -275,22 +285,27 @@ export class OrganisationEditorComponent implements OnInit {
         }
       }
     })
+  }
 
-    /*OrganisationPickerComponent.open(this.$modal, this.childOrganisations, 'organisation', this.organisation.uuid )
-      .result.then(function (result: Organisation[]) {
-      this.childOrganisations = result;
-    });*/
+
+  private addParentOrganisations() {
+    const dialogRef = this.dialog.open(OrganisationPickerComponent, {
+      width: '800px',
+      data: { searchType: 'organisation', uuid: this.organisation.uuid, regionUUID: '', dsaUUID: '' }
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      for (let org of result) {
+        if (!this.parentOrganisations.some(x => x.uuid === org.uuid)) {
+          this.parentOrganisations.push(org);
+
+          this.parentOrgTable.updateRows();
+        }
+      }
+    })
   }
 
   /*
-  private editParentOrganisations() {
-    const vm = this;
-    OrganisationPickerComponent.open(this.$modal, this.parentOrganisations, 'organisation', this.organisation.uuid )
-      .result.then(function (result: Organisation[]) {
-      this.parentOrganisations = result;
-    });
-  }
-
   private editServices() {
     const vm = this;
     OrganisationPickerComponent.open(this.$modal, this.services, 'services', this.organisation.uuid )

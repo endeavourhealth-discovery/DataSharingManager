@@ -47,11 +47,11 @@ public class ValueSetsLogic {
         if (isEdit) {
 
             ValueSetsEntity entity = new ValueSetsEntity();
-            entity.setUuid(jsonValueSets.getUuid());
+            entity.setId(jsonValueSets.getId());
             entity.setName(jsonValueSets.getName());
 
             dal.updateValuesSets(entity);
-            dal.deleteValueSetsCodes(jsonValueSets.getUuid());
+            dal.deleteValueSetsCodes(jsonValueSets.getId());
             dal.createValueSetsCodes(parseCodeSetCodes(jsonValueSets.getValuesSetCodes()));
 
             return dal.parseEntityToJson(entity);
@@ -59,7 +59,7 @@ public class ValueSetsLogic {
         } else {
 
             ValueSetsEntity entity = new ValueSetsEntity();
-            entity.setUuid(UUID.randomUUID().toString());
+            // entity.setId(UUID.randomUUID().toString());
             entity.setName(jsonValueSets.getName());
             entity = dal.createValuesSets(entity);
 
@@ -72,8 +72,8 @@ public class ValueSetsLogic {
     public void deleteCodeSet(List<String> ids) throws Exception {
         SecurityValueSetsDAL dal = new SecurityValueSetsDAL();
         for (String id : ids) {
-            dal.deleteValueSetsCodes(id);
-            dal.deleteValuesSets(id);
+            /*dal.deleteValueSetsCodes(id);
+            dal.deleteValuesSets(id);*/
         }
     }
 
@@ -90,8 +90,8 @@ public class ValueSetsLogic {
         ArrayList<ValueSetsCodesEntity> codeEntities = new ArrayList();
         for (JsonValueSetCodes code : codes) {
             ValueSetsCodesEntity codeEntity = new ValueSetsCodesEntity();
-            codeEntity.setUuid(UUID.randomUUID().toString());
-            codeEntity.setValueSetsUuid(code.getValueSetsUuid());
+            // codeEntity.setUid(UUID.randomUUID().toString());
+            codeEntity.setValueSetsId(code.getValueSetId());
             codeEntity.setRead2ConceptId(code.getRead2ConceptId());
             codeEntity.setCtv3ConceptId(code.getCtv3ConceptId());
             codeEntity.setSctConceptId(code.getSctConceptId());

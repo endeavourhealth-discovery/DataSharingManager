@@ -19,6 +19,7 @@ import {BrowserModule} from "@angular/platform-browser";
 import {GenericTableModule} from "../generic-table/generic-table.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {FormsModule} from "@angular/forms";
+import {RegionPickerComponent} from "./region-picker/region-picker.component";
 
 @NgModule({
   imports: [
@@ -53,9 +54,11 @@ import {FormsModule} from "@angular/forms";
   ],
   declarations: [
     RegionComponent,
-    RegionEditorComponent
+    RegionEditorComponent,
+    RegionPickerComponent
   ],
   entryComponents : [
+    RegionPickerComponent
   ],
   providers: [
     RegionService]

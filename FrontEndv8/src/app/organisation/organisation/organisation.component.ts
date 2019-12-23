@@ -79,7 +79,6 @@ export class OrganisationComponent implements OnInit {
       .subscribe(
         (result) => {
           this.totalItems = result;
-          console.log(result);
         },
         (error) => console.log(error)
       );
@@ -135,11 +134,9 @@ export class OrganisationComponent implements OnInit {
   private search() {
 
     this.loadingComplete = false;
-    console.log('searching', this.pageNumber);
     this.organisationService.search(this.searchData, this.searchType, this.pageNumber, this.pageSize, this.orderColumn, this.descending)
       .subscribe(result => {
           this.organisations = result;
-          console.log(result);
           this.loadingComplete = true;
         },
         error => {
@@ -150,7 +147,6 @@ export class OrganisationComponent implements OnInit {
   }
 
   itemClicked(org: Organisation) {
-    console.log(org);
     this.router.navigate(['/organisation', org.uuid, 'edit']);
   }
 

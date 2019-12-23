@@ -47,7 +47,6 @@ export class OrganisationPickerComponent implements OnInit {
   }
 
   search($event: KeyboardEvent) {
-    console.log('gete');
     if (this.searchData.length < 3) {
       return;
     }
