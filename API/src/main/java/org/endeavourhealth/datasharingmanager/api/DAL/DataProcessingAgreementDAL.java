@@ -49,12 +49,11 @@ public class DataProcessingAgreementDAL {
 
     public void updateDPA(JsonDPA dpa, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+        DataProcessingAgreementEntity oldDPAEntity = entityManager.find(DataProcessingAgreementEntity.class, dpa.getUuid());
+        oldDPAEntity.setMappingsFromDAL();
 
         dpa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getPurposes()));
         dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits()));
-
-        DataProcessingAgreementEntity oldDPAEntity = entityManager.find(DataProcessingAgreementEntity.class, dpa.getUuid());
-        oldDPAEntity.setMappingsFromDAL();
 
         DataProcessingAgreementEntity newDPA = new DataProcessingAgreementEntity(dpa);
         JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement edited", oldDPAEntity, newDPA);
