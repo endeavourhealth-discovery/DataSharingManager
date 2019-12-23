@@ -52,14 +52,14 @@ public class DataProcessingAgreementDAL {
         DataProcessingAgreementEntity oldDPAEntity = entityManager.find(DataProcessingAgreementEntity.class, dpa.getUuid());
         oldDPAEntity.setMappingsFromDAL();
 
-        dpa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getPurposes()));
-        dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits()));
-
-        DataProcessingAgreementEntity newDPA = new DataProcessingAgreementEntity(dpa);
-        JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement edited", oldDPAEntity, newDPA);
-
         try {
             entityManager.getTransaction().begin();
+
+            dpa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getPurposes(), entityManager));
+            dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits(), entityManager));
+
+            DataProcessingAgreementEntity newDPA = new DataProcessingAgreementEntity(dpa);
+            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement edited", oldDPAEntity, newDPA);
 
             auditJson = new MasterMappingDAL().updateDataProcessingAgreementMappings(dpa, oldDPAEntity, auditJson, entityManager);
 
@@ -83,11 +83,11 @@ public class DataProcessingAgreementDAL {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
         DataProcessingAgreementEntity dpaEntity = new DataProcessingAgreementEntity(dpa);
 
-        dpa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getPurposes()));
-        dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits()));
-
         try {
             entityManager.getTransaction().begin();
+
+            dpa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getPurposes(), entityManager));
+            dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits(), entityManager));
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement created", null, dpaEntity);
 

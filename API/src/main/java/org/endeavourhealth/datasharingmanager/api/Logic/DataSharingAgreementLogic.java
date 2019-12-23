@@ -10,6 +10,7 @@ import org.endeavourhealth.common.security.usermanagermodel.models.caching.*;
 import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 
+import javax.persistence.EntityManager;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,12 +104,12 @@ public class DataSharingAgreementLogic {
                 .build();
     }
 
-    public static List<JsonPurpose> setUuidsAndSavePurpose(List<JsonPurpose> purposes) throws Exception {
+    public static List<JsonPurpose> setUuidsAndSavePurpose(List<JsonPurpose> purposes, EntityManager entityManager) throws Exception {
         for (JsonPurpose purpose : purposes) {
             if (purpose.getUuid() == null) {
                 purpose.setUuid(UUID.randomUUID().toString());
             }
-            new PurposeDAL().savePurpose(purpose);
+            new PurposeDAL().savePurpose(purpose, entityManager);
         }
 
         return purposes;
