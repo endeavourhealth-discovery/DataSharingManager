@@ -34,22 +34,6 @@ public class PurposeDAL {
         }
     }
 
-    public void updatePurpose(JsonPurpose purpose) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-            PurposeEntity dsaPurpose = entityManager.find(PurposeEntity.class, purpose.getUuid());
-            entityManager.getTransaction().begin();
-            dsaPurpose.setTitle(purpose.getTitle());
-            dsaPurpose.setDetail(purpose.getDetail());
-            entityManager.getTransaction().commit();
-
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw e;
-        } finally {
-            entityManager.close();
-        }
     }
 
     public void deleteAllPurposes(String uuid, Short mapType) throws Exception {
