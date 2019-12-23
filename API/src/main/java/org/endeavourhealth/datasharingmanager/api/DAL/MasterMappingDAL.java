@@ -500,6 +500,7 @@ public class MasterMappingDAL {
                                                List<JsonPurpose> updatedPurposes, Short thisMapTypeId, Short otherMapTypeId,
                                                JsonNode auditJson, EntityManager entityManager) throws Exception {
 
+        // First, identify what has changed
         List<JsonPurpose> addedPurposes = new ArrayList<>();
         List<PurposeEntity> removedPurposes = new ArrayList<>();
         List<JsonPurpose> changedPurposes = new ArrayList<>();
@@ -519,11 +520,9 @@ public class MasterMappingDAL {
                 } else {
                     Optional<PurposeEntity> oldPurpose = oldPurposes.stream().filter(op -> op.getUuid().equals(updatedPurpose.getUuid())).findFirst();
                     if (oldPurpose.isPresent()) {
-                        if (!updatedPurpose.getTitle().equals(oldPurpose.get().getTitle()) || !updatedPurpose.getDetail().equals(oldPurpose.get().getDetail())) {
+                        if (!updatedPurpose.toString().equals(oldPurpose.get().toString())) {
                             changedPurposes.add(updatedPurpose);
-                        } else {
-                            // Unchanged - no action required.
-                        }
+                        } //else: Unchanged - no action required.
                     } else {
                         addedPurposes.add(updatedPurpose);
                     }
@@ -531,33 +530,36 @@ public class MasterMappingDAL {
             }
         }
 
+        List<String> removalLog = new ArrayList<>();
+        List<String> additionLog = new ArrayList<>();
+
+        // Now apply changes
         if (!removedPurposes.isEmpty()) {
             List<String> removedPurposeUuids = removedPurposes.stream().map(PurposeEntity::getUuid).collect(Collectors.toList());
             deleteMappings(thisItemIsChild, thisItem, removedPurposeUuids, thisMapTypeId, otherMapTypeId, entityManager);
-
-            List<String> changes = new ArrayList<>();
-
-            for (PurposeEntity p : removedPurposes) {
-                changes.add(p.getUuid() + " - " + p.getTitle() + " - " + p.getDetail());
-            }
-
-            ((ObjectNode) auditJson).put("Removed" + MapType.valueOfTypeId(otherMapTypeId), StringUtils.join(changes, System.getProperty("line.separator")));
+            removedPurposes.forEach(rp -> removalLog.add(rp.toString()));
         }
 
         if (!addedPurposes.isEmpty()) {
             List<String> addedPurposeUuids = addedPurposes.stream().map(JsonPurpose::getUuid).collect(Collectors.toList());
             saveMappings(thisItemIsChild, thisItem, addedPurposeUuids, thisMapTypeId, otherMapTypeId, entityManager);
-
-            List<String> changes = new ArrayList<>();
-
-            for (JsonPurpose p : addedPurposes) {
-                changes.add(p.getUuid() + " - " + p.getTitle() + " - " + p.getDetail());
-            }
-
-            ((ObjectNode) auditJson).put("Added" + MapType.valueOfTypeId(otherMapTypeId), StringUtils.join(changes, System.getProperty("line.separator")));
+            addedPurposes.forEach(ap -> additionLog.add(ap.toString()));
         }
 
-        // TODO: audit changes
+        for (JsonPurpose p : changedPurposes) {
+            Optional<PurposeEntity> oldPe = oldPurposes.stream().filter(pe -> pe.getUuid().equals(p.getUuid())).findAny();
+            // For now, log as removal + addition.  Uuid will be unchanged.
+            additionLog.add(p.toString());
+            removalLog.add(oldPe.get().toString());
+        }
+
+        // Finally, add to Json
+        if (!removalLog.isEmpty()) {
+            ((ObjectNode) auditJson).put("Removed" + MapType.valueOfTypeId(otherMapTypeId), StringUtils.join(removalLog, System.getProperty("line.separator")));
+        }
+        if (!additionLog.isEmpty()) {
+            ((ObjectNode) auditJson).put("Added" + MapType.valueOfTypeId(otherMapTypeId), StringUtils.join(additionLog, System.getProperty("line.separator")));
+        }
 
         return auditJson;
     }
