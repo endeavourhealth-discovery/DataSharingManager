@@ -15,8 +15,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import javax.xml.crypto.KeySelector;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class MasterMappingDAL {
 
@@ -91,11 +93,11 @@ public class MasterMappingDAL {
         String uuid = (updatedDPA != null? updatedDPA.getUuid(): oldDPA.getUuid());
 
         // Purposes
-        auditJson = updateMappingsAndGetAuditForObjList(false, uuid, (oldDPA == null ? null : oldDPA.getPurposes()),
+        auditJson = updatePurposesAndGetAudit(false, uuid, (oldDPA == null ? null : oldDPA.getPurposes()),
                 (updatedDPA == null ? null : updatedDPA.getPurposes()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType(), auditJson, entityManager);
 
         // Benefits
-        auditJson = updateMappingsAndGetAuditForObjList(false, uuid, (oldDPA == null ? null : oldDPA.getBenefits()),
+        auditJson = updatePurposesAndGetAudit(false, uuid, (oldDPA == null ? null : oldDPA.getBenefits()),
                 (updatedDPA == null ? null : updatedDPA.getBenefits()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType(), auditJson, entityManager);
 
         // Regions
@@ -490,6 +492,72 @@ public class MasterMappingDAL {
 
         auditJson = appendToJson(false, removedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
         auditJson = appendToJson(true, addedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
+
+        return auditJson;
+    }
+
+    private JsonNode updatePurposesAndGetAudit(boolean thisItemIsChild, String thisItem, List<PurposeEntity> oldPurposes,
+                                               List<JsonPurpose> updatedPurposes, Short thisMapTypeId, Short otherMapTypeId,
+                                               JsonNode auditJson, EntityManager entityManager) throws Exception {
+
+        List<JsonPurpose> addedPurposes = new ArrayList<>();
+        List<PurposeEntity> removedPurposes = new ArrayList<>();
+        List<JsonPurpose> changedPurposes = new ArrayList<>();
+
+        if (oldPurposes != null) {
+            for (PurposeEntity oldPurpose : oldPurposes) {
+                if (updatedPurposes == null || updatedPurposes.stream().noneMatch(up -> up.getUuid().equals(oldPurpose.getUuid()))) {
+                    removedPurposes.add(oldPurpose);
+                }
+            }
+        }
+
+        if (updatedPurposes != null) {
+            for (JsonPurpose updatedPurpose : updatedPurposes) {
+                if (oldPurposes == null) {
+                    addedPurposes.add(updatedPurpose);
+                } else {
+                    Optional<PurposeEntity> oldPurpose = oldPurposes.stream().filter(op -> op.getUuid().equals(updatedPurpose.getUuid())).findFirst();
+                    if (oldPurpose.isPresent()) {
+                        if (!updatedPurpose.getTitle().equals(oldPurpose.get().getTitle()) || !updatedPurpose.getDetail().equals(oldPurpose.get().getDetail())) {
+                            changedPurposes.add(updatedPurpose);
+                        } else {
+                            // Unchanged - no action required.
+                        }
+                    } else {
+                        addedPurposes.add(updatedPurpose);
+                    }
+                }
+            }
+        }
+
+        if (!removedPurposes.isEmpty()) {
+            List<String> removedPurposeUuids = removedPurposes.stream().map(PurposeEntity::getUuid).collect(Collectors.toList());
+            deleteMappings(thisItemIsChild, thisItem, removedPurposeUuids, thisMapTypeId, otherMapTypeId, entityManager);
+
+            List<String> changes = new ArrayList<>();
+
+            for (PurposeEntity p : removedPurposes) {
+                changes.add(p.getUuid() + " - " + p.getTitle() + " - " + p.getDetail());
+            }
+
+            ((ObjectNode) auditJson).put("Removed" + MapType.valueOfTypeId(otherMapTypeId), StringUtils.join(changes, System.getProperty("line.separator")));
+        }
+
+        if (!addedPurposes.isEmpty()) {
+            List<String> addedPurposeUuids = addedPurposes.stream().map(JsonPurpose::getUuid).collect(Collectors.toList());
+            saveMappings(thisItemIsChild, thisItem, addedPurposeUuids, thisMapTypeId, otherMapTypeId, entityManager);
+
+            List<String> changes = new ArrayList<>();
+
+            for (JsonPurpose p : addedPurposes) {
+                changes.add(p.getUuid() + " - " + p.getTitle() + " - " + p.getDetail());
+            }
+
+            ((ObjectNode) auditJson).put("Added" + MapType.valueOfTypeId(otherMapTypeId), StringUtils.join(changes, System.getProperty("line.separator")));
+        }
+
+        // TODO: audit changes
 
         return auditJson;
     }
