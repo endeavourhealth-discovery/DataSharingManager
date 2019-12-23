@@ -261,7 +261,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
         return new DataProcessingAgreementLogic().checkOrganisationIsPartOfDPA(odsCode, true);
     }
 
-    @GET
+    /*@GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.DpaEndpoint.checkOrganisationAndSystem")
@@ -278,7 +278,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "ODS Code", odsCode);
 
         return new DataProcessingAgreementLogic().checkOrganisationAndSystemIsPartOfDPA(odsCode, systemName);
-    }
+    }*/
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

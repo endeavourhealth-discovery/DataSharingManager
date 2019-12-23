@@ -207,7 +207,7 @@ public class DataProcessingAgreementLogic {
                 .build();
     }
 
-    public Response checkOrganisationAndSystemIsPartOfDPA(String odsCode, String systemName) throws Exception {
+    /*public Response checkOrganisationAndSystemIsPartOfDPA(String odsCode, String systemName) throws Exception {
 
         List<DataProcessingAgreementEntity> matchingDpa = new SecurityDataProcessingAgreementDAL().getDataProcessingAgreementsForOrganisationAndSystemType(odsCode, systemName);
 
@@ -215,5 +215,5 @@ public class DataProcessingAgreementLogic {
                 .ok()
                 .entity(matchingDpa)
                 .build();
-    }
+    }*/
 }
