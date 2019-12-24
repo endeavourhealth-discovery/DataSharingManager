@@ -45,18 +45,14 @@ public class RegionLogic {
                 .build();
     }
 
-    public Response postRegion(JsonRegion region) throws Exception {
+    public Response postRegion(JsonRegion region, String userProjectID) throws Exception {
 
         if (region.getUuid() != null) {
-            new RegionDAL().updateRegion(region);
-            new MasterMappingDAL().deleteAllMappings(region.getUuid());
+            new RegionDAL().updateRegion(region, userProjectID);
         } else {
             region.setUuid(UUID.randomUUID().toString());
-            new RegionDAL().saveRegion(region);
+            new RegionDAL().saveRegion(region, userProjectID);
         }
-
-        //Process Mappings
-        new MasterMappingDAL().saveRegionMappings(region);
 
         return Response
                 .ok()
@@ -126,7 +122,7 @@ public class RegionLogic {
 
     public Response getParentRegions(String regionUuid, String userId) throws Exception {
 
-        List<String> regionUuids = new SecurityMasterMappingDAL().getParentMappings(regionUuid, MapType.REGION.getMapType(), MapType.REGION.getMapType());
+        List<String> regionUuids = new SecurityMasterMappingDAL().getParentMappings(regionUuid, MapType.CHILDREGION.getMapType(), MapType.PARENTREGION.getMapType());
         List<RegionEntity> ret = new ArrayList<>();
 
         if (userId != null) {
@@ -144,7 +140,7 @@ public class RegionLogic {
 
     public Response getChildRegions(String regionUuid) throws Exception {
 
-        List<String> regionUuids = new SecurityMasterMappingDAL().getChildMappings(regionUuid, MapType.REGION.getMapType(), MapType.REGION.getMapType());
+        List<String> regionUuids = new SecurityMasterMappingDAL().getChildMappings(regionUuid, MapType.PARENTREGION.getMapType(), MapType.CHILDREGION.getMapType());
         List<RegionEntity> ret = new ArrayList<>();
 
         if (!regionUuids.isEmpty())

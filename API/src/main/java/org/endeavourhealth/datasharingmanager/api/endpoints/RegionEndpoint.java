@@ -67,7 +67,8 @@ public final class RegionEndpoint extends AbstractEndpoint {
             "of a region.")
     @RequiresAdmin
     public Response postRegion(@Context SecurityContext sc,
-                         @ApiParam(value = "Json representation of region to save or update") JsonRegion region
+                               @HeaderParam("userProjectId") String userProjectId,
+                               @ApiParam(value = "Json representation of region to save or update") JsonRegion region
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
@@ -75,7 +76,7 @@ public final class RegionEndpoint extends AbstractEndpoint {
                 "Region", region);
 
         clearLogbackMarkers();
-        return new RegionLogic().postRegion(region);
+        return new RegionLogic().postRegion(region, userProjectId);
     }
 
     @DELETE
@@ -86,6 +87,7 @@ public final class RegionEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Delete a region based on UUID that is passed to the API.  Warning! This is permanent.")
     @RequiresAdmin
     public Response deleteRegion(@Context SecurityContext sc,
+                                 @HeaderParam("userProjectId") String userProjectId,
                                  @ApiParam(value = "UUID of the region to be deleted") @QueryParam("uuid") String uuid
     ) throws Exception {
         super.setLogbackMarkers(sc);
@@ -93,7 +95,7 @@ public final class RegionEndpoint extends AbstractEndpoint {
                 "Region",
                 "Region Id", uuid);
 
-        new RegionDAL().deleteRegion(uuid);
+        new RegionDAL().deleteRegion(uuid, userProjectId);
 
         clearLogbackMarkers();
         return Response
