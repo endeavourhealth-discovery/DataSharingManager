@@ -1,5 +1,5 @@
 import {Purpose} from './Purpose';
-import {Documentation} from "./Documentation";
+import {Documentation} from "../../documentation/models/Documentation";
 
 export class Dsa {
     uuid: string;

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {Organisation} from '../../models/Organisation';
+import {Organisation} from '../models/Organisation';
 import {OrganisationService} from '../organisation.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";

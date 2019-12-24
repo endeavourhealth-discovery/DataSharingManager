@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {Region} from "../models/Region";
-import {Organisation} from "../models/Organisation";
-import {Dsa} from "../models/Dsa";
-import {Dpa} from "../models/Dpa";
-import {Marker} from "../models/Marker";
+import {Region} from "./models/Region";
+import {Organisation} from "../organisation/models/Organisation";
+import {Dsa} from "../data-sharing-agreement/model/Dsa";
+import {Dpa} from "../data-processing-agreement/models/Dpa";
+import {Marker} from "./models/Marker";
 
 @Injectable()
 export class RegionService {

@@ -1,11 +1,11 @@
 import {Component, OnInit, QueryList, ViewChild} from '@angular/core';
 import {RegionService} from '../region.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Region} from "../../models/Region";
-import {Organisation} from "../../models/Organisation";
-import {Dsa} from "../../models/Dsa";
-import {Dpa} from "../../models/Dpa";
-import {Marker} from "../../models/Marker";
+import {Region} from "../models/Region";
+import {Organisation} from "../../organisation/models/Organisation";
+import {Dsa} from "../../data-sharing-agreement/model/Dsa";
+import {Dpa} from "../../data-processing-agreement/models/Dpa";
+import {Marker} from "../models/Marker";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {LoggerService, UserManagerService} from "dds-angular8";
 import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";

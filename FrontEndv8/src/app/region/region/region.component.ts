@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {RegionService} from '../region.service';
 import {Router} from '@angular/router';
-import {Region} from "../../models/Region";
-import {Organisation} from "../../models/Organisation";
+import {Region} from "../models/Region";
+import {Organisation} from "../../organisation/models/Organisation";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {LoggerService, UserManagerService} from "dds-angular8";
 

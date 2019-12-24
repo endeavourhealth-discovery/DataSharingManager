@@ -7,7 +7,7 @@ import {ValueSetsService} from "../value-sets.service";
 //TODO remove temp code -start
 import {SchedulerComponent} from "../../scheduler/scheduler/scheduler.component";
 import {Schedule} from "../../scheduler/models/Schedule";
-import {ValueSets} from "../../models/ValueSets";
+import {ValueSets} from "../models/ValueSets";
 //TODO remove temp code -end
 
 @Component({

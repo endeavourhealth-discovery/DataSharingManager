@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs/Observable';
-import {Organisation} from '../models/Organisation';
-import {Region} from "../models/Region";
-import {Dpa} from "../models/Dpa";
-import {Dsa} from "../models/Dsa";
-import {Address} from "../models/Address";
-import {FileUpload} from "../models/FileUpload";
-import {OrganisationType} from "../models/OrganisationType";
+import {Organisation} from './models/Organisation';
+import {Region} from "../region/models/Region";
+import {Dpa} from "../data-processing-agreement/models/Dpa";
+import {Dsa} from "../data-sharing-agreement/model/Dsa";
+import {Address} from "./models/Address";
+import {FileUpload} from "./models/FileUpload";
+import {OrganisationType} from "./models/OrganisationType";
 
 @Injectable()
 export class OrganisationService  {
