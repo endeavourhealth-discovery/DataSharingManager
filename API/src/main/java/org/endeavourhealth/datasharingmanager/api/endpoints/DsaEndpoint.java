@@ -68,7 +68,8 @@ public final class DsaEndpoint extends AbstractEndpoint {
             "of a data sharing agreement")
     @RequiresAdmin
     public Response postDSA(@Context SecurityContext sc,
-                         @ApiParam(value = "Json representation of data sharing agreeement to save or update") JsonDSA dsa
+                            @HeaderParam("userProjectId") String userProjectId,
+                            @ApiParam(value = "Json representation of data sharing agreeement to save or update") JsonDSA dsa
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
@@ -77,7 +78,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
 
         clearLogbackMarkers();
 
-        return new DataSharingAgreementLogic().postDSA(dsa);
+        return new DataSharingAgreementLogic().postDSA(dsa, userProjectId);
     }
 
     @DELETE
@@ -88,14 +89,15 @@ public final class DsaEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Delete a data sharing agreement based on UUID that is passed to the API.  Warning! This is permanent.")
     @RequiresAdmin
     public Response deleteDSA(@Context SecurityContext sc,
-                           @ApiParam(value = "UUID of the data sharing agreement to be deleted") @QueryParam("uuid") String uuid
+                              @HeaderParam("userProjectId") String userProjectId,
+                              @ApiParam(value = "UUID of the data sharing agreement to be deleted") @QueryParam("uuid") String uuid
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "DSA",
                 "DSA Id", uuid);
 
-        new DataSharingAgreementDAL().deleteDSA(uuid);
+        new DataSharingAgreementDAL().deleteDSA(uuid, userProjectId);
 
         clearLogbackMarkers();
         return Response

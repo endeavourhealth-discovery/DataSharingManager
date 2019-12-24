@@ -136,7 +136,45 @@ public class MasterMappingDAL {
 
     }
 
-    private JsonNode appendToJson(boolean added, List<String> mappings, String type, JsonNode auditJson) throws Exception {
+
+    public JsonNode updateDataSharingAgreementMappings(JsonDSA updatedDSA, DataSharingAgreementEntity oldDSA, JsonNode auditJson, EntityManager entityManager) throws Exception {
+
+        String uuid = (updatedDSA != null ? updatedDSA.getUuid() : oldDSA.getUuid());
+
+        // Purposes
+        auditJson = updatePurposesAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getPurposes()),
+                (updatedDSA == null ? null : updatedDSA.getPurposes()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType(), auditJson, entityManager);
+
+        // Benefits
+        auditJson = updatePurposesAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getBenefits()),
+                (updatedDSA == null ? null : updatedDSA.getBenefits()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType(), auditJson, entityManager);
+
+        // Regions
+        auditJson = updateMappingsAndGetAudit(true, uuid, (oldDSA == null ? null : oldDSA.getRegions()),
+                (updatedDSA == null ? null : updatedDSA.getRegions()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.REGION.getMapType(), auditJson, entityManager);
+
+        // Projects
+        auditJson = updateMappingsAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getProjects()),
+                (updatedDSA == null ? null : updatedDSA.getProjects()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PROJECT.getMapType(), auditJson, entityManager);
+
+        // Publishers
+        auditJson = updateMappingsAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getPublishers()),
+                (updatedDSA == null ? null : updatedDSA.getPublishers()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson, entityManager);
+
+        // Subscribers
+        auditJson = updateMappingsAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getSubscribers()),
+                (updatedDSA == null ? null : updatedDSA.getSubscribers()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.SUBSCRIBER.getMapType(), auditJson, entityManager);
+
+        // Documentation
+        auditJson = updateMappingsAndGetAuditForObjList(false, uuid, (oldDSA == null ? null : oldDSA.getDocumentations()),
+                (updatedDSA == null ? null : updatedDSA.getDocumentations()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.DOCUMENT.getMapType(), auditJson, entityManager);
+
+
+        return auditJson;
+    }
+
+
+        private JsonNode appendToJson(boolean added, List<String> mappings, String type, JsonNode auditJson) throws Exception {
         if (!mappings.isEmpty()) {
             return new AuditCompareLogic().generateListDifferenceAuditJson(auditJson, added, mappings, type);
         }

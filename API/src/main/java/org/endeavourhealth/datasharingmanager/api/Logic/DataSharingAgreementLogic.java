@@ -44,16 +44,7 @@ public class DataSharingAgreementLogic {
                 .build();
     }
 
-    public Response postDSA(JsonDSA dsa) throws Exception {
-        new PurposeDAL().deleteAllPurposes(dsa.getUuid(), MapType.DATASHARINGAGREEMENT.getMapType());
-
-        if (dsa.getUuid() != null) {
-            new MasterMappingDAL().deleteAllMappings(dsa.getUuid());
-            new DataSharingAgreementDAL().updateDSA(dsa);
-        } else {
-            dsa.setUuid(UUID.randomUUID().toString());
-            new DataSharingAgreementDAL().saveDSA(dsa);
-        }
+    public Response postDSA(JsonDSA dsa, String userProjectID) throws Exception {
 
         for (JsonDocumentation doc : dsa.getDocumentations()) {
             if (doc.getUuid() != null) {
@@ -64,10 +55,12 @@ public class DataSharingAgreementLogic {
             }
         }
 
-        dsa.setPurposes(setUuidsAndSavePurpose(dsa.getPurposes()));
-        dsa.setBenefits(setUuidsAndSavePurpose(dsa.getBenefits()));
-
-        new MasterMappingDAL().saveDataSharingAgreementMappings(dsa);
+        if (dsa.getUuid() != null) {
+            new DataSharingAgreementDAL().updateDSA(dsa, userProjectID);
+        } else {
+            dsa.setUuid(UUID.randomUUID().toString());
+            new DataSharingAgreementDAL().saveDSA(dsa, userProjectID);
+        }
 
         return Response
                 .ok(dsa.getUuid())

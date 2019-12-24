@@ -1,10 +1,17 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataProcessingAgreementEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataSharingAgreementEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDSA;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
+import org.endeavourhealth.datasharingmanager.api.Logic.DataSharingAgreementLogic;
+import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
+import org.endeavourhealth.uiaudit.enums.AuditAction;
+import org.endeavourhealth.uiaudit.enums.ItemType;
+import org.endeavourhealth.uiaudit.logic.AuditCompareLogic;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -41,25 +48,27 @@ public class DataSharingAgreementDAL {
 
     }
 
-    public void updateDSA(JsonDSA dsa) throws Exception {
+    public void updateDSA(JsonDSA dsa, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+        DataSharingAgreementEntity oldDSAEntity = entityManager.find(DataSharingAgreementEntity.class, dsa.getUuid());
+        oldDSAEntity.setMappingsFromDAL();
 
         try {
-
-            DataSharingAgreementEntity dsaEntity = entityManager.find(DataSharingAgreementEntity.class, dsa.getUuid());
-
             entityManager.getTransaction().begin();
-            dsaEntity.setName(dsa.getName());
-            dsaEntity.setDescription(dsa.getDescription());
-            dsaEntity.setDerivation(dsa.getDerivation());
-            dsaEntity.setDsaStatusId(dsa.getDsaStatusId());
-            dsaEntity.setConsentModelId(dsa.getConsentModelId());
-            if (dsa.getStartDate() != null) {
-                dsaEntity.setStartDate(Date.valueOf(dsa.getStartDate()));
-            }
-            if (dsa.getEndDate() != null) {
-                dsaEntity.setEndDate(Date.valueOf(dsa.getEndDate()));
-            }
+
+            dsa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dsa.getPurposes(), entityManager));
+            dsa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dsa.getBenefits(), entityManager));
+            
+            DataSharingAgreementEntity newDSA = new DataSharingAgreementEntity(dsa);
+            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Sharing Agreement edited", oldDSAEntity, newDSA);
+
+            auditJson = new MasterMappingDAL().updateDataSharingAgreementMappings(dsa, oldDSAEntity, auditJson, entityManager);
+            
+            oldDSAEntity.updateFromJson(dsa);
+
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                    AuditAction.EDIT, ItemType.DSA, null, null, auditJson);
+
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
@@ -71,28 +80,25 @@ public class DataSharingAgreementDAL {
         clearDSACache(dsa.getUuid());
     }
 
-    public void saveDSA(JsonDSA dsa) throws Exception {
+    public void saveDSA(JsonDSA dsa, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+        DataSharingAgreementEntity dsaEntity = new DataSharingAgreementEntity(dsa);
 
         try {
-
-            DataSharingAgreementEntity dsaEntity = new DataSharingAgreementEntity();
             entityManager.getTransaction().begin();
-            dsaEntity.setName(dsa.getName());
-            dsaEntity.setDescription(dsa.getDescription());
-            dsaEntity.setDerivation(dsa.getDerivation());
-            dsaEntity.setDsaStatusId(dsa.getDsaStatusId());
-            dsaEntity.setConsentModelId(dsa.getConsentModelId());
-            if (dsa.getStartDate() != null) {
-                dsaEntity.setStartDate(Date.valueOf(dsa.getStartDate()));
-            }
-            if (dsa.getEndDate() != null) {
-                dsaEntity.setEndDate(Date.valueOf(dsa.getEndDate()));
-            }
-            dsaEntity.setUuid(dsa.getUuid());
+
+            dsa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dsa.getPurposes(), entityManager));
+            dsa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dsa.getBenefits(), entityManager));
+
+            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Sharing Agreement created", null, dsaEntity);
+
+            auditJson = new MasterMappingDAL().updateDataSharingAgreementMappings(dsa, null, auditJson, entityManager);
+
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                    AuditAction.ADD, ItemType.DSA, null, null, auditJson);
+
             entityManager.persist(dsaEntity);
             entityManager.getTransaction().commit();
-
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             throw e;
@@ -103,16 +109,22 @@ public class DataSharingAgreementDAL {
         clearDSACache(dsa.getUuid());
     }
 
-    public void deleteDSA(String uuid) throws Exception {
+    public void deleteDSA(String uuid, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
         try {
-
-            DataSharingAgreementEntity dsaEntity = entityManager.find(DataSharingAgreementEntity.class, uuid);
             entityManager.getTransaction().begin();
-            entityManager.remove(dsaEntity);
-            entityManager.getTransaction().commit();
 
+            DataSharingAgreementEntity oldDSAEntity = entityManager.find(DataSharingAgreementEntity.class, uuid);
+            oldDSAEntity.setMappingsFromDAL();
+
+            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Sharing Agreement deleted", oldDSAEntity, null);
+            auditJson = new MasterMappingDAL().updateDataSharingAgreementMappings(null, oldDSAEntity, auditJson, entityManager);
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                    AuditAction.DELETE, ItemType.DSA, null, null, auditJson);
+
+            entityManager.remove(oldDSAEntity);
+            entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             throw e;
