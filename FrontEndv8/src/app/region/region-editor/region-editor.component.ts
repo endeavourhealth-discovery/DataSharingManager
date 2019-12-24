@@ -3,7 +3,7 @@ import {RegionService} from '../region.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Region} from "../models/Region";
 import {Organisation} from "../../organisation/models/Organisation";
-import {Dsa} from "../../data-sharing-agreement/model/Dsa";
+import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {Marker} from "../models/Marker";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";

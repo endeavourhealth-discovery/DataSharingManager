@@ -4,7 +4,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import { DatePipe } from '@angular/common';
 import {Region} from "../../region/models/Region";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
-import {Dsa} from "../../data-sharing-agreement/model/Dsa";
+import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {OrganisationType} from "../models/OrganisationType";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {LoggerService, UserManagerService} from "dds-angular8";

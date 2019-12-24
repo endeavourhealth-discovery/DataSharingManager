@@ -1,5 +1,5 @@
 import {Documentation} from "../../documentation/models/Documentation";
-import {Purpose} from "../../data-sharing-agreement/model/Purpose";
+import {Purpose} from "../../data-sharing-agreement/models/Purpose";
 
 export class Dpa {
   uuid: string;

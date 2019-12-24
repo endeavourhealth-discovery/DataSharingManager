@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Observable';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Region} from "./models/Region";
 import {Organisation} from "../organisation/models/Organisation";
-import {Dsa} from "../data-sharing-agreement/model/Dsa";
+import {Dsa} from "../data-sharing-agreement/models/Dsa";
 import {Dpa} from "../data-processing-agreement/models/Dpa";
 import {Marker} from "./models/Marker";
 

@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {Organisation} from './models/Organisation';
 import {Region} from "../region/models/Region";
 import {Dpa} from "../data-processing-agreement/models/Dpa";
-import {Dsa} from "../data-sharing-agreement/model/Dsa";
+import {Dsa} from "../data-sharing-agreement/models/Dsa";
 import {Address} from "./models/Address";
 import {FileUpload} from "./models/FileUpload";
 import {OrganisationType} from "./models/OrganisationType";
