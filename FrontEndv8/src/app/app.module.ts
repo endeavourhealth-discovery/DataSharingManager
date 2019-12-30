@@ -9,6 +9,10 @@ import {SchedulerModule} from "./scheduler/scheduler.module";
 import {ValueSetsModule} from "./value-sets/value-sets.module";
 import {GenericTableModule} from "./generic-table/generic-table.module";
 import {RegionModule} from "./region/region.module";
+import {CohortModule} from "./cohort/cohort.module";
+import {DataExchangeModule} from "./data-exchange/data-exchange.module";
+import {DataFlowModule} from "./data-flow/data-flow.module";
+import {DataSetModule} from "./data-set/data-set.module";
 
 
 const keycloakService = new KeycloakService();
@@ -22,6 +26,10 @@ const keycloakService = new KeycloakService();
     RegionModule,
     SchedulerModule,
     ValueSetsModule,
+    CohortModule,
+    DataExchangeModule,
+    DataFlowModule,
+    DataSetModule,
 
     LayoutModule,
     SecurityModule,

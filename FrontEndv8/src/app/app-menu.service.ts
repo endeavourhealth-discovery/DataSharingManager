@@ -6,6 +6,14 @@ import {OrganisationEditorComponent} from "./organisation/organisation-editor/or
 import {ValueSetsComponent} from "./value-sets/value-sets/value-sets.component";
 import {RegionComponent} from "./region/region/region.component";
 import {RegionEditorComponent} from "./region/region-editor/region-editor.component";
+//import {CohortComponent} from "./cohort/cohort/cohort.component";
+//import {CohortEditorComponent} from "./cohort/cohort-editor/cohort-editor.component";
+//import {DataExchangeComponent} from './data-exchange/data-exchange/data-exchange.component';
+//import {DataExchangeEditorComponent} from './data-exchange/data-exchange-editor/data-exchange-editor.component';
+//import {DataFlowComponent} from './data-flow/data-flow/data-flow.component';
+//import {DataFlowEditorComponent} from './data-flow/data-flow-editor/data-flow-editor.component';
+//import {DataSetComponent} from './data-set/data-set/data-set.component';
+//import {DataSetEditorComponent} from './data-set/data-set-editor/data-set-editor.component';
 
 @Injectable()
 export class AppMenuService implements  AbstractMenuProvider {
@@ -17,6 +25,14 @@ export class AppMenuService implements  AbstractMenuProvider {
       { path: 'regions', component: RegionComponent, data: {role: 'Viewer'}},
       { path: 'region/:id/:mode', component: RegionEditorComponent, data: {role: 'Viewer'}},
       { path: 'value-sets', component: ValueSetsComponent, data: {role: 'Viewer'}},
+      //{ path: 'cohorts', component: CohortComponent, data: {role: 'Viewer'}},
+      //{ path: 'cohort/:id/:mode', component: CohortEditorComponent, data: {role: 'Viewer'}},
+      //{ path: 'dataExchanges', component: DataExchangeComponent, data: {role: 'Viewer'}},
+      //{ path: 'dataExchange/:id/:mode', component: DataExchangeEditorComponent, data: {role: 'Viewer'}},
+      //{ path: 'dataFlows', component: DataFlowComponent, data: {role: 'Viewer'}},
+      //{ path: 'dataFlow/:id/:mode', component: DataFlowEditorComponent, data: {role: 'Viewer'}},
+      //{ path: 'dataSets', component: DataSetComponent, data: {role: 'Viewer'}},
+      //{ path: 'dataSet/:id/:mode', component: DataSetEditorComponent, data: {role: 'Viewer'}},
     ];
   }
 
@@ -30,10 +46,13 @@ export class AppMenuService implements  AbstractMenuProvider {
 
   getMenuOptions(): MenuOption[] {
     return [
-      {caption: 'Organisations', state: 'organisations/organisations', icon: 'library_books'},
       {caption: 'Regions', state: 'regions', icon: 'library_books'},
+      {caption: 'Organisations', state: 'organisations/organisations', icon: 'library_books'},
       {caption: 'Services', state: 'organisations/services', icon: 'library_books'},
-      {caption: 'Value Sets', state: 'value-sets', icon: 'library_books'},
+      //{caption: 'Data sets', state: 'dataSets', icon: 'library_books'},
+      //{caption: 'Cohorts', state: 'cohorts', icon: 'library_books'},
+      {caption: 'Value sets', state: 'value-sets', icon: 'library_books'},
+
     ];
   }
 }
