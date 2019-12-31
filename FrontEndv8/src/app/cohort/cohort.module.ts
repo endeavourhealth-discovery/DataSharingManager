@@ -18,7 +18,7 @@ import {
 } from '@angular/material';
 import {RouterModule} from '@angular/router';
 
-//import {CohortComponent} from './cohort/cohort.component';
+import {CohortComponent} from './cohort/cohort.component';
 //import {CohortEditorComponent} from "./cohort-editor/cohort-editor.component";
 //import {CohortPickerComponent} from './cohort-picker/cohort-picker.component';
 import {CohortService} from './cohort.service';
@@ -49,7 +49,7 @@ import {GenericTableModule} from '../generic-table/generic-table.module';
     RouterModule,
   ],
   declarations: [
-    //CohortComponent,
+    CohortComponent,
     //CohortEditorComponent,
     //CohortPickerComponent
   ],

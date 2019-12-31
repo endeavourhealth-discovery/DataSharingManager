@@ -6,7 +6,7 @@ import {OrganisationEditorComponent} from "./organisation/organisation-editor/or
 import {ValueSetsComponent} from "./value-sets/value-sets/value-sets.component";
 import {RegionComponent} from "./region/region/region.component";
 import {RegionEditorComponent} from "./region/region-editor/region-editor.component";
-//import {CohortComponent} from "./cohort/cohort/cohort.component";
+import {CohortComponent} from "./cohort/cohort/cohort.component";
 //import {CohortEditorComponent} from "./cohort/cohort-editor/cohort-editor.component";
 //import {DataExchangeComponent} from './data-exchange/data-exchange/data-exchange.component';
 //import {DataExchangeEditorComponent} from './data-exchange/data-exchange-editor/data-exchange-editor.component';
@@ -31,7 +31,7 @@ export class AppMenuService implements  AbstractMenuProvider {
       { path: 'regions', component: RegionComponent, data: {role: 'Viewer'}},
       { path: 'region/:id/:mode', component: RegionEditorComponent, data: {role: 'Viewer'}},
       { path: 'value-sets', component: ValueSetsComponent, data: {role: 'Viewer'}},
-      //{ path: 'cohorts', component: CohortComponent, data: {role: 'Viewer'}},
+      { path: 'cohorts', component: CohortComponent, data: {role: 'Viewer'}},
       //{ path: 'cohort/:id/:mode', component: CohortEditorComponent, data: {role: 'Viewer'}},
       //{ path: 'dataExchanges', component: DataExchangeComponent, data: {role: 'Viewer'}},
       //{ path: 'dataExchange/:id/:mode', component: DataExchangeEditorComponent, data: {role: 'Viewer'}},
@@ -64,7 +64,7 @@ export class AppMenuService implements  AbstractMenuProvider {
       //{caption: 'Data sharing agreements', state: 'dsas', icon: 'library_books'},
       //{caption: 'Data processing agreements', state: 'dpas', icon: 'library_books'},
       //{caption: 'Data sets', state: 'dataSets', icon: 'library_books'},
-      //{caption: 'Cohorts', state: 'cohorts', icon: 'library_books'},
+      {caption: 'Cohorts', state: 'cohorts', icon: 'library_books'},
       {caption: 'Value sets', state: 'value-sets', icon: 'library_books'},
     ];
   }
