@@ -7,6 +7,7 @@ export class DataSet {
 
 	getDisplayItems(): any[] {
 		return [
+      {label: 'Name', property: 'name'},
 			{label: 'Description', property: 'description'}
 		];
 	}

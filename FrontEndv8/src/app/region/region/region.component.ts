@@ -57,7 +57,6 @@ export class RegionComponent implements OnInit {
   }
 
   getRegions(userId: string) {
-
     this.loadingComplete = false;
     this.regionService.getAllRegions(userId)
       .subscribe(
@@ -85,7 +84,6 @@ export class RegionComponent implements OnInit {
   }
 
   delete(item: Region) {
-
     /*MessageBoxDialog.open(this.$modal, 'Delete region', 'Are you sure that you want to delete the <b>' + item.name + '</b> region?', 'Delete region', 'Cancel')
       .result.then(
       () => this.doDelete(item),

@@ -10,7 +10,6 @@ export class Cohort {
         return [
             {label: 'Name', property: 'name'},
             {label: 'Description', property: 'description'},
-            {label: 'Technical definition', property: 'technicalDefinition'},
         ];
     }
 }

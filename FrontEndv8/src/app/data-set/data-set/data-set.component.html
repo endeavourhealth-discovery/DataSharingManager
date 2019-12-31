@@ -3,8 +3,8 @@
     <div mat-card-avatar>
       <mat-icon>lightbulb_outline</mat-icon>
     </div>
-    <mat-card-title>Cohorts</mat-card-title>
-    <mat-card-subtitle>All the Cohorts currently defined in the Data Sharing Manager</mat-card-subtitle>
+    <mat-card-title>Data Sets</mat-card-title>
+    <mat-card-subtitle>All the Data Sets currently defined in the Data Sharing Manager</mat-card-subtitle>
     <div fxFlex></div>
     <mat-menu #visualiseMenu="matMenu">
       <button *ngIf="allowEdit" mat-menu-item (click)="add()">Add cohort</button>
@@ -15,12 +15,12 @@
     </div>
   </mat-card-header>
   <mat-card-content>
-      <app-generic-table
-        [items]="cohorts"
-        [detailsToShow]="cohortDetailsToShow"
-        [pageSize]="20"
-        [allowSelect]="allowEdit"
-        (clicked)="itemClicked($event)">
-      </app-generic-table>
+    <app-generic-table
+      [items]="datasets"
+      [detailsToShow]="datasetDetailsToShow"
+      [pageSize]="20"
+      [allowSelect]="allowEdit"
+      (clicked)="itemClicked($event)">
+    </app-generic-table>
   </mat-card-content>
 </mat-card>

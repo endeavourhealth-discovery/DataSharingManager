@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Cohort} from '../models/Cohort';
 import {CohortService} from '../cohort.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {LoggerService, UserManagerService} from "dds-angular8";
 
@@ -12,8 +12,6 @@ import {LoggerService, UserManagerService} from "dds-angular8";
 })
 export class CohortComponent implements OnInit {
   cohorts: Cohort[];
-  searchData = '';
-  searchType: string;
   pageNumber = 1;
   pageSize = 20;
   orderColumn = 'name';
@@ -26,13 +24,11 @@ export class CohortComponent implements OnInit {
 
   constructor(private cohortService: CohortService,
               private router: Router,
-              private route: ActivatedRoute,
               private userManagerNotificationService: UserManagerService,
               private log: LoggerService) {
   }
 
   ngOnInit() {
-
     this.userManagerNotificationService.onProjectChange.subscribe(active => {
       this.activeProject = active;
       this.roleChanged();
@@ -42,7 +38,6 @@ export class CohortComponent implements OnInit {
   }
 
   roleChanged() {
-
     if (this.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
       this.allowEdit = true;
     } else {
@@ -73,9 +68,12 @@ export class CohortComponent implements OnInit {
     this.router.navigate(['/cohort', item.uuid,  'edit']);
   }
 
+  itemClicked(cohort: Cohort) {
+    this.router.navigate(['/cohort', cohort.uuid, 'edit']);
+  }
+
   delete(item: Cohort) {
-    /*
-    MessageBoxDialog.open(this.$modal, 'Delete cohort', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete cohort', 'Cancel')
+    /*MessageBoxDialog.open(this.$modal, 'Delete cohort', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete cohort', 'Cancel')
       .result.then(
       () => this.doDelete(item),
       () => this.log.info('Delete cancelled')
@@ -96,32 +94,6 @@ export class CohortComponent implements OnInit {
 
   close() {
     this.router.navigate(['/overview']);
-  }
-
-  onSearch($event) {
-    this.searchData = $event;
-    this.pageNumber = 1;
-    this.cohorts = [];
-    this.search();
-  }
-
-  private search() {
-
-    this.loadingComplete = false;
-    this.cohortService.search(this.searchData)
-      .subscribe(result => {
-          this.cohorts = result;
-          this.loadingComplete = true;
-        },
-        error => {
-          this.log.error('The cohort could not be loaded. Please try again.'/*, error, 'Load organisations'*/);
-          this.loadingComplete = true;
-        }
-      );
-  }
-
-  itemClicked(cohort: Cohort) {
-    this.router.navigate(['/cohort', cohort.uuid, 'edit']);
   }
 
 }
