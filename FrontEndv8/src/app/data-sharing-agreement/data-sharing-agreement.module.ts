@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BrowserModule} from '@angular/platform-browser';
-import {CommonModule} from '@angular/common';
+import {CommonModule, DatePipe} from '@angular/common';
 import {CoreModule} from 'dds-angular8';
 import {FlexModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
@@ -18,10 +18,11 @@ import {
 } from '@angular/material';
 import {RouterModule} from '@angular/router';
 
-//import {CohortComponent} from './cohort/cohort.component';
-//import {CohortEditorComponent} from "./cohort-editor/cohort-editor.component";
-//import {CohortPickerComponent} from './cohort-picker/cohort-picker.component';
-import {CohortService} from './cohort.service';
+//import {DataSharingAgreementComponent} from './data-sharing-agreement/data-sharing-agreement.component';
+//import {DataSharingAgreementEditorComponent} from './data-sharing-agreement-editor/data-sharing-agreement-editor.component';
+//import {DataSharingAgreementPickerComponent} from './data-sharing-agreement-picker/data-sharing-agreement-picker.component';
+//import {PurposeAddComponent} from './purpose-add/purpose-add.component';
+import {DataSharingAgreementService} from './data-sharing-agreement.service';
 
 //TODO remove temp code -start
 import {SchedulerComponent} from '../scheduler/scheduler/scheduler.component';
@@ -49,18 +50,21 @@ import {GenericTableModule} from '../generic-table/generic-table.module';
     RouterModule,
   ],
   declarations: [
-    //CohortComponent,
-    //CohortEditorComponent,
-    //CohortPickerComponent
+    //DataSharingAgreementComponent,
+    //DataSharingAgreementEditorComponent,
+    //DataSharingAgreementPickerComponent,
+    //PurposeAddComponent
   ],
   entryComponents : [
-    //CohortPickerComponent
+    //DataSharingAgreementPickerComponent,
+    //PurposeAddComponent
     //TODO remove temp code -start
     SchedulerComponent,
     //TODO remove temp code -end
   ],
   providers: [
-    CohortService,
+    DataSharingAgreementService,
+    DatePipe
   ]
 })
-export class CohortModule { }
+export class DataSharingAgreementModule { }

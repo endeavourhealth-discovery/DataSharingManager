@@ -17,11 +17,12 @@ import {
   MatTableModule, MatTabsModule, MatTreeModule
 } from '@angular/material';
 import {RouterModule} from '@angular/router';
+import {DocumentationService} from "../documentation/documentation.service";
 
-//import {CohortComponent} from './cohort/cohort.component';
-//import {CohortEditorComponent} from "./cohort-editor/cohort-editor.component";
-//import {CohortPickerComponent} from './cohort-picker/cohort-picker.component';
-import {CohortService} from './cohort.service';
+//import {DataProcessingAgreementComponent} from './data-processing-agreement/data-processing-agreement.component';
+//import {DataProcessingAgreementEditorComponent} from "./data-processing-agreement-editor/data-processing-agreement-editor.component";
+//import {DataProcessingAgreementPickerComponent} from './data-processing-agreement-picker/data-processing-agreement-picker.component';
+import {DataProcessingAgreementService} from "./data-processing-agreement.service";
 
 //TODO remove temp code -start
 import {SchedulerComponent} from '../scheduler/scheduler/scheduler.component';
@@ -49,18 +50,19 @@ import {GenericTableModule} from '../generic-table/generic-table.module';
     RouterModule,
   ],
   declarations: [
-    //CohortComponent,
-    //CohortEditorComponent,
-    //CohortPickerComponent
+    //DataProcessingAgreementComponent,
+    //DataProcessingAgreementEditorComponent,
+    //DataProcessingAgreementPickerComponent
   ],
   entryComponents : [
-    //CohortPickerComponent
+    //DataProcessingAgreementPickerComponent
     //TODO remove temp code -start
     SchedulerComponent,
     //TODO remove temp code -end
   ],
   providers: [
-    CohortService,
+    DataProcessingAgreementService,
+    DocumentationService
   ]
 })
-export class CohortModule { }
+export class DataProcessingAgreementModule { }

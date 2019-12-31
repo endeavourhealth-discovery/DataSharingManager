@@ -14,6 +14,12 @@ import {RegionEditorComponent} from "./region/region-editor/region-editor.compon
 //import {DataFlowEditorComponent} from './data-flow/data-flow-editor/data-flow-editor.component';
 //import {DataSetComponent} from './data-set/data-set/data-set.component';
 //import {DataSetEditorComponent} from './data-set/data-set-editor/data-set-editor.component';
+//import {DataProcessingAgreementComponent} from './data-processing-agreement/data-processing-agreement/data-processing-agreement.component';
+//import {DataProcessingAgreementEditorComponent} from './data-processing-agreement/data-processing-agreement-editor/data-processing-agreement-editor.component';
+//import {DataSharingAgreementComponent} from './data-sharing-agreement/data-sharing-agreement/data-sharing-agreement.component';
+//import {DataSharingAgreementEditorComponent} from './data-sharing-agreement/data-sharing-agreement-editor/data-sharing-agreement-editor.component';
+//import {DataSharingSummaryComponent} from './data-sharing-summary/data-sharing-summary/data-sharing-summary.component';
+//import {DataSharingSummaryEditorComponent} from './data-sharing-summary/data-sharing-summary-editor/data-sharing-summary-editor.component';
 
 @Injectable()
 export class AppMenuService implements  AbstractMenuProvider {
@@ -33,6 +39,12 @@ export class AppMenuService implements  AbstractMenuProvider {
       //{ path: 'dataFlow/:id/:mode', component: DataFlowEditorComponent, data: {role: 'Viewer'}},
       //{ path: 'dataSets', component: DataSetComponent, data: {role: 'Viewer'}},
       //{ path: 'dataSet/:id/:mode', component: DataSetEditorComponent, data: {role: 'Viewer'}},
+      //{ path: 'dpas', component: DataProcessingAgreementComponent, data: {role: 'Viewer'}},
+      //{ path: 'dpa/:id/:mode', component: DataProcessingAgreementEditorComponent, data: {role: 'Viewer'}},
+      //{ path: 'dsas', component: DataSharingAgreementComponent, data: {role: 'Viewer'}},
+      //{ path: 'dsa/:id/:mode', component: DataSharingAgreementEditorComponent, data: {role: 'Viewer'}},
+      //{ path: 'dataSharingSummaries', component: DataSharingSummaryComponent, data: {role: 'Viewer'}},
+      //{ path: 'dataSharingSummary/:id/:mode', component: DataSharingSummaryEditorComponent, data: {role: 'Viewer'}},
     ];
   }
 
@@ -49,10 +61,11 @@ export class AppMenuService implements  AbstractMenuProvider {
       {caption: 'Regions', state: 'regions', icon: 'library_books'},
       {caption: 'Organisations', state: 'organisations/organisations', icon: 'library_books'},
       {caption: 'Services', state: 'organisations/services', icon: 'library_books'},
+      //{caption: 'Data sharing agreements', state: 'dsas', icon: 'library_books'},
+      //{caption: 'Data processing agreements', state: 'dpas', icon: 'library_books'},
       //{caption: 'Data sets', state: 'dataSets', icon: 'library_books'},
       //{caption: 'Cohorts', state: 'cohorts', icon: 'library_books'},
       {caption: 'Value sets', state: 'value-sets', icon: 'library_books'},
-
     ];
   }
 }

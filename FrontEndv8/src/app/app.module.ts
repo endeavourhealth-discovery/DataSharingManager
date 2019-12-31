@@ -13,6 +13,9 @@ import {CohortModule} from "./cohort/cohort.module";
 import {DataExchangeModule} from "./data-exchange/data-exchange.module";
 import {DataFlowModule} from "./data-flow/data-flow.module";
 import {DataSetModule} from "./data-set/data-set.module";
+import {DataProcessingAgreementModule} from "./data-processing-agreement/data-processing-agreement.module";
+import {DataSharingAgreementModule} from "./data-sharing-agreement/data-sharing-agreement.module";
+import {DataSharingSummaryModule} from "./data-sharing-summary/data-sharing-summary.module";
 
 
 const keycloakService = new KeycloakService();
@@ -30,6 +33,9 @@ const keycloakService = new KeycloakService();
     DataExchangeModule,
     DataFlowModule,
     DataSetModule,
+    DataProcessingAgreementModule,
+    DataSharingAgreementModule,
+    DataSharingSummaryModule,
 
     LayoutModule,
     SecurityModule,

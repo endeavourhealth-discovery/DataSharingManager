@@ -34,7 +34,7 @@ BEGIN
 
     THEN
         ALTER TABLE data_sharing_manager.dataset
-        ADD COLUMN technical_definition mediumtext null COMMENT 'the technical definition of the cohort';
+        ADD COLUMN technical_definition mediumtext null COMMENT 'the technical definition of the dataset';
 
     END IF;
 

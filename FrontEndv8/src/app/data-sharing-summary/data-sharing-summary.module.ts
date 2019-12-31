@@ -18,10 +18,10 @@ import {
 } from '@angular/material';
 import {RouterModule} from '@angular/router';
 
-//import {CohortComponent} from './cohort/cohort.component';
-//import {CohortEditorComponent} from "./cohort-editor/cohort-editor.component";
-//import {CohortPickerComponent} from './cohort-picker/cohort-picker.component';
-import {CohortService} from './cohort.service';
+//import {DataSharingSummaryComponent} from './data-sharing-summary/data-sharing-summary.component';
+//import {DataSharingSummaryEditorComponent} from './data-sharing-summary-editor/data-sharing-summary-editor.component';
+//import {DataSharingSummaryOverviewComponent} from './data-sharing-summary-overview/data-sharing-summary-overview.component';
+import {DataSharingSummaryService} from './data-sharing-summary.service';
 
 //TODO remove temp code -start
 import {SchedulerComponent} from '../scheduler/scheduler/scheduler.component';
@@ -49,18 +49,17 @@ import {GenericTableModule} from '../generic-table/generic-table.module';
     RouterModule,
   ],
   declarations: [
-    //CohortComponent,
-    //CohortEditorComponent,
-    //CohortPickerComponent
+    //DataSharingSummaryComponent,
+    //DataSharingSummaryEditorComponent,
+    //DataSharingSummaryOverviewComponent,
   ],
   entryComponents : [
-    //CohortPickerComponent
     //TODO remove temp code -start
     SchedulerComponent,
     //TODO remove temp code -end
   ],
   providers: [
-    CohortService,
+    DataSharingSummaryService,
   ]
 })
-export class CohortModule { }
+export class DataSharingSummaryModule { }
