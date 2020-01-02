@@ -1,0 +1,121 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar><mat-icon>lightbulb_outline</mat-icon></div>
+    <mat-card-title>Cohort details</mat-card-title>
+    <mat-card-subtitle>{{cohort.name}}</mat-card-subtitle>
+    <div fxFlex></div>
+    <mat-menu #visualiseMenu="matMenu">
+      <button *ngIf="allowEdit" mat-menu-item (click)="save(false)">Save</button>
+      <button *ngIf="allowEdit" mat-menu-item (click)="save(true)">Save & close</button>
+    </mat-menu>
+    <div fxLayoutAlign="center" class="mat-action" matRipple>
+      <mat-icon [matMenuTriggerFor]="visualiseMenu">more_vert</mat-icon>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="form">
+      <div class="form-group" #fgName="ngModelGroup" ngModelGroup="cohort" [class.has-error]="!fgName.valid">
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Cohort name</mat-label>
+            <input required matInput [(ngModel)]="cohort.name" placeholder="Cohort name" name="name">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Description</mat-label>
+            <input matInput [(ngModel)]="cohort.description" placeholder="Description" name="description">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Technical definition</mat-label>
+            <input matInput [(ngModel)]="cohort.technicalDefinition" placeholder="Technical definition" name="technicalDefinition">
+          </mat-form-field>
+        </div>
+        <br>
+      </div>
+      <mat-tab-group dynamicHeight>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span matBadge="{{dpas?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dpas?.length < 1">Processing agreements</span>
+          </ng-template>
+          <app-generic-table
+            #dpaTable
+            [items]="dpas"
+            [detailsToShow]="dpaDetailsToShow"
+            [allowSelect]="allowEdit">
+          </app-generic-table>
+        </mat-tab>
+      </mat-tab-group>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<!--
+<div class="module">
+  <div class="container-fluid">
+    <div class="module-heading">
+      Cohort details
+      <div class="pull-right">
+        <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-success" (click)="save(false)">Save</button>
+        <button *ngIf="allowEdit" type="button" class="btn btn-sm btn-warning" (click)="save(true)">Save & close</button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="close()">Cancel</button>
+      </div>
+    </div>
+    <div class="module-body">
+      <form>
+        <fieldset [disabled]="!allowEdit">
+          <legend>Cohort</legend>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label class="control-label">Cohort name</label>
+              <input type="text" class="form-control" placeholder="Cohort name" [(ngModel)]="cohort.name" name="name">
+            </div>
+-->
+            <!--<div class="form-group col-md-6">
+              <label class="control-label">Consent model</label>
+              <div class="input-group">
+                <select class="form-control" [(ngModel)]="cohort.consentModelId" name="consentModelId">
+                  <option *ngFor="let con of consents" [ngValue]="con.num">{{con.name}}</option>
+                </select>
+              </div>
+            </div>-->
+
+<!--      </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label class="control-label">Description</label>
+              <textarea type="textarea" rows="20" class="form-control" placeholder="Description" [(ngModel)]="cohort.description" name="description"></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label class="control-label">Technical definition</label>
+              <textarea type="textarea" rows="20" class="form-control" placeholder="Technical definition" [(ngModel)]="cohort.technicalDefinition" name="technicalDefinition"></textarea>
+            </div>
+          </div>
+        </fieldset>
+
+        <ngb-tabset>
+          <ngb-tab>
+            <ng-template ngbTabTitle><span class="tab-title">Data processing agreements </span><span class="badge badge-pill badge-primary">{{dpas?.length}}</span></ng-template>
+            <ng-template ngbTabContent>
+              <entity-viewer
+                (onshowPicker)="editDataProcessingAgreements()"
+                [items]="dpas"
+                [primary]="'name'"
+                [primaryOrderText]="'Name'"
+                [displayClass]="'region'"
+                [secondary]="'description'"
+                [secondaryOrderText]="'Description'"
+                [typeDescription]="'Data processing agreement'"
+                [model]="'dpa'"
+                [detailsToShow]="dpaDetailsToShow"
+                [allowEdit]="allowEdit"
+                [showEditButton]="allowEdit">
+              </entity-viewer>
+            </ng-template>
+          </ngb-tab>
+        </ngb-tabset>
+      </form>
+    </div>
+  </div>
+</div>
+-->

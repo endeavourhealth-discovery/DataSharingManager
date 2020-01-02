@@ -7,7 +7,7 @@ import {ValueSetsComponent} from "./value-sets/value-sets/value-sets.component";
 import {RegionComponent} from "./region/region/region.component";
 import {RegionEditorComponent} from "./region/region-editor/region-editor.component";
 import {CohortComponent} from "./cohort/cohort/cohort.component";
-//import {CohortEditorComponent} from "./cohort/cohort-editor/cohort-editor.component";
+import {CohortEditorComponent} from "./cohort/cohort-editor/cohort-editor.component";
 import {DataExchangeComponent} from './data-exchange/data-exchange/data-exchange.component';
 //import {DataExchangeEditorComponent} from './data-exchange/data-exchange-editor/data-exchange-editor.component';
 import {DataFlowComponent} from './data-flow/data-flow/data-flow.component';
@@ -18,7 +18,7 @@ import {DataProcessingAgreementComponent} from './data-processing-agreement/data
 //import {DataProcessingAgreementEditorComponent} from './data-processing-agreement/data-processing-agreement-editor/data-processing-agreement-editor.component';
 import {DataSharingAgreementComponent} from './data-sharing-agreement/data-sharing-agreement/data-sharing-agreement.component';
 //import {DataSharingAgreementEditorComponent} from './data-sharing-agreement/data-sharing-agreement-editor/data-sharing-agreement-editor.component';
-//import {DataSharingSummaryComponent} from './data-sharing-summary/data-sharing-summary/data-sharing-summary.component';
+import {DataSharingSummaryComponent} from './data-sharing-summary/data-sharing-summary/data-sharing-summary.component';
 //import {DataSharingSummaryEditorComponent} from './data-sharing-summary/data-sharing-summary-editor/data-sharing-summary-editor.component';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class AppMenuService implements  AbstractMenuProvider {
       { path: 'region/:id/:mode', component: RegionEditorComponent, data: {role: 'Viewer'}},
       { path: 'value-sets', component: ValueSetsComponent, data: {role: 'Viewer'}},
       { path: 'cohorts', component: CohortComponent, data: {role: 'Viewer'}},
-      //{ path: 'cohort/:id/:mode', component: CohortEditorComponent, data: {role: 'Viewer'}},
+      { path: 'cohort/:id/:mode', component: CohortEditorComponent, data: {role: 'Viewer'}},
       { path: 'dataExchanges', component: DataExchangeComponent, data: {role: 'Viewer'}},
       //{ path: 'dataExchange/:id/:mode', component: DataExchangeEditorComponent, data: {role: 'Viewer'}},
       { path: 'dataFlows', component: DataFlowComponent, data: {role: 'Viewer'}},
@@ -43,7 +43,7 @@ export class AppMenuService implements  AbstractMenuProvider {
       //{ path: 'dpa/:id/:mode', component: DataProcessingAgreementEditorComponent, data: {role: 'Viewer'}},
       { path: 'dsas', component: DataSharingAgreementComponent, data: {role: 'Viewer'}},
       //{ path: 'dsa/:id/:mode', component: DataSharingAgreementEditorComponent, data: {role: 'Viewer'}},
-      //{ path: 'dataSharingSummaries', component: DataSharingSummaryComponent, data: {role: 'Viewer'}},
+      { path: 'dataSharingSummaries', component: DataSharingSummaryComponent, data: {role: 'Viewer'}},
       //{ path: 'dataSharingSummary/:id/:mode', component: DataSharingSummaryEditorComponent, data: {role: 'Viewer'}},
     ];
   }

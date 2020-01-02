@@ -18,7 +18,7 @@ import {
 } from '@angular/material';
 import {RouterModule} from '@angular/router';
 
-//import {DataSharingSummaryComponent} from './data-sharing-summary/data-sharing-summary.component';
+import {DataSharingSummaryComponent} from './data-sharing-summary/data-sharing-summary.component';
 //import {DataSharingSummaryEditorComponent} from './data-sharing-summary-editor/data-sharing-summary-editor.component';
 //import {DataSharingSummaryOverviewComponent} from './data-sharing-summary-overview/data-sharing-summary-overview.component';
 import {DataSharingSummaryService} from './data-sharing-summary.service';
@@ -49,7 +49,7 @@ import {GenericTableModule} from '../generic-table/generic-table.module';
     RouterModule,
   ],
   declarations: [
-    //DataSharingSummaryComponent,
+    DataSharingSummaryComponent,
     //DataSharingSummaryEditorComponent,
     //DataSharingSummaryOverviewComponent,
   ],

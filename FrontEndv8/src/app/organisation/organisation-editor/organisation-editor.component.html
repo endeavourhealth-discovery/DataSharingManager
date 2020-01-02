@@ -123,7 +123,7 @@
       </mat-tab>
       <mat-tab *ngIf="organisation.isService === 0">
         <ng-template mat-tab-label>
-          <span matBadge="{{dsaPublishing?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dsaPublishing?.length < 1">DSA Publishing to</span>
+          <span matBadge="{{dsaPublishing?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dsaPublishing?.length < 1">DSA publishing to</span>
         </ng-template>
         <app-generic-table
           [items]="dsaPublishing"
