@@ -33,7 +33,6 @@ export class DataSetComponent implements OnInit {
       this.activeProject = active;
       this.roleChanged();
     });
-
     this.getDataSets();
   }
 

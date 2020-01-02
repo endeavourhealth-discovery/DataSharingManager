@@ -18,7 +18,7 @@ import {
 } from '@angular/material';
 import {RouterModule} from '@angular/router';
 
-//import {DataExchangeComponent} from './data-exchange/data-exchange.component';
+import {DataExchangeComponent} from './data-exchange/data-exchange.component';
 //import {DataExchangeEditorComponent} from './data-exchange-editor/data-exchange-editor.component';
 //import {DataExchangePickerComponent} from './data-exchange-picker/data-exchange-picker.component';
 import {DataExchangeService} from './data-exchange.service';
@@ -49,7 +49,7 @@ import {GenericTableModule} from '../generic-table/generic-table.module';
     RouterModule,
   ],
   declarations: [
-    //DataExchangeComponent,
+    DataExchangeComponent,
     //DataExchangeEditorComponent,
     //DataExchangePickerComponent
   ],

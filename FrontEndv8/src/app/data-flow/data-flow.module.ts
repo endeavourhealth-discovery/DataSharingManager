@@ -18,7 +18,7 @@ import {
 } from '@angular/material';
 import {RouterModule} from '@angular/router';
 
-//import {DataFlowComponent} from './data-flow/data-flow.component';
+import {DataFlowComponent} from './data-flow/data-flow.component';
 //import {DataFlowEditorComponent} from './data-flow-editor/data-flow-editor.component';
 //import {DataFlowPickerComponent} from './data-flow-picker/data-flow-picker.component';
 import {DataFlowService} from "./data-flow.service";
@@ -49,7 +49,7 @@ import {GenericTableModule} from '../generic-table/generic-table.module';
     RouterModule,
   ],
   declarations: [
-    //DataFlowComponent,
+    DataFlowComponent,
     //DataFlowEditorComponent,
     //DataFlowPickerComponent
   ],

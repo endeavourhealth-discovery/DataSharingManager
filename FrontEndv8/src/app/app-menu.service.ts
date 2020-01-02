@@ -8,9 +8,9 @@ import {RegionComponent} from "./region/region/region.component";
 import {RegionEditorComponent} from "./region/region-editor/region-editor.component";
 import {CohortComponent} from "./cohort/cohort/cohort.component";
 //import {CohortEditorComponent} from "./cohort/cohort-editor/cohort-editor.component";
-//import {DataExchangeComponent} from './data-exchange/data-exchange/data-exchange.component';
+import {DataExchangeComponent} from './data-exchange/data-exchange/data-exchange.component';
 //import {DataExchangeEditorComponent} from './data-exchange/data-exchange-editor/data-exchange-editor.component';
-//import {DataFlowComponent} from './data-flow/data-flow/data-flow.component';
+import {DataFlowComponent} from './data-flow/data-flow/data-flow.component';
 //import {DataFlowEditorComponent} from './data-flow/data-flow-editor/data-flow-editor.component';
 import {DataSetComponent} from './data-set/data-set/data-set.component';
 //import {DataSetEditorComponent} from './data-set/data-set-editor/data-set-editor.component';
@@ -33,9 +33,9 @@ export class AppMenuService implements  AbstractMenuProvider {
       { path: 'value-sets', component: ValueSetsComponent, data: {role: 'Viewer'}},
       { path: 'cohorts', component: CohortComponent, data: {role: 'Viewer'}},
       //{ path: 'cohort/:id/:mode', component: CohortEditorComponent, data: {role: 'Viewer'}},
-      //{ path: 'dataExchanges', component: DataExchangeComponent, data: {role: 'Viewer'}},
+      { path: 'dataExchanges', component: DataExchangeComponent, data: {role: 'Viewer'}},
       //{ path: 'dataExchange/:id/:mode', component: DataExchangeEditorComponent, data: {role: 'Viewer'}},
-      //{ path: 'dataFlows', component: DataFlowComponent, data: {role: 'Viewer'}},
+      { path: 'dataFlows', component: DataFlowComponent, data: {role: 'Viewer'}},
       //{ path: 'dataFlow/:id/:mode', component: DataFlowEditorComponent, data: {role: 'Viewer'}},
       { path: 'dataSets', component: DataSetComponent, data: {role: 'Viewer'}},
       //{ path: 'dataSet/:id/:mode', component: DataSetEditorComponent, data: {role: 'Viewer'}},
