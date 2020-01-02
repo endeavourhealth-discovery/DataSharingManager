@@ -65,7 +65,6 @@ export class AppMenuService implements  AbstractMenuProvider {
       {caption: 'Data processing agreements', state: 'dpas', icon: 'library_books'},
       {caption: 'Data sets', state: 'dataSets', icon: 'library_books'},
       {caption: 'Cohorts', state: 'cohorts', icon: 'library_books'},
-      {caption: 'Value sets', state: 'value-sets', icon: 'library_books'},
     ];
   }
 }

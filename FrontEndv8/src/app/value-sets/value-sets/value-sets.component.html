@@ -6,35 +6,27 @@
     <mat-card-title>Value Sets</mat-card-title>
     <mat-card-subtitle>Available value sets</mat-card-subtitle>
     <div fxFlex></div>
-    <mat-menu #visualiseMenu="matMenu">
-      <button *ngIf="allowEdit" mat-menu-item (click)="add()">Add value set</button>
-      <button mat-menu-item (click)="close()">Cancel</button>
-    </mat-menu>
-    <div fxLayoutAlign="center" class="mat-action" matRipple>
-      <mat-icon [matMenuTriggerFor]="visualiseMenu">more_vert</mat-icon>
-    </div>
   </mat-card-header>
   <mat-card-content>
-    <mat-card-content>
-      <app-generic-table-ssp
+    <mat-card-content style="height: 600px; overflow-y: auto">
+      <app-generic-table-ssp #valueSetsTable
         [items]="valueSets"
         [totalItems]="totalItems"
         [detailsToShow]="detailsToShow"
-        [pageSize]="20"
+        [pageSize]="pageSize"
         [allowSelect]="allowEdit"
         (deleted)="delete($event)"
         (clicked)="itemClicked($event)"
         (onPageChange)="pageChange($event)"
         (onOrderChange)="onOrderChange($event)"
-        (search)="onSearch($event)"></app-generic-table-ssp>
+        (search)="onSearch($event)">
+      </app-generic-table-ssp>
     </mat-card-content>
+    <mat-card-footer>
+      <div mat-dialog-actions>
+        <button mat-raised-button (click)="cancel()">Cancel</button>
+        <button mat-raised-button (click)="ok()">Ok</button>
+      </div>
+    </mat-card-footer>
   </mat-card-content>
-  <!--TODO: remove temporary Scheduler caller start -->
-  <br>
-  <br>
-  <br>
-  <button mat-raised-button (click)="setSchedule()">Set Schedule</button>
-  <br>
-  <br>
-  <!--TODO: remove temporary Scheduler caller end -->
 </mat-card>

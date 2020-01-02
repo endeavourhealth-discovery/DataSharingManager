@@ -4,6 +4,9 @@ import {OrganisationService} from '../organisation.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {LoggerService, UserManagerService} from "dds-angular8";
+import {ValueSetsComponent} from "../../value-sets/value-sets/value-sets.component";
+import {ValueSets} from "src/app/value-sets/models/ValueSets";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-organisation',
@@ -53,7 +56,7 @@ export class OrganisationComponent implements OnInit {
               private router: Router,
               private route: ActivatedRoute,
               private userManagerNotificationService: UserManagerService,
-              private log: LoggerService) {
+              private log: LoggerService, public dialog: MatDialog) {
   }
 
   protected performAction(mode: string) {
@@ -161,4 +164,19 @@ export class OrganisationComponent implements OnInit {
     this.descending = $event.direction == 'desc' ? true : false;
     this.search();
   }
+
+  //TODO remove temp code -start
+  setValueSets() {
+    const dialogRef = this.dialog.open(ValueSetsComponent, {
+      height: '850px',
+      width: '1500px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log(result);
+      }
+    });
+  }
+  //TODO remove temp code -end
 }

@@ -41,17 +41,26 @@ public class ValueSetsLogic {
         return new SecurityValueSetsDAL().getAllValueSets(searchData, pageNumber, pageSize, orderColumn, descending);
     }
 
+    public Response getTotalNumber(String expression) throws Exception {
+        Long count = new SecurityValueSetsDAL().getTotalNumber(expression);
+        return Response
+                .ok()
+                .entity(count)
+                .build();
+    }
+
+    /*
     public JsonValueSets saveCodeSet(JsonValueSets jsonValueSets, boolean isEdit) throws Exception {
 
         SecurityValueSetsDAL dal = new SecurityValueSetsDAL();
         if (isEdit) {
 
             ValueSetsEntity entity = new ValueSetsEntity();
-            entity.setId(jsonValueSets.getId());
+            entity.setUuid(jsonValueSets.getUuid());
             entity.setName(jsonValueSets.getName());
 
             dal.updateValuesSets(entity);
-            dal.deleteValueSetsCodes(jsonValueSets.getId());
+            dal.deleteValueSetsCodes(jsonValueSets.getUuid());
             dal.createValueSetsCodes(parseCodeSetCodes(jsonValueSets.getValuesSetCodes()));
 
             return dal.parseEntityToJson(entity);
@@ -59,7 +68,7 @@ public class ValueSetsLogic {
         } else {
 
             ValueSetsEntity entity = new ValueSetsEntity();
-            // entity.setId(UUID.randomUUID().toString());
+            entity.setUuid(UUID.randomUUID().toString());
             entity.setName(jsonValueSets.getName());
             entity = dal.createValuesSets(entity);
 
@@ -72,17 +81,9 @@ public class ValueSetsLogic {
     public void deleteCodeSet(List<String> ids) throws Exception {
         SecurityValueSetsDAL dal = new SecurityValueSetsDAL();
         for (String id : ids) {
-            /*dal.deleteValueSetsCodes(id);
-            dal.deleteValuesSets(id);*/
+            dal.deleteValueSetsCodes(id);
+            dal.deleteValuesSets(id);
         }
-    }
-
-    public Response getTotalNumber(String expression) throws Exception {
-        Long count = new SecurityValueSetsDAL().getTotalNumber(expression);
-        return Response
-                .ok()
-                .entity(count)
-                .build();
     }
 
     private ArrayList<ValueSetsCodesEntity> parseCodeSetCodes(JsonValueSetCodes[] codes) {
@@ -91,7 +92,7 @@ public class ValueSetsLogic {
         for (JsonValueSetCodes code : codes) {
             ValueSetsCodesEntity codeEntity = new ValueSetsCodesEntity();
             // codeEntity.setUid(UUID.randomUUID().toString());
-            codeEntity.setValueSetsId(code.getValueSetId());
+            // codeEntity.setValueSetsId(code.getValueSetId());
             codeEntity.setRead2ConceptId(code.getRead2ConceptId());
             codeEntity.setCtv3ConceptId(code.getCtv3ConceptId());
             codeEntity.setSctConceptId(code.getSctConceptId());
@@ -99,4 +100,5 @@ public class ValueSetsLogic {
         }
         return codeEntities;
     }
+    */
 }

@@ -1,14 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {ActivatedRoute, Router} from "@angular/router";
 import {LoggerService, UserManagerService} from "dds-angular8";
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialogRef} from "@angular/material/dialog";
 import {ValueSetsService} from "../value-sets.service";
-//TODO remove temp code -start
-import {SchedulerComponent} from "../../scheduler/scheduler/scheduler.component";
-import {Schedule} from "../../scheduler/models/Schedule";
 import {ValueSets} from "../models/ValueSets";
-//TODO remove temp code -end
+import {GenericTableSspComponent} from "../../generic-table/generic-table-ssp/generic-table-ssp.component";
 
 @Component({
   selector: 'app-value-sets',
@@ -17,30 +14,31 @@ import {ValueSets} from "../models/ValueSets";
 })
 export class ValueSetsComponent implements OnInit {
 
+  @ViewChild('valueSetsTable', { static: false }) valueSetsTable: GenericTableSspComponent;
+
   public activeProject: UserProject;
   private paramSubscriber: any;
 
-  //TODO remove temp code -start
-  schedule: Schedule;
-  //TODO remove temp code -end
-
   valueSets: ValueSets[];
+  selectedValueSets: ValueSets[];
   totalItems: number;
   detailsToShow = new ValueSets().getDisplayItems();
   loadingComplete = false;
   pageNumber = 1;
-  pageSize = 20;
+  pageSize = 10;
   searchData = '';
   orderColumn = 'name';
   descending = false;
-  allowEdit = false;
+  allowEdit = true;
 
-  constructor(private valueSetService: ValueSetsService,
-              private router: Router,
-              private route: ActivatedRoute,
-              private userManagerNotificationService: UserManagerService,
-              private log: LoggerService,
-              public dialog: MatDialog) {
+  constructor(
+    public dialogRef: MatDialogRef<ValueSetsComponent>,
+    private valueSetService: ValueSetsService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private userManagerNotificationService: UserManagerService,
+    private log: LoggerService) {
+
   }
 
   ngOnInit() {
@@ -51,11 +49,6 @@ export class ValueSetsComponent implements OnInit {
   }
 
   roleChanged() {
-    if (this.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
-      this.allowEdit = true;
-    } else {
-      this.allowEdit = false;
-    }
     this.paramSubscriber = this.route.params.subscribe(
       params => {
         this.search();
@@ -90,15 +83,7 @@ export class ValueSetsComponent implements OnInit {
   }
 
   delete(items: ValueSets[]) {
-    this.valueSetService.delete(items).
-    subscribe(
-      (result) => {
-        console.log("Delete successful.")
-        this.search();
-        this.getTotal();
-      },
-      (error) => console.log(error)
-    );
+    console.log(items);
   }
 
   itemClicked(item: ValueSets) {
@@ -137,27 +122,12 @@ export class ValueSetsComponent implements OnInit {
       );
   }
 
-  add() {
-
+  ok() {
+    this.selectedValueSets = this.valueSetsTable.selection.selected;
+    this.dialogRef.close(this.selectedValueSets);
   }
 
-  close() {
-
+  cancel() {
+    this.dialogRef.close();
   }
-
-  //TODO remove temp code -start
-  setSchedule() {
-    const dialogRef = this.dialog.open(SchedulerComponent, {
-      height: '610px',
-      width: '1200px',
-      data: {schedule: this.schedule, allowTime: true},
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.schedule = result;
-      }
-    });
-  }
-  //TODO remove temp code -end
 }

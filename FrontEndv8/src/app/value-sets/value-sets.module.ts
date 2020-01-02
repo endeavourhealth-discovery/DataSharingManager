@@ -5,6 +5,7 @@ import {MatCardModule} from "@angular/material/card";
 import {MatIconModule} from "@angular/material/icon";
 import {MatMenuModule} from "@angular/material/menu";
 import {GenericTableModule} from "../generic-table/generic-table.module";
+import {MatDialogModule} from "@angular/material/dialog";
 
 @NgModule({
   imports: [
@@ -13,6 +14,7 @@ import {GenericTableModule} from "../generic-table/generic-table.module";
     MatIconModule,
     MatMenuModule,
     GenericTableModule,
+    MatDialogModule,
   ],
   declarations: [
     ValueSetsComponent,

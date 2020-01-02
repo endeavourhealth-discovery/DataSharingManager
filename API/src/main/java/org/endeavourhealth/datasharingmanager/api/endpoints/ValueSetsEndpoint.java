@@ -47,8 +47,8 @@ public class ValueSetsEndpoint extends AbstractEndpoint {
         super.setLogbackMarkers(sc);
 
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
-                "Organisation(s)",
-                "Organisation Id", uuid,
+                "ValueSet(s)",
+                "ValueSet Id", uuid,
                 "SearchData", searchData);
 
         clearLogbackMarkers();
@@ -61,6 +61,23 @@ public class ValueSetsEndpoint extends AbstractEndpoint {
                 .build();
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.Organisation.searchCount")
+    @Path("/searchCount")
+    @ApiOperation(value = "When using server side pagination, this returns the total count of the results of the query")
+    public Response getValueSetsSearchCount(@Context SecurityContext sc,
+                                            @ApiParam(value = "expression to filter value sets by") @QueryParam("expression") String expression
+    ) throws Exception {
+
+        if (expression == null)
+            expression = "";
+
+        return new ValueSetsLogic().getTotalNumber(expression);
+    }
+
+    /*
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -100,20 +117,5 @@ public class ValueSetsEndpoint extends AbstractEndpoint {
                 .entity(jsonValueSets)
                 .build();
     }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Timed(absolute = true, name="DataSharingManager.Organisation.searchCount")
-    @Path("/searchCount")
-    @ApiOperation(value = "When using server side pagination, this returns the total count of the results of the query")
-    public Response getValueSetsSearchCount(@Context SecurityContext sc,
-                                               @ApiParam(value = "expression to filter value sets by") @QueryParam("expression") String expression
-    ) throws Exception {
-
-        if (expression == null)
-            expression = "";
-
-        return new ValueSetsLogic().getTotalNumber(expression);
-    }
+    */
 }
