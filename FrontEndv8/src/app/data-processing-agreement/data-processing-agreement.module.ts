@@ -19,7 +19,7 @@ import {
 import {RouterModule} from '@angular/router';
 import {DocumentationService} from "../documentation/documentation.service";
 
-//import {DataProcessingAgreementComponent} from './data-processing-agreement/data-processing-agreement.component';
+import {DataProcessingAgreementComponent} from './data-processing-agreement/data-processing-agreement.component';
 //import {DataProcessingAgreementEditorComponent} from "./data-processing-agreement-editor/data-processing-agreement-editor.component";
 //import {DataProcessingAgreementPickerComponent} from './data-processing-agreement-picker/data-processing-agreement-picker.component';
 import {DataProcessingAgreementService} from "./data-processing-agreement.service";
@@ -50,7 +50,7 @@ import {GenericTableModule} from '../generic-table/generic-table.module';
     RouterModule,
   ],
   declarations: [
-    //DataProcessingAgreementComponent,
+    DataProcessingAgreementComponent,
     //DataProcessingAgreementEditorComponent,
     //DataProcessingAgreementPickerComponent
   ],

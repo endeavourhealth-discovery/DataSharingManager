@@ -3,11 +3,11 @@
     <div mat-card-avatar>
       <mat-icon>lightbulb_outline</mat-icon>
     </div>
-    <mat-card-title>Data exchanges</mat-card-title>
-    <mat-card-subtitle>All the Data exchanges currently defined in the Data Sharing Manager</mat-card-subtitle>
+    <mat-card-title>Data sharing agreements</mat-card-title>
+    <mat-card-subtitle>All the Data sharing agreements currently defined in the Data Sharing Manager</mat-card-subtitle>
     <div fxFlex></div>
     <mat-menu #visualiseMenu="matMenu">
-      <button *ngIf="allowEdit" mat-menu-item (click)="add()">Add Data exchange</button>
+      <button *ngIf="allowEdit" mat-menu-item (click)="add()">Add Data sharing agreement</button>
       <button mat-menu-item (click)="close()">Cancel</button>
     </mat-menu>
     <div fxLayoutAlign="center" class="mat-action" matRipple>
@@ -16,8 +16,8 @@
   </mat-card-header>
   <mat-card-content>
     <app-generic-table
-      [items]="exchanges"
-      [detailsToShow]="dataExchangeDetailsToShow"
+      [items]="dsas"
+      [detailsToShow]="dsaDetailsToShow"
       [pageSize]="20"
       [allowSelect]="allowEdit"
       (clicked)="itemClicked($event)">

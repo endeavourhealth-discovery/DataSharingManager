@@ -17,6 +17,7 @@ export class DataExchange {
 
     getDisplayItems(): any[] {
         return [
+            {label: 'Name', property: 'name'},
             {label: 'Flow status', property: 'flowStatusId'},
             {label: 'Approximate volume', property: 'approximateVolume'},
             {label: 'System name', property: 'systemName'},

@@ -16,7 +16,8 @@ export class DataFlow {
 
     getDisplayItems(): any[] {
         return [
-            {label: 'Purpose', property: 'purpose'}
+            {label: 'Name', property: 'name'},
+            {label: 'Purpose', property: 'purpose'},
         ];
     }
 }

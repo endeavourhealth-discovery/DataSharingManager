@@ -18,7 +18,7 @@ import {
 } from '@angular/material';
 import {RouterModule} from '@angular/router';
 
-//import {DataSharingAgreementComponent} from './data-sharing-agreement/data-sharing-agreement.component';
+import {DataSharingAgreementComponent} from './data-sharing-agreement/data-sharing-agreement.component';
 //import {DataSharingAgreementEditorComponent} from './data-sharing-agreement-editor/data-sharing-agreement-editor.component';
 //import {DataSharingAgreementPickerComponent} from './data-sharing-agreement-picker/data-sharing-agreement-picker.component';
 //import {PurposeAddComponent} from './purpose-add/purpose-add.component';
@@ -50,7 +50,7 @@ import {GenericTableModule} from '../generic-table/generic-table.module';
     RouterModule,
   ],
   declarations: [
-    //DataSharingAgreementComponent,
+    DataSharingAgreementComponent,
     //DataSharingAgreementEditorComponent,
     //DataSharingAgreementPickerComponent,
     //PurposeAddComponent
