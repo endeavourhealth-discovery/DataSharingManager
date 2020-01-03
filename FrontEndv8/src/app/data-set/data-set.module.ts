@@ -19,14 +19,10 @@ import {
 import {RouterModule} from '@angular/router';
 
 import {DataSetComponent} from './data-set/data-set.component';
-//import {DataSetEditorComponent} from './data-set-editor/data-set-editor.component';
 //import {DataSetPickerComponent} from './data-set-picker/data-set-picker.component';
 import {DataSetService} from "./data-set.service";
-
-//TODO remove temp code -start
-import {SchedulerComponent} from '../scheduler/scheduler/scheduler.component';
 import {GenericTableModule} from '../generic-table/generic-table.module';
-//TODO remove temp code -end
+import {DataSetEditorComponent} from './data-set-editor/data-set-editor.component';
 
 @NgModule({
   imports: [
@@ -50,14 +46,11 @@ import {GenericTableModule} from '../generic-table/generic-table.module';
   ],
   declarations: [
     DataSetComponent,
-    //DataSetEditorComponent,
+    DataSetEditorComponent,
     //DataSetPickerComponent
   ],
   entryComponents : [
     //DataSetPickerComponent
-    //TODO remove temp code -start
-    SchedulerComponent,
-    //TODO remove temp code -end
   ],
   providers: [
     DataSetService,

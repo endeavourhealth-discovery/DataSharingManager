@@ -1,0 +1,56 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar><mat-icon>lightbulb_outline</mat-icon></div>
+    <mat-card-title>Data Set details</mat-card-title>
+    <mat-card-subtitle>{{dataset.name}}</mat-card-subtitle>
+    <div fxFlex></div>
+    <mat-menu #visualiseMenu="matMenu">
+      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(false)">Save</button>
+      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(true)">Save & close</button>
+    </mat-menu>
+    <div fxLayoutAlign="center" class="mat-action" matRipple>
+      <mat-icon [matMenuTriggerFor]="visualiseMenu">more_vert</mat-icon>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="form" #f="ngForm" novalidate>
+      <div class="form-group" #fgName="ngModelGroup" ngModelGroup="organisation" [class.has-error]="!fgName.valid">
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Data Set name</mat-label>
+            <input required matInput [(ngModel)]="dataset.name" placeholder="Data Set name" name="name">
+          </mat-form-field>
+          <div></div>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Description</mat-label>
+            <textarea matInput [(ngModel)]="dataset.description" placeholder="Description"
+                      name="description" rows="15">
+            </textarea>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Technical definition</mat-label>
+            <textarea matInput [(ngModel)]="dataset.technicalDefinition" placeholder="Technical definition"
+                      name="definition" rows="15">
+            </textarea>
+          </mat-form-field>
+        </div>
+        <br>
+      </div>
+    </form>
+    <mat-tab-group dynamicHeight>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{processingAgreements?.length}}" matBadgeOverlap="false" [matBadgeHidden]="processingAgreements?.length < 1">Processing agreements</span>
+        </ng-template>
+        <app-generic-table #dpaTable
+                           [items]="processingAgreements"
+                           [detailsToShow]="processingAgreementsDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="processingAgreementClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDPAs()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

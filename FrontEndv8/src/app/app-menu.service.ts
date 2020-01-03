@@ -13,7 +13,7 @@ import {DataExchangeComponent} from './data-exchange/data-exchange/data-exchange
 import {DataFlowComponent} from './data-flow/data-flow/data-flow.component';
 //import {DataFlowEditorComponent} from './data-flow/data-flow-editor/data-flow-editor.component';
 import {DataSetComponent} from './data-set/data-set/data-set.component';
-//import {DataSetEditorComponent} from './data-set/data-set-editor/data-set-editor.component';
+import {DataSetEditorComponent} from './data-set/data-set-editor/data-set-editor.component';
 import {DataProcessingAgreementComponent} from './data-processing-agreement/data-processing-agreement/data-processing-agreement.component';
 //import {DataProcessingAgreementEditorComponent} from './data-processing-agreement/data-processing-agreement-editor/data-processing-agreement-editor.component';
 import {DataSharingAgreementComponent} from './data-sharing-agreement/data-sharing-agreement/data-sharing-agreement.component';
@@ -38,7 +38,7 @@ export class AppMenuService implements  AbstractMenuProvider {
       { path: 'dataFlows', component: DataFlowComponent, data: {role: 'Viewer'}},
       //{ path: 'dataFlow/:id/:mode', component: DataFlowEditorComponent, data: {role: 'Viewer'}},
       { path: 'dataSets', component: DataSetComponent, data: {role: 'Viewer'}},
-      //{ path: 'dataSet/:id/:mode', component: DataSetEditorComponent, data: {role: 'Viewer'}},
+      { path: 'dataSet/:id/:mode', component: DataSetEditorComponent, data: {role: 'Viewer'}},
       { path: 'dpas', component: DataProcessingAgreementComponent, data: {role: 'Viewer'}},
       //{ path: 'dpa/:id/:mode', component: DataProcessingAgreementEditorComponent, data: {role: 'Viewer'}},
       { path: 'dsas', component: DataSharingAgreementComponent, data: {role: 'Viewer'}},
