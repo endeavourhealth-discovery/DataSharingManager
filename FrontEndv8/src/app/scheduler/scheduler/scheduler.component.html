@@ -321,9 +321,9 @@
         <input matInput class="description" placeholder="Cron description" [(ngModel)]="cronDescription" readonly>
       </mat-form-field>
     </div>
-    <div mat-dialog-actions>
-      <button mat-raised-button (click)="cancel()">Cancel</button>
-      <button mat-raised-button [disabled]="formIsInvalid" [mat-dialog-close]="schedule">Ok</button>
+    <div mat-card-actions>
+      <button mat-raised-button color="primary" [disabled]="formIsInvalid" [mat-dialog-close]="schedule">Ok</button>
+      <button mat-raised-button color="accent" (click)="cancel()">Cancel</button>
     </div>
   </mat-card-content>
 </mat-card>

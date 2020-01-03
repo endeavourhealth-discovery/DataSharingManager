@@ -106,5 +106,19 @@ export class DataSetEditorComponent implements OnInit {
   }
 
   save(close: boolean) {
+    this.dataset.dpas = {};
+    for (const idx in this.processingAgreements) {
+      const dpa: Dpa = this.processingAgreements[idx];
+      this.dataset.dpas[dpa.uuid] = dpa.name;
+    }
+
+    this.dataSetService.saveDataSet(this.dataset)
+      .subscribe(saved => {
+          this.dataset.uuid = saved;
+          this.log.success('Data Set saved successfully.');
+          if (close) { window.history.back(); }
+        },
+        error => this.log.error('The Data Set could not be saved. Please try again.')
+      );
   }
 }

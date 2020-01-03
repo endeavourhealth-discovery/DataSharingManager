@@ -17,12 +17,11 @@ import {
   MatTableModule, MatTabsModule, MatTreeModule
 } from '@angular/material';
 import {RouterModule} from '@angular/router';
-
 import {DataSetComponent} from './data-set/data-set.component';
-//import {DataSetPickerComponent} from './data-set-picker/data-set-picker.component';
 import {DataSetService} from "./data-set.service";
 import {GenericTableModule} from '../generic-table/generic-table.module';
 import {DataSetEditorComponent} from './data-set-editor/data-set-editor.component';
+import {DataSetPickerComponent} from './data-set-picker/data-set-picker.component';
 
 @NgModule({
   imports: [
@@ -47,10 +46,9 @@ import {DataSetEditorComponent} from './data-set-editor/data-set-editor.componen
   declarations: [
     DataSetComponent,
     DataSetEditorComponent,
-    //DataSetPickerComponent
+    DataSetPickerComponent,
   ],
   entryComponents : [
-    //DataSetPickerComponent
   ],
   providers: [
     DataSetService,

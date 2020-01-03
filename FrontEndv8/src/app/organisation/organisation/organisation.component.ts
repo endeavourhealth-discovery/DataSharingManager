@@ -7,6 +7,9 @@ import {LoggerService, UserManagerService} from "dds-angular8";
 import {ValueSetsComponent} from "../../value-sets/value-sets/value-sets.component";
 import {ValueSets} from "src/app/value-sets/models/ValueSets";
 import {MatDialog} from "@angular/material/dialog";
+import {DataSetPickerComponent} from "../../data-set/data-set-picker/data-set-picker.component";
+import {SchedulerComponent} from "../../scheduler/scheduler/scheduler.component";
+import {Schedule} from "../../scheduler/models/Schedule";
 
 @Component({
   selector: 'app-organisation',
@@ -166,12 +169,21 @@ export class OrganisationComponent implements OnInit {
   }
 
   //TODO remove temp code -start
-  setValueSets() {
-    const dialogRef = this.dialog.open(ValueSetsComponent, {
-      height: '850px',
-      width: '1500px',
+  testDialog() {
+    // const dialogRef = this.dialog.open(ValueSetsComponent, {
+    //   height: '850px',
+    //   width: '1500px',
+    // });
+    const dialogRef = this.dialog.open(DataSetPickerComponent, {
+      height: '750px',
+      width: '1200px',
     });
-
+    // let schedule = new Schedule();
+    // const dialogRef = this.dialog.open(SchedulerComponent, {
+    //   height: '610px',
+    //   width: '1200px',
+    //   data: {schedule: schedule, allowTime: true},
+    // });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         console.log(result);
