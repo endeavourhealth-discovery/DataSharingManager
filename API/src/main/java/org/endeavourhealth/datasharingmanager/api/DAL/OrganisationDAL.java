@@ -1,10 +1,8 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.CohortEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.MasterMappingEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.OrganisationEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonOrganisation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonStatistics;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
@@ -21,25 +19,32 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.sql.Date;
 import java.util.*;
 
 public class OrganisationDAL {
 
+    private EntityManager _entityManager;
     private AddressDAL _addressDAL;
+    private MasterMappingDAL _masterMappingDAL;
+    private AuditCompareLogic _auditCompareLogic;
+    private UIAuditJDBCDAL _uiAuditJDBCDAL;
+
     public OrganisationDAL() throws Exception {
+        _entityManager = ConnectionManager.getDsmEntityManager();
         _addressDAL = new AddressDAL();
+        _masterMappingDAL = new MasterMappingDAL();
+        _auditCompareLogic = new AuditCompareLogic();
+        _uiAuditJDBCDAL = new UIAuditJDBCDAL();
+    }
 
     private void clearOrganisationCache(String organisationId) throws Exception {
         OrganisationCache.clearOrganisationCache(organisationId);
     }
 
     public void deleteUneditedBulkOrganisations() throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            entityManager.getTransaction().begin();
-            Query query = entityManager.createQuery(
+            _entityManager.getTransaction().begin();
+            Query query = _entityManager.createQuery(
                     "DELETE from OrganisationEntity o " +
                             "where o.bulkImported = :active " +
                             "and o.bulkItemUpdated = :notActive");
@@ -48,23 +53,21 @@ public class OrganisationDAL {
 
             int deletedCount = query.executeUpdate();
 
-            entityManager.getTransaction().commit();
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
     }
 
     public List<OrganisationEntity> getOrganisations(String expression, boolean searchServices,
-                                                            byte organisationType,
-                                                            Integer pageNumber, Integer pageSize,
-                                                            String orderColumn, boolean descending) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
+                                                     byte organisationType,
+                                                     Integer pageNumber, Integer pageSize,
+                                                     String orderColumn, boolean descending) throws Exception {
         try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<OrganisationEntity> cq = cb.createQuery(OrganisationEntity.class);
             Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
 
@@ -84,132 +87,127 @@ public class OrganisationDAL {
             else
                 cq.where(predicate).orderBy(cb.asc(rootEntry.get(orderColumn)), cb.asc(rootEntry.get("uuid")));
 
-            TypedQuery<OrganisationEntity> query = entityManager.createQuery(cq);
+            TypedQuery<OrganisationEntity> query = _entityManager.createQuery(cq);
             query.setFirstResult((pageNumber - 1) * pageSize);
             query.setMaxResults(pageSize);
             List<OrganisationEntity> ret = query.getResultList();
 
             return ret;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
     }
 
     public void updateOrganisation(JsonOrganisation organisation, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-        OrganisationEntity oldOrganisationEntity = entityManager.find(OrganisationEntity.class, organisation.getUuid());
+        OrganisationEntity oldOrganisationEntity = _entityManager.find(OrganisationEntity.class, organisation.getUuid());
         oldOrganisationEntity.setMappingsFromDAL();
         oldOrganisationEntity.setAddresses(_addressDAL.getAddressesForOrganisation(organisation.getUuid()));
 
         try {
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
 
             OrganisationEntity newOrganisation = new OrganisationEntity(organisation);
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Organisation edited", oldOrganisationEntity, newOrganisation);
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Organisation edited", oldOrganisationEntity, newOrganisation);
 
             auditJson = _addressDAL.updateAddressesAndGetAudit(organisation.getAddresses(), oldOrganisationEntity.getAddresses(), organisation.getUuid(), auditJson, _entityManager);
+            auditJson = _masterMappingDAL.updateOrganisationMappings(organisation, oldOrganisationEntity, auditJson, _entityManager);
 
             oldOrganisationEntity.updateFromJson(organisation);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId,
                     AuditAction.EDIT, ItemType.ORGANISATION, null, null, auditJson);
 
-            entityManager.getTransaction().commit();
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearOrganisationCache(organisation.getUuid());
     }
 
     public void saveOrganisation(JsonOrganisation organisation, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
         OrganisationEntity organisationEntity = new OrganisationEntity(organisation);
 
         try {
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
+            _entityManager.persist(organisationEntity);
 
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Organisation created", null, organisationEntity);
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Organisation created", null, organisationEntity);
 
             auditJson = _addressDAL.updateAddressesAndGetAudit(organisation.getAddresses(), null, organisation.getUuid(), auditJson, _entityManager);
+            auditJson = _masterMappingDAL.updateOrganisationMappings(organisation, null, auditJson, _entityManager);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId,
                     AuditAction.ADD, ItemType.ORGANISATION, null, null, auditJson);
 
-            entityManager.persist(organisationEntity);
-            entityManager.getTransaction().commit();
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearOrganisationCache(organisation.getUuid());
     }
 
     public void bulkSaveOrganisation(List<OrganisationEntity> organisationEntities) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
             int batchSize = 50;
 
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
 
             for (int i = 0; i < organisationEntities.size(); i++) {
                 OrganisationEntity organisationEntity = organisationEntities.get(i);
-                entityManager.merge(organisationEntity);
+                _entityManager.merge(organisationEntity);
                 new AddressDAL().deleteAddressForOrganisations(organisationEntity.getUuid());
                 if (i % batchSize == 0) {
-                    entityManager.flush();
-                    entityManager.clear();
+                    _entityManager.flush();
+                    _entityManager.clear();
                 }
             }
 
-            entityManager.getTransaction().commit();
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
     }
 
     public void deleteOrganisation(String uuid, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
 
-            OrganisationEntity oldOrganisationEntity = entityManager.find(OrganisationEntity.class, uuid);
+            OrganisationEntity oldOrganisationEntity = _entityManager.find(OrganisationEntity.class, uuid);
             oldOrganisationEntity.setMappingsFromDAL();
             oldOrganisationEntity.setAddresses(_addressDAL.getAddressesForOrganisation(uuid));
 
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Organisation deleted", oldOrganisationEntity, null);
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Organisation deleted", oldOrganisationEntity, null);
             auditJson = _addressDAL.updateAddressesAndGetAudit(null, oldOrganisationEntity.getAddresses(), oldOrganisationEntity.getUuid(), auditJson, _entityManager);
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+            auditJson = _masterMappingDAL.updateOrganisationMappings(null, oldOrganisationEntity, auditJson, _entityManager);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId,
                     AuditAction.DELETE, ItemType.ORGANISATION, null, null, auditJson);
 
-            entityManager.remove(oldOrganisationEntity);
-            entityManager.getTransaction().commit();
+            _entityManager.remove(oldOrganisationEntity);
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearOrganisationCache(uuid);
     }
 
     public Long getTotalNumberOfOrganisations(String expression, boolean searchServices) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<Long> cq = cb.createQuery(Long.class);
             Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
 
@@ -230,20 +228,18 @@ public class OrganisationDAL {
 
             cq.where(predicate);
 
-            Long ret = entityManager.createQuery(cq).getSingleResult();
+            Long ret = _entityManager.createQuery(cq).getSingleResult();
 
             return ret;
 
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
     }
 
     public List<OrganisationEntity> getUpdatedBulkOrganisations() throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<OrganisationEntity> cq = cb.createQuery(OrganisationEntity.class);
             Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
 
@@ -251,46 +247,42 @@ public class OrganisationDAL {
                     (cb.equal(rootEntry.get("bulkItemUpdated"), (byte) 1)));
 
             cq.where(predicate);
-            TypedQuery<OrganisationEntity> query = entityManager.createQuery(cq);
+            TypedQuery<OrganisationEntity> query = _entityManager.createQuery(cq);
             List<OrganisationEntity> ret = query.getResultList();
 
             return ret;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
     }
 
     public List<OrganisationEntity> getConflictedOrganisations() throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
 
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<OrganisationEntity> cq = cb.createQuery(OrganisationEntity.class);
             Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
 
             Predicate predicate = cb.isNotNull(rootEntry.get("bulkConflictedWith"));
 
             cq.where(predicate);
-            TypedQuery<OrganisationEntity> query = entityManager.createQuery(cq);
+            TypedQuery<OrganisationEntity> query = _entityManager.createQuery(cq);
             List<OrganisationEntity> ret = query.getResultList();
 
             return ret;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
     }
 
     public List<Object[]> executeOrganisationStatisticQuery(String queryName) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            Query query = entityManager.createNamedQuery(queryName);
+            Query query = _entityManager.createNamedQuery(queryName);
             List<Object[]> result = query.getResultList();
 
             return result;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
     }
@@ -422,23 +414,21 @@ public class OrganisationDAL {
     }
 
     public List<OrganisationEntity> getOrganisationByType(byte orgType) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<OrganisationEntity> cq = cb.createQuery(OrganisationEntity.class);
             Root<OrganisationEntity> rootEntry = cq.from(OrganisationEntity.class);
 
             Predicate predicate = cb.equal(rootEntry.get("type"), orgType);
 
             cq.where(predicate);
-            TypedQuery<OrganisationEntity> query = entityManager.createQuery(cq);
+            TypedQuery<OrganisationEntity> query = _entityManager.createQuery(cq);
             List<OrganisationEntity> ret = query.getResultList();
 
             return ret;
 
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
     }
 }
