@@ -18,8 +18,8 @@
       <div class="form-group" #fgName="ngModelGroup" ngModelGroup="organisation" [class.has-error]="!fgName.valid">
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
           <mat-form-field appearance="outline" fxFlex="50" fxFill>
-            <mat-label>Data Set name</mat-label>
-            <input required matInput [(ngModel)]="dataset.name" placeholder="Data Set name" name="name">
+            <mat-label>Name</mat-label>
+            <input required matInput [(ngModel)]="dataset.name" placeholder="Name" name="name">
           </mat-form-field>
           <div></div>
           <mat-form-field appearance="outline" fxFlex="50" fxFill>

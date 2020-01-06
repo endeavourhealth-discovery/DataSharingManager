@@ -20,14 +20,10 @@ import {RouterModule} from '@angular/router';
 import {DocumentationService} from "../documentation/documentation.service";
 
 import {DataProcessingAgreementComponent} from './data-processing-agreement/data-processing-agreement.component';
-//import {DataProcessingAgreementEditorComponent} from "./data-processing-agreement-editor/data-processing-agreement-editor.component";
+import {DataProcessingAgreementEditorComponent} from "./data-processing-agreement-editor/data-processing-agreement-editor.component";
 //import {DataProcessingAgreementPickerComponent} from './data-processing-agreement-picker/data-processing-agreement-picker.component';
 import {DataProcessingAgreementService} from "./data-processing-agreement.service";
-
-//TODO remove temp code -start
-import {SchedulerComponent} from '../scheduler/scheduler/scheduler.component';
 import {GenericTableModule} from '../generic-table/generic-table.module';
-//TODO remove temp code -end
 
 @NgModule({
   imports: [
@@ -51,18 +47,16 @@ import {GenericTableModule} from '../generic-table/generic-table.module';
   ],
   declarations: [
     DataProcessingAgreementComponent,
-    //DataProcessingAgreementEditorComponent,
+    DataProcessingAgreementEditorComponent,
     //DataProcessingAgreementPickerComponent
   ],
   entryComponents : [
     //DataProcessingAgreementPickerComponent
-    //TODO remove temp code -start
-    SchedulerComponent,
-    //TODO remove temp code -end
   ],
   providers: [
     DataProcessingAgreementService,
     DocumentationService
   ]
 })
-export class DataProcessingAgreementModule { }
+export class DataProcessingAgreementModule {
+}
