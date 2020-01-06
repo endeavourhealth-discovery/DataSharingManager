@@ -529,10 +529,12 @@ public class MasterMappingDAL {
 
         // Finally, add to Json
         if (!removalLog.isEmpty()) {
-            ((ObjectNode) auditJson).put("Removed " + MapType.valueOfTypeId(otherMapTypeId, true).toLowerCase(), StringUtils.join(removalLog, System.getProperty("line.separator")));
+            ((ObjectNode) auditJson).put("Removed " + MapType.valueOfTypeId(otherMapTypeId, true).toLowerCase(),
+                    StringUtils.join(removalLog, System.getProperty("line.separator")));
         }
         if (!additionLog.isEmpty()) {
-            ((ObjectNode) auditJson).put("Added " + MapType.valueOfTypeId(otherMapTypeId, true).toLowerCase(), StringUtils.join(additionLog, System.getProperty("line.separator")));
+            ((ObjectNode) auditJson).put("Added " + MapType.valueOfTypeId(otherMapTypeId, true).toLowerCase(),
+                    StringUtils.join(additionLog, System.getProperty("line.separator")));
         }
 
         return auditJson;
