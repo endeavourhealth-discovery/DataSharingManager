@@ -26,6 +26,10 @@ import java.util.*;
 
 public class OrganisationDAL {
 
+    private AddressDAL _addressDAL;
+    public OrganisationDAL() throws Exception {
+        _addressDAL = new AddressDAL();
+
     private void clearOrganisationCache(String organisationId) throws Exception {
         OrganisationCache.clearOrganisationCache(organisationId);
     }
@@ -95,6 +99,7 @@ public class OrganisationDAL {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
         OrganisationEntity oldOrganisationEntity = entityManager.find(OrganisationEntity.class, organisation.getUuid());
         oldOrganisationEntity.setMappingsFromDAL();
+        oldOrganisationEntity.setAddresses(_addressDAL.getAddressesForOrganisation(organisation.getUuid()));
 
         try {
             entityManager.getTransaction().begin();
@@ -102,7 +107,7 @@ public class OrganisationDAL {
             OrganisationEntity newOrganisation = new OrganisationEntity(organisation);
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Organisation edited", oldOrganisationEntity, newOrganisation);
 
-            auditJson = new MasterMappingDAL().updateOrganisationMappings(organisation, oldOrganisationEntity, auditJson, entityManager);
+            auditJson = _addressDAL.updateAddressesAndGetAudit(organisation.getAddresses(), oldOrganisationEntity.getAddresses(), organisation.getUuid(), auditJson, _entityManager);
 
             oldOrganisationEntity.updateFromJson(organisation);
 
@@ -129,7 +134,7 @@ public class OrganisationDAL {
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Organisation created", null, organisationEntity);
 
-            auditJson = new MasterMappingDAL().updateOrganisationMappings(organisation, null, auditJson, entityManager);
+            auditJson = _addressDAL.updateAddressesAndGetAudit(organisation.getAddresses(), null, organisation.getUuid(), auditJson, _entityManager);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.ADD, ItemType.ORGANISATION, null, null, auditJson);
@@ -181,9 +186,10 @@ public class OrganisationDAL {
 
             OrganisationEntity oldOrganisationEntity = entityManager.find(OrganisationEntity.class, uuid);
             oldOrganisationEntity.setMappingsFromDAL();
+            oldOrganisationEntity.setAddresses(_addressDAL.getAddressesForOrganisation(uuid));
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Organisation deleted", oldOrganisationEntity, null);
-            auditJson = new MasterMappingDAL().updateOrganisationMappings(null, oldOrganisationEntity, auditJson, entityManager);
+            auditJson = _addressDAL.updateAddressesAndGetAudit(null, oldOrganisationEntity.getAddresses(), oldOrganisationEntity.getUuid(), auditJson, _entityManager);
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.DELETE, ItemType.ORGANISATION, null, null, auditJson);
 
