@@ -62,24 +62,20 @@ public class OrganisationLogic {
         }
     }
 
-    public Response postOrganisation(JsonOrganisation organisation) throws Exception {
+    public Response postOrganisation(JsonOrganisation organisation, String userProjectId) throws Exception {
 
 
         if (organisation.getUuid() != null) {
-            new MasterMappingDAL().deleteAllMappings(organisation.getUuid());
-            new OrganisationDAL().updateOrganisation(organisation);
+            new OrganisationDAL().updateOrganisation(organisation, userProjectId);
         } else {
             String hashString = organisation.getName() + organisation.getOdsCode();
             if (organisation.getIsService().equals("1")) {
                 hashString += "service";
             }
             organisation.setUuid(UUID.nameUUIDFromBytes(hashString.getBytes()).toString());
-            new OrganisationDAL().saveOrganisation(organisation);
+            new OrganisationDAL().saveOrganisation(organisation, userProjectId);
         }
 
-
-        //Process Mappings
-        new MasterMappingDAL().saveOrganisationMappings(organisation);
 
         new AddressDAL().deleteAddressForOrganisations(organisation.getUuid());
         List<JsonAddress> addresses = organisation.getAddresses();

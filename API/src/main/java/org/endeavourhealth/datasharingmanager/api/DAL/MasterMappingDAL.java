@@ -179,7 +179,40 @@ public class MasterMappingDAL {
         return auditJson;
     }
 
-    private JsonNode appendToJson(boolean added, List<String> mappings, String type, JsonNode auditJson) throws Exception {
+    public JsonNode updateOrganisationMappings(JsonOrganisation updatedOrganisation, OrganisationEntity oldOrganisation, JsonNode auditJson, EntityManager entityManager) throws Exception {
+        String uuid = (updatedOrganisation != null ? updatedOrganisation.getUuid() : oldOrganisation.getUuid());
+
+        // Regions
+        auditJson = updateMappingsAndGetAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getRegions()),
+                (updatedOrganisation == null ? null : updatedOrganisation.getRegions()), MapType.ORGANISATION.getMapType(), MapType.REGION.getMapType(), auditJson, entityManager);
+
+        // Parent Organisations
+        auditJson = updateMappingsAndGetAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getParentOrganisations()),
+                (updatedOrganisation == null ? null : updatedOrganisation.getParentOrganisations()), MapType.ORGANISATION.getMapType(), MapType.ORGANISATION.getMapType(), auditJson, entityManager);
+
+        // Child Organisations
+        auditJson = updateMappingsAndGetAudit(false, uuid, (oldOrganisation == null ? null : oldOrganisation.getChildOrganisations()),
+                (updatedOrganisation == null ? null : updatedOrganisation.getChildOrganisations()), MapType.ORGANISATION.getMapType(), MapType.ORGANISATION.getMapType(), auditJson, entityManager);
+
+        // Services
+        auditJson = updateMappingsAndGetAudit(false, uuid, (oldOrganisation == null ? null : oldOrganisation.getServices()),
+                (updatedOrganisation == null ? null : updatedOrganisation.getServices()), MapType.ORGANISATION.getMapType(), MapType.SERVICE.getMapType(), auditJson, entityManager);
+
+        // Publishing DPA
+        auditJson = updateMappingsAndGetAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getDpaPublishing()),
+                (updatedOrganisation == null ? null : updatedOrganisation.getDpaPublishing()), MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
+
+        // Publishing DSA
+        auditJson = updateMappingsAndGetAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getDsaPublishing()),
+                (updatedOrganisation == null ? null : updatedOrganisation.getDsaPublishing()), MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson, entityManager);
+
+        // Subscribing DSA
+        auditJson = updateMappingsAndGetAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getDsaSubscribing()),
+                (updatedOrganisation == null ? null : updatedOrganisation.getDsaSubscribing()), MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson, entityManager);
+
+        return auditJson;
+    }
+
     private JsonNode appendToJson(String changeDescription, List<String> mappings, String type, JsonNode auditJson) throws Exception {
         if (!mappings.isEmpty()) {
             return new AuditCompareLogic().generateListDifferenceAuditJson(auditJson, changeDescription, mappings, type);

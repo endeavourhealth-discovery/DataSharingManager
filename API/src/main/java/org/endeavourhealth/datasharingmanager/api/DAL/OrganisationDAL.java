@@ -1,10 +1,18 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.CohortEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.OrganisationEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonOrganisation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonStatistics;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
+import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
+import org.endeavourhealth.uiaudit.enums.AuditAction;
+import org.endeavourhealth.uiaudit.enums.ItemType;
+import org.endeavourhealth.uiaudit.logic.AuditCompareLogic;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -83,27 +91,25 @@ public class OrganisationDAL {
         }
     }
 
-    public void updateOrganisation(JsonOrganisation organisation) throws Exception {
+    public void updateOrganisation(JsonOrganisation organisation, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+        OrganisationEntity oldOrganisationEntity = entityManager.find(OrganisationEntity.class, organisation.getUuid());
+        oldOrganisationEntity.setMappingsFromDAL();
 
         try {
-            OrganisationEntity organisationEntity = entityManager.find(OrganisationEntity.class, organisation.getUuid());
             entityManager.getTransaction().begin();
-            organisationEntity.setName(organisation.getName());
-            organisationEntity.setAlternativeName(organisation.getAlternativeName());
-            organisationEntity.setOdsCode(organisation.getOdsCode());
-            organisationEntity.setIcoCode(organisation.getIcoCode());
-            organisationEntity.setIgToolkitStatus(organisation.getIgToolkitStatus());
-            organisationEntity.setIsService((byte) (organisation.getIsService().equals("1") ? 1 : 0));
-            organisationEntity.setType(organisation.getType());
-            organisationEntity.setBulkItemUpdated((byte) 1);
-            if (organisation.getDateOfRegistration() != null) {
-                organisationEntity.setDateOfRegistration(Date.valueOf(organisation.getDateOfRegistration()));
-            }
-            //organisationEntity.setRegistrationPerson(organisation.getRegistrationPerson());
-            organisationEntity.setEvidenceOfRegistration(organisation.getEvidenceOfRegistration());
-            entityManager.getTransaction().commit();
 
+            OrganisationEntity newOrganisation = new OrganisationEntity(organisation);
+            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Organisation edited", oldOrganisationEntity, newOrganisation);
+
+            auditJson = new MasterMappingDAL().updateOrganisationMappings(organisation, oldOrganisationEntity, auditJson, entityManager);
+
+            oldOrganisationEntity.updateFromJson(organisation);
+
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                    AuditAction.EDIT, ItemType.ORGANISATION, null, null, auditJson);
+
+            entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             throw e;
@@ -114,30 +120,22 @@ public class OrganisationDAL {
         clearOrganisationCache(organisation.getUuid());
     }
 
-    public void saveOrganisation(JsonOrganisation organisation) throws Exception {
+    public void saveOrganisation(JsonOrganisation organisation, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+        OrganisationEntity organisationEntity = new OrganisationEntity(organisation);
 
         try {
-            OrganisationEntity organisationEntity = new OrganisationEntity();
             entityManager.getTransaction().begin();
-            organisationEntity.setName(organisation.getName());
-            organisationEntity.setAlternativeName(organisation.getAlternativeName());
-            organisationEntity.setOdsCode(organisation.getOdsCode());
-            organisationEntity.setIcoCode(organisation.getIcoCode());
-            organisationEntity.setIgToolkitStatus(organisation.getIgToolkitStatus());
-            organisationEntity.setIsService((byte) (organisation.getIsService().equals("1") ? 1 : 0));
-            organisationEntity.setBulkImported((byte) (organisation.getBulkImported().equals("1") ? 1 : 0));
-            organisationEntity.setBulkItemUpdated((byte) (organisation.getBulkItemUpdated().equals("1") ? 1 : 0));
-            organisationEntity.setType(organisation.getType());
-            if (organisation.getDateOfRegistration() != null) {
-                organisationEntity.setDateOfRegistration(Date.valueOf(organisation.getDateOfRegistration()));
-            }
-            //organisationEntity.setRegistrationPerson(organisation.getRegistrationPerson());
-            organisationEntity.setEvidenceOfRegistration(organisation.getEvidenceOfRegistration());
-            organisationEntity.setUuid(organisation.getUuid());
+
+            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Organisation created", null, organisationEntity);
+
+            auditJson = new MasterMappingDAL().updateOrganisationMappings(organisation, null, auditJson, entityManager);
+
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                    AuditAction.ADD, ItemType.ORGANISATION, null, null, auditJson);
+
             entityManager.persist(organisationEntity);
             entityManager.getTransaction().commit();
-
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
             throw e;
@@ -175,13 +173,21 @@ public class OrganisationDAL {
         }
     }
 
-    public void deleteOrganisation(String uuid) throws Exception {
+    public void deleteOrganisation(String uuid, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
         try {
-            OrganisationEntity organisationEntity = entityManager.find(OrganisationEntity.class, uuid);
             entityManager.getTransaction().begin();
-            entityManager.remove(organisationEntity);
+
+            OrganisationEntity oldOrganisationEntity = entityManager.find(OrganisationEntity.class, uuid);
+            oldOrganisationEntity.setMappingsFromDAL();
+
+            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Organisation deleted", oldOrganisationEntity, null);
+            auditJson = new MasterMappingDAL().updateOrganisationMappings(null, oldOrganisationEntity, auditJson, entityManager);
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+                    AuditAction.DELETE, ItemType.ORGANISATION, null, null, auditJson);
+
+            entityManager.remove(oldOrganisationEntity);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
