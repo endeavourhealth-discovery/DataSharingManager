@@ -200,8 +200,9 @@ public class MasterMappingDAL {
     }
 
     private JsonNode appendToJson(boolean added, List<String> mappings, String type, JsonNode auditJson) throws Exception {
+    private JsonNode appendToJson(String changeDescription, List<String> mappings, String type, JsonNode auditJson) throws Exception {
         if (!mappings.isEmpty()) {
-            return new AuditCompareLogic().generateListDifferenceAuditJson(auditJson, added, mappings, type);
+            return new AuditCompareLogic().generateListDifferenceAuditJson(auditJson, changeDescription, mappings, type);
         }
 
         return auditJson;
