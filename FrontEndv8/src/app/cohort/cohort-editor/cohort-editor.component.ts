@@ -1,11 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Cohort} from "../models/Cohort";
 import {CohortService} from '../cohort.service';
 import {LoggerService, UserManagerService} from "dds-angular8";
 import {ActivatedRoute, Router} from '@angular/router';
 import {Dpa} from '../../data-processing-agreement/models/Dpa';
-//import {DataProcessingAgreementPickerComponent} from '../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
+import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
 
 @Component({
   selector: 'app-cohort-editor',
@@ -20,10 +20,7 @@ export class CohortEditorComponent implements OnInit {
   public activeProject: UserProject;
   dpaDetailsToShow = new Dpa().getDisplayItems();
 
-  consents = [
-    {num: 0, name : 'Explicit Consent'},
-    {num: 1, name : 'Implied Consent'}
-  ];
+  @ViewChild('dpaTable', {static: false}) dpaTable: GenericTableComponent;
 
   constructor(private log: LoggerService,
               private cohortService: CohortService,
@@ -75,7 +72,7 @@ export class CohortEditorComponent implements OnInit {
           this.cohort = result;
           this.getLinkedDpas();
         },
-        error => this.log.error('The cohort could not be loaded. Please try again.'/*, error, 'Load cohort'*/)
+        error => this.log.error('The Cohort could not be loaded. Please try again.'/*, error, 'Load cohort'*/)
       );
   }
 
@@ -93,7 +90,7 @@ export class CohortEditorComponent implements OnInit {
           this.log.success('Cohort saved successfully'/*, vm.cohort, 'Save cohort'*/);
           if (close) {this.close();}
         },
-        error => this.log.error('The cohort could not be saved. Please try again.'/*, error, 'Save cohort'*/)
+        error => this.log.error('The Cohort could not be saved. Please try again.'/*, error, 'Save cohort'*/)
       );
   }
 
@@ -120,9 +117,22 @@ export class CohortEditorComponent implements OnInit {
   private getLinkedDpas() {
     this.cohortService.getLinkedDpas(this.cohort.uuid)
       .subscribe(
-        result => this.dpas = result,
+        result => {
+          this.dpas = result;
+        },
         error => this.log.error('The associated data processing agreements could not be loaded. Please try again.'/*, error, 'Load associated data processing agreements'*/)
       );
   }
+
+  dpaClicked(item: Dpa) {
+    this.router.navigate(['/dpa', item.uuid, 'edit']);
+  }
+
+  /*deleteDpa() {
+    console.log(this.dpaTable.selection.selected);
+  }
+
+  addDpa() {
+  }*/
 
 }

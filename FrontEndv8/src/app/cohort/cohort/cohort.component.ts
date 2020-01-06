@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Cohort} from '../models/Cohort';
 import {CohortService} from '../cohort.service';
 import {Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
 
 @Component({
   selector: 'app-cohort',
@@ -21,6 +22,8 @@ export class CohortComponent implements OnInit {
   loadingComplete = false;
 
   public activeProject: UserProject;
+
+  @ViewChild('cohortsTable', {static: false}) cohortsTable: GenericTableComponent;
 
   constructor(private cohortService: CohortService,
               private router: Router,
@@ -72,7 +75,9 @@ export class CohortComponent implements OnInit {
     this.router.navigate(['/cohort', cohort.uuid, 'edit']);
   }
 
-  delete(item: Cohort) {
+  /*delete(item: Cohort) {*/
+  delete() {
+      console.log(this.cohortsTable.selection.selected);
     /*MessageBoxDialog.open(this.$modal, 'Delete cohort', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete cohort', 'Cancel')
       .result.then(
       () => this.doDelete(item),

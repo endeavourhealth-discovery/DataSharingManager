@@ -20,13 +20,9 @@ import {RouterModule} from '@angular/router';
 
 import {CohortComponent} from './cohort/cohort.component';
 import {CohortEditorComponent} from "./cohort-editor/cohort-editor.component";
-//import {CohortPickerComponent} from './cohort-picker/cohort-picker.component';
+import {CohortPickerComponent} from './cohort-picker/cohort-picker.component';
 import {CohortService} from './cohort.service';
-
-//TODO remove temp code -start
-import {SchedulerComponent} from '../scheduler/scheduler/scheduler.component';
 import {GenericTableModule} from '../generic-table/generic-table.module';
-//TODO remove temp code -end
 
 @NgModule({
   imports: [
@@ -51,13 +47,10 @@ import {GenericTableModule} from '../generic-table/generic-table.module';
   declarations: [
     CohortComponent,
     CohortEditorComponent,
-    //CohortPickerComponent
+    CohortPickerComponent
   ],
   entryComponents : [
-    //CohortPickerComponent
-    //TODO remove temp code -start
-    SchedulerComponent,
-    //TODO remove temp code -end
+    CohortPickerComponent
   ],
   providers: [
     CohortService,

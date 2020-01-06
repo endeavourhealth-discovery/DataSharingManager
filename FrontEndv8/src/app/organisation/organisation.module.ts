@@ -1,8 +1,10 @@
 import { NgModule } from '@angular/core';
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {BrowserModule} from "@angular/platform-browser";
 import {CommonModule, DatePipe} from '@angular/common';
+import {CoreModule} from "dds-angular8";
+import {FlexModule} from "@angular/flex-layout";
 import {FormsModule} from '@angular/forms';
-import { OrganisationComponent } from './organisation/organisation.component';
-import { OrganisationService } from './organisation.service';
 import {
   MatBadgeModule,
   MatButtonModule,
@@ -14,17 +16,17 @@ import {
   MatSortModule,
   MatTableModule, MatTabsModule, MatTreeModule
 } from '@angular/material';
-import {FlexModule} from "@angular/flex-layout";
 import {RouterModule} from "@angular/router";
-import {CoreModule} from "dds-angular8";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {BrowserModule} from "@angular/platform-browser";
+
+import {OrganisationComponent} from './organisation/organisation.component';
+import {OrganisationService} from './organisation.service';
 import {OrganisationEditorComponent} from "./organisation-editor/organisation-editor.component";
+import {OrganisationPickerComponent} from './organisation-picker/organisation-picker.component';
+import {GenericTableModule} from "../generic-table/generic-table.module";
 //TODO remove temp code -start
 import {SchedulerComponent} from "../scheduler/scheduler/scheduler.component";
-import {GenericTableModule} from "../generic-table/generic-table.module";
-import {OrganisationPickerComponent} from './organisation-picker/organisation-picker.component';
 import {DataSetPickerComponent} from "../data-set/data-set-picker/data-set-picker.component";
+import {CohortPickerComponent} from "../cohort/cohort-picker/cohort-picker.component";
 //TODO remove temp code -end
 
 @NgModule({
@@ -68,6 +70,7 @@ import {DataSetPickerComponent} from "../data-set/data-set-picker/data-set-picke
     SchedulerComponent,
     OrganisationPickerComponent,
     DataSetPickerComponent,
+    CohortPickerComponent,
     //TODO remove temp code -end
   ],
   providers: [

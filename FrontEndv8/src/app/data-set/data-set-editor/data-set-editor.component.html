@@ -2,7 +2,8 @@
   <mat-card-header>
     <div mat-card-avatar><mat-icon>lightbulb_outline</mat-icon></div>
     <mat-card-title>Data Set details</mat-card-title>
-    <mat-card-subtitle>{{dataset.name}}</mat-card-subtitle>
+    <mat-card-subtitle *ngIf="dataset.name">{{dataset.name}}</mat-card-subtitle>
+    <mat-card-subtitle *ngIf="!dataset.name">New Data Set</mat-card-subtitle>
     <div fxFlex></div>
     <mat-menu #visualiseMenu="matMenu">
       <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(false)">Save</button>
