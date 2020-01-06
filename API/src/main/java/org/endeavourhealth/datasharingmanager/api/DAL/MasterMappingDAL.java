@@ -186,11 +186,11 @@ public class MasterMappingDAL {
 
         // Parent Regions
         auditJson = updateMappingsAndGetAudit(true, uuid, (oldRegion == null ? null : oldRegion.getParentRegions()),
-                (updatedRegion == null ? null : updatedRegion.getParentRegions()), MapType.CHILDREGION.getMapType(), MapType.PARENTREGION.getMapType(), auditJson, entityManager);
+                (updatedRegion == null ? null : updatedRegion.getParentRegions()), MapType.REGION.getMapType(), MapType.REGION.getMapType(), auditJson, entityManager);
 
         // Child Regions
         auditJson = updateMappingsAndGetAudit(false, uuid, (oldRegion == null ? null : oldRegion.getChildRegions()),
-                (updatedRegion == null ? null : updatedRegion.getChildRegions()), MapType.PARENTREGION.getMapType(), MapType.CHILDREGION.getMapType(), auditJson, entityManager);
+                (updatedRegion == null ? null : updatedRegion.getChildRegions()), MapType.REGION.getMapType(), MapType.REGION.getMapType(), auditJson, entityManager);
 
         // Organisations
         auditJson = updateMappingsAndGetAudit(false, uuid, (oldRegion == null ? null : oldRegion.getOrganisations()),

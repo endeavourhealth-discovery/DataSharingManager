@@ -148,12 +148,6 @@ values (15, "Extract Technical Details");
 insert into data_sharing_manager.map_type (id, map_type)
 values (16, "Schedule");
 
-insert into data_sharing_manager.map_type (id, map_type)
-values (17, "'"Parent Region"");
-
-insert into data_sharing_manager.map_type (id, map_type)
-values (18, "'"Child Region"'");
-
 
 /*data_sharing_manager.security_infrastructure*/
 insert into data_sharing_manager.security_infrastructure (id, security_infrastructure)
