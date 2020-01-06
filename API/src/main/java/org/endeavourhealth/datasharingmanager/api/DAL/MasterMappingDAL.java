@@ -93,11 +93,11 @@ public class MasterMappingDAL {
         String uuid = (updatedDPA != null ? updatedDPA.getUuid() : oldDPA.getUuid());
 
         // Purposes
-        auditJson = updatePurposesAndGetAudit(false, uuid, (oldDPA == null ? null : oldDPA.getPurposes()),
+        auditJson = updatePurposesAndGetAudit(uuid, (oldDPA == null ? null : oldDPA.getPurposes()),
                 (updatedDPA == null ? null : updatedDPA.getPurposes()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType(), auditJson, entityManager);
 
         // Benefits
-        auditJson = updatePurposesAndGetAudit(false, uuid, (oldDPA == null ? null : oldDPA.getBenefits()),
+        auditJson = updatePurposesAndGetAudit(uuid, (oldDPA == null ? null : oldDPA.getBenefits()),
                 (updatedDPA == null ? null : updatedDPA.getBenefits()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType(), auditJson, entityManager);
 
         // Regions
@@ -122,11 +122,11 @@ public class MasterMappingDAL {
         String uuid = (updatedDSA != null ? updatedDSA.getUuid() : oldDSA.getUuid());
 
         // Purposes
-        auditJson = updatePurposesAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getPurposes()),
+        auditJson = updatePurposesAndGetAudit(uuid, (oldDSA == null ? null : oldDSA.getPurposes()),
                 (updatedDSA == null ? null : updatedDSA.getPurposes()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType(), auditJson, entityManager);
 
         // Benefits
-        auditJson = updatePurposesAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getBenefits()),
+        auditJson = updatePurposesAndGetAudit(uuid, (oldDSA == null ? null : oldDSA.getBenefits()),
                 (updatedDSA == null ? null : updatedDSA.getBenefits()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType(), auditJson, entityManager);
 
         // Regions
@@ -470,7 +470,7 @@ public class MasterMappingDAL {
         return auditJson;
     }
 
-    private JsonNode updatePurposesAndGetAudit(boolean thisItemIsChild, String thisItem, List<PurposeEntity> oldPurposes,
+    private JsonNode updatePurposesAndGetAudit(String thisItem, List<PurposeEntity> oldPurposes,
                                                List<JsonPurpose> updatedPurposes, Short thisMapTypeId, Short otherMapTypeId,
                                                JsonNode auditJson, EntityManager entityManager) throws Exception {
 
@@ -510,13 +510,13 @@ public class MasterMappingDAL {
         // Now apply changes
         if (!removedPurposes.isEmpty()) {
             List<String> removedPurposeUuids = removedPurposes.stream().map(PurposeEntity::getUuid).collect(Collectors.toList());
-            deleteMappings(thisItemIsChild, thisItem, removedPurposeUuids, thisMapTypeId, otherMapTypeId, entityManager);
+            deleteMappings(false, thisItem, removedPurposeUuids, thisMapTypeId, otherMapTypeId, entityManager);
             removedPurposes.forEach(rp -> removalLog.add(rp.toString()));
         }
 
         if (!addedPurposes.isEmpty()) {
             List<String> addedPurposeUuids = addedPurposes.stream().map(JsonPurpose::getUuid).collect(Collectors.toList());
-            saveMappings(thisItemIsChild, thisItem, addedPurposeUuids, thisMapTypeId, otherMapTypeId, entityManager);
+            saveMappings(false, thisItem, addedPurposeUuids, thisMapTypeId, otherMapTypeId, entityManager);
             addedPurposes.forEach(ap -> additionLog.add(ap.toString()));
         }
 
