@@ -451,8 +451,10 @@ public class MasterMappingDAL {
         updateMappings(thisItemIsChild, thisItem, oldMappings, updatedMappings,
                 thisMapTypeId, otherMapTypeId, removedMappings, addedMappings, entityManager);
 
-        auditJson = appendToJson(false, removedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
-        auditJson = appendToJson(true, addedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
+        auditJson = appendToJson(getChangeDescription(thisItemIsChild, false, thisMapTypeId, otherMapTypeId),
+                removedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
+        auditJson = appendToJson(getChangeDescription(thisItemIsChild, true, thisMapTypeId, otherMapTypeId),
+                addedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
 
         return auditJson;
     }
@@ -516,10 +518,10 @@ public class MasterMappingDAL {
 
         // Finally, add to Json
         if (!removalLog.isEmpty()) {
-            ((ObjectNode) auditJson).put("Removed" + MapType.valueOfTypeId(otherMapTypeId), StringUtils.join(removalLog, System.getProperty("line.separator")));
+            ((ObjectNode) auditJson).put("Removed " + MapType.valueOfTypeId(otherMapTypeId, true).toLowerCase(), StringUtils.join(removalLog, System.getProperty("line.separator")));
         }
         if (!additionLog.isEmpty()) {
-            ((ObjectNode) auditJson).put("Added" + MapType.valueOfTypeId(otherMapTypeId), StringUtils.join(additionLog, System.getProperty("line.separator")));
+            ((ObjectNode) auditJson).put("Added " + MapType.valueOfTypeId(otherMapTypeId, true).toLowerCase(), StringUtils.join(additionLog, System.getProperty("line.separator")));
         }
 
         return auditJson;
@@ -542,10 +544,30 @@ public class MasterMappingDAL {
         deleteDocuments(removedMappings);
         saveDocuments(addedMappings, newDocuments);
 
-        auditJson = appendToJson(false, removedMappings, MapType.valueOfTypeId(documentMapType), auditJson);
-        auditJson = appendToJson(true, addedMappings, MapType.valueOfTypeId(documentMapType), auditJson);
+        auditJson = appendToJson(getChangeDescription(false, false, thisMapTypeId, documentMapType),
+                removedMappings, MapType.valueOfTypeId(documentMapType), auditJson);
+        auditJson = appendToJson(getChangeDescription(false, true, thisMapTypeId, documentMapType),
+                addedMappings, MapType.valueOfTypeId(documentMapType), auditJson);
 
         return auditJson;
+    }
+
+    private String getChangeDescription(boolean thisItemIsChild, boolean added, Short thisMapTypeId, Short otherMapTypeId) {
+        List<String> components = new ArrayList<>();
+
+        components.add(added ? "Added" : "Removed");
+        if (thisMapTypeId.equals(otherMapTypeId)) {
+            components.add(thisItemIsChild ? "parent" : "child");
+        }
+        if (thisMapTypeId.equals(MapType.PUBLISHER.getMapType())) {
+            components.add("publishing");
+        }
+        if (thisMapTypeId.equals(MapType.SUBSCRIBER.getMapType())) {
+            components.add("subscribing");
+        }
+        components.add(MapType.valueOfTypeId(otherMapTypeId, true).toLowerCase());
+
+        return String.join(" ", components);
     }
 
     private void deleteDocuments(List<String> deletedDocuments) throws Exception {
