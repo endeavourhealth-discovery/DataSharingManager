@@ -90,7 +90,7 @@ public class MasterMappingDAL {
 
     public JsonNode updateDataProcessingAgreementMappings(JsonDPA updatedDPA, DataProcessingAgreementEntity oldDPA, JsonNode auditJson, EntityManager entityManager) throws Exception {
 
-        String uuid = (updatedDPA != null? updatedDPA.getUuid(): oldDPA.getUuid());
+        String uuid = (updatedDPA != null ? updatedDPA.getUuid() : oldDPA.getUuid());
 
         // Purposes
         auditJson = updatePurposesAndGetAudit(false, uuid, (oldDPA == null ? null : oldDPA.getPurposes()),
@@ -114,26 +114,6 @@ public class MasterMappingDAL {
 
 
         return auditJson;
-
-
-/*
-        if (dpa.getCohorts() != null) {
-            Map<UUID, String> cohorts = dpa.getCohorts();
-            saveChildMappings(cohorts, MapType.COHORT.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-        if (dpa.getDataSets() != null) {
-            Map<UUID, String> datasets = dpa.getDataSets();
-            saveChildMappings(datasets, MapType.DATASET.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-
-
-*/
-
-
-
-
-
-
     }
 
 
@@ -240,11 +220,8 @@ public class MasterMappingDAL {
                 }
 
             } catch (Exception e) {
-                // entityManager.getTransaction().rollback();
                 throw e;
-            } /*finally {
-                entityManager.close();
-            }*/
+            }
         }
     }
 
