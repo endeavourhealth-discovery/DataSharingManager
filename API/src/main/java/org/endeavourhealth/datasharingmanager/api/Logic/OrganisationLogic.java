@@ -76,27 +76,6 @@ public class OrganisationLogic {
             new OrganisationDAL().saveOrganisation(organisation, userProjectId);
         }
 
-
-        new AddressDAL().deleteAddressForOrganisations(organisation.getUuid());
-        List<JsonAddress> addresses = organisation.getAddresses();
-        if (!addresses.isEmpty()) {
-            for (JsonAddress address : addresses) {
-                if (address.getOrganisationUuid() == null)
-                    address.setOrganisationUuid(organisation.getUuid());
-
-                if (address.getUuid() == null) {
-                    address.setUuid(UUID.randomUUID().toString());
-                }
-                new AddressDAL().saveAddress(address);
-                /*else
-                    AddressEntity.updateAddress(address);*/
-
-                new AddressDAL().getGeolocation(address);
-            }
-
-        }
-
-
         return Response
                 .ok()
                 .entity(organisation.getUuid())
