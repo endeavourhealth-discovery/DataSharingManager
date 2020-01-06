@@ -22,33 +22,6 @@ public class PurposeDAL {
         entityManager.merge(dsaPurpose);
     }
 
-    public void deleteAllPurposes(String uuid, Short mapType) throws Exception {
-
-        List<String> purposes = new SecurityMasterMappingDAL().getChildMappings(uuid, mapType, MapType.PURPOSE.getMapType());
-        purposes.addAll(new SecurityMasterMappingDAL().getChildMappings(uuid, mapType, MapType.BENEFIT.getMapType()));
-
-        if (purposes.size() == 0)
-            return;
-
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-            entityManager.getTransaction().begin();
-            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-            CriteriaDelete<PurposeEntity> query = criteriaBuilder.createCriteriaDelete(PurposeEntity.class);
-            Root<PurposeEntity> root = query.from(PurposeEntity.class);
-            query.where(root.get("uuid").in(purposes));
-
-            entityManager.createQuery(query).executeUpdate();
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw e;
-        } finally {
-            entityManager.close();
-        }
-    }
-
     public List<PurposeEntity> getPurposesFromList(List<String> purposes) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
