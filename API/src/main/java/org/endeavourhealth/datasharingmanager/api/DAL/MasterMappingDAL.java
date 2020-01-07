@@ -24,7 +24,7 @@ public class MasterMappingDAL {
         _entityManager = entityManager;
     }
 
-    public void updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson) throws Exception {
+    void updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson) throws Exception {
         String uuid = (updatedDataSet != null? updatedDataSet.getUuid(): oldDataset.getUuid());
         Short thisMapTypeID = MapType.DATASET.getMapType();
 
@@ -34,7 +34,7 @@ public class MasterMappingDAL {
                 thisMapTypeID, MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
     }
 
-    public void updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson) throws Exception {
+    void updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson) throws Exception {
         String uuid = (updatedCohort != null ? updatedCohort.getUuid() : oldCohort.getUuid());
         Short thisMapTypeID = MapType.COHORT.getMapType();
 
@@ -43,7 +43,7 @@ public class MasterMappingDAL {
                 (updatedCohort == null ? null : updatedCohort.getDpas()), thisMapTypeID, MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
     }
 
-    public void updateDataProcessingAgreementMappings(JsonDPA updatedDPA, DataProcessingAgreementEntity oldDPA, JsonNode auditJson) throws Exception {
+    void updateDataProcessingAgreementMappings(JsonDPA updatedDPA, DataProcessingAgreementEntity oldDPA, JsonNode auditJson) throws Exception {
         String uuid = (updatedDPA != null ? updatedDPA.getUuid() : oldDPA.getUuid());
         Short thisMapTypeID = MapType.DATAPROCESSINGAGREEMENT.getMapType();
 
@@ -69,7 +69,7 @@ public class MasterMappingDAL {
     }
 
 
-    public void updateDataSharingAgreementMappings(JsonDSA updatedDSA, DataSharingAgreementEntity oldDSA, JsonNode auditJson) throws Exception {
+    void updateDataSharingAgreementMappings(JsonDSA updatedDSA, DataSharingAgreementEntity oldDSA, JsonNode auditJson) throws Exception {
         String uuid = (updatedDSA != null ? updatedDSA.getUuid() : oldDSA.getUuid());
         Short thisMapTypeID = MapType.DATASHARINGAGREEMENT.getMapType();
 
@@ -102,7 +102,7 @@ public class MasterMappingDAL {
                 (updatedDSA == null ? null : updatedDSA.getDocumentations()), thisMapTypeID, MapType.DOCUMENT.getMapType(), auditJson);
     }
 
-    public void updateRegionMappings(JsonRegion updatedRegion, RegionEntity oldRegion, JsonNode auditJson) throws Exception {
+    void updateRegionMappings(JsonRegion updatedRegion, RegionEntity oldRegion, JsonNode auditJson) throws Exception {
         String uuid = (updatedRegion != null ? updatedRegion.getUuid() : oldRegion.getUuid());
         Short thisMapTypeID = MapType.REGION.getMapType();
 
@@ -127,7 +127,7 @@ public class MasterMappingDAL {
                 (updatedRegion == null ? null : updatedRegion.getOrganisations()), thisMapTypeID, MapType.ORGANISATION.getMapType(), auditJson);
     }
 
-    public void updateOrganisationMappings(JsonOrganisation updatedOrganisation, OrganisationEntity oldOrganisation, JsonNode auditJson) throws Exception {
+    void updateOrganisationMappings(JsonOrganisation updatedOrganisation, OrganisationEntity oldOrganisation, JsonNode auditJson) throws Exception {
         String uuid = (updatedOrganisation != null ? updatedOrganisation.getUuid() : oldOrganisation.getUuid());
         Short thisMapTypeID = MapType.ORGANISATION.getMapType();
 
@@ -160,7 +160,7 @@ public class MasterMappingDAL {
                 (updatedOrganisation == null ? null : updatedOrganisation.getDsaSubscribing()), MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
     }
 
-    private void saveMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToAdd, Short thisMapTypeId, Short otherMapTypeId) throws Exception {
+    private void saveMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToAdd, Short thisMapTypeId, Short otherMapTypeId) {
         mappingsToAdd.forEach((mapping) -> {
             MasterMappingEntity mme;
             if (thisItemIsChild) {
@@ -173,7 +173,7 @@ public class MasterMappingDAL {
     }
 
 
-    private void deleteMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToDelete, Short thisMapTypeId, Short otherMapTypeId) throws Exception {
+    private void deleteMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToDelete, Short thisMapTypeId, Short otherMapTypeId) {
         mappingsToDelete.forEach((mapping) -> {
             MasterMappingEntity mme;
             if (thisItemIsChild) {
@@ -213,7 +213,7 @@ public class MasterMappingDAL {
 
     }
 
-    public void updateProjectMappings(JsonProject updatedProject, ProjectEntity oldProject, JsonNode auditJson) throws Exception {
+    void updateProjectMappings(JsonProject updatedProject, ProjectEntity oldProject, JsonNode auditJson) throws Exception {
         String uuid = (updatedProject != null ? updatedProject.getUuid() : oldProject.getUuid());
         Short thisMapTypeID = MapType.PROJECT.getMapType();
 
@@ -264,7 +264,7 @@ public class MasterMappingDAL {
     private void updateMappingsAndAddToAudit(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
                                              Map<UUID, String> updatedMap, Short thisMapTypeId, Short otherMapTypeId,
                                              JsonNode auditJson) throws Exception {
-        List<String> updatedMappings = new ArrayList<String>();
+        List<String> updatedMappings = new ArrayList<>();
         if (updatedMap != null) {
             updatedMap.forEach((k, v) -> updatedMappings.add(k.toString()));
         }
@@ -382,7 +382,7 @@ public class MasterMappingDAL {
                                                List<JsonDocumentation> newDocuments, Short thisMapTypeId,
                                                JsonNode auditJson) throws Exception {
 
-        List<String> updatedMappings = new ArrayList<String>();
+        List<String> updatedMappings = new ArrayList<>();
         List<String> removedMappings = new ArrayList<>();
         List<String> addedMappings = new ArrayList<>();
         newDocuments.forEach((k) -> updatedMappings.add(k.getUuid()));
