@@ -197,34 +197,6 @@ public class MasterMappingDAL {
                 updatedProject.getSchedule(), thisMapTypeID, auditJson);
     }
 
-    public List<String> getParentMappingsFromList(List<String> childUuids, Short childMapTypeId, Short parentMapTypeId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-            CriteriaQuery<MasterMappingEntity> cq = cb.createQuery(MasterMappingEntity.class);
-            Root<MasterMappingEntity> rootEntry = cq.from(MasterMappingEntity.class);
-
-            Predicate predicate = cb.and((rootEntry.get("childUuid").in(childUuids)),
-                    cb.equal(rootEntry.get("childMapTypeId"), childMapTypeId),
-                    cb.equal(rootEntry.get("parentMapTypeId"), parentMapTypeId));
-
-            cq.where(predicate);
-            TypedQuery<MasterMappingEntity> query = entityManager.createQuery(cq);
-            List<MasterMappingEntity> maps = query.getResultList();
-
-            List<String> children = new ArrayList<>();
-            for (MasterMappingEntity mme : maps) {
-                children.add(mme.getParentUuid());
-            }
-
-            return children;
-        } finally {
-            entityManager.close();
-        }
-
-    }
-
     private void updateDocumentsAndAddToAudit(String thisItem, List<String> oldDocuments, List<JsonDocumentation> updatedDocuments,
                                               Short thisMapTypeId, JsonNode auditJson) throws Exception {
 

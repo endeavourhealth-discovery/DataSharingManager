@@ -190,7 +190,7 @@ public class OrganisationLogic {
 
     public Response getDPAsOrganisationPublishingToFromList(List<String> organisationUuids) throws Exception {
 
-        List<String> dpaUUIDs = _masterMappingDAL.getParentMappingsFromList(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        List<String> dpaUUIDs = new SecurityMasterMappingDAL().getParentMappings(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!dpaUUIDs.isEmpty())
@@ -218,7 +218,7 @@ public class OrganisationLogic {
 
     public Response getDSAsOrganisationSubscribingToFromList(List<String> organisationUuids) throws Exception {
 
-        List<String> dsaUuids = _masterMappingDAL.getParentMappingsFromList(organisationUuids, MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+        List<String> dsaUuids = new SecurityMasterMappingDAL().getParentMappings(organisationUuids, MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
         if (!dsaUuids.isEmpty())
@@ -246,7 +246,7 @@ public class OrganisationLogic {
 
     public Response getDSAsOrganisationPublishingToFromList(List<String> organisationUuids) throws Exception {
 
-        List<String> dsaUUIds = _masterMappingDAL.getParentMappingsFromList(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+        List<String> dsaUUIds = new SecurityMasterMappingDAL().getParentMappings(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
         if (!dsaUUIds.isEmpty())
