@@ -10,6 +10,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.J
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonFileUpload;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonOrganisation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonStatistics;
+import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
@@ -17,6 +18,7 @@ import org.endeavourhealth.common.security.usermanagermodel.models.caching.Regio
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 import org.endeavourhealth.datasharingmanager.api.utility.CsvHelper;
 
+import javax.persistence.EntityManager;
 import javax.ws.rs.core.Response;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -34,6 +36,14 @@ public class OrganisationLogic {
     private Integer defaultPageSize = 20;
     private String defaultOrderColumn = "name";
     private String defaultSearchData = "";
+
+    private EntityManager _entityManager;
+    private MasterMappingDAL _masterMappingDAL;
+
+    public OrganisationLogic() throws Exception {
+        _entityManager = ConnectionManager.getDsmEntityManager();
+        _masterMappingDAL = new MasterMappingDAL(_entityManager);
+    }
 
     public Response getOrganisation(String uuid, String searchData, String searchType, byte organisationType,
                 Integer pageNumber, Integer pageSize, String orderColumn, boolean descending, UUID userId ) throws Exception {
@@ -180,7 +190,7 @@ public class OrganisationLogic {
 
     public Response getDPAsOrganisationPublishingToFromList(List<String> organisationUuids) throws Exception {
 
-        List<String> dpaUUIDs = new MasterMappingDAL().getParentMappingsFromList(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        List<String> dpaUUIDs = _masterMappingDAL.getParentMappingsFromList(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!dpaUUIDs.isEmpty())
@@ -208,7 +218,7 @@ public class OrganisationLogic {
 
     public Response getDSAsOrganisationSubscribingToFromList(List<String> organisationUuids) throws Exception {
 
-        List<String> dsaUuids = new MasterMappingDAL().getParentMappingsFromList(organisationUuids, MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+        List<String> dsaUuids = _masterMappingDAL.getParentMappingsFromList(organisationUuids, MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
         if (!dsaUuids.isEmpty())
@@ -236,7 +246,7 @@ public class OrganisationLogic {
 
     public Response getDSAsOrganisationPublishingToFromList(List<String> organisationUuids) throws Exception {
 
-        List<String> dsaUUIds = new MasterMappingDAL().getParentMappingsFromList(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+        List<String> dsaUUIds = _masterMappingDAL.getParentMappingsFromList(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
         if (!dsaUUIds.isEmpty())
@@ -553,7 +563,7 @@ public class OrganisationLogic {
             }
 
             if (i % 200 == 0 ) {
-                new MasterMappingDAL().bulkSaveMappings(bulkUploadMappings);
+                _masterMappingDAL.bulkSaveMappings(bulkUploadMappings);
                 bulkUploadMappings.clear();
             }
 
@@ -574,7 +584,7 @@ public class OrganisationLogic {
         });*/
 
         if (!bulkUploadMappings.isEmpty()) {
-            new MasterMappingDAL().bulkSaveMappings(bulkUploadMappings);
+            _masterMappingDAL.bulkSaveMappings(bulkUploadMappings);
             bulkUploadMappings.clear();
         }
 

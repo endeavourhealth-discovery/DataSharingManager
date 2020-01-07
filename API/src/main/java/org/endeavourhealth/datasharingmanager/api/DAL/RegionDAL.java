@@ -36,7 +36,7 @@ public class RegionDAL {
             RegionEntity newRegion = new RegionEntity(region);
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Region edited", oldRegionEntity, newRegion);
 
-            auditJson = new MasterMappingDAL().updateRegionMappings(region, oldRegionEntity, auditJson, entityManager);
+            auditJson = new MasterMappingDAL(entityManager).updateRegionMappings(region, oldRegionEntity, auditJson);
 
             oldRegionEntity.updateFromJson(region);
 
@@ -63,7 +63,7 @@ public class RegionDAL {
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Region created", null, regionEntity);
 
-            auditJson = new MasterMappingDAL().updateRegionMappings(region, null, auditJson, entityManager);
+            auditJson = new MasterMappingDAL(entityManager).updateRegionMappings(region, null, auditJson);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.ADD, ItemType.REGION, null, null, auditJson);
@@ -90,7 +90,7 @@ public class RegionDAL {
             oldRegionEntity.setMappingsFromDAL();
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Region deleted", oldRegionEntity, null);
-            auditJson = new MasterMappingDAL().updateRegionMappings(null, oldRegionEntity, auditJson, entityManager);
+            auditJson = new MasterMappingDAL(entityManager).updateRegionMappings(null, oldRegionEntity, auditJson);
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.DELETE, ItemType.REGION, null, null, auditJson);
 

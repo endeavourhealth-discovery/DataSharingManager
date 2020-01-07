@@ -61,7 +61,7 @@ public class DataProcessingAgreementDAL {
             DataProcessingAgreementEntity newDPA = new DataProcessingAgreementEntity(dpa);
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement edited", oldDPAEntity, newDPA);
 
-            auditJson = new MasterMappingDAL().updateDataProcessingAgreementMappings(dpa, oldDPAEntity, auditJson, entityManager);
+            auditJson = new MasterMappingDAL(entityManager).updateDataProcessingAgreementMappings(dpa, oldDPAEntity, auditJson);
 
             oldDPAEntity.updateFromJson(dpa);
 
@@ -91,7 +91,7 @@ public class DataProcessingAgreementDAL {
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement created", null, dpaEntity);
 
-            auditJson = new MasterMappingDAL().updateDataProcessingAgreementMappings(dpa, null, auditJson, entityManager);
+            auditJson = new MasterMappingDAL(entityManager).updateDataProcessingAgreementMappings(dpa, null, auditJson);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.ADD, ItemType.DPA, null, null, auditJson);
@@ -118,7 +118,7 @@ public class DataProcessingAgreementDAL {
             oldDPAEntity.setMappingsFromDAL();
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement deleted", oldDPAEntity, null);
-            auditJson = new MasterMappingDAL().updateDataProcessingAgreementMappings(null, oldDPAEntity, auditJson, entityManager);
+            auditJson = new MasterMappingDAL(entityManager).updateDataProcessingAgreementMappings(null, oldDPAEntity, auditJson);
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.DELETE, ItemType.DPA, null, null, auditJson);
 

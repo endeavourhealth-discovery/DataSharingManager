@@ -17,152 +17,158 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MasterMappingDAL {
+    
+    private EntityManager _entityManager;
 
-    public JsonNode updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson, EntityManager entityManager) throws Exception {
+    public MasterMappingDAL(EntityManager entityManager) {
+        _entityManager = entityManager;
+    }
+
+    public JsonNode updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson) throws Exception {
 
         String uuid = (updatedDataSet != null? updatedDataSet.getUuid(): oldDataset.getUuid());
 
         // DPAs
         auditJson = updateMappingsAndGetAudit(true, uuid, (oldDataset == null ? null : oldDataset.getDpas()),
                 (updatedDataSet == null ? null : updatedDataSet.getDpas()),
-                MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
+                MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
 
         return auditJson;
     }
 
-    public JsonNode updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson, EntityManager entityManager) throws Exception {
+    public JsonNode updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson) throws Exception {
 
         String uuid = (updatedCohort != null ? updatedCohort.getUuid() : oldCohort.getUuid());
 
         // DPAs
         auditJson = updateMappingsAndGetAudit(true, uuid, (oldCohort == null ? null : oldCohort.getDpas()),
-                (updatedCohort == null ? null : updatedCohort.getDpas()), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
+                (updatedCohort == null ? null : updatedCohort.getDpas()), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
 
         return auditJson;
 
     }
 
-    public JsonNode updateDataProcessingAgreementMappings(JsonDPA updatedDPA, DataProcessingAgreementEntity oldDPA, JsonNode auditJson, EntityManager entityManager) throws Exception {
+    public JsonNode updateDataProcessingAgreementMappings(JsonDPA updatedDPA, DataProcessingAgreementEntity oldDPA, JsonNode auditJson) throws Exception {
 
         String uuid = (updatedDPA != null ? updatedDPA.getUuid() : oldDPA.getUuid());
 
         // Purposes
         auditJson = updatePurposesAndGetAudit(uuid, (oldDPA == null ? null : oldDPA.getPurposes()),
-                (updatedDPA == null ? null : updatedDPA.getPurposes()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType(), auditJson, entityManager);
+                (updatedDPA == null ? null : updatedDPA.getPurposes()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType(), auditJson);
 
         // Benefits
         auditJson = updatePurposesAndGetAudit(uuid, (oldDPA == null ? null : oldDPA.getBenefits()),
-                (updatedDPA == null ? null : updatedDPA.getBenefits()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType(), auditJson, entityManager);
+                (updatedDPA == null ? null : updatedDPA.getBenefits()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType(), auditJson);
 
         // Regions
         auditJson = updateMappingsAndGetAudit(true, uuid, (oldDPA == null ? null : oldDPA.getRegions()),
-                (updatedDPA == null ? null : updatedDPA.getRegions()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.REGION.getMapType(), auditJson, entityManager);
+                (updatedDPA == null ? null : updatedDPA.getRegions()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.REGION.getMapType(), auditJson);
 
         // Publishers
         auditJson = updateMappingsAndGetAudit(false, uuid, (oldDPA == null ? null : oldDPA.getPublishers()),
-                (updatedDPA == null ? null : updatedDPA.getPublishers()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson, entityManager);
+                (updatedDPA == null ? null : updatedDPA.getPublishers()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson);
 
         // Documentation
         auditJson = updateMappingsAndGetAuditForObjList(false, uuid, (oldDPA == null ? null : oldDPA.getDocumentations()),
-                (updatedDPA == null ? null : updatedDPA.getDocumentations()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.DOCUMENT.getMapType(), auditJson, entityManager);
+                (updatedDPA == null ? null : updatedDPA.getDocumentations()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.DOCUMENT.getMapType(), auditJson);
 
 
         return auditJson;
     }
 
 
-    public JsonNode updateDataSharingAgreementMappings(JsonDSA updatedDSA, DataSharingAgreementEntity oldDSA, JsonNode auditJson, EntityManager entityManager) throws Exception {
+    public JsonNode updateDataSharingAgreementMappings(JsonDSA updatedDSA, DataSharingAgreementEntity oldDSA, JsonNode auditJson) throws Exception {
 
         String uuid = (updatedDSA != null ? updatedDSA.getUuid() : oldDSA.getUuid());
 
         // Purposes
         auditJson = updatePurposesAndGetAudit(uuid, (oldDSA == null ? null : oldDSA.getPurposes()),
-                (updatedDSA == null ? null : updatedDSA.getPurposes()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType(), auditJson, entityManager);
+                (updatedDSA == null ? null : updatedDSA.getPurposes()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType(), auditJson);
 
         // Benefits
         auditJson = updatePurposesAndGetAudit(uuid, (oldDSA == null ? null : oldDSA.getBenefits()),
-                (updatedDSA == null ? null : updatedDSA.getBenefits()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType(), auditJson, entityManager);
+                (updatedDSA == null ? null : updatedDSA.getBenefits()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType(), auditJson);
 
         // Regions
         auditJson = updateMappingsAndGetAudit(true, uuid, (oldDSA == null ? null : oldDSA.getRegions()),
-                (updatedDSA == null ? null : updatedDSA.getRegions()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.REGION.getMapType(), auditJson, entityManager);
+                (updatedDSA == null ? null : updatedDSA.getRegions()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.REGION.getMapType(), auditJson);
 
         // Projects
         auditJson = updateMappingsAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getProjects()),
-                (updatedDSA == null ? null : updatedDSA.getProjects()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PROJECT.getMapType(), auditJson, entityManager);
+                (updatedDSA == null ? null : updatedDSA.getProjects()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PROJECT.getMapType(), auditJson);
 
         // Publishers
         auditJson = updateMappingsAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getPublishers()),
-                (updatedDSA == null ? null : updatedDSA.getPublishers()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson, entityManager);
+                (updatedDSA == null ? null : updatedDSA.getPublishers()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson);
 
         // Subscribers
         auditJson = updateMappingsAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getSubscribers()),
-                (updatedDSA == null ? null : updatedDSA.getSubscribers()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.SUBSCRIBER.getMapType(), auditJson, entityManager);
+                (updatedDSA == null ? null : updatedDSA.getSubscribers()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.SUBSCRIBER.getMapType(), auditJson);
 
         // Documentation
         auditJson = updateMappingsAndGetAuditForObjList(false, uuid, (oldDSA == null ? null : oldDSA.getDocumentations()),
-                (updatedDSA == null ? null : updatedDSA.getDocumentations()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.DOCUMENT.getMapType(), auditJson, entityManager);
+                (updatedDSA == null ? null : updatedDSA.getDocumentations()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.DOCUMENT.getMapType(), auditJson);
 
 
         return auditJson;
     }
 
-    public JsonNode updateRegionMappings(JsonRegion updatedRegion, RegionEntity oldRegion, JsonNode auditJson, EntityManager entityManager) throws Exception {
+    public JsonNode updateRegionMappings(JsonRegion updatedRegion, RegionEntity oldRegion, JsonNode auditJson) throws Exception {
         String uuid = (updatedRegion != null ? updatedRegion.getUuid() : oldRegion.getUuid());
 
         // DSAs
         auditJson = updateMappingsAndGetAudit(false, uuid, (oldRegion == null ? null : oldRegion.getSharingAgreements()),
-                (updatedRegion == null ? null : updatedRegion.getSharingAgreements()), MapType.REGION.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson, entityManager);
+                (updatedRegion == null ? null : updatedRegion.getSharingAgreements()), MapType.REGION.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
 
         // DPAs
         auditJson = updateMappingsAndGetAudit(false, uuid, (oldRegion == null ? null : oldRegion.getProcessingAgreements()),
-                (updatedRegion == null ? null : updatedRegion.getProcessingAgreements()), MapType.REGION.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
+                (updatedRegion == null ? null : updatedRegion.getProcessingAgreements()), MapType.REGION.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
 
         // Parent Regions
         auditJson = updateMappingsAndGetAudit(true, uuid, (oldRegion == null ? null : oldRegion.getParentRegions()),
-                (updatedRegion == null ? null : updatedRegion.getParentRegions()), MapType.REGION.getMapType(), MapType.REGION.getMapType(), auditJson, entityManager);
+                (updatedRegion == null ? null : updatedRegion.getParentRegions()), MapType.REGION.getMapType(), MapType.REGION.getMapType(), auditJson);
 
         // Child Regions
         auditJson = updateMappingsAndGetAudit(false, uuid, (oldRegion == null ? null : oldRegion.getChildRegions()),
-                (updatedRegion == null ? null : updatedRegion.getChildRegions()), MapType.REGION.getMapType(), MapType.REGION.getMapType(), auditJson, entityManager);
+                (updatedRegion == null ? null : updatedRegion.getChildRegions()), MapType.REGION.getMapType(), MapType.REGION.getMapType(), auditJson);
 
         // Organisations
         auditJson = updateMappingsAndGetAudit(false, uuid, (oldRegion == null ? null : oldRegion.getOrganisations()),
-                (updatedRegion == null ? null : updatedRegion.getOrganisations()), MapType.REGION.getMapType(), MapType.ORGANISATION.getMapType(), auditJson, entityManager);
+                (updatedRegion == null ? null : updatedRegion.getOrganisations()), MapType.REGION.getMapType(), MapType.ORGANISATION.getMapType(), auditJson);
 
         return auditJson;
     }
 
-    public JsonNode updateOrganisationMappings(JsonOrganisation updatedOrganisation, OrganisationEntity oldOrganisation, JsonNode auditJson, EntityManager entityManager) throws Exception {
+    public JsonNode updateOrganisationMappings(JsonOrganisation updatedOrganisation, OrganisationEntity oldOrganisation, JsonNode auditJson) throws Exception {
         String uuid = (updatedOrganisation != null ? updatedOrganisation.getUuid() : oldOrganisation.getUuid());
 
         // Regions
         auditJson = updateMappingsAndGetAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getRegions()),
-                (updatedOrganisation == null ? null : updatedOrganisation.getRegions()), MapType.ORGANISATION.getMapType(), MapType.REGION.getMapType(), auditJson, entityManager);
+                (updatedOrganisation == null ? null : updatedOrganisation.getRegions()), MapType.ORGANISATION.getMapType(), MapType.REGION.getMapType(), auditJson);
 
         // Parent Organisations
         auditJson = updateMappingsAndGetAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getParentOrganisations()),
-                (updatedOrganisation == null ? null : updatedOrganisation.getParentOrganisations()), MapType.ORGANISATION.getMapType(), MapType.ORGANISATION.getMapType(), auditJson, entityManager);
+                (updatedOrganisation == null ? null : updatedOrganisation.getParentOrganisations()), MapType.ORGANISATION.getMapType(), MapType.ORGANISATION.getMapType(), auditJson);
 
         // Child Organisations
         auditJson = updateMappingsAndGetAudit(false, uuid, (oldOrganisation == null ? null : oldOrganisation.getChildOrganisations()),
-                (updatedOrganisation == null ? null : updatedOrganisation.getChildOrganisations()), MapType.ORGANISATION.getMapType(), MapType.ORGANISATION.getMapType(), auditJson, entityManager);
+                (updatedOrganisation == null ? null : updatedOrganisation.getChildOrganisations()), MapType.ORGANISATION.getMapType(), MapType.ORGANISATION.getMapType(), auditJson);
 
         // Services
         auditJson = updateMappingsAndGetAudit(false, uuid, (oldOrganisation == null ? null : oldOrganisation.getServices()),
-                (updatedOrganisation == null ? null : updatedOrganisation.getServices()), MapType.ORGANISATION.getMapType(), MapType.SERVICE.getMapType(), auditJson, entityManager);
+                (updatedOrganisation == null ? null : updatedOrganisation.getServices()), MapType.ORGANISATION.getMapType(), MapType.SERVICE.getMapType(), auditJson);
 
         // Publishing DPA
         auditJson = updateMappingsAndGetAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getDpaPublishing()),
-                (updatedOrganisation == null ? null : updatedOrganisation.getDpaPublishing()), MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
+                (updatedOrganisation == null ? null : updatedOrganisation.getDpaPublishing()), MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
 
         // Publishing DSA
         auditJson = updateMappingsAndGetAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getDsaPublishing()),
-                (updatedOrganisation == null ? null : updatedOrganisation.getDsaPublishing()), MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson, entityManager);
+                (updatedOrganisation == null ? null : updatedOrganisation.getDsaPublishing()), MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
 
         // Subscribing DSA
         auditJson = updateMappingsAndGetAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getDsaSubscribing()),
-                (updatedOrganisation == null ? null : updatedOrganisation.getDsaSubscribing()), MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson, entityManager);
+                (updatedOrganisation == null ? null : updatedOrganisation.getDsaSubscribing()), MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
 
         return auditJson;
     }
@@ -177,7 +183,7 @@ public class MasterMappingDAL {
 
     private void updateMappings(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
                                 List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId,
-                                List<String> removedMappings, List<String> addedMappings, EntityManager entityManager) throws Exception {
+                                List<String> removedMappings, List<String> addedMappings) throws Exception {
 
         if (oldMappings != null) {
             for (String oldMapping : oldMappings) {
@@ -199,11 +205,11 @@ public class MasterMappingDAL {
             try {
 
                 if (!removedMappings.isEmpty()) {
-                    deleteMappings(thisItemIsChild, thisItem, removedMappings, thisMapTypeId, otherMapTypeId, entityManager);
+                    deleteMappings(thisItemIsChild, thisItem, removedMappings, thisMapTypeId, otherMapTypeId);
                 }
 
                 if (!addedMappings.isEmpty()) {
-                    saveMappings(thisItemIsChild, thisItem, addedMappings, thisMapTypeId, otherMapTypeId, entityManager);
+                    saveMappings(thisItemIsChild, thisItem, addedMappings, thisMapTypeId, otherMapTypeId);
                 }
 
             } catch (Exception e) {
@@ -212,7 +218,7 @@ public class MasterMappingDAL {
         }
     }
 
-    private void saveMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToAdd, Short thisMapTypeId, Short otherMapTypeId, EntityManager entityManager) throws Exception {
+    private void saveMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToAdd, Short thisMapTypeId, Short otherMapTypeId) throws Exception {
         mappingsToAdd.forEach((mapping) -> {
             MasterMappingEntity mme;
             if (thisItemIsChild) {
@@ -220,12 +226,12 @@ public class MasterMappingDAL {
             } else {
                 mme = new MasterMappingEntity(mapping, otherMapTypeId, thisItem, thisMapTypeId);
             }
-            entityManager.persist(mme);
+            _entityManager.persist(mme);
         });
     }
 
 
-    private void deleteMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToDelete, Short thisMapTypeId, Short otherMapTypeId, EntityManager entityManager) throws Exception {
+    private void deleteMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToDelete, Short thisMapTypeId, Short otherMapTypeId) throws Exception {
         mappingsToDelete.forEach((mapping) -> {
             MasterMappingEntity mme;
             if (thisItemIsChild) {
@@ -233,7 +239,7 @@ public class MasterMappingDAL {
             } else {
                 mme = new MasterMappingEntity(mapping, otherMapTypeId, thisItem, thisMapTypeId);
             }
-            entityManager.remove(entityManager.merge(mme));
+            _entityManager.remove(_entityManager.merge(mme));
         });
     }
 
@@ -265,73 +271,73 @@ public class MasterMappingDAL {
 
     }
 
-    public JsonNode updateProjectMappings(JsonProject updatedProject, ProjectEntity oldProject, JsonNode auditJson, EntityManager entityManager) throws Exception {
+    public JsonNode updateProjectMappings(JsonProject updatedProject, ProjectEntity oldProject, JsonNode auditJson) throws Exception {
         // Publishers
         auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getPublishers(),
-                updatedProject.getPublishers(), MapType.PROJECT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson, entityManager);
+                updatedProject.getPublishers(), MapType.PROJECT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson);
 
         // Subscriber
         auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getSubscribers(),
-                updatedProject.getSubscribers(), MapType.PROJECT.getMapType(), MapType.SUBSCRIBER.getMapType(), auditJson, entityManager);
+                updatedProject.getSubscribers(), MapType.PROJECT.getMapType(), MapType.SUBSCRIBER.getMapType(), auditJson);
 
         // Cohorts
         auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getCohorts(),
-                updatedProject.getCohorts(), MapType.PROJECT.getMapType(), MapType.COHORT.getMapType(), auditJson, entityManager);
+                updatedProject.getCohorts(), MapType.PROJECT.getMapType(), MapType.COHORT.getMapType(), auditJson);
 
         // DataSets
         auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getDataSets(),
-                updatedProject.getDataSets(), MapType.PROJECT.getMapType(), MapType.DATASET.getMapType(), auditJson, entityManager);
+                updatedProject.getDataSets(), MapType.PROJECT.getMapType(), MapType.DATASET.getMapType(), auditJson);
 
         // DSA
         auditJson = updateMappingsAndGetAudit(true, updatedProject.getUuid(), oldProject.getDsas(),
-                updatedProject.getDsas(), MapType.PROJECT.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson, entityManager);
+                updatedProject.getDsas(), MapType.PROJECT.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
 
         // Documents
         auditJson = updateMappingsAndGetAuditForDocuments(updatedProject.getUuid(), oldProject.getDocumentations(),
-                updatedProject.getDocumentations(), MapType.PROJECT.getMapType(), auditJson, entityManager);
+                updatedProject.getDocumentations(), MapType.PROJECT.getMapType(), auditJson);
 
         // Extract Technical Details
         auditJson = updateMappingsAndGetAuditForExtractTechnicalDetails(updatedProject.getUuid(), oldProject.getExtractTechnicalDetails(),
-                updatedProject.getExtractTechnicalDetails(), MapType.PROJECT.getMapType(), auditJson, entityManager);
+                updatedProject.getExtractTechnicalDetails(), MapType.PROJECT.getMapType(), auditJson);
 
         //Schedules
         auditJson = updateMappingsAndGetAuditForSchedule(updatedProject.getUuid(), oldProject.getSchedule(),
-                updatedProject.getSchedule(), MapType.PROJECT.getMapType(), auditJson, entityManager);
+                updatedProject.getSchedule(), MapType.PROJECT.getMapType(), auditJson);
 
         return auditJson;
     }
 
     private <T extends JsonItem> JsonNode updateMappingsAndGetAuditForObjList(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
                                                List<T> updatedObjectList, Short thisMapTypeId, Short otherMapTypeId,
-                                               JsonNode auditJson, EntityManager entityManager) throws Exception {
+                                               JsonNode auditJson) throws Exception {
         List<String> updatedMappings = new ArrayList<String>();
         if (updatedObjectList != null) {
             updatedObjectList.forEach((o) -> updatedMappings.add(o.getUuid()));
         }
 
-        return updateMappingsAndGetAudit(thisItemIsChild, thisItem, oldMappings, updatedMappings, thisMapTypeId, otherMapTypeId, auditJson, entityManager);
+        return updateMappingsAndGetAudit(thisItemIsChild, thisItem, oldMappings, updatedMappings, thisMapTypeId, otherMapTypeId, auditJson);
     }
 
     private JsonNode updateMappingsAndGetAudit(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
                                                Map<UUID, String> updatedMap, Short thisMapTypeId, Short otherMapTypeId,
-                                               JsonNode auditJson, EntityManager entityManager) throws Exception {
+                                               JsonNode auditJson) throws Exception {
         List<String> updatedMappings = new ArrayList<String>();
         if (updatedMap != null) {
             updatedMap.forEach((k, v) -> updatedMappings.add(k.toString()));
         }
 
-        return updateMappingsAndGetAudit(thisItemIsChild, thisItem, oldMappings, updatedMappings, thisMapTypeId, otherMapTypeId, auditJson, entityManager);
+        return updateMappingsAndGetAudit(thisItemIsChild, thisItem, oldMappings, updatedMappings, thisMapTypeId, otherMapTypeId, auditJson);
     }
 
     private JsonNode updateMappingsAndGetAudit(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
                                                List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId,
-                                               JsonNode auditJson, EntityManager entityManager) throws Exception {
+                                               JsonNode auditJson) throws Exception {
 
         List<String> removedMappings = new ArrayList<>();
         List<String> addedMappings = new ArrayList<>();
 
         updateMappings(thisItemIsChild, thisItem, oldMappings, updatedMappings,
-                thisMapTypeId, otherMapTypeId, removedMappings, addedMappings, entityManager);
+                thisMapTypeId, otherMapTypeId, removedMappings, addedMappings);
 
         auditJson = appendToJson(getChangeDescription(thisItemIsChild, false, thisMapTypeId, otherMapTypeId),
                 removedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
@@ -343,7 +349,7 @@ public class MasterMappingDAL {
 
     private JsonNode updatePurposesAndGetAudit(String thisItem, List<PurposeEntity> oldPurposes,
                                                List<JsonPurpose> updatedPurposes, Short thisMapTypeId, Short otherMapTypeId,
-                                               JsonNode auditJson, EntityManager entityManager) throws Exception {
+                                               JsonNode auditJson) throws Exception {
 
         // First, identify what has changed
         List<JsonPurpose> addedPurposes = new ArrayList<>();
@@ -381,13 +387,13 @@ public class MasterMappingDAL {
         // Now apply changes
         if (!removedPurposes.isEmpty()) {
             List<String> removedPurposeUuids = removedPurposes.stream().map(PurposeEntity::getUuid).collect(Collectors.toList());
-            deleteMappings(false, thisItem, removedPurposeUuids, thisMapTypeId, otherMapTypeId, entityManager);
+            deleteMappings(false, thisItem, removedPurposeUuids, thisMapTypeId, otherMapTypeId);
             removedPurposes.forEach(rp -> removalLog.add(rp.toString()));
         }
 
         if (!addedPurposes.isEmpty()) {
             List<String> addedPurposeUuids = addedPurposes.stream().map(JsonPurpose::getUuid).collect(Collectors.toList());
-            saveMappings(false, thisItem, addedPurposeUuids, thisMapTypeId, otherMapTypeId, entityManager);
+            saveMappings(false, thisItem, addedPurposeUuids, thisMapTypeId, otherMapTypeId);
             addedPurposes.forEach(ap -> additionLog.add(ap.toString()));
         }
 
@@ -413,7 +419,7 @@ public class MasterMappingDAL {
 
     private JsonNode updateMappingsAndGetAuditForDocuments(String parentItem, List<String> oldDocuments,
                                                List<JsonDocumentation> newDocuments, Short thisMapTypeId,
-                                               JsonNode auditJson, EntityManager entityManager) throws Exception {
+                                               JsonNode auditJson) throws Exception {
 
         List<String> updatedMappings = new ArrayList<String>();
         List<String> removedMappings = new ArrayList<>();
@@ -423,7 +429,7 @@ public class MasterMappingDAL {
         Short documentMapType = MapType.DOCUMENT.getMapType();
 
         updateMappings(false, parentItem, oldDocuments, updatedMappings,
-                thisMapTypeId, documentMapType, removedMappings, addedMappings, entityManager);
+                thisMapTypeId, documentMapType, removedMappings, addedMappings);
 
         deleteDocuments(removedMappings);
         saveDocuments(addedMappings, newDocuments);
@@ -501,7 +507,7 @@ public class MasterMappingDAL {
 
     private JsonNode updateMappingsAndGetAuditForSchedule(String projectUuid, ProjectScheduleEntity scheduleEntity,
                                                           JsonProjectSchedule scheduleJson, Short thisMapTypeId,
-                                                          JsonNode auditJson, EntityManager entityManager) throws Exception {
+                                                          JsonNode auditJson) throws Exception {
 
         SecurityProjectScheduleDAL dal = new SecurityProjectScheduleDAL();
         //schedule was set
@@ -512,7 +518,7 @@ public class MasterMappingDAL {
             if (scheduleEntity == null) {
                 dal.save(scheduleJson);
                 saveMappings(true, scheduleJson.getUuid(), parent, MapType.SCHEDULE.getMapType(),
-                        MapType.PROJECT.getMapType(), entityManager);
+                        MapType.PROJECT.getMapType());
                 ((ObjectNode)auditJson).put("AddedSCHEDULE",
                         StringUtils.join(scheduleJson.getCronDescription() + " ("+scheduleJson.getUuid()+")",
                                 System.getProperty("line.separator")));
@@ -530,14 +536,14 @@ public class MasterMappingDAL {
                     //Previous schedule was deleted then a new one was added
                     dal.delete(scheduleEntity.getUuid());
                     deleteMappings(true, scheduleEntity.getUuid(), parent, MapType.SCHEDULE.getMapType(),
-                            thisMapTypeId, entityManager);
+                            thisMapTypeId);
                     ((ObjectNode)auditJson).put("RemovedSCHEDULE",
                             StringUtils.join(scheduleEntity.getCronDescription() + " ("+scheduleEntity.getUuid()+")",
                                     System.getProperty("line.separator")));
 
                     dal.save(scheduleJson);
                     saveMappings(true, scheduleJson.getUuid(), parent, MapType.SCHEDULE.getMapType(),
-                            MapType.PROJECT.getMapType(), entityManager);
+                            MapType.PROJECT.getMapType());
                     ((ObjectNode)auditJson).put("AddedSCHEDULE",
                             StringUtils.join(scheduleJson.getCronDescription() + " ("+scheduleJson.getUuid()+")",
                                     System.getProperty("line.separator")));
@@ -547,7 +553,7 @@ public class MasterMappingDAL {
             //schedule was deleted
             dal.delete(scheduleEntity.getUuid());
             deleteMappings(true, scheduleEntity.getUuid(), parent, MapType.SCHEDULE.getMapType(),
-                    thisMapTypeId, entityManager);
+                    thisMapTypeId);
             ((ObjectNode)auditJson).put("RemovedSCHEDULE",
                     StringUtils.join(scheduleEntity.getCronDescription() + " ("+scheduleEntity.getUuid()+")",
                             System.getProperty("line.separator")));
@@ -557,7 +563,7 @@ public class MasterMappingDAL {
 
     private JsonNode updateMappingsAndGetAuditForExtractTechnicalDetails(String projectUuid, ExtractTechnicalDetailsEntity detailsEntity,
                                                           JsonExtractTechnicalDetails detailsJson, Short thisMapTypeId,
-                                                          JsonNode auditJson, EntityManager entityManager) throws Exception {
+                                                          JsonNode auditJson) throws Exception {
 
         ExtractTechnicalDetailsDAL dal = new ExtractTechnicalDetailsDAL();
         //details were set
@@ -571,7 +577,7 @@ public class MasterMappingDAL {
                 }
                 dal.saveExtractTechnicalDetails(detailsJson);
                 saveMappings(true, detailsJson.getUuid(), parent, MapType.EXTRACTTECHNICALDETAILS.getMapType(),
-                        MapType.PROJECT.getMapType(), entityManager);
+                        MapType.PROJECT.getMapType());
                 ((ObjectNode)auditJson).put("AddedEXTRACTTECHNICALDETAILS",
                         StringUtils.join(detailsJson.getName() + " ("+detailsJson.getUuid()+")",
                                 System.getProperty("line.separator")));
@@ -589,13 +595,13 @@ public class MasterMappingDAL {
                     //Previous details were deleted then new ones were added
                     dal.deleteExtractTechnicalDetails(detailsEntity.getUuid());
                     deleteMappings(true, detailsEntity.getUuid(), parent, MapType.EXTRACTTECHNICALDETAILS.getMapType(),
-                            thisMapTypeId, entityManager);
+                            thisMapTypeId);
                     ((ObjectNode)auditJson).put("RemovedEXTRACTTECHNICALDETAILS",
                             StringUtils.join(detailsEntity.getName() + " ("+detailsEntity.getUuid()+")",
                                     System.getProperty("line.separator")));
                     dal.saveExtractTechnicalDetails(detailsJson);
                     saveMappings(true, detailsJson.getUuid(), parent, MapType.EXTRACTTECHNICALDETAILS.getMapType(),
-                            MapType.PROJECT.getMapType(), entityManager);
+                            MapType.PROJECT.getMapType());
                     ((ObjectNode)auditJson).put("AddedEXTRACTTECHNICALDETAILS",
                             StringUtils.join(detailsJson.getName() + " ("+detailsJson.getUuid()+")",
                                     System.getProperty("line.separator")));
@@ -605,7 +611,7 @@ public class MasterMappingDAL {
             //details were deleted
             dal.deleteExtractTechnicalDetails(detailsEntity.getUuid());
             deleteMappings(true, detailsEntity.getUuid(), parent, MapType.EXTRACTTECHNICALDETAILS.getMapType(),
-                    thisMapTypeId, entityManager);
+                    thisMapTypeId);
             ((ObjectNode)auditJson).put("RemovedEXTRACTTECHNICALDETAILS",
                     StringUtils.join(detailsEntity.getName() + " ("+detailsEntity.getUuid()+")",
                             System.getProperty("line.separator")));
