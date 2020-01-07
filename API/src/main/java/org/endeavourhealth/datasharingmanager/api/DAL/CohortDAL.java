@@ -47,7 +47,6 @@ public class CohortDAL {
     public void updateCohort(JsonCohort cohort, String userProjectId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
-
         CohortEntity oldCohortEntity = entityManager.find(CohortEntity.class, cohort.getUuid());
         oldCohortEntity.setDpas(new SecurityMasterMappingDAL().getParentMappings(cohort.getUuid(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType()));
         CohortEntity newCohort = new CohortEntity(cohort);
@@ -88,7 +87,7 @@ public class CohortDAL {
             cohortEntity.setTechnicalDefinition(cohort.getTechnicalDefinition());
             cohortEntity.setUuid(cohort.getUuid());
 
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Cohort Created", null, cohortEntity);
+            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Cohort created", null, cohortEntity);
 
             auditJson = new MasterMappingDAL().updateCohortMappings(cohort, null, auditJson, entityManager);
 
@@ -111,18 +110,16 @@ public class CohortDAL {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
         try {
-            CohortEntity oldCohortEntity = entityManager.find(CohortEntity.class, uuid);
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Cohort deleted", oldCohortEntity, null);
-
-            CohortEntity cohortEntity = entityManager.find(CohortEntity.class, uuid);
             entityManager.getTransaction().begin();
-            entityManager.remove(cohortEntity);
 
+            CohortEntity oldCohortEntity = entityManager.find(CohortEntity.class, uuid);
+            oldCohortEntity.setDpas(new SecurityMasterMappingDAL().getParentMappings(uuid, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType()));
+            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Cohort deleted", oldCohortEntity, null);
             auditJson = new MasterMappingDAL().updateCohortMappings(null, oldCohortEntity, auditJson, entityManager);
-
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.DELETE, ItemType.COHORT, null, null, auditJson);
 
+            entityManager.remove(oldCohortEntity);
             entityManager.getTransaction().commit();
         } catch (Exception e) {
             entityManager.getTransaction().rollback();

@@ -15,8 +15,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import javax.xml.crypto.KeySelector;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class MasterMappingDAL {
 
@@ -64,21 +66,137 @@ public class MasterMappingDAL {
 
     public JsonNode updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson, EntityManager entityManager) throws Exception {
 
+        String uuid = (updatedDataSet != null? updatedDataSet.getUuid(): oldDataset.getUuid());
+
         // DPAs
-        auditJson = updateMappingsAndGetAudit(true, updatedDataSet.getUuid(), (oldDataset == null ? null : oldDataset.getDpas()),
-                updatedDataSet.getDpas(), MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
+        auditJson = updateMappingsAndGetAudit(true, uuid, (oldDataset == null ? null : oldDataset.getDpas()),
+                (updatedDataSet == null ? null : updatedDataSet.getDpas()),
+                MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
 
         return auditJson;
     }
 
     public JsonNode updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson, EntityManager entityManager) throws Exception {
 
+        String uuid = (updatedCohort != null ? updatedCohort.getUuid() : oldCohort.getUuid());
+
         // DPAs
-        auditJson = updateMappingsAndGetAudit(true, updatedCohort.getUuid(), (oldCohort == null ? null: oldCohort.getDpas()),
-                updatedCohort.getDpas(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
+        auditJson = updateMappingsAndGetAudit(true, uuid, (oldCohort == null ? null : oldCohort.getDpas()),
+                (updatedCohort == null ? null : updatedCohort.getDpas()), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
 
         return auditJson;
 
+    }
+
+    public JsonNode updateDataProcessingAgreementMappings(JsonDPA updatedDPA, DataProcessingAgreementEntity oldDPA, JsonNode auditJson, EntityManager entityManager) throws Exception {
+
+        String uuid = (updatedDPA != null? updatedDPA.getUuid(): oldDPA.getUuid());
+
+        // Purposes
+        auditJson = updatePurposesAndGetAudit(false, uuid, (oldDPA == null ? null : oldDPA.getPurposes()),
+                (updatedDPA == null ? null : updatedDPA.getPurposes()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType(), auditJson, entityManager);
+
+        // Benefits
+        auditJson = updatePurposesAndGetAudit(false, uuid, (oldDPA == null ? null : oldDPA.getBenefits()),
+                (updatedDPA == null ? null : updatedDPA.getBenefits()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType(), auditJson, entityManager);
+
+        // Regions
+        auditJson = updateMappingsAndGetAudit(true, uuid, (oldDPA == null ? null : oldDPA.getRegions()),
+                (updatedDPA == null ? null : updatedDPA.getRegions()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.REGION.getMapType(), auditJson, entityManager);
+
+        // Publishers
+        auditJson = updateMappingsAndGetAudit(false, uuid, (oldDPA == null ? null : oldDPA.getPublishers()),
+                (updatedDPA == null ? null : updatedDPA.getPublishers()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson, entityManager);
+
+        // Documentation
+        auditJson = updateMappingsAndGetAuditForObjList(false, uuid, (oldDPA == null ? null : oldDPA.getDocumentations()),
+                (updatedDPA == null ? null : updatedDPA.getDocumentations()), MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.DOCUMENT.getMapType(), auditJson, entityManager);
+
+
+        return auditJson;
+
+
+/*
+        if (dpa.getCohorts() != null) {
+            Map<UUID, String> cohorts = dpa.getCohorts();
+            saveChildMappings(cohorts, MapType.COHORT.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        }
+        if (dpa.getDataSets() != null) {
+            Map<UUID, String> datasets = dpa.getDataSets();
+            saveChildMappings(datasets, MapType.DATASET.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        }
+
+
+*/
+
+
+
+
+
+
+    }
+
+
+    public JsonNode updateDataSharingAgreementMappings(JsonDSA updatedDSA, DataSharingAgreementEntity oldDSA, JsonNode auditJson, EntityManager entityManager) throws Exception {
+
+        String uuid = (updatedDSA != null ? updatedDSA.getUuid() : oldDSA.getUuid());
+
+        // Purposes
+        auditJson = updatePurposesAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getPurposes()),
+                (updatedDSA == null ? null : updatedDSA.getPurposes()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PURPOSE.getMapType(), auditJson, entityManager);
+
+        // Benefits
+        auditJson = updatePurposesAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getBenefits()),
+                (updatedDSA == null ? null : updatedDSA.getBenefits()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.BENEFIT.getMapType(), auditJson, entityManager);
+
+        // Regions
+        auditJson = updateMappingsAndGetAudit(true, uuid, (oldDSA == null ? null : oldDSA.getRegions()),
+                (updatedDSA == null ? null : updatedDSA.getRegions()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.REGION.getMapType(), auditJson, entityManager);
+
+        // Projects
+        auditJson = updateMappingsAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getProjects()),
+                (updatedDSA == null ? null : updatedDSA.getProjects()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PROJECT.getMapType(), auditJson, entityManager);
+
+        // Publishers
+        auditJson = updateMappingsAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getPublishers()),
+                (updatedDSA == null ? null : updatedDSA.getPublishers()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType(), auditJson, entityManager);
+
+        // Subscribers
+        auditJson = updateMappingsAndGetAudit(false, uuid, (oldDSA == null ? null : oldDSA.getSubscribers()),
+                (updatedDSA == null ? null : updatedDSA.getSubscribers()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.SUBSCRIBER.getMapType(), auditJson, entityManager);
+
+        // Documentation
+        auditJson = updateMappingsAndGetAuditForObjList(false, uuid, (oldDSA == null ? null : oldDSA.getDocumentations()),
+                (updatedDSA == null ? null : updatedDSA.getDocumentations()), MapType.DATASHARINGAGREEMENT.getMapType(), MapType.DOCUMENT.getMapType(), auditJson, entityManager);
+
+
+        return auditJson;
+    }
+
+    public JsonNode updateRegionMappings(JsonRegion updatedRegion, RegionEntity oldRegion, JsonNode auditJson, EntityManager entityManager) throws Exception {
+        String uuid = (updatedRegion != null ? updatedRegion.getUuid() : oldRegion.getUuid());
+
+        // DSAs
+        auditJson = updateMappingsAndGetAudit(false, uuid, (oldRegion == null ? null : oldRegion.getSharingAgreements()),
+                (updatedRegion == null ? null : updatedRegion.getSharingAgreements()), MapType.REGION.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson, entityManager);
+
+        // DPAs
+        auditJson = updateMappingsAndGetAudit(false, uuid, (oldRegion == null ? null : oldRegion.getProcessingAgreements()),
+                (updatedRegion == null ? null : updatedRegion.getProcessingAgreements()), MapType.REGION.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson, entityManager);
+
+        // Parent Regions
+        auditJson = updateMappingsAndGetAudit(true, uuid, (oldRegion == null ? null : oldRegion.getParentRegions()),
+                (updatedRegion == null ? null : updatedRegion.getParentRegions()), MapType.CHILDREGION.getMapType(), MapType.PARENTREGION.getMapType(), auditJson, entityManager);
+
+        // Child Regions
+        auditJson = updateMappingsAndGetAudit(false, uuid, (oldRegion == null ? null : oldRegion.getChildRegions()),
+                (updatedRegion == null ? null : updatedRegion.getChildRegions()), MapType.PARENTREGION.getMapType(), MapType.CHILDREGION.getMapType(), auditJson, entityManager);
+
+        // Organisations
+        auditJson = updateMappingsAndGetAudit(false, uuid, (oldRegion == null ? null : oldRegion.getOrganisations()),
+                (updatedRegion == null ? null : updatedRegion.getOrganisations()), MapType.REGION.getMapType(), MapType.ORGANISATION.getMapType(), auditJson, entityManager);
+
+        return auditJson;
     }
 
     private JsonNode appendToJson(boolean added, List<String> mappings, String type, JsonNode auditJson) throws Exception {
@@ -93,22 +211,17 @@ public class MasterMappingDAL {
                                 List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId,
                                 List<String> removedMappings, List<String> addedMappings, EntityManager entityManager) throws Exception {
 
-        if (oldMappings == null || oldMappings.isEmpty()) {
-            // No old mappings; any that exist are new
-            addedMappings = updatedMappings;
-        } else if (updatedMappings == null || updatedMappings.isEmpty()) {
-            // No mappings in updated; any in old have been removed
-            removedMappings = oldMappings;
-        } else {
-            // old and updated mappings exist; check what has changed
+        if (oldMappings != null) {
             for (String oldMapping : oldMappings) {
-                if (!updatedMappings.contains(oldMapping)) {
+                if (updatedMappings == null || !updatedMappings.contains(oldMapping)) {
                     removedMappings.add(oldMapping);
                 }
             }
+        }
 
+        if (updatedMappings != null) {
             for (String updatedMapping : updatedMappings) {
-                if (!oldMappings.contains(updatedMapping)) {
+                if (oldMappings == null || !oldMappings.contains(updatedMapping)) {
                     addedMappings.add(updatedMapping);
                 }
             }
@@ -270,150 +383,6 @@ public class MasterMappingDAL {
         }
     }
 
-    public void saveRegionMappings(JsonRegion region) throws Exception {
-
-        if (region.getParentRegions() != null) {
-            Map<UUID, String> parentRegions = region.getParentRegions();
-            saveParentMappings(parentRegions, MapType.REGION.getMapType(), region.getUuid(), MapType.REGION.getMapType());
-        }
-
-        if (region.getChildRegions() != null) {
-            Map<UUID, String> childRegions = region.getChildRegions();
-            saveChildMappings(childRegions, MapType.REGION.getMapType(), region.getUuid(), MapType.REGION.getMapType());
-        }
-
-        if (region.getOrganisations() != null) {
-            Map<UUID, String> organisations = region.getOrganisations();
-            saveChildMappings(organisations, MapType.ORGANISATION.getMapType(), region.getUuid(), MapType.REGION.getMapType());
-
-            CompletableFuture.runAsync(() -> {
-                try {
-                    new AddressDAL().getGeoLocationsForOrganisations(new ArrayList<>(organisations.keySet()));
-                } catch (Exception e) {
-                    // ignore error;
-                }
-            });
-        }
-
-        if (region.getSharingAgreements() != null) {
-            Map<UUID, String> sharingAgreements = region.getSharingAgreements();
-            saveChildMappings(sharingAgreements, MapType.DATASHARINGAGREEMENT.getMapType(), region.getUuid(), MapType.REGION.getMapType());
-        }
-
-        if (region.getProcessingAgreements() != null) {
-            Map<UUID, String> processingAgreements = region.getProcessingAgreements();
-            saveChildMappings(processingAgreements, MapType.DATAPROCESSINGAGREEMENT.getMapType(), region.getUuid(), MapType.REGION.getMapType());
-        }
-    }
-
-    public void saveDataSharingAgreementMappings(JsonDSA dsa) throws Exception {
-
-        if (dsa.getDataFlows() != null) {
-            Map<UUID, String> dataFlows = dsa.getDataFlows();
-            saveChildMappings(dataFlows, MapType.DATAFLOW.getMapType(), dsa.getUuid(), MapType.DATASHARINGAGREEMENT.getMapType());
-        }
-
-        if (dsa.getRegions() != null) {
-            Map<UUID, String> regions = dsa.getRegions();
-            saveParentMappings(regions, MapType.REGION.getMapType(), dsa.getUuid(), MapType.DATASHARINGAGREEMENT.getMapType());
-        }
-
-        if (dsa.getProjects() != null) {
-            Map<UUID, String> projects = dsa.getProjects();
-            saveChildMappings(projects, MapType.PROJECT.getMapType(), dsa.getUuid(), MapType.DATASHARINGAGREEMENT.getMapType());
-        }
-
-        if (dsa.getPublishers() != null) {
-            Map<UUID, String> publishers = dsa.getPublishers();
-            saveChildMappings(publishers, MapType.PUBLISHER.getMapType(), dsa.getUuid(), MapType.DATASHARINGAGREEMENT.getMapType());
-
-            CompletableFuture.runAsync(() -> {
-                try {
-                    new AddressDAL().getGeoLocationsForOrganisations(new ArrayList<>(publishers.keySet()));
-                } catch (Exception e) {
-                    // ignore error;
-                }
-            });
-        }
-
-        if (dsa.getSubscribers() != null) {
-            Map<UUID, String> subscribers = dsa.getSubscribers();
-            saveChildMappings(subscribers, MapType.SUBSCRIBER.getMapType(), dsa.getUuid(), MapType.DATASHARINGAGREEMENT.getMapType());
-
-            CompletableFuture.runAsync(() -> {
-                try {
-                    new AddressDAL().getGeoLocationsForOrganisations(new ArrayList<>(subscribers.keySet()));
-                } catch (Exception e) {
-                    // ignore error;
-                }
-            });
-        }
-
-        if (dsa.getDocumentations() != null) {
-            Map<UUID, String> documentation = new HashMap<>();
-            List<JsonDocumentation> jsonDocumentations = dsa.getDocumentations();
-            for (JsonDocumentation doc : jsonDocumentations) {
-                documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
-            }
-            saveChildMappings(documentation, MapType.DOCUMENT.getMapType(), dsa.getUuid(), MapType.DATASHARINGAGREEMENT.getMapType());
-        }
-
-        if (dsa.getPurposes() != null) {
-            Map<UUID, String> purposes = new HashMap<>();
-            List<JsonPurpose> jsonPurposes = dsa.getPurposes();
-            for (JsonPurpose purp : jsonPurposes) {
-                purposes.put(UUID.fromString(purp.getUuid()), purp.getTitle());
-            }
-            saveChildMappings(purposes, MapType.PURPOSE.getMapType(), dsa.getUuid(), MapType.DATASHARINGAGREEMENT.getMapType());
-        }
-
-        if (dsa.getBenefits() != null) {
-            Map<UUID, String> benefits = new HashMap<>();
-            List<JsonPurpose> jsonBenefits = dsa.getBenefits();
-            for (JsonPurpose benef : jsonBenefits) {
-                benefits.put(UUID.fromString(benef.getUuid()), benef.getTitle());
-            }
-            saveChildMappings(benefits, MapType.BENEFIT.getMapType(), dsa.getUuid(), MapType.DATASHARINGAGREEMENT.getMapType());
-        }
-    }
-
-    public void saveDataFlowMappings(JsonDataFlow dataFlow) throws Exception {
-
-        if (dataFlow.getDsas() != null) {
-            Map<UUID, String> dsas = dataFlow.getDsas();
-            saveParentMappings(dsas, MapType.DATASHARINGAGREEMENT.getMapType(), dataFlow.getUuid(), MapType.DATAFLOW.getMapType());
-        }
-
-        if (dataFlow.getDpas() != null) {
-            Map<UUID, String> dpas = dataFlow.getDpas();
-            saveParentMappings(dpas, MapType.DATAPROCESSINGAGREEMENT.getMapType(), dataFlow.getUuid(), MapType.DATAFLOW.getMapType());
-        }
-
-        if (dataFlow.getExchanges() != null) {
-            Map<UUID, String> exchanges = dataFlow.getExchanges();
-            saveChildMappings(exchanges, MapType.DATAEXCHANGE.getMapType(), dataFlow.getUuid(), MapType.DATAFLOW.getMapType());
-        }
-
-        if (dataFlow.getPublishers() != null) {
-            Map<UUID, String> publishers = dataFlow.getPublishers();
-            saveChildMappings(publishers, MapType.PUBLISHER.getMapType(), dataFlow.getUuid(), MapType.DATAFLOW.getMapType());
-        }
-
-        if (dataFlow.getSubscribers() != null) {
-            Map<UUID, String> subscribers = dataFlow.getSubscribers();
-            saveChildMappings(subscribers, MapType.SUBSCRIBER.getMapType(), dataFlow.getUuid(), MapType.DATAFLOW.getMapType());
-        }
-
-        if (dataFlow.getDocumentations() != null) {
-            Map<UUID, String> documentation = new HashMap<>();
-            List<JsonDocumentation> jsonDocumentations = dataFlow.getDocumentations();
-            for (JsonDocumentation doc : jsonDocumentations) {
-                documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
-            }
-            saveChildMappings(documentation, MapType.DOCUMENT.getMapType(), dataFlow.getUuid(), MapType.DATAFLOW.getMapType());
-        }
-    }
-
     public JsonNode updateProjectMappings(JsonProject updatedProject, ProjectEntity oldProject, JsonNode auditJson, EntityManager entityManager) throws Exception {
         // Publishers
         auditJson = updateMappingsAndGetAudit(false, updatedProject.getUuid(), oldProject.getPublishers(),
@@ -450,20 +419,108 @@ public class MasterMappingDAL {
         return auditJson;
     }
 
+    private <T extends JsonItem> JsonNode updateMappingsAndGetAuditForObjList(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
+                                               List<T> updatedObjectList, Short thisMapTypeId, Short otherMapTypeId,
+                                               JsonNode auditJson, EntityManager entityManager) throws Exception {
+        List<String> updatedMappings = new ArrayList<String>();
+        if (updatedObjectList != null) {
+            updatedObjectList.forEach((o) -> updatedMappings.add(o.getUuid()));
+        }
+
+        return updateMappingsAndGetAudit(thisItemIsChild, thisItem, oldMappings, updatedMappings, thisMapTypeId, otherMapTypeId, auditJson, entityManager);
+    }
+
     private JsonNode updateMappingsAndGetAudit(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
                                                Map<UUID, String> updatedMap, Short thisMapTypeId, Short otherMapTypeId,
                                                JsonNode auditJson, EntityManager entityManager) throws Exception {
-
         List<String> updatedMappings = new ArrayList<String>();
+        if (updatedMap != null) {
+            updatedMap.forEach((k, v) -> updatedMappings.add(k.toString()));
+        }
+
+        return updateMappingsAndGetAudit(thisItemIsChild, thisItem, oldMappings, updatedMappings, thisMapTypeId, otherMapTypeId, auditJson, entityManager);
+    }
+
+    private JsonNode updateMappingsAndGetAudit(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
+                                               List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId,
+                                               JsonNode auditJson, EntityManager entityManager) throws Exception {
+
         List<String> removedMappings = new ArrayList<>();
         List<String> addedMappings = new ArrayList<>();
-        updatedMap.forEach((k, v) -> updatedMappings.add(k.toString()));
 
         updateMappings(thisItemIsChild, thisItem, oldMappings, updatedMappings,
                 thisMapTypeId, otherMapTypeId, removedMappings, addedMappings, entityManager);
 
         auditJson = appendToJson(false, removedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
         auditJson = appendToJson(true, addedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
+
+        return auditJson;
+    }
+
+    private JsonNode updatePurposesAndGetAudit(boolean thisItemIsChild, String thisItem, List<PurposeEntity> oldPurposes,
+                                               List<JsonPurpose> updatedPurposes, Short thisMapTypeId, Short otherMapTypeId,
+                                               JsonNode auditJson, EntityManager entityManager) throws Exception {
+
+        // First, identify what has changed
+        List<JsonPurpose> addedPurposes = new ArrayList<>();
+        List<PurposeEntity> removedPurposes = new ArrayList<>();
+        List<JsonPurpose> changedPurposes = new ArrayList<>();
+
+        if (oldPurposes != null) {
+            for (PurposeEntity oldPurpose : oldPurposes) {
+                if (updatedPurposes == null || updatedPurposes.stream().noneMatch(up -> up.getUuid().equals(oldPurpose.getUuid()))) {
+                    removedPurposes.add(oldPurpose);
+                }
+            }
+        }
+
+        if (updatedPurposes != null) {
+            for (JsonPurpose updatedPurpose : updatedPurposes) {
+                if (oldPurposes == null) {
+                    addedPurposes.add(updatedPurpose);
+                } else {
+                    Optional<PurposeEntity> oldPurpose = oldPurposes.stream().filter(op -> op.getUuid().equals(updatedPurpose.getUuid())).findFirst();
+                    if (oldPurpose.isPresent()) {
+                        if (!updatedPurpose.toString().equals(oldPurpose.get().toString())) {
+                            changedPurposes.add(updatedPurpose);
+                        } //else: Unchanged - no action required.
+                    } else {
+                        addedPurposes.add(updatedPurpose);
+                    }
+                }
+            }
+        }
+
+        List<String> removalLog = new ArrayList<>();
+        List<String> additionLog = new ArrayList<>();
+
+        // Now apply changes
+        if (!removedPurposes.isEmpty()) {
+            List<String> removedPurposeUuids = removedPurposes.stream().map(PurposeEntity::getUuid).collect(Collectors.toList());
+            deleteMappings(thisItemIsChild, thisItem, removedPurposeUuids, thisMapTypeId, otherMapTypeId, entityManager);
+            removedPurposes.forEach(rp -> removalLog.add(rp.toString()));
+        }
+
+        if (!addedPurposes.isEmpty()) {
+            List<String> addedPurposeUuids = addedPurposes.stream().map(JsonPurpose::getUuid).collect(Collectors.toList());
+            saveMappings(thisItemIsChild, thisItem, addedPurposeUuids, thisMapTypeId, otherMapTypeId, entityManager);
+            addedPurposes.forEach(ap -> additionLog.add(ap.toString()));
+        }
+
+        for (JsonPurpose p : changedPurposes) {
+            Optional<PurposeEntity> oldPe = oldPurposes.stream().filter(pe -> pe.getUuid().equals(p.getUuid())).findAny();
+            // For now, log as removal + addition.  Uuid will be unchanged.
+            additionLog.add(p.toString());
+            removalLog.add(oldPe.get().toString());
+        }
+
+        // Finally, add to Json
+        if (!removalLog.isEmpty()) {
+            ((ObjectNode) auditJson).put("Removed" + MapType.valueOfTypeId(otherMapTypeId), StringUtils.join(removalLog, System.getProperty("line.separator")));
+        }
+        if (!additionLog.isEmpty()) {
+            ((ObjectNode) auditJson).put("Added" + MapType.valueOfTypeId(otherMapTypeId), StringUtils.join(additionLog, System.getProperty("line.separator")));
+        }
 
         return auditJson;
     }
@@ -510,133 +567,6 @@ public class MasterMappingDAL {
         }
     }
 
-    public void saveProjectMappings(JsonProject project) throws Exception {
-
-        /*if (project.getPublishers() != null) {
-            Map<UUID, String> publishers = project.getPublishers();
-            saveChildMappings(publishers, MapType.PUBLISHER.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
-
-        if (project.getSubscribers() != null) {
-            Map<UUID, String> subscribers = project.getSubscribers();
-            saveChildMappings(subscribers, MapType.SUBSCRIBER.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
-
-        if (project.getCohorts() != null) {
-            Map<UUID, String> dsas = project.getCohorts();
-            saveChildMappings(dsas, MapType.COHORT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
-
-        if (project.getDataSets() != null) {
-            Map<UUID, String> dpas = project.getDataSets();
-            saveChildMappings(dpas, MapType.DATASET.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
-
-        if (project.getDsas() != null) {
-            Map<UUID, String> exchanges = project.getDsas();
-            saveParentMappings(exchanges, MapType.DATASHARINGAGREEMENT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
-
-        if (project.getDocumentations() != null) {
-            Map<UUID, String> documentation = new HashMap<>();
-            List<JsonDocumentation> jsonDocumentations = project.getDocumentations();
-            for (JsonDocumentation doc : jsonDocumentations) {
-                documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
-            }
-            saveChildMappings(documentation, MapType.DOCUMENT.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
-
-        if (project.getExtractTechnicalDetails() != null) {
-
-            Map<UUID, String> details = new HashMap<>();
-            details.put(UUID.fromString(project.getExtractTechnicalDetails().getUuid()),
-                    project.getExtractTechnicalDetails().getName());
-            saveChildMappings(details, MapType.EXTRACTTECHNICALDETAILS.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-        }
-
-        if (project.getSchedule() != null) {
-            List<String> schedUUIDs = new SecurityMasterMappingDAL().getChildMappings(
-                    project.getUuid(), MapType.PROJECT.getMapType(), MapType.SCHEDULE.getMapType());
-            if (schedUUIDs.size() == 0) {
-                Map<UUID, String> schedule = new HashMap<>();
-                String uuid = project.getSchedule().getUuid();
-                schedule.put(UUID.fromString(uuid), uuid);
-                saveChildMappings(schedule, MapType.SCHEDULE.getMapType(), project.getUuid(), MapType.PROJECT.getMapType());
-            }
-        }*/
-
-    }
-
-    public void saveDataExchangeMappings(JsonDataExchange dataExchange) throws Exception {
-
-        if (dataExchange.getDataFlows() != null) {
-            Map<UUID, String> dataFlows = dataExchange.getDataFlows();
-            saveParentMappings(dataFlows, MapType.DATAFLOW.getMapType(), dataExchange.getUuid(), MapType.DATAEXCHANGE.getMapType());
-        }
-    }
-
-    public void saveDataProcessingAgreementMappings(JsonDPA dpa) throws Exception {
-
-        if (dpa.getDataFlows() != null) {
-            Map<UUID, String> dataFlows = dpa.getDataFlows();
-            saveChildMappings(dataFlows, MapType.DATAFLOW.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-
-        if (dpa.getCohorts() != null) {
-            Map<UUID, String> cohorts = dpa.getCohorts();
-            saveChildMappings(cohorts, MapType.COHORT.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-
-        if (dpa.getRegions() != null) {
-            Map<UUID, String> regions = dpa.getRegions();
-            saveParentMappings(regions, MapType.REGION.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-
-        if (dpa.getDataSets() != null) {
-            Map<UUID, String> datasets = dpa.getDataSets();
-            saveChildMappings(datasets, MapType.DATASET.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-
-        if (dpa.getDocumentations() != null) {
-            Map<UUID, String> documentation = new HashMap<>();
-            List<JsonDocumentation> jsonDocumentations = dpa.getDocumentations();
-            for (JsonDocumentation doc : jsonDocumentations) {
-                documentation.put(UUID.fromString(doc.getUuid()), doc.getTitle());
-            }
-            saveChildMappings(documentation, MapType.DOCUMENT.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-
-        if (dpa.getPublishers() != null) {
-            Map<UUID, String> publishers = dpa.getPublishers();
-            saveChildMappings(publishers, MapType.PUBLISHER.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-
-            CompletableFuture.runAsync(() -> {
-                try {
-                    new AddressDAL().getGeoLocationsForOrganisations(new ArrayList<>(publishers.keySet()));
-                } catch (Exception e) {
-                    // ignore error;
-                }
-            });
-        }
-
-        if (dpa.getPurposes() != null) {
-            Map<UUID, String> purposes = new HashMap<>();
-            List<JsonPurpose> jsonPurposes = dpa.getPurposes();
-            for (JsonPurpose purp : jsonPurposes) {
-                purposes.put(UUID.fromString(purp.getUuid()), purp.getTitle());
-            }
-            saveChildMappings(purposes, MapType.PURPOSE.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-
-        if (dpa.getBenefits() != null) {
-            Map<UUID, String> benefits = new HashMap<>();
-            List<JsonPurpose> jsonBenefits = dpa.getBenefits();
-            for (JsonPurpose benef : jsonBenefits) {
-                benefits.put(UUID.fromString(benef.getUuid()), benef.getTitle());
-            }
-            saveChildMappings(benefits, MapType.BENEFIT.getMapType(), dpa.getUuid(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
-        }
-    }
 
     public void bulkSaveMappings(List<MasterMappingEntity> mappings) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();

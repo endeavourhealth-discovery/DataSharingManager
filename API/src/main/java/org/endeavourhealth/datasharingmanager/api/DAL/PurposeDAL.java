@@ -14,42 +14,12 @@ import java.util.List;
 
 public class PurposeDAL {
 
-    public void savePurpose(JsonPurpose purpose) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-            PurposeEntity dsaPurpose = new PurposeEntity();
-            dsaPurpose.setUuid(purpose.getUuid());
-            dsaPurpose.setDetail(purpose.getDetail());
-            dsaPurpose.setTitle(purpose.getTitle());
-            entityManager.getTransaction().begin();
-            entityManager.merge(dsaPurpose);
-            entityManager.getTransaction().commit();
-
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw e;
-        } finally {
-            entityManager.close();
-        }
-    }
-
-    public void updatePurpose(JsonPurpose purpose) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-            PurposeEntity dsaPurpose = entityManager.find(PurposeEntity.class, purpose.getUuid());
-            entityManager.getTransaction().begin();
-            dsaPurpose.setTitle(purpose.getTitle());
-            dsaPurpose.setDetail(purpose.getDetail());
-            entityManager.getTransaction().commit();
-
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw e;
-        } finally {
-            entityManager.close();
-        }
+    public void savePurpose(JsonPurpose purpose, EntityManager entityManager) throws Exception {
+        PurposeEntity dsaPurpose = new PurposeEntity();
+        dsaPurpose.setUuid(purpose.getUuid());
+        dsaPurpose.setDetail(purpose.getDetail());
+        dsaPurpose.setTitle(purpose.getTitle());
+        entityManager.merge(dsaPurpose);
     }
 
     public void deleteAllPurposes(String uuid, Short mapType) throws Exception {

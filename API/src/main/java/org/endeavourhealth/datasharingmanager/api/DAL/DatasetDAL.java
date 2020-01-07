@@ -114,6 +114,7 @@ public class DatasetDAL {
 
         try {
             DatasetEntity oldDataSetEntity = entityManager.find(DatasetEntity.class, uuid);
+            oldDataSetEntity.setDpas(new SecurityMasterMappingDAL().getParentMappings(uuid, MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType()));
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data set deleted", oldDataSetEntity, null);
             entityManager.getTransaction().begin();
             entityManager.remove(oldDataSetEntity);

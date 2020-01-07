@@ -10,6 +10,7 @@ import org.endeavourhealth.common.security.usermanagermodel.models.caching.*;
 import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 
+import javax.persistence.EntityManager;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,16 +44,7 @@ public class DataSharingAgreementLogic {
                 .build();
     }
 
-    public Response postDSA(JsonDSA dsa) throws Exception {
-        new PurposeDAL().deleteAllPurposes(dsa.getUuid(), MapType.DATASHARINGAGREEMENT.getMapType());
-
-        if (dsa.getUuid() != null) {
-            new MasterMappingDAL().deleteAllMappings(dsa.getUuid());
-            new DataSharingAgreementDAL().updateDSA(dsa);
-        } else {
-            dsa.setUuid(UUID.randomUUID().toString());
-            new DataSharingAgreementDAL().saveDSA(dsa);
-        }
+    public Response postDSA(JsonDSA dsa, String userProjectID) throws Exception {
 
         for (JsonDocumentation doc : dsa.getDocumentations()) {
             if (doc.getUuid() != null) {
@@ -63,10 +55,12 @@ public class DataSharingAgreementLogic {
             }
         }
 
-        dsa.setPurposes(setUuidsAndSavePurpose(dsa.getPurposes()));
-        dsa.setBenefits(setUuidsAndSavePurpose(dsa.getBenefits()));
-
-        new MasterMappingDAL().saveDataSharingAgreementMappings(dsa);
+        if (dsa.getUuid() != null) {
+            new DataSharingAgreementDAL().updateDSA(dsa, userProjectID);
+        } else {
+            dsa.setUuid(UUID.randomUUID().toString());
+            new DataSharingAgreementDAL().saveDSA(dsa, userProjectID);
+        }
 
         return Response
                 .ok(dsa.getUuid())
@@ -103,30 +97,15 @@ public class DataSharingAgreementLogic {
                 .build();
     }
 
-    public static List<JsonPurpose> setUuidsAndSavePurpose(List<JsonPurpose> purposes) throws Exception {
+    public static List<JsonPurpose> setUuidsAndSavePurpose(List<JsonPurpose> purposes, EntityManager entityManager) throws Exception {
         for (JsonPurpose purpose : purposes) {
             if (purpose.getUuid() == null) {
                 purpose.setUuid(UUID.randomUUID().toString());
             }
-            new PurposeDAL().savePurpose(purpose);
+            new PurposeDAL().savePurpose(purpose, entityManager);
         }
 
         return purposes;
-    }
-
-    public Response getLinkedDataFlows(String dsaUuid) throws Exception {
-
-        List<String> dataFlowUuids = new SecurityMasterMappingDAL().getChildMappings(dsaUuid, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.DATAFLOW.getMapType());
-
-        List<DataFlowEntity> ret = new ArrayList<>();
-
-        if (!dataFlowUuids.isEmpty())
-            ret = new DataFlowDAL().getDataFlowsFromList(dataFlowUuids);
-
-        return Response
-                .ok()
-                .entity(ret)
-                .build();
     }
 
     public Response getLinkedRegions(String dsaUuid, String userId) throws Exception {

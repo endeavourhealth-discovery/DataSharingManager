@@ -34,16 +34,7 @@ public class DataProcessingAgreementLogic {
         }
     }
 
-    public Response postDPA(JsonDPA dpa) throws Exception {
-
-
-        if (dpa.getUuid() != null) {
-            new MasterMappingDAL().deleteAllMappings(dpa.getUuid());
-            new DataProcessingAgreementDAL().updateDPA(dpa);
-        } else {
-            dpa.setUuid(UUID.randomUUID().toString());
-            new DataProcessingAgreementDAL().saveDPA(dpa);
-        }
+    public Response postDPA(JsonDPA dpa, String userProjectID) throws Exception {
 
         for (JsonDocumentation doc : dpa.getDocumentations()) {
             if (doc.getUuid() != null) {
@@ -54,11 +45,12 @@ public class DataProcessingAgreementLogic {
             }
         }
 
-
-        dpa.setPurposes(new DataSharingAgreementLogic().setUuidsAndSavePurpose(dpa.getPurposes()));
-        dpa.setBenefits(new DataSharingAgreementLogic().setUuidsAndSavePurpose(dpa.getBenefits()));
-
-        new MasterMappingDAL().saveDataProcessingAgreementMappings(dpa);
+        if (dpa.getUuid() != null) {
+            new DataProcessingAgreementDAL().updateDPA(dpa, userProjectID);
+        } else {
+            dpa.setUuid(UUID.randomUUID().toString());
+            new DataProcessingAgreementDAL().saveDPA(dpa, userProjectID);
+        }
 
         return Response
                 .ok()
@@ -104,20 +96,6 @@ public class DataProcessingAgreementLogic {
         return Response
                 .ok()
                 .entity(dpas)
-                .build();
-    }
-
-    public Response getLinkedDataFlows(String dpaUuid) throws Exception {
-
-        List<String> dataFlowUuids = new SecurityMasterMappingDAL().getChildMappings(dpaUuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.DATAFLOW.getMapType());
-        List<DataFlowEntity> ret = new ArrayList<>();
-
-        if (!dataFlowUuids.isEmpty())
-            ret = new DataFlowDAL().getDataFlowsFromList(dataFlowUuids);
-
-        return Response
-                .ok()
-                .entity(ret)
                 .build();
     }
 

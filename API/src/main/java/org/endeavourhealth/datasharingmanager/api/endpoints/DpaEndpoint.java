@@ -27,6 +27,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Path("/dpa")
 @Metrics(registry = "EdsRegistry")
@@ -69,14 +70,26 @@ public final class DpaEndpoint extends AbstractEndpoint {
             "of a data processing agreement.")
     @RequiresAdmin
     public Response postDPA(@Context SecurityContext sc,
-                         @ApiParam(value = "Json representation of data processing agreement to save or update") JsonDPA dpa) throws Exception {
+                            @HeaderParam("userProjectId") String userProjectId,
+                            @ApiParam(value = "Json representation of data processing agreement to save or update") JsonDPA dpa) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
                 "DPA",
                 "DPA", dpa);
 
         clearLogbackMarkers();
-        return new DataProcessingAgreementLogic().postDPA(dpa);
+
+        if (dpa.getPublishers() != null) {
+            CompletableFuture.runAsync(() -> {
+                try {
+                    new AddressDAL().getGeoLocationsForOrganisations(new ArrayList<>(dpa.getPublishers().keySet()));
+                } catch (Exception e) {
+                    // ignore error;
+                }
+            });
+        }
+
+        return new DataProcessingAgreementLogic().postDPA(dpa, userProjectId);
     }
 
     @DELETE
@@ -87,37 +100,20 @@ public final class DpaEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Delete a data processing agreement based on UUID that is passed to the API.  Warning! This is permanent.")
     @RequiresAdmin
     public Response deleteDPA(@Context SecurityContext sc,
-                           @ApiParam(value = "UUID of the data processing agreement to be deleted") @QueryParam("uuid") String uuid
+                              @HeaderParam("userProjectId") String userProjectId,
+                              @ApiParam(value = "UUID of the data processing agreement to be deleted") @QueryParam("uuid") String uuid
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "DPA",
                 "DPA Id", uuid);
 
-        new DataProcessingAgreementDAL().deleteDPA(uuid);
+        new DataProcessingAgreementDAL().deleteDPA(uuid, userProjectId);
 
         clearLogbackMarkers();
         return Response
                 .ok()
                 .build();
-    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Timed(absolute = true, name="DataSharingManager.DpaEndpoint.GetDataFlows")
-    @Path("/dataflows")
-    @ApiOperation(value = "Returns a list of Json representations of data flow agreements that are linked " +
-            "to the data processing agreeement.  Accepts a UUID of a data processing agreement.")
-    public Response getLinkedDataFlowsForDPA(@Context SecurityContext sc,
-                                       @ApiParam(value = "UUID of data processing agreement") @QueryParam("uuid") String uuid
-    ) throws Exception {
-        super.setLogbackMarkers(sc);
-        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
-                "dataflows(s)",
-                "DPA Id", uuid);
-
-        return new DataProcessingAgreementLogic().getLinkedDataFlows(uuid);
     }
 
     @GET
