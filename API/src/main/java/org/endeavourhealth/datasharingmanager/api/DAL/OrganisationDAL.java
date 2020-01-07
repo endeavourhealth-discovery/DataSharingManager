@@ -110,7 +110,7 @@ public class OrganisationDAL {
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Organisation edited", oldOrganisationEntity, newOrganisation);
 
             auditJson = _addressDAL.updateAddressesAndGetAudit(organisation.getAddresses(), oldOrganisationEntity.getAddresses(), organisation.getUuid(), auditJson, _entityManager);
-            auditJson = _masterMappingDAL.updateOrganisationMappings(organisation, oldOrganisationEntity, auditJson);
+            _masterMappingDAL.updateOrganisationMappings(organisation, oldOrganisationEntity, auditJson);
 
             oldOrganisationEntity.updateFromJson(organisation);
 
@@ -138,7 +138,7 @@ public class OrganisationDAL {
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Organisation created", null, organisationEntity);
 
             auditJson = _addressDAL.updateAddressesAndGetAudit(organisation.getAddresses(), null, organisation.getUuid(), auditJson, _entityManager);
-            auditJson = _masterMappingDAL.updateOrganisationMappings(organisation, null, auditJson);
+            _masterMappingDAL.updateOrganisationMappings(organisation, null, auditJson);
 
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId,
                     AuditAction.ADD, ItemType.ORGANISATION, null, null, auditJson);
@@ -189,7 +189,7 @@ public class OrganisationDAL {
 
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Organisation deleted", oldOrganisationEntity, null);
             auditJson = _addressDAL.updateAddressesAndGetAudit(null, oldOrganisationEntity.getAddresses(), oldOrganisationEntity.getUuid(), auditJson, _entityManager);
-            auditJson = _masterMappingDAL.updateOrganisationMappings(null, oldOrganisationEntity, auditJson);
+            _masterMappingDAL.updateOrganisationMappings(null, oldOrganisationEntity, auditJson);
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId,
                     AuditAction.DELETE, ItemType.ORGANISATION, null, null, auditJson);
 

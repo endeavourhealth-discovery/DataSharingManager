@@ -90,7 +90,7 @@ public class ProjectDAL {
                 projectEntity.setEndDate(Date.valueOf(project.getEndDate()));
             }
 
-            auditJson = new MasterMappingDAL(entityManager).updateProjectMappings(project, oldProjectEntity, auditJson);
+            new MasterMappingDAL(entityManager).updateProjectMappings(project, oldProjectEntity, auditJson);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.EDIT, ItemType.PROJECT, null, null, auditJson);

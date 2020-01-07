@@ -59,7 +59,7 @@ public class CohortDAL {
             oldCohortEntity.setDescription(cohort.getDescription());
             oldCohortEntity.setTechnicalDefinition(cohort.getTechnicalDefinition());
 
-            auditJson = new MasterMappingDAL(entityManager).updateCohortMappings(cohort, oldCohortEntity, auditJson);
+            new MasterMappingDAL(entityManager).updateCohortMappings(cohort, oldCohortEntity, auditJson);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.EDIT, ItemType.COHORT, null, null, auditJson);
@@ -89,7 +89,7 @@ public class CohortDAL {
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Cohort created", null, cohortEntity);
 
-            auditJson = new MasterMappingDAL(entityManager).updateCohortMappings(cohort, null, auditJson);
+            new MasterMappingDAL(entityManager).updateCohortMappings(cohort, null, auditJson);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.ADD, ItemType.COHORT, null, null, auditJson);
@@ -115,7 +115,7 @@ public class CohortDAL {
             CohortEntity oldCohortEntity = entityManager.find(CohortEntity.class, uuid);
             oldCohortEntity.setDpas(new SecurityMasterMappingDAL().getParentMappings(uuid, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType()));
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Cohort deleted", oldCohortEntity, null);
-            auditJson = new MasterMappingDAL(entityManager).updateCohortMappings(null, oldCohortEntity, auditJson);
+            new MasterMappingDAL(entityManager).updateCohortMappings(null, oldCohortEntity, auditJson);
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.DELETE, ItemType.COHORT, null, null, auditJson);
 

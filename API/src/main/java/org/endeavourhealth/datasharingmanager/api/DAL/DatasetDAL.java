@@ -60,7 +60,7 @@ public class DatasetDAL {
             oldDataSetEntity.setDescription(dataset.getDescription());
             oldDataSetEntity.setTechnicalDefinition(dataset.getTechnicalDefinition());
 
-            auditJson = new MasterMappingDAL(entityManager).updateDataSetMappings(dataset, oldDataSetEntity, auditJson);
+            new MasterMappingDAL(entityManager).updateDataSetMappings(dataset, oldDataSetEntity, auditJson);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.EDIT, ItemType.DATASET, null, null, auditJson);
@@ -90,7 +90,7 @@ public class DatasetDAL {
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data set created", null, dataSetEntity);
 
-            auditJson = new MasterMappingDAL(entityManager).updateDataSetMappings(dataset, null, auditJson);
+            new MasterMappingDAL(entityManager).updateDataSetMappings(dataset, null, auditJson);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.ADD, ItemType.DATASET, null, null, auditJson);
@@ -119,7 +119,7 @@ public class DatasetDAL {
             entityManager.getTransaction().begin();
             entityManager.remove(oldDataSetEntity);
 
-            auditJson = new MasterMappingDAL(entityManager).updateDataSetMappings(null, oldDataSetEntity, auditJson);
+            new MasterMappingDAL(entityManager).updateDataSetMappings(null, oldDataSetEntity, auditJson);
 
             new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
                     AuditAction.DELETE, ItemType.DATASET, null, null, auditJson);
