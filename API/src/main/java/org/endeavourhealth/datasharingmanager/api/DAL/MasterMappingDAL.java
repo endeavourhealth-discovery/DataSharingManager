@@ -160,59 +160,6 @@ public class MasterMappingDAL {
                 (updatedOrganisation == null ? null : updatedOrganisation.getDsaSubscribing()), MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
     }
 
-    private void saveMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToAdd, Short thisMapTypeId, Short otherMapTypeId) {
-        mappingsToAdd.forEach((mapping) -> {
-            MasterMappingEntity mme;
-            if (thisItemIsChild) {
-                mme = new MasterMappingEntity(thisItem, thisMapTypeId, mapping, otherMapTypeId);
-            } else {
-                mme = new MasterMappingEntity(mapping, otherMapTypeId, thisItem, thisMapTypeId);
-            }
-            _entityManager.persist(mme);
-        });
-    }
-
-
-    private void deleteMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToDelete, Short thisMapTypeId, Short otherMapTypeId) {
-        mappingsToDelete.forEach((mapping) -> {
-            MasterMappingEntity mme;
-            if (thisItemIsChild) {
-                mme = new MasterMappingEntity(thisItem, thisMapTypeId, mapping, otherMapTypeId);
-            } else {
-                mme = new MasterMappingEntity(mapping, otherMapTypeId, thisItem, thisMapTypeId);
-            }
-            _entityManager.remove(_entityManager.merge(mme));
-        });
-    }
-
-    public List<String> getParentMappingsFromList(List<String> childUuids, Short childMapTypeId, Short parentMapTypeId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-            CriteriaQuery<MasterMappingEntity> cq = cb.createQuery(MasterMappingEntity.class);
-            Root<MasterMappingEntity> rootEntry = cq.from(MasterMappingEntity.class);
-
-            Predicate predicate = cb.and((rootEntry.get("childUuid").in(childUuids)),
-                    cb.equal(rootEntry.get("childMapTypeId"), childMapTypeId),
-                    cb.equal(rootEntry.get("parentMapTypeId"), parentMapTypeId));
-
-            cq.where(predicate);
-            TypedQuery<MasterMappingEntity> query = entityManager.createQuery(cq);
-            List<MasterMappingEntity> maps = query.getResultList();
-
-            List<String> children = new ArrayList<>();
-            for (MasterMappingEntity mme : maps) {
-                children.add(mme.getParentUuid());
-            }
-
-            return children;
-        } finally {
-            entityManager.close();
-        }
-
-    }
-
     void updateProjectMappings(JsonProject updatedProject, ProjectEntity oldProject, JsonNode auditJson) throws Exception {
         String uuid = (updatedProject != null ? updatedProject.getUuid() : oldProject.getUuid());
         Short thisMapTypeID = MapType.PROJECT.getMapType();
@@ -248,6 +195,34 @@ public class MasterMappingDAL {
         //Schedules
         updateMappingsAndGetAuditForSchedule(uuid, oldProject.getSchedule(),
                 updatedProject.getSchedule(), thisMapTypeID, auditJson);
+    }
+
+    public List<String> getParentMappingsFromList(List<String> childUuids, Short childMapTypeId, Short parentMapTypeId) throws Exception {
+        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+
+        try {
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<MasterMappingEntity> cq = cb.createQuery(MasterMappingEntity.class);
+            Root<MasterMappingEntity> rootEntry = cq.from(MasterMappingEntity.class);
+
+            Predicate predicate = cb.and((rootEntry.get("childUuid").in(childUuids)),
+                    cb.equal(rootEntry.get("childMapTypeId"), childMapTypeId),
+                    cb.equal(rootEntry.get("parentMapTypeId"), parentMapTypeId));
+
+            cq.where(predicate);
+            TypedQuery<MasterMappingEntity> query = entityManager.createQuery(cq);
+            List<MasterMappingEntity> maps = query.getResultList();
+
+            List<String> children = new ArrayList<>();
+            for (MasterMappingEntity mme : maps) {
+                children.add(mme.getParentUuid());
+            }
+
+            return children;
+        } finally {
+            entityManager.close();
+        }
+
     }
 
     private void updateDocumentsAndAddToAudit(String thisItem, List<String> oldDocuments, List<JsonDocumentation> updatedDocuments,
@@ -384,6 +359,31 @@ public class MasterMappingDAL {
             ((ObjectNode) auditJson).put("Added " + MapType.valueOfTypeId(otherMapTypeId, true).toLowerCase(),
                     StringUtils.join(additionLog, System.getProperty("line.separator")));
         }
+    }
+
+    private void saveMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToAdd, Short thisMapTypeId, Short otherMapTypeId) {
+        mappingsToAdd.forEach((mapping) -> {
+            MasterMappingEntity mme;
+            if (thisItemIsChild) {
+                mme = new MasterMappingEntity(thisItem, thisMapTypeId, mapping, otherMapTypeId);
+            } else {
+                mme = new MasterMappingEntity(mapping, otherMapTypeId, thisItem, thisMapTypeId);
+            }
+            _entityManager.persist(mme);
+        });
+    }
+
+
+    private void deleteMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToDelete, Short thisMapTypeId, Short otherMapTypeId) {
+        mappingsToDelete.forEach((mapping) -> {
+            MasterMappingEntity mme;
+            if (thisItemIsChild) {
+                mme = new MasterMappingEntity(thisItem, thisMapTypeId, mapping, otherMapTypeId);
+            } else {
+                mme = new MasterMappingEntity(mapping, otherMapTypeId, thisItem, thisMapTypeId);
+            }
+            _entityManager.remove(_entityManager.merge(mme));
+        });
     }
 
     private String getChangeDescription(boolean thisItemIsChild, boolean added, Short thisMapTypeId, Short otherMapTypeId) {
