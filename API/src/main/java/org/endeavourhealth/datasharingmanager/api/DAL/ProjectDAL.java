@@ -25,166 +25,131 @@ import java.util.*;
 
 public class ProjectDAL {
 
+    private EntityManager _entityManager;
+    private MasterMappingDAL _masterMappingDAL;
+    private AuditCompareLogic _auditCompareLogic;
+    private UIAuditJDBCDAL _uiAuditJDBCDAL;
+
+    public ProjectDAL() throws Exception {
+        _entityManager = ConnectionManager.getDsmEntityManager();
+        _masterMappingDAL = new MasterMappingDAL(_entityManager);
+        _auditCompareLogic = new AuditCompareLogic();
+        _uiAuditJDBCDAL = new UIAuditJDBCDAL();
+    }
+
     private void clearProjectCache(String projectId) throws Exception {
         ProjectCache.clearProjectCache(projectId);
     }
 
     public List<ProjectEntity> getAllProjects() throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+         try {
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<ProjectEntity> cq = cb.createQuery(ProjectEntity.class);
             Root<ProjectEntity> rootEntry = cq.from(ProjectEntity.class);
             CriteriaQuery<ProjectEntity> all = cq.select(rootEntry);
-            TypedQuery<ProjectEntity> allQuery = entityManager.createQuery(all);
+            TypedQuery<ProjectEntity> allQuery = _entityManager.createQuery(all);
             List<ProjectEntity> ret = allQuery.getResultList();
 
             return ret;
         } finally {
-            entityManager.close();
+             _entityManager.close();
         }
 
     }
 
     public void updateProject(JsonProject project, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        ProjectEntity oldProjectEntity = entityManager.find(ProjectEntity.class, project.getUuid());
-        oldProjectEntity.setDsas(new SecurityMasterMappingDAL().getParentMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType()));
-        oldProjectEntity.setPublishers(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.PUBLISHER.getMapType()));
-        oldProjectEntity.setSubscribers(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.SUBSCRIBER.getMapType()));
-        oldProjectEntity.setDocumentations(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.DOCUMENT.getMapType()));
-        oldProjectEntity.setCohorts(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.COHORT.getMapType()));
-        oldProjectEntity.setDataSets(new SecurityMasterMappingDAL().getChildMappings(project.getUuid(), MapType.PROJECT.getMapType(), MapType.DATASET.getMapType()));
-        oldProjectEntity.setSchedule(new SecurityProjectDAL().getLinkedSchedule(project.getUuid(), MapType.SCHEDULE.getMapType()));
-        oldProjectEntity.setExtractTechnicalDetails(new SecurityProjectDAL().getLinkedExtractTechnicalDetails(project.getUuid(), MapType.EXTRACTTECHNICALDETAILS.getMapType()));
-
-        ProjectEntity newProject = new ProjectEntity(project);
-
-        JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Project edited", oldProjectEntity, newProject);
+        ProjectEntity oldProjectEntity = _entityManager.find(ProjectEntity.class, project.getUuid());
+        oldProjectEntity.setMappingsFromDAL();
 
         try {
-            ProjectEntity projectEntity = entityManager.find(ProjectEntity.class, project.getUuid());
-            entityManager.getTransaction().begin();
-            projectEntity.setName(project.getName());
-            projectEntity.setLeadUser(project.getLeadUser());
-            projectEntity.setTechnicalLeadUser(project.getTechnicalLeadUser());
-            projectEntity.setConsentModelId(project.getConsentModelId());
-            projectEntity.setDeidentificationLevel(project.getDeidentificationLevel());
-            projectEntity.setProjectTypeId(project.getProjectTypeId());
-            projectEntity.setSecurityInfrastructureId(project.getSecurityInfrastructureId());
-            projectEntity.setIpAddress(project.getIpAddress());
-            projectEntity.setSummary(project.getSummary());
-            projectEntity.setBusinessCase(project.getBusinessCase());
-            projectEntity.setObjectives(project.getObjectives());
-            projectEntity.setSecurityArchitectureId(project.getSecurityArchitectureId());
-            projectEntity.setStorageProtocolId(project.getStorageProtocolId());
-            projectEntity.setBusinessCaseStatus(project.getBusinessCaseStatus());
-            projectEntity.setFlowScheduleId(project.getFlowScheduleId());
-            projectEntity.setProjectStatusId(project.getProjectStatusId());
-            if (project.getStartDate() != null) {
-                projectEntity.setStartDate(Date.valueOf(project.getStartDate()));
-            }
-            if (project.getEndDate() != null) {
-                projectEntity.setEndDate(Date.valueOf(project.getEndDate()));
-            }
+            _entityManager.getTransaction().begin();
 
-            new MasterMappingDAL(entityManager).updateProjectMappings(project, oldProjectEntity, auditJson);
+            ProjectEntity newProject = new ProjectEntity(project);
+            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Project edited", oldProjectEntity, newProject);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
+            _masterMappingDAL.updateProjectMappings(project, oldProjectEntity, auditJson);
+
+            oldProjectEntity.updateFromJson(project);
+
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId,
                     AuditAction.EDIT, ItemType.PROJECT, null, null, auditJson);
 
-            entityManager.getTransaction().commit();
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearProjectCache(project.getUuid());
     }
 
-    public void saveProject(JsonProject project) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+    public void saveProject(JsonProject project, String userProjectId) throws Exception {
+        ProjectEntity projectEntity = new ProjectEntity(project);
 
         try {
-            ProjectEntity projectEntity = new ProjectEntity();
-            entityManager.getTransaction().begin();
-            projectEntity.setUuid(project.getUuid());
-            projectEntity.setName(project.getName());
-            projectEntity.setLeadUser(project.getLeadUser());
-            projectEntity.setTechnicalLeadUser(project.getTechnicalLeadUser());
-            projectEntity.setConsentModelId(project.getConsentModelId());
-            projectEntity.setDeidentificationLevel(project.getDeidentificationLevel());
-            projectEntity.setProjectTypeId(project.getProjectTypeId());
-            projectEntity.setSecurityInfrastructureId(project.getSecurityInfrastructureId());
-            projectEntity.setIpAddress(project.getIpAddress());
-            projectEntity.setSummary(project.getSummary());
-            projectEntity.setBusinessCase(project.getBusinessCase());
-            projectEntity.setObjectives(project.getObjectives());
-            projectEntity.setSecurityArchitectureId(project.getSecurityArchitectureId());
-            projectEntity.setStorageProtocolId(project.getStorageProtocolId());
-            projectEntity.setBusinessCaseStatus(project.getBusinessCaseStatus());
-            projectEntity.setFlowScheduleId(project.getFlowScheduleId());
-            projectEntity.setProjectStatusId(project.getProjectStatusId());
-            if (project.getStartDate() != null) {
-                projectEntity.setStartDate(Date.valueOf(project.getStartDate()));
-            }
-            if (project.getEndDate() != null) {
-                projectEntity.setEndDate(Date.valueOf(project.getEndDate()));
-            }
-            entityManager.persist(projectEntity);
-            entityManager.getTransaction().commit();
+            _entityManager.getTransaction().begin();
+            _entityManager.persist(projectEntity);
 
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Project created", null, projectEntity);
+
+            _masterMappingDAL.updateProjectMappings(project, null, auditJson);
+
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId,
+                    AuditAction.ADD, ItemType.PROJECT, null, null, auditJson);
+
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearProjectCache(project.getUuid());
     }
 
-    public void deleteProject(String uuid) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
+    public void deleteProject(String uuid, String userProjectId) throws Exception {
         try {
-            ProjectEntity projectEntity = entityManager.find(ProjectEntity.class, uuid);
-            entityManager.getTransaction().begin();
-            entityManager.remove(projectEntity);
-            entityManager.getTransaction().commit();
+            _entityManager.getTransaction().begin();
 
+            ProjectEntity oldProjectEntity = _entityManager.find(ProjectEntity.class, uuid);
+            oldProjectEntity.setMappingsFromDAL();
+
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Project deleted", oldProjectEntity, null);
+            _masterMappingDAL.updateProjectMappings(null, oldProjectEntity, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId,
+                    AuditAction.DELETE, ItemType.ORGANISATION, null, null, auditJson);
+
+            _entityManager.remove(oldProjectEntity);
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearProjectCache(uuid);
     }
 
     public List<ProjectEntity> search(String expression) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<ProjectEntity> cq = cb.createQuery(ProjectEntity.class);
             Root<ProjectEntity> rootEntry = cq.from(ProjectEntity.class);
 
             Predicate predicate = cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%");
 
             cq.where(predicate);
-            TypedQuery<ProjectEntity> query = entityManager.createQuery(cq);
+            TypedQuery<ProjectEntity> query = _entityManager.createQuery(cq);
             List<ProjectEntity> ret = query.getResultList();
 
             return ret;
 
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
     }
 
