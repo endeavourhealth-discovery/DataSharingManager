@@ -454,28 +454,26 @@ public class MasterMappingDAL {
     }
 
 
-    public void bulkSaveMappings(List<MasterMappingEntity> mappings) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
+    public void bulkSaveMappings(List<MasterMappingEntity> mappings) {
         try {
             int batchSize = 50;
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
 
             for (int i = 0; i < mappings.size(); ++i) {
                 MasterMappingEntity mapping = mappings.get(i);
-                entityManager.merge(mapping);
+                _entityManager.merge(mapping);
                 if (i % batchSize == 0) {
-                    entityManager.flush();
-                    entityManager.clear();
+                    _entityManager.flush();
+                    _entityManager.clear();
                 }
             }
 
-            entityManager.getTransaction().commit();
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
     }
 
