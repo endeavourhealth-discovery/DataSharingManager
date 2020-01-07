@@ -173,51 +173,6 @@ public class MasterMappingDAL {
         return auditJson;
     }
 
-    private JsonNode appendToJson(String changeDescription, List<String> mappings, String type, JsonNode auditJson) throws Exception {
-        if (!mappings.isEmpty()) {
-            return new AuditCompareLogic().generateListDifferenceAuditJson(auditJson, changeDescription, mappings, type);
-        }
-
-        return auditJson;
-    }
-
-    private void updateMappings(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
-                                List<String> updatedMappings, Short thisMapTypeId, Short otherMapTypeId,
-                                List<String> removedMappings, List<String> addedMappings) throws Exception {
-
-        if (oldMappings != null) {
-            for (String oldMapping : oldMappings) {
-                if (updatedMappings == null || !updatedMappings.contains(oldMapping)) {
-                    removedMappings.add(oldMapping);
-                }
-            }
-        }
-
-        if (updatedMappings != null) {
-            for (String updatedMapping : updatedMappings) {
-                if (oldMappings == null || !oldMappings.contains(updatedMapping)) {
-                    addedMappings.add(updatedMapping);
-                }
-            }
-        }
-
-        if (!removedMappings.isEmpty() || !addedMappings.isEmpty()) {
-            try {
-
-                if (!removedMappings.isEmpty()) {
-                    deleteMappings(thisItemIsChild, thisItem, removedMappings, thisMapTypeId, otherMapTypeId);
-                }
-
-                if (!addedMappings.isEmpty()) {
-                    saveMappings(thisItemIsChild, thisItem, addedMappings, thisMapTypeId, otherMapTypeId);
-                }
-
-            } catch (Exception e) {
-                throw e;
-            }
-        }
-    }
-
     private void saveMappings(boolean thisItemIsChild, String thisItem, List<String> mappingsToAdd, Short thisMapTypeId, Short otherMapTypeId) throws Exception {
         mappingsToAdd.forEach((mapping) -> {
             MasterMappingEntity mme;
@@ -339,13 +294,35 @@ public class MasterMappingDAL {
         List<String> removedMappings = new ArrayList<>();
         List<String> addedMappings = new ArrayList<>();
 
-        updateMappings(thisItemIsChild, thisItem, oldMappings, updatedMappings,
-                thisMapTypeId, otherMapTypeId, removedMappings, addedMappings);
+        if (oldMappings != null) {
+            for (String oldMapping : oldMappings) {
+                if (updatedMappings == null || !updatedMappings.contains(oldMapping)) {
+                    removedMappings.add(oldMapping);
+                }
+            }
+        }
 
-        auditJson = appendToJson(getChangeDescription(thisItemIsChild, false, thisMapTypeId, otherMapTypeId),
-                removedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
-        auditJson = appendToJson(getChangeDescription(thisItemIsChild, true, thisMapTypeId, otherMapTypeId),
-                addedMappings, MapType.valueOfTypeId(otherMapTypeId), auditJson);
+        if (updatedMappings != null) {
+            for (String updatedMapping : updatedMappings) {
+                if (oldMappings == null || !oldMappings.contains(updatedMapping)) {
+                    addedMappings.add(updatedMapping);
+                }
+            }
+        }
+
+        if (!removedMappings.isEmpty()) {
+            deleteMappings(thisItemIsChild, thisItem, removedMappings, thisMapTypeId, otherMapTypeId);
+            auditJson = new AuditCompareLogic().generateListDifferenceAuditJson(auditJson,
+                    getChangeDescription(thisItemIsChild, false, thisMapTypeId, otherMapTypeId),
+                    removedMappings, MapType.valueOfTypeId(otherMapTypeId));
+        }
+
+        if (!addedMappings.isEmpty()) {
+            saveMappings(thisItemIsChild, thisItem, addedMappings, thisMapTypeId, otherMapTypeId);
+            auditJson = new AuditCompareLogic().generateListDifferenceAuditJson(auditJson,
+                    getChangeDescription(thisItemIsChild, true, thisMapTypeId, otherMapTypeId),
+                    addedMappings, MapType.valueOfTypeId(otherMapTypeId));
+        }
 
         return auditJson;
     }
@@ -431,16 +408,10 @@ public class MasterMappingDAL {
 
         Short documentMapType = MapType.DOCUMENT.getMapType();
 
-        updateMappings(false, parentItem, oldDocuments, updatedMappings,
-                thisMapTypeId, documentMapType, removedMappings, addedMappings);
+        updateMappingsAndGetAudit(false, parentItem, oldDocuments, updatedMappings, thisMapTypeId, documentMapType, auditJson);
 
         deleteDocuments(removedMappings);
         saveDocuments(addedMappings, newDocuments);
-
-        auditJson = appendToJson(getChangeDescription(false, false, thisMapTypeId, documentMapType),
-                removedMappings, MapType.valueOfTypeId(documentMapType), auditJson);
-        auditJson = appendToJson(getChangeDescription(false, true, thisMapTypeId, documentMapType),
-                addedMappings, MapType.valueOfTypeId(documentMapType), auditJson);
 
         return auditJson;
     }
