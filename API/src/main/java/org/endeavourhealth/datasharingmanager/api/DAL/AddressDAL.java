@@ -80,7 +80,7 @@ public class AddressDAL {
 
     }
 
-    public JsonNode updateAddressesAndGetAudit(List<JsonAddress> updatedAddresses, List<AddressEntity> oldAddresses,
+    public void updateAddressesAndGetAudit(List<JsonAddress> updatedAddresses, List<AddressEntity> oldAddresses,
                                                String organisationUuid, JsonNode auditJson, EntityManager entityManager) {
 
         List<String> removalLog = new ArrayList<>();
@@ -137,8 +137,6 @@ public class AddressDAL {
         if (!updateLog.isEmpty()) {
             ((ObjectNode) auditJson).put("Updated address", StringUtils.join(updateLog, "; "));
         }
-
-        return auditJson;
     }
 
     private List<Object[]> getAddressMarkers(String parentUUID, Short parentMapType, Short childMapType) throws Exception {
