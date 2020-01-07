@@ -25,31 +25,30 @@ public class MasterMappingDAL {
     }
 
     public JsonNode updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson) throws Exception {
-
         String uuid = (updatedDataSet != null? updatedDataSet.getUuid(): oldDataset.getUuid());
+        Short thisMapTypeID = MapType.DATASET.getMapType();
 
         // DPAs
         auditJson = updateMappingsAndGetAudit(true, uuid, (oldDataset == null ? null : oldDataset.getDpas()),
                 (updatedDataSet == null ? null : updatedDataSet.getDpas()),
-                MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
+                thisMapTypeID, MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
 
         return auditJson;
     }
 
     public JsonNode updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson) throws Exception {
-
         String uuid = (updatedCohort != null ? updatedCohort.getUuid() : oldCohort.getUuid());
+        Short thisMapTypeID = MapType.COHORT.getMapType();
 
         // DPAs
         auditJson = updateMappingsAndGetAudit(true, uuid, (oldCohort == null ? null : oldCohort.getDpas()),
-                (updatedCohort == null ? null : updatedCohort.getDpas()), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
+                (updatedCohort == null ? null : updatedCohort.getDpas()), thisMapTypeID, MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
 
         return auditJson;
 
     }
 
     public JsonNode updateDataProcessingAgreementMappings(JsonDPA updatedDPA, DataProcessingAgreementEntity oldDPA, JsonNode auditJson) throws Exception {
-
         String uuid = (updatedDPA != null ? updatedDPA.getUuid() : oldDPA.getUuid());
         Short thisMapTypeID = MapType.DATAPROCESSINGAGREEMENT.getMapType();
 
@@ -73,13 +72,11 @@ public class MasterMappingDAL {
         auditJson = updateMappingsAndGetAuditForObjList(false, uuid, (oldDPA == null ? null : oldDPA.getDocumentations()),
                 (updatedDPA == null ? null : updatedDPA.getDocumentations()), thisMapTypeID, MapType.DOCUMENT.getMapType(), auditJson);
 
-
         return auditJson;
     }
 
 
     public JsonNode updateDataSharingAgreementMappings(JsonDSA updatedDSA, DataSharingAgreementEntity oldDSA, JsonNode auditJson) throws Exception {
-
         String uuid = (updatedDSA != null ? updatedDSA.getUuid() : oldDSA.getUuid());
         Short thisMapTypeID = MapType.DATASHARINGAGREEMENT.getMapType();
 
@@ -110,7 +107,6 @@ public class MasterMappingDAL {
         // Documentation
         auditJson = updateMappingsAndGetAuditForObjList(false, uuid, (oldDSA == null ? null : oldDSA.getDocumentations()),
                 (updatedDSA == null ? null : updatedDSA.getDocumentations()), thisMapTypeID, MapType.DOCUMENT.getMapType(), auditJson);
-
 
         return auditJson;
     }
