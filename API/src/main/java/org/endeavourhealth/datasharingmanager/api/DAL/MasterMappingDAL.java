@@ -3,7 +3,6 @@ package org.endeavourhealth.datasharingmanager.api.DAL;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectScheduleDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
@@ -12,57 +11,12 @@ import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionMan
 import org.endeavourhealth.uiaudit.logic.AuditCompareLogic;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import javax.xml.crypto.KeySelector;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class MasterMappingDAL {
-
-    // This method should be removed, and calls redirected to updateMappings (to be written)
-    public void deleteAllMappings(String uuid) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-            entityManager.getTransaction().begin();
-            Query query = entityManager.createQuery(
-                    "DELETE from MasterMappingEntity m " +
-                            "where m.childUuid = :uuid " +
-                            "or m.parentUuid = :uuid");
-            query.setParameter("uuid", uuid);
-
-            int deletedCount = query.executeUpdate();
-
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw e;
-        } finally {
-            entityManager.close();
-        }
-    }
-
-    // This method should be removed, and calls redirected to updateMappings
-    public void saveParentMappings(Map<UUID, String> parents, Short parentMapTypeId, String childUuid, Short childMapTypeId) throws Exception {
-        // Convert to List
-        List<String> parentUuids = new ArrayList<String>();
-        parents.forEach((k, v) -> parentUuids.add(k.toString()));
-
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-        try {
-            entityManager.getTransaction().begin();
-            saveMappings(true, childUuid, parentUuids, childMapTypeId, parentMapTypeId, entityManager);
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw e;
-        } finally {
-            entityManager.close();
-        }
-    }
 
     public JsonNode updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson, EntityManager entityManager) throws Exception {
 
@@ -283,29 +237,6 @@ public class MasterMappingDAL {
         });
     }
 
-    // Should become redundant
-    private void saveChildMappings(Map<UUID, String> children, Short childMapTypeId, String parentUuid, Short parentMapTypeId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-            children.forEach((k, v) -> {
-                MasterMappingEntity mme = new MasterMappingEntity();
-                entityManager.getTransaction().begin();
-                mme.setChildUuid(k.toString());
-                mme.setChildMapTypeId(childMapTypeId);
-                mme.setParentUuid(parentUuid);
-                mme.setParentMapTypeId(parentMapTypeId);
-                entityManager.persist(mme);
-                entityManager.getTransaction().commit();
-            });
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw e;
-        } finally {
-            entityManager.close();
-        }
-    }
-
     public List<String> getParentMappingsFromList(List<String> childUuids, Short childMapTypeId, Short parentMapTypeId) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
@@ -332,66 +263,6 @@ public class MasterMappingDAL {
             entityManager.close();
         }
 
-    }
-
-    public void saveOrganisationMappings(JsonOrganisation organisation) throws Exception {
-        //Default to organisation
-        Short organisationType = MapType.ORGANISATION.getMapType();
-
-        if (organisation.getIsService().equals("0")) {
-            if (organisation.getRegions() != null) {
-                Map<UUID, String> regions = organisation.getRegions();
-                saveParentMappings(regions, MapType.REGION.getMapType(), organisation.getUuid(), MapType.ORGANISATION.getMapType());
-            }
-
-            if (organisation.getChildOrganisations() != null) {
-                Map<UUID, String> childOrganisations = organisation.getChildOrganisations();
-                saveChildMappings(childOrganisations, MapType.ORGANISATION.getMapType(), organisation.getUuid(), MapType.ORGANISATION.getMapType());
-
-                CompletableFuture.runAsync(() -> {
-                    try {
-                        new AddressDAL().getGeoLocationsForOrganisations(new ArrayList<>(childOrganisations.keySet()));
-                    } catch (Exception e) {
-                        // ignore error;
-                    }
-                });
-            }
-
-            if (organisation.getServices() != null) {
-                Map<UUID, String> services = organisation.getServices();
-                saveChildMappings(services, MapType.SERVICE.getMapType(), organisation.getUuid(), MapType.ORGANISATION.getMapType());
-
-                CompletableFuture.runAsync(() -> {
-                    try {
-                        new AddressDAL().getGeoLocationsForOrganisations(new ArrayList<>(services.keySet()));
-                    } catch (Exception e) {
-                        // ignore error;
-                    }
-                });
-            }
-
-            if (organisation.getDpaPublishing() != null) {
-                Map<UUID, String> dpas = organisation.getDpaPublishing();
-                saveParentMappings(dpas, MapType.DATAPROCESSINGAGREEMENT.getMapType(), organisation.getUuid(), MapType.PUBLISHER.getMapType());
-            }
-
-            if (organisation.getDsaPublishing() != null) {
-                Map<UUID, String> dsas = organisation.getDsaPublishing();
-                saveParentMappings(dsas, MapType.DATASHARINGAGREEMENT.getMapType(), organisation.getUuid(), MapType.PUBLISHER.getMapType());
-            }
-
-            if (organisation.getDsaSubscribing() != null) {
-                Map<UUID, String> dsaSub = organisation.getDsaSubscribing();
-                saveParentMappings(dsaSub, MapType.DATASHARINGAGREEMENT.getMapType(), organisation.getUuid(), MapType.SUBSCRIBER.getMapType());
-            }
-        } else {
-            organisationType = MapType.SERVICE.getMapType();
-        }
-
-        if (organisation.getParentOrganisations() != null) {
-            Map<UUID, String> parentOrganisations = organisation.getParentOrganisations();
-            saveParentMappings(parentOrganisations, MapType.ORGANISATION.getMapType(), organisation.getUuid(), organisationType);
-        }
     }
 
     public JsonNode updateProjectMappings(JsonProject updatedProject, ProjectEntity oldProject, JsonNode auditJson, EntityManager entityManager) throws Exception {
