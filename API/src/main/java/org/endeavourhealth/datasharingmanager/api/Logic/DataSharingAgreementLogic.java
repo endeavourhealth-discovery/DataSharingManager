@@ -46,15 +46,6 @@ public class DataSharingAgreementLogic {
 
     public Response postDSA(JsonDSA dsa, String userProjectID) throws Exception {
 
-        for (JsonDocumentation doc : dsa.getDocumentations()) {
-            if (doc.getUuid() != null) {
-                new DocumentationDAL().updateDocument(doc);
-            } else {
-                doc.setUuid(UUID.randomUUID().toString());
-                new DocumentationDAL().saveDocument(doc);
-            }
-        }
-
         if (dsa.getUuid() != null) {
             new DataSharingAgreementDAL().updateDSA(dsa, userProjectID);
         } else {

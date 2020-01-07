@@ -64,8 +64,8 @@ public class MasterMappingDAL {
                 (updatedDPA == null ? null : updatedDPA.getPublishers()), thisMapTypeID, MapType.PUBLISHER.getMapType(), auditJson);
 
         // Documentation
-        updateMappingsAndGetAuditForObjList(false, uuid, (oldDPA == null ? null : oldDPA.getDocumentations()),
-                (updatedDPA == null ? null : updatedDPA.getDocumentations()), thisMapTypeID, MapType.DOCUMENT.getMapType(), auditJson);
+        updateDocumentsAndAddToAudit(uuid, (oldDPA == null ? null : oldDPA.getDocumentations()),
+                (updatedDPA == null ? null : updatedDPA.getDocumentations()), thisMapTypeID, auditJson);
     }
 
 
@@ -98,8 +98,8 @@ public class MasterMappingDAL {
                 (updatedDSA == null ? null : updatedDSA.getSubscribers()), thisMapTypeID, MapType.SUBSCRIBER.getMapType(), auditJson);
 
         // Documentation
-        updateMappingsAndGetAuditForObjList(false, uuid, (oldDSA == null ? null : oldDSA.getDocumentations()),
-                (updatedDSA == null ? null : updatedDSA.getDocumentations()), thisMapTypeID, MapType.DOCUMENT.getMapType(), auditJson);
+        updateDocumentsAndAddToAudit(uuid, (oldDSA == null ? null : oldDSA.getDocumentations()),
+                (updatedDSA == null ? null : updatedDSA.getDocumentations()), thisMapTypeID, auditJson);
     }
 
     void updateRegionMappings(JsonRegion updatedRegion, RegionEntity oldRegion, JsonNode auditJson) throws Exception {
@@ -238,7 +238,7 @@ public class MasterMappingDAL {
                 updatedProject.getDsas(), thisMapTypeID, MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
 
         // Documents
-        updateMappingsAndGetAuditForDocuments(uuid, oldProject.getDocumentations(),
+        updateDocumentsAndAddToAudit(uuid, oldProject.getDocumentations(),
                 updatedProject.getDocumentations(), thisMapTypeID, auditJson);
 
         // Extract Technical Details
@@ -250,15 +250,23 @@ public class MasterMappingDAL {
                 updatedProject.getSchedule(), thisMapTypeID, auditJson);
     }
 
-    private <T extends JsonItem> void updateMappingsAndGetAuditForObjList(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
-                                               List<T> updatedObjectList, Short thisMapTypeId, Short otherMapTypeId,
-                                               JsonNode auditJson) throws Exception {
-        List<String> updatedMappings = new ArrayList<String>();
-        if (updatedObjectList != null) {
-            updatedObjectList.forEach((o) -> updatedMappings.add(o.getUuid()));
+    private void updateDocumentsAndAddToAudit(String thisItem, List<String> oldDocuments, List<JsonDocumentation> updatedDocuments,
+                                              Short thisMapTypeId, JsonNode auditJson) throws Exception {
+
+        List<String> updatedMappings = new ArrayList<>();
+
+        if (updatedDocuments != null) {
+            for (JsonDocumentation updatedDocument : updatedDocuments) {
+                if (updatedDocument.getUuid() == null) {
+                    updatedDocument.setUuid(UUID.randomUUID().toString());
+                    new DocumentationDAL(_entityManager).saveDocument(updatedDocument);
+                }
+            }
+
+            updatedDocuments.forEach((o) -> updatedMappings.add(o.getUuid()));
         }
 
-        updateMappingsAndAddToAudit(thisItemIsChild, thisItem, oldMappings, updatedMappings, thisMapTypeId, otherMapTypeId, auditJson);
+        updateMappingsAndAddToAudit(false, thisItem, oldDocuments, updatedMappings, thisMapTypeId, MapType.DOCUMENT.getMapType(), auditJson);
     }
 
     private void updateMappingsAndAddToAudit(boolean thisItemIsChild, String thisItem, List<String> oldMappings,
@@ -378,23 +386,6 @@ public class MasterMappingDAL {
         }
     }
 
-    private void updateMappingsAndGetAuditForDocuments(String parentItem, List<String> oldDocuments,
-                                               List<JsonDocumentation> newDocuments, Short thisMapTypeId,
-                                               JsonNode auditJson) throws Exception {
-
-        List<String> updatedMappings = new ArrayList<>();
-        List<String> removedMappings = new ArrayList<>();
-        List<String> addedMappings = new ArrayList<>();
-        newDocuments.forEach((k) -> updatedMappings.add(k.getUuid()));
-
-        Short documentMapType = MapType.DOCUMENT.getMapType();
-
-        updateMappingsAndAddToAudit(false, parentItem, oldDocuments, updatedMappings, thisMapTypeId, documentMapType, auditJson);
-
-        deleteDocuments(removedMappings);
-        saveDocuments(addedMappings, newDocuments);
-    }
-
     private String getChangeDescription(boolean thisItemIsChild, boolean added, Short thisMapTypeId, Short otherMapTypeId) {
         List<String> components = new ArrayList<>();
 
@@ -412,26 +403,6 @@ public class MasterMappingDAL {
 
         return String.join(" ", components);
     }
-
-    private void deleteDocuments(List<String> deletedDocuments) throws Exception {
-        for (String uuid : deletedDocuments) {
-            new DocumentationDAL().deleteDocument(uuid);
-        }
-    }
-
-    private void saveDocuments(List<String> addedDocuments, List<JsonDocumentation> documents) throws Exception {
-        for (JsonDocumentation doc : documents) {
-            if (addedDocuments.contains(doc.getUuid())) {
-                if (doc.getUuid() != null) {
-                    new DocumentationDAL().updateDocument(doc);
-                } else {
-                    doc.setUuid(UUID.randomUUID().toString());
-                    new DocumentationDAL().saveDocument(doc);
-                }
-            }
-        }
-    }
-
 
     public void bulkSaveMappings(List<MasterMappingEntity> mappings) {
         try {
