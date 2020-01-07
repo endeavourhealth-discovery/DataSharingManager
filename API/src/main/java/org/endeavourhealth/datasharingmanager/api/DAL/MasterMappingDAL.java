@@ -165,36 +165,36 @@ public class MasterMappingDAL {
         Short thisMapTypeID = MapType.PROJECT.getMapType();
 
         // Publishers
-        updateMappingsAndAddToAudit(false, uuid, oldProject.getPublishers(),
-                updatedProject.getPublishers(), thisMapTypeID, MapType.PUBLISHER.getMapType(), auditJson);
+        updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getPublishers()),
+                (updatedProject == null ? null : updatedProject.getPublishers()), thisMapTypeID, MapType.PUBLISHER.getMapType(), auditJson);
 
         // Subscriber
-        updateMappingsAndAddToAudit(false, uuid, oldProject.getSubscribers(),
-                updatedProject.getSubscribers(), thisMapTypeID, MapType.SUBSCRIBER.getMapType(), auditJson);
+        updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getSubscribers()),
+                (updatedProject == null ? null : updatedProject.getSubscribers()), thisMapTypeID, MapType.SUBSCRIBER.getMapType(), auditJson);
 
         // Cohorts
-        updateMappingsAndAddToAudit(false, uuid, oldProject.getCohorts(),
-                updatedProject.getCohorts(), thisMapTypeID, MapType.COHORT.getMapType(), auditJson);
+        updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getCohorts()),
+                (updatedProject == null ? null : updatedProject.getCohorts()), thisMapTypeID, MapType.COHORT.getMapType(), auditJson);
 
         // DataSets
-        updateMappingsAndAddToAudit(false, uuid, oldProject.getDataSets(),
-                updatedProject.getDataSets(), thisMapTypeID, MapType.DATASET.getMapType(), auditJson);
+        updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getDataSets()),
+                (updatedProject == null ? null : updatedProject.getDataSets()), thisMapTypeID, MapType.DATASET.getMapType(), auditJson);
 
         // DSA
-        updateMappingsAndAddToAudit(true, uuid, oldProject.getDsas(),
-                updatedProject.getDsas(), thisMapTypeID, MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
+        updateMappingsAndAddToAudit(true, uuid, (oldProject == null ? null : oldProject.getDsas()),
+                (updatedProject == null ? null : updatedProject.getDsas()), thisMapTypeID, MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
 
         // Documents
-        updateDocumentsAndAddToAudit(uuid, oldProject.getDocumentations(),
-                updatedProject.getDocumentations(), thisMapTypeID, auditJson);
+        updateDocumentsAndAddToAudit(uuid, (oldProject == null ? null : oldProject.getDocumentations()),
+                (updatedProject == null ? null : updatedProject.getDocumentations()), thisMapTypeID, auditJson);
 
         // Extract Technical Details
-        updateMappingsAndGetAuditForExtractTechnicalDetails(uuid, oldProject.getExtractTechnicalDetails(),
-                updatedProject.getExtractTechnicalDetails(), thisMapTypeID, auditJson);
+        updateMappingsAndGetAuditForExtractTechnicalDetails(uuid, (oldProject == null ? null : oldProject.getExtractTechnicalDetails()),
+                (updatedProject == null ? null : updatedProject.getExtractTechnicalDetails()), thisMapTypeID, auditJson);
 
         //Schedules
-        updateMappingsAndGetAuditForSchedule(uuid, oldProject.getSchedule(),
-                updatedProject.getSchedule(), thisMapTypeID, auditJson);
+        updateMappingsAndGetAuditForSchedule(uuid, (oldProject == null ? null : oldProject.getSchedule()),
+                (updatedProject == null ? null : updatedProject.getSchedule()), thisMapTypeID, auditJson);
     }
 
     private void updateDocumentsAndAddToAudit(String thisItem, List<String> oldDocuments, List<JsonDocumentation> updatedDocuments,
