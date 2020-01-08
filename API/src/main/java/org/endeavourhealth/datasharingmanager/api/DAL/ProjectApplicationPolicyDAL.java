@@ -23,6 +23,7 @@ public class ProjectApplicationPolicyDAL {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
         try {
+            //TODO: Audit this? Or, move Application Policy to a field in Project, or to MasterMapping?
             entityManager.getTransaction().begin();
             ProjectApplicationPolicyEntity projectApplicationPolicyEntity = new ProjectApplicationPolicyEntity();
             projectApplicationPolicyEntity.setProjectUuid(projectApplicationPolicy.getProjectUuid());
