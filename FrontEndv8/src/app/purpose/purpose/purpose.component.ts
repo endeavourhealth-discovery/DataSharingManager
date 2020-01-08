@@ -25,12 +25,12 @@ export class PurposeComponent implements OnInit {
   editMode = false;
 
   constructor(public dialogRef: MatDialogRef<PurposeComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: DialogData,
+              @Inject(MAT_DIALOG_DATA) public dataIn: DialogData,
               private log: LoggerService) {
 
-    this.data = data.resultData;
-    this.type = data.type;
-    this.index = data.index;
+    this.data = dataIn.resultData;
+    this.type = dataIn.type;
+    this.index = dataIn.index;
   }
 
   ngOnInit() {
