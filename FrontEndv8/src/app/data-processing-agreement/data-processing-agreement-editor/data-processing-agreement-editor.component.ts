@@ -23,6 +23,9 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
   @ViewChild('purposesTable', { static: false }) purposesTable: GenericTableComponent;
   @ViewChild('benefitsTable', { static: false }) benefitsTable: GenericTableComponent;
+  @ViewChild('regionsTable', { static: false }) regionsTable: GenericTableComponent;
+  @ViewChild('publishersTable', { static: false }) publishersTable: GenericTableComponent;
+  @ViewChild('documentationsTable', { static: false }) documentationsTable: GenericTableComponent;
 
 
   dpa: Dpa;
@@ -227,7 +230,13 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   deleteRegions() {
-    //TODO
+    for (var i = 0; i < this.regionsTable.selection.selected.length; i++) {
+      let purpose = this.regionsTable.selection.selected[i];
+      this.regions.forEach( (item, index) => {
+        if(item === purpose) this.regions.splice(index,1);
+      });
+    }
+    this.regionsTable.updateRows();
   }
 
   addRegion() {
@@ -247,7 +256,13 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   deletePublishers() {
-    //TODO
+    for (var i = 0; i < this.publishersTable.selection.selected.length; i++) {
+      let purpose = this.publishersTable.selection.selected[i];
+      this.publishers.forEach( (item, index) => {
+        if(item === purpose) this.publishers.splice(index,1);
+      });
+    }
+    this.publishersTable.updateRows();
   }
 
   addPublisher() {

@@ -5,6 +5,7 @@ export class Purpose {
 
     getDisplayItems() :any[] {
         return [
+            {label: 'Title', property: 'title'},
             {label: 'Detail', property: 'detail'},
         ];
     }
