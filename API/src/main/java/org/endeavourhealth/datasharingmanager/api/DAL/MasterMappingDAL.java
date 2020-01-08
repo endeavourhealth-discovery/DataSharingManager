@@ -358,7 +358,6 @@ public class MasterMappingDAL {
             }
         }
 
-
         SecurityProjectScheduleDAL securityProjectScheduleDAL = new SecurityProjectScheduleDAL();
 
         Short thisMapTypeId = MapType.PROJECT.getMapType();
@@ -376,6 +375,10 @@ public class MasterMappingDAL {
         }
 
         if (addedSchedule != null) {
+            if (addedSchedule.getUuid() == null) {
+                addedSchedule.setUuid(UUID.randomUUID().toString());
+            }
+
             securityProjectScheduleDAL.save(addedSchedule);
 
             List<String> addedScheduleUuids = new ArrayList<>(Arrays.asList(addedSchedule.getUuid()));
