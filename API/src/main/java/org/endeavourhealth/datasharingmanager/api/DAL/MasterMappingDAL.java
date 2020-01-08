@@ -11,7 +11,6 @@ import org.endeavourhealth.uiaudit.logic.AuditCompareLogic;
 
 import javax.persistence.EntityManager;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MasterMappingDAL {
     
@@ -282,6 +281,8 @@ public class MasterMappingDAL {
 
         if (updatedPurposes != null) {
             for (JsonPurpose updatedPurpose : updatedPurposes) {
+                updatedPurpose.setUuidIfRequired();
+
                 if (oldPurposes == null) {
                     addedPurposes.add(updatedPurpose);
                 } else {
@@ -289,6 +290,8 @@ public class MasterMappingDAL {
                     if (oldPurpose.isPresent()) {
                         if (!updatedPurpose.toString().equals(oldPurpose.get().toString())) {
                             changeLog.add(buildBeforeAfter(oldPurpose.get().toString(), updatedPurpose.toString()));
+                            oldPurpose.get().updateFromJson(updatedPurpose);
+                            _entityManager.merge(oldPurpose.get());
                         } //else: Unchanged - no action required.
                     } else {
                         addedPurposes.add(updatedPurpose);
@@ -297,30 +300,39 @@ public class MasterMappingDAL {
             }
         }
 
-        List<String> removalLog = new ArrayList<>();
-        List<String> additionLog = new ArrayList<>();
-
         // Now apply changes and add to Json
         if (!removedPurposes.isEmpty()) {
-            List<String> removedPurposeUuids = removedPurposes.stream().map(PurposeEntity::getUuid).collect(Collectors.toList());
-            deleteMappings(false, thisItem, removedPurposeUuids, thisMapTypeId, otherMapTypeId);
-            removedPurposes.forEach(rp -> removalLog.add(rp.toString()));
+            List<String> removedPurposeUuids = new ArrayList<>();
+            List<String> removalLog = new ArrayList<>();
 
+            for (PurposeEntity removedPurpose : removedPurposes) {
+                removedPurposeUuids.add(removedPurpose.getUuid());
+                _entityManager.remove(_entityManager.merge(removedPurpose));
+                removalLog.add(removedPurpose.toString());
+            }
+
+            deleteMappings(false, thisItem, removedPurposeUuids, thisMapTypeId, otherMapTypeId);
             ((ObjectNode) auditJson).put(buildChangeDescription(false, false, thisMapTypeId, otherMapTypeId),
                     StringUtils.join(removalLog, System.getProperty("line.separator")));
         }
 
         if (!addedPurposes.isEmpty()) {
-            List<String> addedPurposeUuids = addedPurposes.stream().map(JsonPurpose::getUuid).collect(Collectors.toList());
-            saveMappings(false, thisItem, addedPurposeUuids, thisMapTypeId, otherMapTypeId);
-            addedPurposes.forEach(ap -> additionLog.add(ap.toString()));
+            List<String> addedPurposeUuids = new ArrayList<>();
+            List<String> additionLog = new ArrayList<>();
 
+            for (JsonPurpose addedPurpose : addedPurposes) {
+                addedPurposeUuids.add(addedPurpose.getUuid());
+                _entityManager.persist(new PurposeEntity(addedPurpose));
+                additionLog.add(addedPurpose.toString());
+            }
+
+            saveMappings(false, thisItem, addedPurposeUuids, thisMapTypeId, otherMapTypeId);
             ((ObjectNode) auditJson).put(buildChangeDescription(false, true, thisMapTypeId, otherMapTypeId),
                     StringUtils.join(additionLog, System.getProperty("line.separator")));
         }
 
         if (!changeLog.isEmpty()) {
-            // No changes required to mappings
+            // No changes required to mappings, and entities already merged above
 
             ((ObjectNode) auditJson).put(buildChangeDescription(false, false, true, thisMapTypeId, otherMapTypeId),
                     StringUtils.join(changeLog, System.getProperty("line.separator")));
@@ -490,11 +502,11 @@ public class MasterMappingDAL {
         });
     }
 
-    private String buildChangeDescription(boolean thisItemIsChild, boolean added, Short thisMapTypeId, Short otherMapTypeId) {
+    static String buildChangeDescription(boolean thisItemIsChild, boolean added, Short thisMapTypeId, Short otherMapTypeId) {
         return buildChangeDescription(thisItemIsChild, added, false, thisMapTypeId, otherMapTypeId);
     }
 
-    private String buildChangeDescription(boolean thisItemIsChild, boolean added, boolean updated, Short thisMapTypeId, Short otherMapTypeId) {
+    static String buildChangeDescription(boolean thisItemIsChild, boolean added, boolean updated, Short thisMapTypeId, Short otherMapTypeId) {
         List<String> components = new ArrayList<>();
 
         if (updated) {

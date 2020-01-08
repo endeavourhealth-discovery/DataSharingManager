@@ -4,13 +4,15 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.Se
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDSA;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonPurpose;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.*;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.ProjectCache;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.UserCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
-import org.endeavourhealth.datasharingmanager.api.DAL.*;
+import org.endeavourhealth.datasharingmanager.api.DAL.DataSharingAgreementDAL;
+import org.endeavourhealth.datasharingmanager.api.DAL.PurposeDAL;
+import org.endeavourhealth.datasharingmanager.api.DAL.RegionDAL;
 
-import javax.persistence.EntityManager;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,17 +88,6 @@ public class DataSharingAgreementLogic {
                 .ok()
                 .entity(dsas)
                 .build();
-    }
-
-    public static List<JsonPurpose> setUuidsAndSavePurpose(List<JsonPurpose> purposes, EntityManager entityManager) throws Exception {
-        for (JsonPurpose purpose : purposes) {
-            if (purpose.getUuid() == null) {
-                purpose.setUuid(UUID.randomUUID().toString());
-            }
-            new PurposeDAL().savePurpose(purpose, entityManager);
-        }
-
-        return purposes;
     }
 
     public Response getLinkedRegions(String dsaUuid, String userId) throws Exception {

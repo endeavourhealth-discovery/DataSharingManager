@@ -6,7 +6,6 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDSA;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
-import org.endeavourhealth.datasharingmanager.api.Logic.DataSharingAgreementLogic;
 import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
 import org.endeavourhealth.uiaudit.enums.AuditAction;
 import org.endeavourhealth.uiaudit.enums.ItemType;
@@ -63,9 +62,6 @@ public class DataSharingAgreementDAL {
         try {
             _entityManager.getTransaction().begin();
 
-            dsa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dsa.getPurposes(), _entityManager));
-            dsa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dsa.getBenefits(), _entityManager));
-            
             DataSharingAgreementEntity newDSA = new DataSharingAgreementEntity(dsa);
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data Sharing Agreement edited", oldDSAEntity, newDSA);
 
@@ -91,9 +87,6 @@ public class DataSharingAgreementDAL {
 
         try {
             _entityManager.getTransaction().begin();
-
-            dsa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dsa.getPurposes(), _entityManager));
-            dsa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dsa.getBenefits(), _entityManager));
 
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data Sharing Agreement created", null, dsaEntity);
 

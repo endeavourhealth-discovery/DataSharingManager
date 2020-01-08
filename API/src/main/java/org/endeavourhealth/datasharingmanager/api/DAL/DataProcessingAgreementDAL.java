@@ -1,14 +1,10 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.CohortEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataProcessingAgreementEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDPA;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
-import org.endeavourhealth.datasharingmanager.api.Logic.DataSharingAgreementLogic;
 import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
 import org.endeavourhealth.uiaudit.enums.AuditAction;
 import org.endeavourhealth.uiaudit.enums.ItemType;
@@ -20,7 +16,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.sql.Date;
 import java.util.List;
 
 public class DataProcessingAgreementDAL {
@@ -64,9 +59,6 @@ public class DataProcessingAgreementDAL {
         try {
             _entityManager.getTransaction().begin();
 
-            dpa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getPurposes(), _entityManager));
-            dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits(), _entityManager));
-
             DataProcessingAgreementEntity newDPA = new DataProcessingAgreementEntity(dpa);
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data Processing Agreement edited", oldDPAEntity, newDPA);
 
@@ -92,9 +84,6 @@ public class DataProcessingAgreementDAL {
 
         try {
             _entityManager.getTransaction().begin();
-
-            dpa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getPurposes(), _entityManager));
-            dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits(), _entityManager));
 
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data Processing Agreement created", null, dpaEntity);
 
