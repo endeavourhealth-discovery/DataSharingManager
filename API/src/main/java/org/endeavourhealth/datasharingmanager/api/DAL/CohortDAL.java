@@ -22,121 +22,119 @@ import java.util.List;
 
 public class CohortDAL {
 
+    private EntityManager _entityManager;
+    private MasterMappingDAL _masterMappingDAL;
+    private AuditCompareLogic _auditCompareLogic;
+    private UIAuditJDBCDAL _uiAuditJDBCDAL;
+
+    public CohortDAL() throws Exception {
+        _entityManager = ConnectionManager.getDsmEntityManager();
+        _masterMappingDAL = new MasterMappingDAL(_entityManager);
+        _auditCompareLogic = new AuditCompareLogic();
+        _uiAuditJDBCDAL = new UIAuditJDBCDAL();
+    }
+    
     private void clearCohortCache(String cohortId) throws Exception {
         CohortCache.clearCohortCache(cohortId);
     }
 
-    public List<CohortEntity> getAllCohorts() throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
+    public List<CohortEntity> getAllCohorts() {
         try {
-
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<CohortEntity> cq = cb.createQuery(CohortEntity.class);
             Root<CohortEntity> rootEntry = cq.from(CohortEntity.class);
             CriteriaQuery<CohortEntity> all = cq.select(rootEntry);
-            TypedQuery<CohortEntity> allQuery = entityManager.createQuery(all);
+            TypedQuery<CohortEntity> allQuery = _entityManager.createQuery(all);
             List<CohortEntity> ret = allQuery.getResultList();
 
             return ret;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
     }
 
     public void updateCohort(JsonCohort cohort, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        CohortEntity oldCohortEntity = entityManager.find(CohortEntity.class, cohort.getUuid());
+        CohortEntity oldCohortEntity = _entityManager.find(CohortEntity.class, cohort.getUuid());
         oldCohortEntity.setDpas(new SecurityMasterMappingDAL().getParentMappings(cohort.getUuid(), MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType()));
         CohortEntity newCohort = new CohortEntity(cohort);
-        JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Cohort edited", oldCohortEntity, newCohort);
+        JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Cohort edited", oldCohortEntity, newCohort);
 
         try {
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
             oldCohortEntity.setName(cohort.getName());
             oldCohortEntity.setConsentModelId(cohort.getConsentModelId());
             oldCohortEntity.setDescription(cohort.getDescription());
             oldCohortEntity.setTechnicalDefinition(cohort.getTechnicalDefinition());
 
-            new MasterMappingDAL(entityManager).updateCohortMappings(cohort, oldCohortEntity, auditJson);
+            _masterMappingDAL.updateCohortMappings(cohort, oldCohortEntity, auditJson);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.EDIT, ItemType.COHORT, null, null, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.COHORT, auditJson);
 
-            entityManager.getTransaction().commit();
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearCohortCache(cohort.getUuid());
     }
 
     public void saveCohort(JsonCohort cohort, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
         CohortEntity cohortEntity = new CohortEntity();
 
         try {
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
             cohortEntity.setName(cohort.getName());
             cohortEntity.setConsentModelId(cohort.getConsentModelId());
             cohortEntity.setDescription(cohort.getDescription());
             cohortEntity.setTechnicalDefinition(cohort.getTechnicalDefinition());
             cohortEntity.setUuid(cohort.getUuid());
 
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Cohort created", null, cohortEntity);
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Cohort created", null, cohortEntity);
 
-            new MasterMappingDAL(entityManager).updateCohortMappings(cohort, null, auditJson);
+            _masterMappingDAL.updateCohortMappings(cohort, null, auditJson);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.ADD, ItemType.COHORT, null, null, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.COHORT, auditJson);
 
-            entityManager.persist(cohortEntity);
-            entityManager.getTransaction().commit();
+            _entityManager.persist(cohortEntity);
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearCohortCache(cohort.getUuid());
     }
 
     public void deleteCohort(String uuid, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
 
-            CohortEntity oldCohortEntity = entityManager.find(CohortEntity.class, uuid);
+            CohortEntity oldCohortEntity = _entityManager.find(CohortEntity.class, uuid);
             oldCohortEntity.setDpas(new SecurityMasterMappingDAL().getParentMappings(uuid, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType()));
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Cohort deleted", oldCohortEntity, null);
-            new MasterMappingDAL(entityManager).updateCohortMappings(null, oldCohortEntity, auditJson);
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.DELETE, ItemType.COHORT, null, null, auditJson);
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Cohort deleted", oldCohortEntity, null);
+            _masterMappingDAL.updateCohortMappings(null, oldCohortEntity, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.DELETE, ItemType.COHORT, auditJson);
 
-            entityManager.remove(oldCohortEntity);
-            entityManager.getTransaction().commit();
+            _entityManager.remove(oldCohortEntity);
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearCohortCache(uuid);
     }
 
     public List<CohortEntity> search(String expression) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<CohortEntity> cq = cb.createQuery(CohortEntity.class);
             Root<CohortEntity> rootEntry = cq.from(CohortEntity.class);
 
@@ -144,12 +142,12 @@ public class CohortDAL {
                     cb.like(cb.upper(rootEntry.get("description")), "%" + expression.toUpperCase() + "%"));
 
             cq.where(predicate);
-            TypedQuery<CohortEntity> query = entityManager.createQuery(cq);
+            TypedQuery<CohortEntity> query = _entityManager.createQuery(cq);
             List<CohortEntity> ret = query.getResultList();
 
             return ret;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
     }
