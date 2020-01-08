@@ -120,7 +120,7 @@ public class ProjectDAL {
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Project deleted", oldProjectEntity, null);
             _masterMappingDAL.updateProjectMappings(null, oldProjectEntity, auditJson);
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId,
-                    AuditAction.DELETE, ItemType.ORGANISATION, null, null, auditJson);
+                    AuditAction.DELETE, ItemType.PROJECT, null, null, auditJson);
 
             _entityManager.remove(oldProjectEntity);
             _entityManager.getTransaction().commit();
