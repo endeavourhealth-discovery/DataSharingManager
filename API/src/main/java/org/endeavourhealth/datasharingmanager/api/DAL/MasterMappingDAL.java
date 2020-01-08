@@ -48,11 +48,11 @@ public class MasterMappingDAL {
         Short thisMapTypeID = MapType.DATAPROCESSINGAGREEMENT.getMapType();
 
         // Purposes
-        updatePurposesAndGetAudit(uuid, (oldDPA == null ? null : oldDPA.getPurposes()),
+        updatePurposesAndAddToAudit(uuid, (oldDPA == null ? null : oldDPA.getPurposes()),
                 (updatedDPA == null ? null : updatedDPA.getPurposes()), thisMapTypeID, MapType.PURPOSE.getMapType(), auditJson);
 
         // Benefits
-        updatePurposesAndGetAudit(uuid, (oldDPA == null ? null : oldDPA.getBenefits()),
+        updatePurposesAndAddToAudit(uuid, (oldDPA == null ? null : oldDPA.getBenefits()),
                 (updatedDPA == null ? null : updatedDPA.getBenefits()), thisMapTypeID, MapType.BENEFIT.getMapType(), auditJson);
 
         // Regions
@@ -74,11 +74,11 @@ public class MasterMappingDAL {
         Short thisMapTypeID = MapType.DATASHARINGAGREEMENT.getMapType();
 
         // Purposes
-        updatePurposesAndGetAudit(uuid, (oldDSA == null ? null : oldDSA.getPurposes()),
+        updatePurposesAndAddToAudit(uuid, (oldDSA == null ? null : oldDSA.getPurposes()),
                 (updatedDSA == null ? null : updatedDSA.getPurposes()), thisMapTypeID, MapType.PURPOSE.getMapType(), auditJson);
 
         // Benefits
-        updatePurposesAndGetAudit(uuid, (oldDSA == null ? null : oldDSA.getBenefits()),
+        updatePurposesAndAddToAudit(uuid, (oldDSA == null ? null : oldDSA.getBenefits()),
                 (updatedDSA == null ? null : updatedDSA.getBenefits()), thisMapTypeID, MapType.BENEFIT.getMapType(), auditJson);
 
         // Regions
@@ -265,9 +265,9 @@ public class MasterMappingDAL {
         }
     }
 
-    private void updatePurposesAndGetAudit(String thisItem, List<PurposeEntity> oldPurposes,
-                                               List<JsonPurpose> updatedPurposes, Short thisMapTypeId, Short otherMapTypeId,
-                                               JsonNode auditJson) throws Exception {
+    private void updatePurposesAndAddToAudit(String thisItem, List<PurposeEntity> oldPurposes,
+                                             List<JsonPurpose> updatedPurposes, Short thisMapTypeId, Short otherMapTypeId,
+                                             JsonNode auditJson) throws Exception {
 
         // First, identify what has changed
         List<JsonPurpose> addedPurposes = new ArrayList<>();
