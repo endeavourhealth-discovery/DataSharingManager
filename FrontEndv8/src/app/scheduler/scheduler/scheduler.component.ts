@@ -164,11 +164,10 @@ export class SchedulerComponent implements OnInit {
   //Advanced Tab
   cronManual: string;
 
-  constructor(
-    public dialogRef: MatDialogRef<SchedulerComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private schedulerService: SchedulerService,
-    private log: LoggerService) {
+  constructor(public dialogRef: MatDialogRef<SchedulerComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: DialogData,
+              private schedulerService: SchedulerService,
+              private log: LoggerService) {
 
     this.schedule = data.schedule;
     this.allowTime = data.allowTime;

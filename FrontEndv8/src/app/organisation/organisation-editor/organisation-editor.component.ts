@@ -433,4 +433,9 @@ export class OrganisationEditorComponent implements OnInit {
   editRegion(item: Organisation) {
     this.router.navigate(['/region', item.uuid, 'edit']);
   }
+
+  editDpa(dpa: Dpa) {
+    this.router.navigate(['/dpa', dpa.uuid, 'edit']);
+  }
+
 }

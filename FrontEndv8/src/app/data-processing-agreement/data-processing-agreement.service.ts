@@ -7,8 +7,8 @@ import {DataSet} from '../data-set/models/Dataset';
 import {Cohort} from '../cohort/models/Cohort';
 import {Organisation} from '../organisation/models/Organisation';
 import {Marker} from '../region/models/Marker';
-import {Purpose} from "../data-sharing-agreement/models/Purpose";
 import {Region} from "../region/models/Region";
+import { Purpose } from "src/app/models/Purpose";
 
 @Injectable()
 export class DataProcessingAgreementService {

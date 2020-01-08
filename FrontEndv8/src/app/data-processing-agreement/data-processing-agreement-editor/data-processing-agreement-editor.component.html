@@ -27,7 +27,7 @@
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill>
             <mat-label>Status</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="dpa.dsaStatusId" name="status">
+            <mat-select matInput name="status" [disabled]="disableStatus" [(ngModel)]="dpa.dsaStatusId" name="status">
               <mat-option *ngFor="let stat of status" [value]="stat.num">{{stat.name}}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -58,7 +58,7 @@
                            [allowSelect]="allowEdit"
                            (clicked)="purposeClicked($event)">
           <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePurposes()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPurpose()"><mat-icon>add</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPurpose(-1)"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
       <mat-tab>
@@ -71,7 +71,7 @@
                            [allowSelect]="allowEdit"
                            (clicked)="benefitClicked($event)">
           <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteBenefits()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addBenefit()"><mat-icon>add</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addBenefit(-1)"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
       <mat-tab>

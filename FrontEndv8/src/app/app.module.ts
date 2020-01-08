@@ -16,6 +16,7 @@ import {DataSetModule} from "./data-set/data-set.module";
 import {DataProcessingAgreementModule} from "./data-processing-agreement/data-processing-agreement.module";
 import {DataSharingAgreementModule} from "./data-sharing-agreement/data-sharing-agreement.module";
 import {DataSharingSummaryModule} from "./data-sharing-summary/data-sharing-summary.module";
+import {PurposeModule} from "./purpose/purpose.module";
 
 
 const keycloakService = new KeycloakService();
@@ -28,6 +29,7 @@ const keycloakService = new KeycloakService();
     OrganisationModule,
     RegionModule,
     SchedulerModule,
+    PurposeModule,
     ValueSetsModule,
     CohortModule,
     DataExchangeModule,

@@ -1,0 +1,29 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar><mat-icon>lightbulb_outline</mat-icon></div>
+    <mat-card-title>Add {{type}}</mat-card-title>
+    <mat-card-subtitle>Add a new {{type | lowercase}}</mat-card-subtitle>
+    <div fxFlex></div>
+  </mat-card-header>
+  <mat-card-content>
+      <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+        <mat-form-field appearance="outline" fxFlex="100" fxFill>
+          <mat-label>Title</mat-label>
+          <input required matInput [(ngModel)]="title" placeholder="Title" name="title">
+        </mat-form-field>
+        <div></div>
+        <mat-form-field appearance="outline" fxFlex="100" fxFill>
+          <mat-label>Detail</mat-label>
+          <textarea matInput [(ngModel)]="detail" placeholder="detail" name="detail" rows="15">
+          </textarea>
+        </mat-form-field>
+      </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button *ngIf="!editMode" mat-raised-button color="primary" (click)="add()" cdkFocusInitial>Add {{type | lowercase}}</button>
+    <button *ngIf="!editMode" mat-raised-button color="accent" (click)="addAnother()" cdkFocusInitial>Add another {{type | lowercase}}</button>
+    <button *ngIf="editMode" mat-raised-button color="primary" (click)="save();">Save</button>
+    <button *ngIf="editMode" mat-raised-button color="accent" (click)="saveAndAddAnother();">Save and add another {{type | lowercase}}</button>
+    <button mat-raised-button color="accent" (click)="cancel()" cdkFocusInitial>Cancel</button>
+  </mat-card-actions>
+</mat-card>

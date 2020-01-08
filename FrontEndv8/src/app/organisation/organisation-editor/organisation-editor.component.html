@@ -117,7 +117,8 @@
         <app-generic-table
           [items]="dpaPublishing"
           [detailsToShow]="dpaDetailsToShow"
-          [allowSelect]="allowEdit">
+          [allowSelect]="allowEdit"
+          (clicked)="editDpa($event)">
           <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
         </app-generic-table>

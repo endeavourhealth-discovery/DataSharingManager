@@ -2,12 +2,12 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from 'rxjs/Observable';
 import {Organisation} from '../organisation/models/Organisation';
-import {Purpose} from './models/Purpose';
 import {Region} from '../region/models/Region';
 import {DataFlow} from '../data-flow/models/DataFlow';
 import {Dsa} from './models/Dsa';
 import {Marker} from '../region/models/Marker';
 import {Project} from "../project/models/Project";
+import { Purpose } from "src/app/models/Purpose";
 
 @Injectable()
 export class DataSharingAgreementService {

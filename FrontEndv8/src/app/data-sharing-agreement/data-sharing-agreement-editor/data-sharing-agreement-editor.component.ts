@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {DataSharingAgreementService} from '../data-sharing-agreement.service';
 import {LoggerService, UserManagerService} from "dds-angular8";
 import {ActivatedRoute, Router} from '@angular/router';
-import {Purpose} from '../models/Purpose';
+import {Purpose} from '../../models/Purpose';
 import {Organisation} from '../../organisation/models/Organisation';
 import {Region} from '../../region/models/Region';
 import {Dsa} from '../models/Dsa';

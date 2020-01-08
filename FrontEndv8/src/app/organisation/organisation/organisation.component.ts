@@ -56,7 +56,8 @@ export class OrganisationComponent implements OnInit {
               private router: Router,
               private route: ActivatedRoute,
               private userManagerNotificationService: UserManagerService,
-              private log: LoggerService, public dialog: MatDialog) {
+              private log: LoggerService,
+              public dialog: MatDialog) {
   }
 
   protected performAction(mode: string) {
