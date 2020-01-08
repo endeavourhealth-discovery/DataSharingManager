@@ -450,6 +450,10 @@ public class MasterMappingDAL {
         return String.join(" ", components);
     }
 
+    private String buildBeforeAfter(String before, String after) {
+        return "Before: " + before + "; After: " + after;
+    }
+
     public void bulkSaveMappings(List<MasterMappingEntity> mappings) {
         try {
             int batchSize = 50;
