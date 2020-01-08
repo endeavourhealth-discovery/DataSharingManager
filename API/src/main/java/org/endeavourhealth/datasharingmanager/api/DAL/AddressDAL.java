@@ -87,16 +87,6 @@ public class AddressDAL {
         List<String> additionLog = new ArrayList<>();
         List<String> updateLog = new ArrayList<>();
 
-        if (oldAddresses != null) {
-            for (AddressEntity oldAddress : oldAddresses) {
-                if (updatedAddresses == null || updatedAddresses.stream().noneMatch(up -> up.getUuid().equals(oldAddress.getUuid()))) {
-                    // Removed
-                    removalLog.add(oldAddress.toString());
-                    entityManager.remove(entityManager.merge(oldAddress));
-                }
-            }
-        }
-
         if (updatedAddresses != null) {
             for (JsonAddress updatedAddress : updatedAddresses) {
                 updatedAddress.setUuidsIfRequired(organisationUuid);
@@ -117,6 +107,16 @@ public class AddressDAL {
                         } //else: Unchanged - no action required.
                     } else {
                         added = true;
+                    }
+                }
+
+                if (oldAddresses != null) {
+                    for (AddressEntity oldAddress : oldAddresses) {
+                        if (updatedAddresses == null || updatedAddresses.stream().noneMatch(up -> up.getUuid().equals(oldAddress.getUuid()))) {
+                            // Removed
+                            removalLog.add(oldAddress.toString());
+                            entityManager.remove(entityManager.merge(oldAddress));
+                        }
                     }
                 }
 
