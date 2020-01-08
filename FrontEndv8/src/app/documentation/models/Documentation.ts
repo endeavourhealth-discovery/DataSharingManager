@@ -8,7 +8,7 @@ export class Documentation {
         return [
             {label: 'Title', property: 'title'},
             {label: 'Filename', property: 'filename'},
-            {label: 'File Data', property: 'fileData', document : true},
+            //{label: 'File Data', property: 'fileData', document : true},
         ];
     }
 }

@@ -25,18 +25,20 @@ import {GenericTableComponent} from "../../generic-table/generic-table/generic-t
   templateUrl: './data-sharing-agreement-editor.component.html',
   styleUrls: ['./data-sharing-agreement-editor.component.css']
 })
+
 export class DataSharingAgreementEditorComponent implements OnInit {
   private paramSubscriber: any;
 
   dsa: Dsa = <Dsa>{};
   //dataFlows: DataFlow[] = [];
+  purposes: Purpose[] = [];
+  benefits: Purpose[] = [];
   regions: Region[] = [];
   projects: Project[] = [];
   publishers: Organisation[] = [];
   subscribers: Organisation[] = [];
   documentations: Documentation[] = [];
-  purposes: Purpose[] = [];
-  benefits: Purpose[] = [];
+
   publisherMarkers: Marker[];
   subscriberMarkers: Marker[];
   mapMarkers: Marker[] = [];
@@ -63,11 +65,13 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   ];
 
   //dataflowDetailsToShow = new DataFlow().getDisplayItems();
-  regionDetailsToShow = new Region().getDisplayItems();
-  orgDetailsToShow = new Organisation().getDisplayItems();
   purposeDetailsToShow = new Purpose().getDisplayItems();
-  documentDetailsToShow = new Documentation().getDisplayItems();
+  benefitDetailsToShow = new Purpose().getDisplayItems();
+  regionDetailsToShow = new Region().getDisplayItems();
   projectDetailsToShow = new Project().getDisplayItems();
+  publisherDetailsToShow = new Organisation().getDisplayItems();
+  subscriberDetailsToShow = new Organisation().getDisplayItems();
+  documentDetailsToShow = new Documentation().getDisplayItems();
 
   constructor(private log: LoggerService,
               private dsaService: DataSharingAgreementService,
@@ -131,12 +135,12 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           this.dsa.endDate = this.datePipe.transform(this.dsa.endDate,"yyyy-MM-dd");
           this.checkEndDate();
           //this.getLinkedDataFlows();
-          this.getLinkedRegions();
-          this.getPublishers();
-          this.getProjects();
-          this.getSubscribers();
           this.getPurposes();
           this.getBenefits();
+          this.getLinkedRegions();
+          this.getProjects();
+          this.getPublishers();
+          this.getSubscribers();
           this.getPublisherMarkers();
           this.getSubscriberMarkers();
           this.getAssociatedDocumentation();
@@ -154,11 +158,26 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       this.dsa.dataFlows[dataflow.uuid] = dataflow.name;
     }*/
 
+    // Populate purposes before save
+    this.dsa.purposes = [];
+    this.dsa.purposes = this.purposes;
+
+    // Populate benefits before save
+    this.dsa.benefits = [];
+    this.dsa.benefits = this.benefits;
+
     // Populate regions before save
     this.dsa.regions = {};
     for (const idx in this.regions) {
       const region: Region = this.regions[idx];
       this.dsa.regions[region.uuid] = region.name;
+    }
+
+    // Populate projects before save
+    this.dsa.projects = {};
+    for (const idx in this.projects) {
+      const proj: Project = this.projects[idx];
+      this.dsa.projects[proj.uuid] = proj.name;
     }
 
     // Populate publishers before save
@@ -174,21 +193,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       const sub: Organisation = this.subscribers[idx];
       this.dsa.subscribers[sub.uuid] = sub.name;
     }
-
-    // Populate projects before save
-    this.dsa.projects = {};
-    for (const idx in this.projects) {
-      const proj: Project = this.projects[idx];
-      this.dsa.projects[proj.uuid] = proj.name;
-    }
-
-    // Populate purposes before save
-    this.dsa.purposes = [];
-    this.dsa.purposes = this.purposes;
-
-    // Populate benefits before save
-    this.dsa.benefits = [];
-    this.dsa.benefits = this.benefits;
 
     // Populate documents before save
     this.dsa.documentations = [];
@@ -209,7 +213,11 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     window.history.back();
   }
 
-  /*private editDataFlows() {
+  /*private editDataFlow(item: DataFlow) {
+  this.router.navigate(['/dataFlow', item.uuid, 'edit']);
+  }
+
+  private editDataFlows() {
     const vm = this;
     DataflowPickerComponent.open(vm.$modal, vm.dataFlows)
       .result.then(function
@@ -217,6 +225,22 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       () => vm.log.info('Edit data flows cancelled')
     );
   }*/
+
+  private editPurposes(index: number = -1) {
+    /*PurposeAddComponent.open(this.$modal, this.purposes, 'Purpose', index)
+      .result.then(function
+      (result: Purpose[]) {this.purposes = result;},
+      () => this.log.info('Edit purposes cancelled')
+    );*/
+  }
+
+  private editBenefits(index: number = -1) {
+    /*PurposeAddComponent.open(this.$modal, this.benefits, 'Benefit', index)
+      .result.then(function
+      (result: Purpose[]) {this.benefits = result;},
+      () => this.log.info('Edit benefits cancelled')
+    );*/
+  }
 
   private editRegions() {
     /*RegionPickerComponent.open(this.$modal, this.regions, '', 1)
@@ -264,26 +288,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       );
     }*/
   }
-
-  private editPurposes(index: number = -1) {
-    /*PurposeAddComponent.open(this.$modal, this.purposes, 'Purpose', index)
-      .result.then(function
-      (result: Purpose[]) {this.purposes = result;},
-      () => this.log.info('Edit purposes cancelled')
-    );*/
-  }
-
-  private editBenefits(index: number = -1) {
-    /*PurposeAddComponent.open(this.$modal, this.benefits, 'Benefit', index)
-      .result.then(function
-      (result: Purpose[]) {this.benefits = result;},
-      () => this.log.info('Edit benefits cancelled')
-    );*/
-  }
-
-  /*private editDataFlow(item: DataFlow) {
-    this.router.navigate(['/dataFlow', item.uuid, 'edit']);
-  }*/
 
   regionClicked(item: Organisation) {
     this.router.navigate(['/region', item.uuid, 'edit']);
