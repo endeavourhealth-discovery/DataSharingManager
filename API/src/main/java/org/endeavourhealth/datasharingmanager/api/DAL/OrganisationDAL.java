@@ -109,7 +109,7 @@ public class OrganisationDAL {
             OrganisationEntity newOrganisation = new OrganisationEntity(organisation);
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode(newOrganisation.organisationOrService() + " edited", oldOrganisationEntity, newOrganisation);
 
-            _addressDAL.updateAddressesAndGetAudit(organisation.getAddresses(), oldOrganisationEntity.getAddresses(), organisation.getUuid(), auditJson, _entityManager);
+            _addressDAL.updateAddressesAndAddToAudit(organisation.getAddresses(), oldOrganisationEntity.getAddresses(), organisation.getUuid(), auditJson, _entityManager);
             _masterMappingDAL.updateOrganisationMappings(organisation, oldOrganisationEntity, auditJson);
 
             oldOrganisationEntity.updateFromJson(organisation);
@@ -136,7 +136,7 @@ public class OrganisationDAL {
 
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode(organisationEntity.organisationOrService() + " created", null, organisationEntity);
 
-            _addressDAL.updateAddressesAndGetAudit(organisation.getAddresses(), null, organisation.getUuid(), auditJson, _entityManager);
+            _addressDAL.updateAddressesAndAddToAudit(organisation.getAddresses(), null, organisation.getUuid(), auditJson, _entityManager);
             _masterMappingDAL.updateOrganisationMappings(organisation, null, auditJson);
 
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.ADD, (organisationEntity.getIsService() == 1 ? ItemType.SERVICE : ItemType.ORGANISATION), auditJson);
@@ -186,7 +186,7 @@ public class OrganisationDAL {
             oldOrganisationEntity.setAddresses(_addressDAL.getAddressesForOrganisation(uuid));
 
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode(oldOrganisationEntity.organisationOrService() + " deleted", oldOrganisationEntity, null);
-            _addressDAL.updateAddressesAndGetAudit(null, oldOrganisationEntity.getAddresses(), oldOrganisationEntity.getUuid(), auditJson, _entityManager);
+            _addressDAL.updateAddressesAndAddToAudit(null, oldOrganisationEntity.getAddresses(), oldOrganisationEntity.getUuid(), auditJson, _entityManager);
             _masterMappingDAL.updateOrganisationMappings(null, oldOrganisationEntity, auditJson);
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.DELETE, (oldOrganisationEntity.getIsService() == 1 ? ItemType.SERVICE : ItemType.ORGANISATION), auditJson);
 

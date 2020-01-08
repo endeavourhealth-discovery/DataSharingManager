@@ -519,7 +519,7 @@ public class MasterMappingDAL {
         return String.join(" ", components);
     }
 
-    private String buildBeforeAfter(String before, String after) {
+    static String buildBeforeAfter(String before, String after) {
         return "Before: " + before + "; After: " + after;
     }
 

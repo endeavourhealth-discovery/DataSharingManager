@@ -80,8 +80,8 @@ public class AddressDAL {
 
     }
 
-    public void updateAddressesAndGetAudit(List<JsonAddress> updatedAddresses, List<AddressEntity> oldAddresses,
-                                               String organisationUuid, JsonNode auditJson, EntityManager entityManager) {
+    public void updateAddressesAndAddToAudit(List<JsonAddress> updatedAddresses, List<AddressEntity> oldAddresses,
+                                             String organisationUuid, JsonNode auditJson, EntityManager entityManager) {
 
         List<String> removalLog = new ArrayList<>();
         List<String> additionLog = new ArrayList<>();
@@ -111,7 +111,7 @@ public class AddressDAL {
                     if (oldAddress.isPresent()) {
                         if (!updatedAddress.toString().equals(oldAddress.get().toString())) {
                             // Updated
-                            updateLog.add("Previous: " + oldAddress.get().toString() + "; Current: " + updatedAddress.toString());
+                            updateLog.add(MasterMappingDAL.buildBeforeAfter(oldAddress.get().toString(), updatedAddress.toString()));
                             oldAddress.get().updateFromJson(updatedAddress);
                             entityManager.merge(oldAddress.get());
                         } //else: Unchanged - no action required.
