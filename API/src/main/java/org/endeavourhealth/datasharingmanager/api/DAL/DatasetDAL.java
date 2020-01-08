@@ -62,8 +62,7 @@ public class DatasetDAL {
 
             new MasterMappingDAL(entityManager).updateDataSetMappings(dataset, oldDataSetEntity, auditJson);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.EDIT, ItemType.DATASET, null, null, auditJson);
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.DATASET, auditJson);
 
             entityManager.getTransaction().commit();
         } catch (Exception e) {
@@ -92,8 +91,7 @@ public class DatasetDAL {
 
             new MasterMappingDAL(entityManager).updateDataSetMappings(dataset, null, auditJson);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.ADD, ItemType.DATASET, null, null, auditJson);
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.DATASET, auditJson);
 
 
             entityManager.persist(dataSetEntity);
@@ -121,8 +119,7 @@ public class DatasetDAL {
 
             new MasterMappingDAL(entityManager).updateDataSetMappings(null, oldDataSetEntity, auditJson);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.DELETE, ItemType.DATASET, null, null, auditJson);
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.DELETE, ItemType.DATASET, auditJson);
 
 
             entityManager.getTransaction().commit();

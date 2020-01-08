@@ -66,8 +66,7 @@ public class DataSharingAgreementDAL {
             
             oldDSAEntity.updateFromJson(dsa);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.EDIT, ItemType.DSA, null, null, auditJson);
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.DSA, auditJson);
 
             entityManager.getTransaction().commit();
         } catch (Exception e) {
@@ -94,8 +93,7 @@ public class DataSharingAgreementDAL {
 
             new MasterMappingDAL(entityManager).updateDataSharingAgreementMappings(dsa, null, auditJson);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.ADD, ItemType.DSA, null, null, auditJson);
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.DSA, auditJson);
 
             entityManager.persist(dsaEntity);
             entityManager.getTransaction().commit();
@@ -120,8 +118,7 @@ public class DataSharingAgreementDAL {
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Sharing Agreement deleted", oldDSAEntity, null);
             new MasterMappingDAL(entityManager).updateDataSharingAgreementMappings(null, oldDSAEntity, auditJson);
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.DELETE, ItemType.DSA, null, null, auditJson);
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.DELETE, ItemType.DSA, auditJson);
 
             entityManager.remove(oldDSAEntity);
             entityManager.getTransaction().commit();

@@ -71,8 +71,7 @@ public class ProjectDAL {
 
             oldProjectEntity.updateFromJson(project);
 
-            _uiAuditJDBCDAL.addToAuditTrail(userProjectId,
-                    AuditAction.EDIT, ItemType.PROJECT, null, null, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.PROJECT, auditJson);
 
             _entityManager.getTransaction().commit();
         } catch (Exception e) {
@@ -96,8 +95,7 @@ public class ProjectDAL {
 
             _masterMappingDAL.updateProjectMappings(project, null, auditJson);
 
-            _uiAuditJDBCDAL.addToAuditTrail(userProjectId,
-                    AuditAction.ADD, ItemType.PROJECT, null, null, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.PROJECT, auditJson);
 
             _entityManager.getTransaction().commit();
         } catch (Exception e) {
@@ -119,8 +117,7 @@ public class ProjectDAL {
 
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Project deleted", oldProjectEntity, null);
             _masterMappingDAL.updateProjectMappings(null, oldProjectEntity, auditJson);
-            _uiAuditJDBCDAL.addToAuditTrail(userProjectId,
-                    AuditAction.DELETE, ItemType.PROJECT, null, null, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.DELETE, ItemType.PROJECT, auditJson);
 
             _entityManager.remove(oldProjectEntity);
             _entityManager.getTransaction().commit();

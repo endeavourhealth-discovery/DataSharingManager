@@ -40,8 +40,7 @@ public class RegionDAL {
 
             oldRegionEntity.updateFromJson(region);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.EDIT, ItemType.REGION, null, null, auditJson);
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.REGION, auditJson);
 
             entityManager.getTransaction().commit();
         } catch (Exception e) {
@@ -65,8 +64,7 @@ public class RegionDAL {
 
             new MasterMappingDAL(entityManager).updateRegionMappings(region, null, auditJson);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.ADD, ItemType.REGION, null, null, auditJson);
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.REGION, auditJson);
 
             entityManager.persist(regionEntity);
             entityManager.getTransaction().commit();
@@ -91,8 +89,7 @@ public class RegionDAL {
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Region deleted", oldRegionEntity, null);
             new MasterMappingDAL(entityManager).updateRegionMappings(null, oldRegionEntity, auditJson);
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.DELETE, ItemType.REGION, null, null, auditJson);
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.DELETE, ItemType.REGION, auditJson);
 
             entityManager.remove(oldRegionEntity);
             entityManager.getTransaction().commit();

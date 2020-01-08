@@ -65,8 +65,7 @@ public class DataProcessingAgreementDAL {
 
             oldDPAEntity.updateFromJson(dpa);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.EDIT, ItemType.DPA, null, null, auditJson);
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.DPA, auditJson);
 
             entityManager.getTransaction().commit();
         } catch (Exception e) {
@@ -93,8 +92,7 @@ public class DataProcessingAgreementDAL {
 
             new MasterMappingDAL(entityManager).updateDataProcessingAgreementMappings(dpa, null, auditJson);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.ADD, ItemType.DPA, null, null, auditJson);
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.DPA, auditJson);
 
             entityManager.persist(dpaEntity);
             entityManager.getTransaction().commit();
@@ -119,8 +117,7 @@ public class DataProcessingAgreementDAL {
 
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement deleted", oldDPAEntity, null);
             new MasterMappingDAL(entityManager).updateDataProcessingAgreementMappings(null, oldDPAEntity, auditJson);
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.DELETE, ItemType.DPA, null, null, auditJson);
+            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.DELETE, ItemType.DPA, auditJson);
 
             entityManager.remove(oldDPAEntity);
             entityManager.getTransaction().commit();
