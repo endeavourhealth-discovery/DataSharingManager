@@ -25,117 +25,121 @@ import java.util.List;
 
 public class DataProcessingAgreementDAL {
 
+    private EntityManager _entityManager;
+    private MasterMappingDAL _masterMappingDAL;
+    private AuditCompareLogic _auditCompareLogic;
+    private UIAuditJDBCDAL _uiAuditJDBCDAL;
+
+    public DataProcessingAgreementDAL() throws Exception {
+        _entityManager = ConnectionManager.getDsmEntityManager();
+        _masterMappingDAL = new MasterMappingDAL(_entityManager);
+        _auditCompareLogic = new AuditCompareLogic();
+        _uiAuditJDBCDAL = new UIAuditJDBCDAL();
+    }
+
     private void clearDPACache(String dpaId) throws Exception {
         DataProcessingAgreementCache.clearDataProcessingAgreementCache(dpaId);
     }
 
     public List<DataProcessingAgreementEntity> getAllDPAs() throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<DataProcessingAgreementEntity> cq = cb.createQuery(DataProcessingAgreementEntity.class);
             Root<DataProcessingAgreementEntity> rootEntry = cq.from(DataProcessingAgreementEntity.class);
             CriteriaQuery<DataProcessingAgreementEntity> all = cq.select(rootEntry);
-            TypedQuery<DataProcessingAgreementEntity> allQuery = entityManager.createQuery(all);
+            TypedQuery<DataProcessingAgreementEntity> allQuery = _entityManager.createQuery(all);
             List<DataProcessingAgreementEntity> ret = allQuery.getResultList();
 
             return ret;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
     }
 
     public void updateDPA(JsonDPA dpa, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-        DataProcessingAgreementEntity oldDPAEntity = entityManager.find(DataProcessingAgreementEntity.class, dpa.getUuid());
+        DataProcessingAgreementEntity oldDPAEntity = _entityManager.find(DataProcessingAgreementEntity.class, dpa.getUuid());
         oldDPAEntity.setMappingsFromDAL();
 
         try {
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
 
-            dpa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getPurposes(), entityManager));
-            dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits(), entityManager));
+            dpa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getPurposes(), _entityManager));
+            dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits(), _entityManager));
 
             DataProcessingAgreementEntity newDPA = new DataProcessingAgreementEntity(dpa);
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement edited", oldDPAEntity, newDPA);
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data Processing Agreement edited", oldDPAEntity, newDPA);
 
-            new MasterMappingDAL(entityManager).updateDataProcessingAgreementMappings(dpa, oldDPAEntity, auditJson);
+            _masterMappingDAL.updateDataProcessingAgreementMappings(dpa, oldDPAEntity, auditJson);
 
             oldDPAEntity.updateFromJson(dpa);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.DPA, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.DPA, auditJson);
 
-            entityManager.getTransaction().commit();
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearDPACache(dpa.getUuid());
     }
 
     public void saveDPA(JsonDPA dpa, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
         DataProcessingAgreementEntity dpaEntity = new DataProcessingAgreementEntity(dpa);
 
         try {
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
 
-            dpa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getPurposes(), entityManager));
-            dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits(), entityManager));
+            dpa.setPurposes(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getPurposes(), _entityManager));
+            dpa.setBenefits(DataSharingAgreementLogic.setUuidsAndSavePurpose(dpa.getBenefits(), _entityManager));
 
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement created", null, dpaEntity);
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data Processing Agreement created", null, dpaEntity);
 
-            new MasterMappingDAL(entityManager).updateDataProcessingAgreementMappings(dpa, null, auditJson);
+            _masterMappingDAL.updateDataProcessingAgreementMappings(dpa, null, auditJson);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.DPA, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.DPA, auditJson);
 
-            entityManager.persist(dpaEntity);
-            entityManager.getTransaction().commit();
+            _entityManager.persist(dpaEntity);
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearDPACache(dpa.getUuid());
     }
 
     public void deleteDPA(String uuid, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
 
-            DataProcessingAgreementEntity oldDPAEntity = entityManager.find(DataProcessingAgreementEntity.class, uuid);
+            DataProcessingAgreementEntity oldDPAEntity = _entityManager.find(DataProcessingAgreementEntity.class, uuid);
             oldDPAEntity.setMappingsFromDAL();
 
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data Processing Agreement deleted", oldDPAEntity, null);
-            new MasterMappingDAL(entityManager).updateDataProcessingAgreementMappings(null, oldDPAEntity, auditJson);
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.DELETE, ItemType.DPA, auditJson);
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data Processing Agreement deleted", oldDPAEntity, null);
+            _masterMappingDAL.updateDataProcessingAgreementMappings(null, oldDPAEntity, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.DELETE, ItemType.DPA, auditJson);
 
-            entityManager.remove(oldDPAEntity);
-            entityManager.getTransaction().commit();
+            _entityManager.remove(oldDPAEntity);
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearDPACache(uuid);
     }
 
     public List<DataProcessingAgreementEntity> search(String expression) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<DataProcessingAgreementEntity> cq = cb.createQuery(DataProcessingAgreementEntity.class);
             Root<DataProcessingAgreementEntity> rootEntry = cq.from(DataProcessingAgreementEntity.class);
 
@@ -143,13 +147,13 @@ public class DataProcessingAgreementDAL {
                     cb.like(cb.upper(rootEntry.get("description")), "%" + expression.toUpperCase() + "%"));
 
             cq.where(predicate);
-            TypedQuery<DataProcessingAgreementEntity> query = entityManager.createQuery(cq);
+            TypedQuery<DataProcessingAgreementEntity> query = _entityManager.createQuery(cq);
             List<DataProcessingAgreementEntity> ret = query.getResultList();
 
             return ret;
 
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
     }
 }
