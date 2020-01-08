@@ -264,12 +264,13 @@ public class MasterMappingDAL {
 
     private void updatePurposesAndAddToAudit(String thisItem, List<PurposeEntity> oldPurposes,
                                              List<JsonPurpose> updatedPurposes, Short thisMapTypeId, Short otherMapTypeId,
-                                             JsonNode auditJson) throws Exception {
+                                             JsonNode auditJson) {
 
         // First, identify what has changed
         List<JsonPurpose> addedPurposes = new ArrayList<>();
         List<PurposeEntity> removedPurposes = new ArrayList<>();
-        List<JsonPurpose> changedPurposes = new ArrayList<>();
+
+        List<String> changeLog = new ArrayList<>();
 
         if (oldPurposes != null) {
             for (PurposeEntity oldPurpose : oldPurposes) {
@@ -287,7 +288,7 @@ public class MasterMappingDAL {
                     Optional<PurposeEntity> oldPurpose = oldPurposes.stream().filter(op -> op.getUuid().equals(updatedPurpose.getUuid())).findFirst();
                     if (oldPurpose.isPresent()) {
                         if (!updatedPurpose.toString().equals(oldPurpose.get().toString())) {
-                            changedPurposes.add(updatedPurpose);
+                            changeLog.add(buildBeforeAfter(oldPurpose.get().toString(), updatedPurpose.toString()));
                         } //else: Unchanged - no action required.
                     } else {
                         addedPurposes.add(updatedPurpose);
@@ -299,34 +300,30 @@ public class MasterMappingDAL {
         List<String> removalLog = new ArrayList<>();
         List<String> additionLog = new ArrayList<>();
 
-        // Now apply changes
+        // Now apply changes and add to Json
         if (!removedPurposes.isEmpty()) {
             List<String> removedPurposeUuids = removedPurposes.stream().map(PurposeEntity::getUuid).collect(Collectors.toList());
             deleteMappings(false, thisItem, removedPurposeUuids, thisMapTypeId, otherMapTypeId);
             removedPurposes.forEach(rp -> removalLog.add(rp.toString()));
+
+            ((ObjectNode) auditJson).put(buildChangeDescription(false, false, thisMapTypeId, otherMapTypeId),
+                    StringUtils.join(removalLog, System.getProperty("line.separator")));
         }
 
         if (!addedPurposes.isEmpty()) {
             List<String> addedPurposeUuids = addedPurposes.stream().map(JsonPurpose::getUuid).collect(Collectors.toList());
             saveMappings(false, thisItem, addedPurposeUuids, thisMapTypeId, otherMapTypeId);
             addedPurposes.forEach(ap -> additionLog.add(ap.toString()));
-        }
 
-        for (JsonPurpose p : changedPurposes) {
-            Optional<PurposeEntity> oldPe = oldPurposes.stream().filter(pe -> pe.getUuid().equals(p.getUuid())).findAny();
-            // For now, log as removal + addition.  Uuid will be unchanged.
-            additionLog.add(p.toString());
-            removalLog.add(oldPe.get().toString());
-        }
-
-        // Finally, add to Json
-        if (!removalLog.isEmpty()) {
-            ((ObjectNode) auditJson).put("Removed " + MapType.valueOfTypeId(otherMapTypeId, true).toLowerCase(),
-                    StringUtils.join(removalLog, System.getProperty("line.separator")));
-        }
-        if (!additionLog.isEmpty()) {
-            ((ObjectNode) auditJson).put("Added " + MapType.valueOfTypeId(otherMapTypeId, true).toLowerCase(),
+            ((ObjectNode) auditJson).put(buildChangeDescription(false, true, thisMapTypeId, otherMapTypeId),
                     StringUtils.join(additionLog, System.getProperty("line.separator")));
+        }
+
+        if (!changeLog.isEmpty()) {
+            // No changes required to mappings
+
+            ((ObjectNode) auditJson).put(buildChangeDescription(false, false, true, thisMapTypeId, otherMapTypeId),
+                    StringUtils.join(changeLog, System.getProperty("line.separator")));
         }
     }
 
@@ -391,8 +388,8 @@ public class MasterMappingDAL {
         if (changedSchedule != null) {
             securityProjectScheduleDAL.update(changedSchedule);
 
-            ((ObjectNode) auditJson).put(getChangeDescription(false, false, true, thisMapTypeId, otherMapTypeId),
-                    "Before: " + oldSchedule.getCronDescription() + "; After: " + changedSchedule.getCronDescription());
+            ((ObjectNode) auditJson).put(buildChangeDescription(false, false, true, thisMapTypeId, otherMapTypeId),
+                    buildBeforeAfter(oldSchedule.getCronDescription(), changedSchedule.getCronDescription()));
         }
     }
 
