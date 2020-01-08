@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Dsa} from '../models/Dsa';
 import {DataSharingAgreementService} from '../data-sharing-agreement.service';
 import {Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
 
 @Component({
   selector: 'app-data-sharing-agreement',
@@ -23,6 +24,8 @@ export class DataSharingAgreementComponent implements OnInit {
   loadingComplete = false;
 
   public activeProject: UserProject;
+
+  @ViewChild('dsasTable', {static: false}) dsasTable: GenericTableComponent;
 
   constructor(private dsaService: DataSharingAgreementService,
               private router: Router,
@@ -79,10 +82,12 @@ export class DataSharingAgreementComponent implements OnInit {
   }
 
   itemClicked(dsa: Dsa) {
-    this.router.navigate(['/dpa', dsa.uuid, 'edit']);
+    this.router.navigate(['/dsa', dsa.uuid, 'edit']);
   }
 
-  delete(item: Dsa) {
+  /*delete(item: Dsa) {*/
+  delete() {
+    console.log(this.dsasTable.selection.selected);
     /*MessageBoxDialog.open(this.$modal, 'Delete data sharing agreement', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete data sharing agreement', 'Cancel')
       .result.then(
       () => this.doDelete(item),
