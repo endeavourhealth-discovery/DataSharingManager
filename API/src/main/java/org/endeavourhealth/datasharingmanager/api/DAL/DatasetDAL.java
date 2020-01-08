@@ -22,135 +22,136 @@ import java.util.List;
 
 public class DatasetDAL {
 
+    private EntityManager _entityManager;
+    private MasterMappingDAL _masterMappingDAL;
+    private AuditCompareLogic _auditCompareLogic;
+    private UIAuditJDBCDAL _uiAuditJDBCDAL;
+
+    public DatasetDAL() throws Exception {
+        _entityManager = ConnectionManager.getDsmEntityManager();
+        _masterMappingDAL = new MasterMappingDAL(_entityManager);
+        _auditCompareLogic = new AuditCompareLogic();
+        _uiAuditJDBCDAL = new UIAuditJDBCDAL();
+    }
+
     private void clearDataSetCache(String dataSetId) throws Exception {
         DataSetCache.clearDataSetCache(dataSetId);
     }
 
     public List<DatasetEntity> getAllDataSets() throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<DatasetEntity> cq = cb.createQuery(DatasetEntity.class);
             Root<DatasetEntity> rootEntry = cq.from(DatasetEntity.class);
             CriteriaQuery<DatasetEntity> all = cq.select(rootEntry);
-            TypedQuery<DatasetEntity> allQuery = entityManager.createQuery(all);
+            TypedQuery<DatasetEntity> allQuery = _entityManager.createQuery(all);
 
             List<DatasetEntity> ret = allQuery.getResultList();
 
             return ret;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
     }
 
     public void updateDataSet(JsonDataSet dataset, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        DatasetEntity oldDataSetEntity = entityManager.find(DatasetEntity.class, dataset.getUuid());
+        DatasetEntity oldDataSetEntity = _entityManager.find(DatasetEntity.class, dataset.getUuid());
         oldDataSetEntity.setDpas(new SecurityMasterMappingDAL().getParentMappings(dataset.getUuid(), MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType()));
         DatasetEntity newDataSet = new DatasetEntity(dataset);
 
-        JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data set edited", oldDataSetEntity, newDataSet);
+        JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data set edited", oldDataSetEntity, newDataSet);
 
         try {
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
             oldDataSetEntity.setName(dataset.getName());
             oldDataSetEntity.setDescription(dataset.getDescription());
             oldDataSetEntity.setTechnicalDefinition(dataset.getTechnicalDefinition());
 
-            new MasterMappingDAL(entityManager).updateDataSetMappings(dataset, oldDataSetEntity, auditJson);
+            _masterMappingDAL.updateDataSetMappings(dataset, oldDataSetEntity, auditJson);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.DATASET, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.DATASET, auditJson);
 
-            entityManager.getTransaction().commit();
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearDataSetCache(dataset.getUuid());
     }
 
     public void saveDataSet(JsonDataSet dataset, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         DatasetEntity dataSetEntity = new DatasetEntity();
 
         try {
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
             dataSetEntity.setUuid(dataset.getUuid());
             dataSetEntity.setName(dataset.getName());
             dataSetEntity.setDescription(dataset.getDescription());
             dataSetEntity.setTechnicalDefinition(dataset.getTechnicalDefinition());
 
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data set created", null, dataSetEntity);
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data set created", null, dataSetEntity);
 
-            new MasterMappingDAL(entityManager).updateDataSetMappings(dataset, null, auditJson);
+            _masterMappingDAL.updateDataSetMappings(dataset, null, auditJson);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.DATASET, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.DATASET, auditJson);
 
 
-            entityManager.persist(dataSetEntity);
-            entityManager.getTransaction().commit();
+            _entityManager.persist(dataSetEntity);
+            _entityManager.getTransaction().commit();
 
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearDataSetCache(dataset.getUuid());
     }
 
     public void deleteDataSet(String uuid, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            DatasetEntity oldDataSetEntity = entityManager.find(DatasetEntity.class, uuid);
+            DatasetEntity oldDataSetEntity = _entityManager.find(DatasetEntity.class, uuid);
             oldDataSetEntity.setDpas(new SecurityMasterMappingDAL().getParentMappings(uuid, MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType()));
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Data set deleted", oldDataSetEntity, null);
-            entityManager.getTransaction().begin();
-            entityManager.remove(oldDataSetEntity);
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data set deleted", oldDataSetEntity, null);
+            _entityManager.getTransaction().begin();
+            _entityManager.remove(oldDataSetEntity);
 
-            new MasterMappingDAL(entityManager).updateDataSetMappings(null, oldDataSetEntity, auditJson);
+            _masterMappingDAL.updateDataSetMappings(null, oldDataSetEntity, auditJson);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId, AuditAction.DELETE, ItemType.DATASET, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.DELETE, ItemType.DATASET, auditJson);
 
 
-            entityManager.getTransaction().commit();
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearDataSetCache(uuid);
     }
 
     public List<DatasetEntity> search(String expression) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<DatasetEntity> cq = cb.createQuery(DatasetEntity.class);
             Root<DatasetEntity> rootEntry = cq.from(DatasetEntity.class);
 
             Predicate predicate = cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%");
 
             cq.where(predicate);
-            TypedQuery<DatasetEntity> query = entityManager.createQuery(cq);
+            TypedQuery<DatasetEntity> query = _entityManager.createQuery(cq);
             List<DatasetEntity> ret = query.getResultList();
 
             return ret;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
-
     }
 }
