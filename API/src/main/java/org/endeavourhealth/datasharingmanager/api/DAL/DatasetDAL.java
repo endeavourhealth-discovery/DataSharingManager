@@ -1,9 +1,7 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DatasetEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDataSet;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSetCache;
@@ -57,18 +55,17 @@ public class DatasetDAL {
 
     public void updateDataSet(JsonDataSet dataset, String userProjectId) throws Exception {
         DatasetEntity oldDataSetEntity = _entityManager.find(DatasetEntity.class, dataset.getUuid());
-        oldDataSetEntity.setDpas(new SecurityMasterMappingDAL().getParentMappings(dataset.getUuid(), MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType()));
-        DatasetEntity newDataSet = new DatasetEntity(dataset);
-
-        JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data set edited", oldDataSetEntity, newDataSet);
+        oldDataSetEntity.setMappingsFromDAL();
 
         try {
             _entityManager.getTransaction().begin();
-            oldDataSetEntity.setName(dataset.getName());
-            oldDataSetEntity.setDescription(dataset.getDescription());
-            oldDataSetEntity.setTechnicalDefinition(dataset.getTechnicalDefinition());
+
+            DatasetEntity newDataSet = new DatasetEntity(dataset);
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data set edited", oldDataSetEntity, newDataSet);
 
             _masterMappingDAL.updateDataSetMappings(dataset, oldDataSetEntity, auditJson);
+
+            oldDataSetEntity.updateFromJson(dataset);
 
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.DATASET, auditJson);
 
@@ -84,14 +81,11 @@ public class DatasetDAL {
     }
 
     public void saveDataSet(JsonDataSet dataset, String userProjectId) throws Exception {
-        DatasetEntity dataSetEntity = new DatasetEntity();
+        DatasetEntity dataSetEntity = new DatasetEntity(dataset);
 
         try {
             _entityManager.getTransaction().begin();
-            dataSetEntity.setUuid(dataset.getUuid());
-            dataSetEntity.setName(dataset.getName());
-            dataSetEntity.setDescription(dataset.getDescription());
-            dataSetEntity.setTechnicalDefinition(dataset.getTechnicalDefinition());
+            _entityManager.persist(dataSetEntity);
 
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data set created", null, dataSetEntity);
 
@@ -99,8 +93,6 @@ public class DatasetDAL {
 
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.DATASET, auditJson);
 
-
-            _entityManager.persist(dataSetEntity);
             _entityManager.getTransaction().commit();
 
         } catch (Exception e) {
@@ -115,16 +107,16 @@ public class DatasetDAL {
 
     public void deleteDataSet(String uuid, String userProjectId) throws Exception {
         try {
-            DatasetEntity oldDataSetEntity = _entityManager.find(DatasetEntity.class, uuid);
-            oldDataSetEntity.setDpas(new SecurityMasterMappingDAL().getParentMappings(uuid, MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType()));
-            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data set deleted", oldDataSetEntity, null);
             _entityManager.getTransaction().begin();
-            _entityManager.remove(oldDataSetEntity);
 
+            DatasetEntity oldDataSetEntity = _entityManager.find(DatasetEntity.class, uuid);
+            oldDataSetEntity.setMappingsFromDAL();
+
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data set deleted", oldDataSetEntity, null);
             _masterMappingDAL.updateDataSetMappings(null, oldDataSetEntity, auditJson);
-
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.DELETE, ItemType.DATASET, auditJson);
 
+            _entityManager.remove(oldDataSetEntity);
 
             _entityManager.getTransaction().commit();
         } catch (Exception e) {
