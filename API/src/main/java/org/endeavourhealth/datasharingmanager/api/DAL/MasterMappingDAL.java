@@ -250,14 +250,14 @@ public class MasterMappingDAL {
         if (!removedMappings.isEmpty()) {
             deleteMappings(thisItemIsChild, thisItem, removedMappings, thisMapTypeId, otherMapTypeId);
             auditJson = new AuditCompareLogic().generateListDifferenceAuditJson(auditJson,
-                    getChangeDescription(thisItemIsChild, false, thisMapTypeId, otherMapTypeId),
+                    buildChangeDescription(thisItemIsChild, false, thisMapTypeId, otherMapTypeId),
                     removedMappings, MapType.valueOfTypeId(otherMapTypeId));
         }
 
         if (!addedMappings.isEmpty()) {
             saveMappings(thisItemIsChild, thisItem, addedMappings, thisMapTypeId, otherMapTypeId);
             auditJson = new AuditCompareLogic().generateListDifferenceAuditJson(auditJson,
-                    getChangeDescription(thisItemIsChild, true, thisMapTypeId, otherMapTypeId),
+                    buildChangeDescription(thisItemIsChild, true, thisMapTypeId, otherMapTypeId),
                     addedMappings, MapType.valueOfTypeId(otherMapTypeId));
         }
     }
@@ -374,7 +374,7 @@ public class MasterMappingDAL {
             List<String> removedScheduleUuids = new ArrayList<>(Arrays.asList(removedSchedule.getUuid()));
             deleteMappings(false, thisItem, removedScheduleUuids, thisMapTypeId, otherMapTypeId);
 
-            ((ObjectNode) auditJson).put(getChangeDescription(false, false, thisMapTypeId, otherMapTypeId),
+            ((ObjectNode) auditJson).put(buildChangeDescription(false, false, thisMapTypeId, otherMapTypeId),
                     removedSchedule.getCronDescription());
         }
 
@@ -384,7 +384,7 @@ public class MasterMappingDAL {
             List<String> addedScheduleUuids = new ArrayList<>(Arrays.asList(addedSchedule.getUuid()));
             saveMappings(false, thisItem, addedScheduleUuids, thisMapTypeId, otherMapTypeId);
 
-            ((ObjectNode) auditJson).put(getChangeDescription(false, true, thisMapTypeId, otherMapTypeId),
+            ((ObjectNode) auditJson).put(buildChangeDescription(false, true, thisMapTypeId, otherMapTypeId),
                     addedSchedule.getCronDescription());
         }
 
@@ -421,11 +421,11 @@ public class MasterMappingDAL {
         });
     }
 
-    private String getChangeDescription(boolean thisItemIsChild, boolean added, Short thisMapTypeId, Short otherMapTypeId) {
-        return getChangeDescription(thisItemIsChild, added, false, thisMapTypeId, otherMapTypeId);
+    private String buildChangeDescription(boolean thisItemIsChild, boolean added, Short thisMapTypeId, Short otherMapTypeId) {
+        return buildChangeDescription(thisItemIsChild, added, false, thisMapTypeId, otherMapTypeId);
     }
 
-    private String getChangeDescription(boolean thisItemIsChild, boolean added, boolean updated, Short thisMapTypeId, Short otherMapTypeId) {
+    private String buildChangeDescription(boolean thisItemIsChild, boolean added, boolean updated, Short thisMapTypeId, Short otherMapTypeId) {
         List<String> components = new ArrayList<>();
 
         if (updated) {
