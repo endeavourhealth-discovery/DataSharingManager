@@ -359,18 +359,29 @@ public class MasterMappingDAL {
     }
 
     private String getChangeDescription(boolean thisItemIsChild, boolean added, Short thisMapTypeId, Short otherMapTypeId) {
+        return getChangeDescription(thisItemIsChild, added, false, thisMapTypeId, otherMapTypeId);
+    }
+
+    private String getChangeDescription(boolean thisItemIsChild, boolean added, boolean updated, Short thisMapTypeId, Short otherMapTypeId) {
         List<String> components = new ArrayList<>();
 
-        components.add(added ? "Added" : "Removed");
+        if (updated) {
+            components.add("Updated");
+        } else {
+            components.add(added ? "Added" : "Removed");
+        }
+
         if (thisMapTypeId.equals(otherMapTypeId)) {
             components.add(thisItemIsChild ? "parent" : "child");
         }
+
         if (thisMapTypeId.equals(MapType.PUBLISHER.getMapType())) {
             components.add("publishing");
         }
         if (thisMapTypeId.equals(MapType.SUBSCRIBER.getMapType())) {
             components.add("subscribing");
         }
+
         components.add(MapType.valueOfTypeId(otherMapTypeId, true).toLowerCase());
 
         return String.join(" ", components);
