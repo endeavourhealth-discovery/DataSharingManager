@@ -1,24 +1,26 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {DataSharingAgreementService} from '../data-sharing-agreement.service';
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {DatePipe} from '@angular/common';
+import {MatDialog} from "@angular/material/dialog";
 import {ActivatedRoute, Router} from '@angular/router';
-import {Purpose} from '../../models/Purpose';
-import {Organisation} from '../../organisation/models/Organisation';
-import {Region} from '../../region/models/Region';
+import {LoggerService, UserManagerService} from "dds-angular8";
+import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Dsa} from '../models/Dsa';
+import {DataSharingAgreementService} from '../data-sharing-agreement.service';
 //import {DataFlow} from '../../data-flow/models/DataFlow';
 //import {DataflowPickerComponent} from '../../data-flow/dataflow-picker/dataflow-picker.component';
-import {RegionPickerComponent} from '../../region/region-picker/region-picker.component';
-import {OrganisationPickerComponent} from '../../organisation/organisation-picker/organisation-picker.component';
-//import {PurposeAddComponent} from '../purpose-add/purpose-add.component';
+import {Purpose} from '../../models/Purpose';
+import {PurposeComponent} from "../../purpose/purpose/purpose.component";
+import {Region} from '../../region/models/Region';
 import {Marker} from '../../region/models/Marker';
-import {Documentation} from "../../documentation/models/Documentation";
-import {DocumentationService} from "../../documentation/documentation.service";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
+import {RegionPickerComponent} from '../../region/region-picker/region-picker.component';
 import {Project} from "../../project/models/Project";
 //import {ProjectPickerComponent} from "../../project/project-picker/project-picker.component";
-import {DatePipe} from '@angular/common';
+import {Organisation} from '../../organisation/models/Organisation';
+import {OrganisationPickerComponent} from '../../organisation/organisation-picker/organisation-picker.component';
+import {Documentation} from "../../documentation/models/Documentation";
+import {DocumentationService} from "../../documentation/documentation.service";
 import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
+
 
 @Component({
   selector: 'app-data-sharing-agreement-editor',
@@ -73,13 +75,22 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   subscriberDetailsToShow = new Organisation().getDisplayItems();
   documentDetailsToShow = new Documentation().getDisplayItems();
 
+  @ViewChild('purposesTable', {static: false}) purposesTable: GenericTableComponent;
+  @ViewChild('benefitsTable', {static: false}) benefitsTable: GenericTableComponent;
+  @ViewChild('projectsTable', {static: false}) projectsTable: GenericTableComponent;
+  @ViewChild('regionsTable', {static: false}) regionsTable: GenericTableComponent;
+  @ViewChild('publishersTable', {static: false}) publishersTable: GenericTableComponent;
+  @ViewChild('subscribersTable', {static: false}) subscribersTable: GenericTableComponent;
+  @ViewChild('documentationsTable', {static: false}) documentationsTable: GenericTableComponent;
+
   constructor(private log: LoggerService,
               private dsaService: DataSharingAgreementService,
               private documentationService: DocumentationService,
               private router: Router,
               private route: ActivatedRoute,
               private userManagerNotificationService: UserManagerService,
-              private datePipe: DatePipe) {
+              private datePipe: DatePipe,
+              public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -226,22 +237,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     );
   }*/
 
-  private editPurposes(index: number = -1) {
-    /*PurposeAddComponent.open(this.$modal, this.purposes, 'Purpose', index)
-      .result.then(function
-      (result: Purpose[]) {this.purposes = result;},
-      () => this.log.info('Edit purposes cancelled')
-    );*/
-  }
-
-  private editBenefits(index: number = -1) {
-    /*PurposeAddComponent.open(this.$modal, this.benefits, 'Benefit', index)
-      .result.then(function
-      (result: Purpose[]) {this.benefits = result;},
-      () => this.log.info('Edit benefits cancelled')
-    );*/
-  }
-
   private editRegions() {
     /*RegionPickerComponent.open(this.$modal, this.regions, '', 1)
       .result.then(function
@@ -289,6 +284,16 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     }*/
   }
 
+  purposeClicked(item: Purpose) {
+    let index = this.purposes.indexOf(item);
+    this.addPurpose(index);
+  }
+
+  benefitClicked(item: Purpose) {
+    let index = this.benefits.indexOf(item);
+    this.addBenefit(index);
+  }
+
   regionClicked(item: Organisation) {
     this.router.navigate(['/region', item.uuid, 'edit']);
   }
@@ -303,6 +308,10 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   subscriberClicked(item: Organisation) {
     this.router.navigate(['/organisation]', item.uuid, 'edit']);
+  }
+
+  documentationClicked(item: Documentation) {
+    this.router.navigate(['/documentation]', item.uuid, 'edit']);
   }
 
   /*private getLinkedDataFlows() {
@@ -391,35 +400,52 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       )
   }
 
-  clickOnPurpose($event) {
-    let index = this.purposes.indexOf($event, 0);
-    this.editPurposes(index);
-  }
-
-  clickOnBenefit($event) {
-    let index = this.benefits.indexOf($event, 0);
-    this.editBenefits(index);
-  }
-
-  removeFromPurposes(match: Purpose) {
-    const index = this.purposes.indexOf(match, 0);
-    if (index > -1) {
-      this.purposes.splice(index, 1);
+  deletePurposes() {
+    for (var i = 0; i < this.purposesTable.selection.selected.length; i++) {
+      let purpose = this.purposesTable.selection.selected[i];
+      this.purposes.forEach( (item, index) => {
+        if(item === purpose) this.purposes.splice(index,1);
+      });
     }
+    this.purposesTable.updateRows();
   }
 
-  removeFromBenefits(match: Purpose) {
-    const index = this.benefits.indexOf(match, 0);
-    if (index > -1) {
-      this.benefits.splice(index, 1);
-    }
+  addPurpose(index: number) {
+    const dialogRef = this.dialog.open(PurposeComponent, {
+      height: '580px',
+      width: '550px',
+      data: {resultData: this.purposes, type: 'Purpose', index: index},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.purposes = result;
+        this.purposesTable.updateRows();
+      }
+    });
   }
 
-  removeFromDocumentation(match: Documentation) {
-    const index = this.documentations.indexOf(match, 0);
-    if (index > -1) {
-      this.documentations.splice(index, 1);
+  deleteBenefits() {
+    for (var i = 0; i < this.benefitsTable.selection.selected.length; i++) {
+      let purpose = this.benefitsTable.selection.selected[i];
+      this.benefits.forEach( (item, index) => {
+        if(item === purpose) this.benefits.splice(index,1);
+      });
     }
+    this.benefitsTable.updateRows();
+  }
+
+  addBenefit(index: number) {
+    const dialogRef = this.dialog.open(PurposeComponent, {
+      height: '580px',
+      width: '550px',
+      data: {resultData: this.benefits, type: 'Benefit', index: index},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.benefits = result;
+        this.benefitsTable.updateRows();
+      }
+    });
   }
 
   swapMarkers() {

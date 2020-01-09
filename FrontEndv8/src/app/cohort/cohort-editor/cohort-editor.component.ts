@@ -128,11 +128,11 @@ export class CohortEditorComponent implements OnInit {
     this.router.navigate(['/dpa', item.uuid, 'edit']);
   }
 
-  /*deleteDpa() {
+  deleteDpa() {
     console.log(this.dpaTable.selection.selected);
   }
 
   addDpa() {
-  }*/
+  }
 
 }

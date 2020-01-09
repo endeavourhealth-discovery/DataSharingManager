@@ -67,10 +67,6 @@ export class CohortComponent implements OnInit {
     this.router.navigate(['/cohort', 1, 'add']);
   }
 
-  edit(item: Cohort) {
-    this.router.navigate(['/cohort', item.uuid,  'edit']);
-  }
-
   itemClicked(cohort: Cohort) {
     this.router.navigate(['/cohort', cohort.uuid, 'edit']);
   }
