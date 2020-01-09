@@ -10,6 +10,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.J
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonFileUpload;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonOrganisation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonStatistics;
+import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
@@ -17,6 +18,7 @@ import org.endeavourhealth.common.security.usermanagermodel.models.caching.Regio
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 import org.endeavourhealth.datasharingmanager.api.utility.CsvHelper;
 
+import javax.persistence.EntityManager;
 import javax.ws.rs.core.Response;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -34,6 +36,14 @@ public class OrganisationLogic {
     private Integer defaultPageSize = 20;
     private String defaultOrderColumn = "name";
     private String defaultSearchData = "";
+
+    private EntityManager _entityManager;
+    private MasterMappingDAL _masterMappingDAL;
+
+    public OrganisationLogic() throws Exception {
+        _entityManager = ConnectionManager.getDsmEntityManager();
+        _masterMappingDAL = new MasterMappingDAL(_entityManager);
+    }
 
     public Response getOrganisation(String uuid, String searchData, String searchType, byte organisationType,
                 Integer pageNumber, Integer pageSize, String orderColumn, boolean descending, UUID userId ) throws Exception {
@@ -62,44 +72,19 @@ public class OrganisationLogic {
         }
     }
 
-    public Response postOrganisation(JsonOrganisation organisation) throws Exception {
+    public Response postOrganisation(JsonOrganisation organisation, String userProjectId) throws Exception {
 
 
         if (organisation.getUuid() != null) {
-            new MasterMappingDAL().deleteAllMappings(organisation.getUuid());
-            new OrganisationDAL().updateOrganisation(organisation);
+            new OrganisationDAL().updateOrganisation(organisation, userProjectId);
         } else {
             String hashString = organisation.getName() + organisation.getOdsCode();
             if (organisation.getIsService().equals("1")) {
                 hashString += "service";
             }
             organisation.setUuid(UUID.nameUUIDFromBytes(hashString.getBytes()).toString());
-            new OrganisationDAL().saveOrganisation(organisation);
+            new OrganisationDAL().saveOrganisation(organisation, userProjectId);
         }
-
-
-        //Process Mappings
-        new MasterMappingDAL().saveOrganisationMappings(organisation);
-
-        new AddressDAL().deleteAddressForOrganisations(organisation.getUuid());
-        List<JsonAddress> addresses = organisation.getAddresses();
-        if (!addresses.isEmpty()) {
-            for (JsonAddress address : addresses) {
-                if (address.getOrganisationUuid() == null)
-                    address.setOrganisationUuid(organisation.getUuid());
-
-                if (address.getUuid() == null) {
-                    address.setUuid(UUID.randomUUID().toString());
-                }
-                new AddressDAL().saveAddress(address);
-                /*else
-                    AddressEntity.updateAddress(address);*/
-
-                new AddressDAL().getGeolocation(address);
-            }
-
-        }
-
 
         return Response
                 .ok()
@@ -205,7 +190,7 @@ public class OrganisationLogic {
 
     public Response getDPAsOrganisationPublishingToFromList(List<String> organisationUuids) throws Exception {
 
-        List<String> dpaUUIDs = new MasterMappingDAL().getParentMappingsFromList(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        List<String> dpaUUIDs = new SecurityMasterMappingDAL().getParentMappings(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!dpaUUIDs.isEmpty())
@@ -233,7 +218,7 @@ public class OrganisationLogic {
 
     public Response getDSAsOrganisationSubscribingToFromList(List<String> organisationUuids) throws Exception {
 
-        List<String> dsaUuids = new MasterMappingDAL().getParentMappingsFromList(organisationUuids, MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+        List<String> dsaUuids = new SecurityMasterMappingDAL().getParentMappings(organisationUuids, MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
         if (!dsaUuids.isEmpty())
@@ -261,7 +246,7 @@ public class OrganisationLogic {
 
     public Response getDSAsOrganisationPublishingToFromList(List<String> organisationUuids) throws Exception {
 
-        List<String> dsaUUIds = new MasterMappingDAL().getParentMappingsFromList(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+        List<String> dsaUUIds = new SecurityMasterMappingDAL().getParentMappings(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
         if (!dsaUUIds.isEmpty())
@@ -578,7 +563,7 @@ public class OrganisationLogic {
             }
 
             if (i % 200 == 0 ) {
-                new MasterMappingDAL().bulkSaveMappings(bulkUploadMappings);
+                _masterMappingDAL.bulkSaveMappings(bulkUploadMappings);
                 bulkUploadMappings.clear();
             }
 
@@ -599,7 +584,7 @@ public class OrganisationLogic {
         });*/
 
         if (!bulkUploadMappings.isEmpty()) {
-            new MasterMappingDAL().bulkSaveMappings(bulkUploadMappings);
+            _masterMappingDAL.bulkSaveMappings(bulkUploadMappings);
             bulkUploadMappings.clear();
         }
 

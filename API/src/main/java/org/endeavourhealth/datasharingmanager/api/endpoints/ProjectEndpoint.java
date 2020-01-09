@@ -94,6 +94,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Delete a project based on UUID that is passed to the API.  Warning! This is permanent.")
     @RequiresAdmin
     public Response deleteProject(@Context SecurityContext sc,
+                                  @HeaderParam("userProjectId") String userProjectId,
                                    @ApiParam(value = "UUID of the project to be deleted") @QueryParam("uuid") String uuid
     ) throws Exception {
         super.setLogbackMarkers(sc);
@@ -101,7 +102,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
                 "Project",
                 "Project UUID", uuid);
 
-        new ProjectDAL().deleteProject(uuid);
+        new ProjectDAL().deleteProject(uuid, userProjectId);
 
         clearLogbackMarkers();
         return Response

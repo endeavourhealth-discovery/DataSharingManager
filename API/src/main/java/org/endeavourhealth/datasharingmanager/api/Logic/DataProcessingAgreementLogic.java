@@ -36,15 +36,6 @@ public class DataProcessingAgreementLogic {
 
     public Response postDPA(JsonDPA dpa, String userProjectID) throws Exception {
 
-        for (JsonDocumentation doc : dpa.getDocumentations()) {
-            if (doc.getUuid() != null) {
-                new DocumentationDAL().updateDocument(doc);
-            } else {
-                doc.setUuid(UUID.randomUUID().toString());
-                new DocumentationDAL().saveDocument(doc);
-            }
-        }
-
         if (dpa.getUuid() != null) {
             new DataProcessingAgreementDAL().updateDPA(dpa, userProjectID);
         } else {

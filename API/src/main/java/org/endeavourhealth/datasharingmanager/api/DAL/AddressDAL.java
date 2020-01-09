@@ -1,9 +1,11 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.commons.lang3.StringUtils;
 import org.endeavourhealth.common.config.ConfigManager;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.AddressEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonAddress;
@@ -25,6 +27,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class AddressDAL {
@@ -77,62 +80,62 @@ public class AddressDAL {
 
     }
 
-    public void saveAddress(JsonAddress address) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
+    public void updateAddressesAndAddToAudit(List<JsonAddress> updatedAddresses, List<AddressEntity> oldAddresses,
+                                             String organisationUuid, JsonNode auditJson, EntityManager entityManager) {
 
-        try {
-            AddressEntity addressEntity = new AddressEntity(address);
-            addressEntity.setUuid(address.getUuid());
-            entityManager.getTransaction().begin();
-            entityManager.persist(addressEntity);
-            entityManager.getTransaction().commit();
+        List<String> removalLog = new ArrayList<>();
+        List<String> additionLog = new ArrayList<>();
+        List<String> updateLog = new ArrayList<>();
 
-        } finally {
-            entityManager.close();
+        if (updatedAddresses != null) {
+            for (JsonAddress updatedAddress : updatedAddresses) {
+                updatedAddress.setUuidsIfRequired(organisationUuid);
+                setGeolocation(updatedAddress);
+
+                boolean added = false;
+
+                if (oldAddresses == null) {
+                    added = true;
+                } else {
+                    Optional<AddressEntity> oldAddress = oldAddresses.stream().filter(op -> op.getUuid().equals(updatedAddress.getUuid())).findFirst();
+                    if (oldAddress.isPresent()) {
+                        if (!updatedAddress.toString().equals(oldAddress.get().toString())) {
+                            // Updated
+                            updateLog.add(MasterMappingDAL.buildBeforeAfter(oldAddress.get().toString(), updatedAddress.toString()));
+                            oldAddress.get().updateFromJson(updatedAddress);
+                            entityManager.merge(oldAddress.get());
+                        } //else: Unchanged - no action required.
+                    } else {
+                        added = true;
+                    }
+                }
+
+                if (oldAddresses != null) {
+                    for (AddressEntity oldAddress : oldAddresses) {
+                        if (updatedAddresses == null || updatedAddresses.stream().noneMatch(up -> up.getUuid().equals(oldAddress.getUuid()))) {
+                            // Removed
+                            removalLog.add(oldAddress.toString());
+                            entityManager.remove(entityManager.merge(oldAddress));
+                        }
+                    }
+                }
+
+                if (added) {
+                    additionLog.add(updatedAddress.toString());
+                    entityManager.persist(new AddressEntity(updatedAddress));
+                }
+            }
         }
-    }
 
-    public void updateAddress(JsonAddress address) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-
-            AddressEntity addressEntity = entityManager.find(AddressEntity.class, address.getUuid());
-            entityManager.getTransaction().begin();
-            addressEntity.setOrganisationUuid(address.getOrganisationUuid());
-            addressEntity.setBuildingName(address.getBuildingName());
-            addressEntity.setNumberAndStreet(address.getNumberAndStreet());
-            addressEntity.setLocality(address.getLocality());
-            addressEntity.setCity(address.getCity());
-            addressEntity.setCounty(address.getCounty());
-            addressEntity.setPostcode(address.getPostcode());
-            addressEntity.setGeolocationReprocess((byte) 0);
-            entityManager.getTransaction().commit();
-
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw e;
-        } finally {
-            entityManager.close();
+        // Finally, add to Json
+        if (!removalLog.isEmpty()) {
+            ((ObjectNode) auditJson).put("Removed address", StringUtils.join(removalLog, "; "));
         }
-    }
-
-    public void updateGeolocation(JsonAddress address) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-
-            AddressEntity addressEntity = entityManager.find(AddressEntity.class, address.getUuid());
-            entityManager.getTransaction().begin();
-            addressEntity.setLat(address.getLat());
-            addressEntity.setLng(address.getLng());
-            addressEntity.setGeolocationReprocess((byte) 0);
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            entityManager.getTransaction().rollback();
-            throw e;
-        } finally {
-            entityManager.close();
+        if (!additionLog.isEmpty()) {
+            ((ObjectNode) auditJson).put("Added address", StringUtils.join(additionLog, "; "));
+        }
+        if (!updateLog.isEmpty()) {
+            ((ObjectNode) auditJson).put("Updated address", StringUtils.join(updateLog, "; "));
         }
     }
 
@@ -195,11 +198,12 @@ public class AddressDAL {
                     continue;
                 }
                 JsonAddress jsonAddress = new JsonAddress(address);
-                getGeolocation(jsonAddress);
+                setGeolocation(jsonAddress);
             }
         }
     }
 
+    // Only referenced in  bulkSaveOrganisation
     public void deleteAddressForOrganisations(String organisationUuid) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();
 
@@ -222,34 +226,38 @@ public class AddressDAL {
         }
     }
 
-    public void getGeolocation(JsonAddress address) throws Exception {
-        Client client = ClientBuilder.newClient();
+    public void setGeolocation(JsonAddress address) {
+        try {
+            Client client = ClientBuilder.newClient();
 
-        JsonNode json = ConfigManager.getConfigurationAsJson("GoogleMapsAPI");
-        String url = json.get("url").asText();
-        String apiKey = json.get("apiKey").asText();
+            JsonNode json = ConfigManager.getConfigurationAsJson("GoogleMapsAPI");
+            String url = json.get("url").asText();
+            String apiKey = json.get("apiKey").asText();
 
-        WebTarget resource = client.target(url + address.getPostcode().replace(" ", "+") + "&key=" + apiKey);
+            WebTarget resource = client.target(url + address.getPostcode().replace(" ", "+") + "&key=" + apiKey);
 
-        Invocation.Builder request = resource.request();
-        request.accept(MediaType.APPLICATION_JSON_TYPE);
+            Invocation.Builder request = resource.request();
+            request.accept(MediaType.APPLICATION_JSON_TYPE);
 
-        Response response = request.get();
+            Response response = request.get();
 
-        if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
-            String s = response.readEntity(String.class);
-            JsonParser parser = new JsonParser();
-            JsonElement obj = parser.parse(s);
-            JsonObject jo = obj.getAsJsonObject();
-            if (jo.getAsJsonArray("results").size() > 0) {
-                JsonElement results = jo.getAsJsonArray("results").get(0);
-                JsonObject location = results.getAsJsonObject().getAsJsonObject("geometry").getAsJsonObject("location");
+            if (response.getStatusInfo().getFamily() == Response.Status.Family.SUCCESSFUL) {
+                String s = response.readEntity(String.class);
+                JsonParser parser = new JsonParser();
+                JsonElement obj = parser.parse(s);
+                JsonObject jo = obj.getAsJsonObject();
+                if (jo.getAsJsonArray("results").size() > 0) {
+                    JsonElement results = jo.getAsJsonArray("results").get(0);
+                    JsonObject location = results.getAsJsonObject().getAsJsonObject("geometry").getAsJsonObject("location");
 
-                address.setLat(Double.parseDouble(location.get("lat").toString()));
-                address.setLng(Double.parseDouble(location.get("lng").toString()));
-
-                new AddressDAL().updateGeolocation(address);
+                    address.setLat(Double.parseDouble(location.get("lat").toString()));
+                    address.setLng(Double.parseDouble(location.get("lng").toString()));
+                }
             }
+        } catch (Exception e) {
+            // Failed to obtain location
+            //TODO: Log this.
         }
     }
+
 }

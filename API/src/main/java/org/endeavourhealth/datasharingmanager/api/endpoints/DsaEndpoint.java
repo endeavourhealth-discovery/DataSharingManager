@@ -69,7 +69,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
     @RequiresAdmin
     public Response postDSA(@Context SecurityContext sc,
                             @HeaderParam("userProjectId") String userProjectId,
-                            @ApiParam(value = "Json representation of data sharing agreeement to save or update") JsonDSA dsa
+                            @ApiParam(value = "Json representation of data sharing agreement to save or update") JsonDSA dsa
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,

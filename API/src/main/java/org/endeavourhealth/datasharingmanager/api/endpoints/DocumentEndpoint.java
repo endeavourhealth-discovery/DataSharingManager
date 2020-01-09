@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DocumentationEntity;
+import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DocumentationCache;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
@@ -92,7 +93,7 @@ public final class DocumentEndpoint extends AbstractEndpoint {
                 "Document",
                 "Document Id", uuid);
 
-        new DocumentationDAL().deleteDocument(uuid);
+        new DocumentationDAL(ConnectionManager.getDsmEntityManager()).deleteDocument(uuid);
 
         clearLogbackMarkers();
         return Response

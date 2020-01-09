@@ -122,7 +122,7 @@ public class RegionLogic {
 
     public Response getParentRegions(String regionUuid, String userId) throws Exception {
 
-        List<String> regionUuids = new SecurityMasterMappingDAL().getParentMappings(regionUuid, MapType.CHILDREGION.getMapType(), MapType.PARENTREGION.getMapType());
+        List<String> regionUuids = new SecurityMasterMappingDAL().getParentMappings(regionUuid, MapType.REGION.getMapType(), MapType.REGION.getMapType());
         List<RegionEntity> ret = new ArrayList<>();
 
         if (userId != null) {
@@ -140,7 +140,7 @@ public class RegionLogic {
 
     public Response getChildRegions(String regionUuid) throws Exception {
 
-        List<String> regionUuids = new SecurityMasterMappingDAL().getChildMappings(regionUuid, MapType.PARENTREGION.getMapType(), MapType.CHILDREGION.getMapType());
+        List<String> regionUuids = new SecurityMasterMappingDAL().getChildMappings(regionUuid, MapType.REGION.getMapType(), MapType.REGION.getMapType());
         List<RegionEntity> ret = new ArrayList<>();
 
         if (!regionUuids.isEmpty())

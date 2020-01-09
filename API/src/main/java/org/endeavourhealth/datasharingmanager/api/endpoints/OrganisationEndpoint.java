@@ -77,7 +77,8 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
             "of a organisation.")
     @RequiresAdmin
     public Response postOrganisation(@Context SecurityContext sc,
-                         @ApiParam(value = "Json representation of organisation to save or update") JsonOrganisation organisation
+                                     @HeaderParam("userProjectId") String userProjectId,
+                                     @ApiParam(value = "Json representation of organisation to save or update") JsonOrganisation organisation
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
@@ -85,7 +86,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
                 "Organisation", organisation);
 
         clearLogbackMarkers();
-        return new OrganisationLogic().postOrganisation(organisation);
+        return new OrganisationLogic().postOrganisation(organisation, userProjectId);
     }
 
     @DELETE
@@ -96,6 +97,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Delete an organisation based on UUID that is passed to the API.  Warning! This is permanent.")
     @RequiresAdmin
     public Response deleteOrganisation(@Context SecurityContext sc,
+                                       @HeaderParam("userProjectId") String userProjectId,
                                        @ApiParam(value = "UUID of the organisation to be deleted") @QueryParam("uuid") String uuid
     ) throws Exception {
         super.setLogbackMarkers(sc);
@@ -103,7 +105,7 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
                 "Organisation",
                 "Organisation Id", uuid);
 
-        new OrganisationDAL().deleteOrganisation(uuid);
+        new OrganisationDAL().deleteOrganisation(uuid, userProjectId);
 
         clearLogbackMarkers();
         return Response

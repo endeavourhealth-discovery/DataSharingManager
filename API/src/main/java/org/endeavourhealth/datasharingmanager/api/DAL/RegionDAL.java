@@ -21,117 +21,118 @@ import java.util.List;
 
 public class RegionDAL {
 
+    private EntityManager _entityManager;
+    private MasterMappingDAL _masterMappingDAL;
+    private AuditCompareLogic _auditCompareLogic;
+    private UIAuditJDBCDAL _uiAuditJDBCDAL;
+
+    public RegionDAL() throws Exception {
+        _entityManager = ConnectionManager.getDsmEntityManager();
+        _masterMappingDAL = new MasterMappingDAL(_entityManager);
+        _auditCompareLogic = new AuditCompareLogic();
+        _uiAuditJDBCDAL = new UIAuditJDBCDAL();
+    }
+
     private void clearRegionCache(String regionID) throws Exception {
         RegionCache.clearRegionCache(regionID);
     }
 
     public void updateRegion(JsonRegion region, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-        RegionEntity oldRegionEntity = entityManager.find(RegionEntity.class, region.getUuid());
+        RegionEntity oldRegionEntity = _entityManager.find(RegionEntity.class, region.getUuid());
         oldRegionEntity.setMappingsFromDAL();
 
         try {
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
 
             RegionEntity newRegion = new RegionEntity(region);
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Region edited", oldRegionEntity, newRegion);
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Region edited", oldRegionEntity, newRegion);
 
-            auditJson = new MasterMappingDAL().updateRegionMappings(region, oldRegionEntity, auditJson, entityManager);
+            _masterMappingDAL.updateRegionMappings(region, oldRegionEntity, auditJson);
 
             oldRegionEntity.updateFromJson(region);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.EDIT, ItemType.REGION, null, null, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.REGION, auditJson);
 
-            entityManager.getTransaction().commit();
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearRegionCache(region.getUuid());
     }
 
     public void saveRegion(JsonRegion region, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
         RegionEntity regionEntity = new RegionEntity(region);
 
         try {
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
 
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Region created", null, regionEntity);
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Region created", null, regionEntity);
 
-            auditJson = new MasterMappingDAL().updateRegionMappings(region, null, auditJson, entityManager);
+            _masterMappingDAL.updateRegionMappings(region, null, auditJson);
 
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.ADD, ItemType.REGION, null, null, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.REGION, auditJson);
 
-            entityManager.persist(regionEntity);
-            entityManager.getTransaction().commit();
+            _entityManager.persist(regionEntity);
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearRegionCache(region.getUuid());
     }
 
     public void deleteRegion(String uuid, String userProjectId) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            entityManager.getTransaction().begin();
+            _entityManager.getTransaction().begin();
 
-            RegionEntity oldRegionEntity = entityManager.find(RegionEntity.class, uuid);
+            RegionEntity oldRegionEntity = _entityManager.find(RegionEntity.class, uuid);
             oldRegionEntity.setMappingsFromDAL();
 
-            JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Region deleted", oldRegionEntity, null);
-            auditJson = new MasterMappingDAL().updateRegionMappings(null, oldRegionEntity, auditJson, entityManager);
-            new UIAuditJDBCDAL().addToAuditTrail(userProjectId,
-                    AuditAction.DELETE, ItemType.REGION, null, null, auditJson);
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Region deleted", oldRegionEntity, null);
+            _masterMappingDAL.updateRegionMappings(null, oldRegionEntity, auditJson);
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.DELETE, ItemType.REGION, auditJson);
 
-            entityManager.remove(oldRegionEntity);
-            entityManager.getTransaction().commit();
+            _entityManager.remove(oldRegionEntity);
+            _entityManager.getTransaction().commit();
         } catch (Exception e) {
-            entityManager.getTransaction().rollback();
+            _entityManager.getTransaction().rollback();
             throw e;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
 
         clearRegionCache(uuid);
     }
 
     public List<RegionEntity> getRegionsFromList(List<String> regions) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<RegionEntity> cq = cb.createQuery(RegionEntity.class);
             Root<RegionEntity> rootEntry = cq.from(RegionEntity.class);
 
             Predicate predicate = rootEntry.get("uuid").in(regions);
 
             cq.where(predicate);
-            TypedQuery<RegionEntity> query = entityManager.createQuery(cq);
+            TypedQuery<RegionEntity> query = _entityManager.createQuery(cq);
 
             List<RegionEntity> ret = query.getResultList();
 
             return ret;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
     }
 
     public List<RegionEntity> search(String expression) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
         try {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
             CriteriaQuery<RegionEntity> cq = cb.createQuery(RegionEntity.class);
             Root<RegionEntity> rootEntry = cq.from(RegionEntity.class);
 
@@ -139,12 +140,12 @@ public class RegionDAL {
                     cb.like(cb.upper(rootEntry.get("description")), "%" + expression.toUpperCase() + "%"));
 
             cq.where(predicate);
-            TypedQuery<RegionEntity> query = entityManager.createQuery(cq);
+            TypedQuery<RegionEntity> query = _entityManager.createQuery(cq);
             List<RegionEntity> ret = query.getResultList();
 
             return ret;
         } finally {
-            entityManager.close();
+            _entityManager.close();
         }
     }
 }
