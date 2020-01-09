@@ -168,8 +168,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
   addPurpose(index: number) {
     const dialogRef = this.dialog.open(PurposeComponent, {
-      height: '600px',
-      width: '350px',
+      height: '580px',
+      width: '550px',
       data: {resultData: this.purposes, type: 'Purpose', index: index},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -205,8 +205,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
   addBenefit(index: number) {
     const dialogRef = this.dialog.open(PurposeComponent, {
-      height: '600px',
-      width: '350px',
+      height: '580px',
+      width: '550px',
       data: {resultData: this.benefits, type: 'Benefit', index: index},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -291,5 +291,42 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
 
   save(close: boolean) {
+
+    // Populate purposes before save
+    this.dpa.purposes = [];
+    this.dpa.purposes = this.purposes;
+
+    // Populate benefits before save
+    this.dpa.benefits = [];
+    this.dpa.benefits = this.benefits;
+
+    // Populate regions before save
+    this.dpa.regions = {};
+    for (const idx in this.regions) {
+      const region: Region = this.regions[idx];
+      this.dpa.regions[region.uuid] = region.name;
+    }
+
+    // Populate publishers before save
+    this.dpa.publishers = {};
+    for (const idx in this.publishers) {
+      const pub: Organisation = this.publishers[idx];
+      this.dpa.publishers[pub.uuid] = pub.name;
+    }
+
+    // Populate documents before save
+    this.dpa.documentations = [];
+    this.dpa.documentations = this.documentations;
+
+    this.dpaService.saveDpa(this.dpa)
+      .subscribe(saved => {
+          this.dpa.uuid = saved;
+          this.log.success('Data processing agreement saved');
+          if (close) {
+            window.history.back();
+          }
+        },
+        error => this.log.error('The data processing agreement could not be saved. Please try again.')
+      );
   }
 }

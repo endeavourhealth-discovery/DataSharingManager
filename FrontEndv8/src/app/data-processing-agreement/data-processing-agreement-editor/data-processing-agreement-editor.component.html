@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card *ngIf="dpa">
   <mat-card-header>
     <div mat-card-avatar><mat-icon>lightbulb_outline</mat-icon></div>
     <mat-card-title>Data Processing Agreement details</mat-card-title>
@@ -15,7 +15,7 @@
   </mat-card-header>
   <mat-card-content>
     <form class="form" #f="ngForm" novalidate>
-      <div class="form-group" #fgName="ngModelGroup" ngModelGroup="organisation" [class.has-error]="!fgName.valid">
+      <div class="form-group" #fgName="ngModelGroup" ngModelGroup="dpa" [class.has-error]="!fgName.valid">
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
           <mat-form-field appearance="outline" fxFlex="50" fxFill>
             <mat-label>Name</mat-label>
