@@ -7,6 +7,8 @@ import {LoggerService, UserManagerService} from "dds-angular8";
 import {MatDialog} from "@angular/material/dialog";
 import {DataSetPickerComponent} from "../../data-set/data-set-picker/data-set-picker.component";
 import {CohortPickerComponent} from "../../cohort/cohort-picker/cohort-picker.component";
+import {Schedule} from "../../scheduler/models/Schedule";
+import {SchedulerComponent} from "../../scheduler/scheduler/scheduler.component";
 
 @Component({
   selector: 'app-organisation',
@@ -172,16 +174,16 @@ export class OrganisationComponent implements OnInit {
     //   height: '850px',
     //   width: '1500px',
     // });
-    const dialogRef = this.dialog.open(DataSetPickerComponent, {
-      height: '750px',
-      width: '1200px',
-    });
-    // let schedule = new Schedule();
-    // const dialogRef = this.dialog.open(SchedulerComponent, {
-    //   height: '610px',
+    // const dialogRef = this.dialog.open(DataSetPickerComponent, {
+    //   height: '750px',
     //   width: '1200px',
-    //   data: {schedule: schedule, allowTime: true},
     // });
+    let schedule = new Schedule();
+    const dialogRef = this.dialog.open(SchedulerComponent, {
+      height: '610px',
+      width: '1200px',
+      data: {schedule: schedule, allowTime: true},
+    });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         console.log(result);

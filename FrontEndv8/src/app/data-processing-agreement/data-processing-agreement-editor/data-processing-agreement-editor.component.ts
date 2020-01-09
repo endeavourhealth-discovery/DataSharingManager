@@ -13,6 +13,7 @@ import {Purpose} from "src/app/models/Purpose";
 import {MatDialog} from "@angular/material/dialog";
 import {PurposeComponent} from "../../purpose/purpose/purpose.component";
 import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
+import {DocumentationComponent} from "../../documentation/documentation/documentation.component";
 
 @Component({
   selector: 'app-data-processing-agreement-editor',
@@ -277,16 +278,27 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
       );
   }
 
-  documentationClicked(item: Documentation) {
-    //TODO
-  }
-
   deleteDocumentations() {
-    //TODO
+    for (var i = 0; i < this.documentationsTable.selection.selected.length; i++) {
+      let purpose = this.documentationsTable.selection.selected[i];
+      this.documentations.forEach( (item, index) => {
+        if(item === purpose) this.documentations.splice(index,1);
+      });
+    }
+    this.documentationsTable.updateRows();
   }
 
   addDocumentation() {
-    //TODO
+    const dialogRef = this.dialog.open(DocumentationComponent, {
+      height: '350px',
+      width: '550px',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.documentations.push(result);
+        this.documentationsTable.updateRows();
+      }
+    });
   }
 
 

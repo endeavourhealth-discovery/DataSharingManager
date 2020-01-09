@@ -13,6 +13,7 @@ import {SchedulerService} from "./scheduler.service";
 import {MatRadioModule} from "@angular/material/radio";
 import {FormsModule} from "@angular/forms";
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
   declarations: [SchedulerComponent],
@@ -28,7 +29,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
         MatSelectModule,
         MatRadioModule,
         FormsModule,
-        MatCheckboxModule
+        MatCheckboxModule,
+        MatButtonModule
     ],
   providers: [
     SchedulerService

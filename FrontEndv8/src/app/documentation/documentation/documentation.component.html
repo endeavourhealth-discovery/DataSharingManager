@@ -1,0 +1,26 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar><mat-icon>lightbulb_outline</mat-icon></div>
+    <mat-card-title>Upload document</mat-card-title>
+    <mat-card-subtitle>Upload a document</mat-card-subtitle>
+    <div fxFlex></div>
+  </mat-card-header>
+  <mat-card-content>
+    <div>
+      <input #fileUploader type="file" (click)="fileUploader.value = null" (change)="fileChange($event)" accept="*" placeholder="File" name="file" style="display: none">
+      <button mat-raised-button color="primary" for="fileUpload" id="fileUpload" (click)="fileUploader.click()">Select files</button>
+    </div>
+    <br>
+    <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+      <mat-form-field appearance="outline" fxFlex="100" fxFill>
+        <mat-label>File</mat-label>
+        <input matInput *ngIf="!file" value="No files selected." placeholder="File" name="file">
+        <input matInput *ngIf="file" [value]="file.name" placeholder="File" name="file">
+      </mat-form-field>
+    </div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button color="primary" [disabled]="!file" (click)="ok()">Ok</button>
+    <button mat-raised-button color="accent" (click)="cancel()">Cancel</button>
+  </mat-card-actions>
+</mat-card>

@@ -25,6 +25,7 @@ import {DataProcessingAgreementEditorComponent} from "./data-processing-agreemen
 import {DataProcessingAgreementService} from "./data-processing-agreement.service";
 import {GenericTableModule} from '../generic-table/generic-table.module';
 import {PurposeComponent} from "../purpose/purpose/purpose.component";
+import {DocumentationComponent} from "../documentation/documentation/documentation.component";
 
 @NgModule({
   imports: [
@@ -53,11 +54,12 @@ import {PurposeComponent} from "../purpose/purpose/purpose.component";
   ],
   entryComponents : [
     //DataProcessingAgreementPickerComponent
-    PurposeComponent
+    PurposeComponent,
+    DocumentationComponent
   ],
   providers: [
     DataProcessingAgreementService,
-    DocumentationService
+    DocumentationService,
   ]
 })
 export class DataProcessingAgreementModule {
