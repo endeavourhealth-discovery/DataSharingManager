@@ -22,8 +22,9 @@ export class CohortService {
   }
 
   saveCohort(cohort: Cohort): Observable<any> {
+	const httpOptions = { responseType: 'text' };
     const url = 'api/cohort';
-    return this.http.post<any>(url, cohort);
+    return this.http.post<any>(url, cohort, httpOptions);
   }
 
   deleteCohort(uuid: string): Observable<any> {

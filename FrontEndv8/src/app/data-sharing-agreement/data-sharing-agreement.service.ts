@@ -31,8 +31,9 @@ export class DataSharingAgreementService {
   }
 
   saveDsa(dsa: Dsa): Observable<any> {
+	const httpOptions = { responseType: 'text' };
     const url = 'api/dsa';
-    return this.http.post<any>(url, dsa);
+    return this.http.post<any>(url, dsa, httpOptions);
   }
 
   deleteDsa(uuid: string): Observable<any> {

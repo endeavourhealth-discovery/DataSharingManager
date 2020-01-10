@@ -118,7 +118,8 @@ export class OrganisationService  {
   }
 
   saveOrganisation(organisation: Organisation): Observable<any> {
-    return this.http.post<any>('api/organisation', organisation);
+	const httpOptions = { responseType: 'text' };
+    return this.http.post<any>('api/organisation', organisation, httpOptions);
   }
 
   deleteOrganisation(uuid: string): Observable<any> {
@@ -148,7 +149,8 @@ export class OrganisationService  {
   }
 
   uploadCsv(fileToUpload: FileUpload): Observable<any> {
-    return this.http.post<any>('api/organisation/upload', fileToUpload);
+	const httpOptions = { responseType: 'text' };
+    return this.http.post<any>('api/organisation/upload', fileToUpload, httpOptions);
   }
 
   saveMappings(limit: number): Observable<any> {

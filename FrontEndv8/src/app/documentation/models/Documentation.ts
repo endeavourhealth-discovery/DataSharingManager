@@ -6,7 +6,7 @@ export class Documentation {
 
     getDisplayItems(): any[] {
         return [
-            {label: 'Title', property: 'title'},
+            //{label: 'Title', property: 'title'},
             {label: 'Filename', property: 'filename'},
             //{label: 'File Data', property: 'fileData', document : true},
         ];
