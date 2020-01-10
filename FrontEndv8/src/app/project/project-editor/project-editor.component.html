@@ -1,0 +1,175 @@
+<mat-card *ngIf="project">
+  <mat-card-header>
+    <div mat-card-avatar><mat-icon>lightbulb_outline</mat-icon></div>
+    <mat-card-title>Project Details</mat-card-title>
+    <mat-card-subtitle *ngIf="project.name">{{project.name}}</mat-card-subtitle>
+    <mat-card-subtitle *ngIf="!project.name">New Project</mat-card-subtitle>
+    <div fxFlex></div>
+    <mat-menu #visualiseMenu="matMenu">
+      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(false)">Save</button>
+      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(true)">Save & close</button>
+    </mat-menu>
+    <div fxLayoutAlign="center" class="mat-action" matRipple>
+      <mat-icon [matMenuTriggerFor]="visualiseMenu">more_vert</mat-icon>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="form" #f="ngForm" novalidate>
+      <div class="form-group" #fgName="ngModelGroup" ngModelGroup="dpa" [class.has-error]="!fgName.valid">
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Name</mat-label>
+            <input required matInput [(ngModel)]="project.name" placeholder="Name" name="name">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Business Case</mat-label>
+            <mat-select matInput name="status" [(ngModel)]="project.businessCaseStatus" name="businessCaseStatus">
+              <mat-option *ngFor="let bc of businessCaseStatuses" [value]="bc.num">{{bc.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Summary</mat-label>
+            <textarea matInput [(ngModel)]="project.summary" placeholder="Summary" name="summary" rows="6"></textarea>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Objectives</mat-label>
+            <textarea matInput [(ngModel)]="project.objectives" placeholder="Objectives" name="objectives" rows="6"></textarea>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Project Lead</mat-label>
+            <mat-select matInput name="status" [(ngModel)]="project.leadUser" name="leadUser">
+              <mat-option *ngFor="let leadUser of userList" [value]="leadUser.uuid">{{leadUser.forename}} {{leadUser.surname}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Project Technical Lead</mat-label>
+            <mat-select matInput name="status" [(ngModel)]="project.technicalLeadUser" name="technicalLeadUser">
+              <mat-option *ngFor="let techUser of userList" [value]="techUser.uuid">{{techUser.forename}} {{techUser.surname}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+            <mat-label>Storage Protocol</mat-label>
+            <mat-select matInput name="status" [(ngModel)]="project.storageProtocolId" name="storageProtocolId">
+              <mat-option *ngFor="let sps of storageProtocols" [value]="sps.num">{{sps.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+            <mat-label>Patient Consent Model</mat-label>
+            <mat-select matInput name="status" [(ngModel)]="project.consentModelId" name="consentModel">
+              <mat-option *ngFor="let con of consents" [value]="con.num">{{con.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="34" fxFill>
+            <mat-label>De-identification Level</mat-label>
+            <mat-select matInput name="status" [(ngModel)]="project.deidentificationLevel" name="deIdentificationLevel">
+              <mat-option *ngFor="let did of deidentificationLevel" [value]="did.num">{{did.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+            <mat-label>Project Type</mat-label>
+            <mat-select matInput name="status" [(ngModel)]="project.projectTypeId" name="projectTypeId">
+              <mat-option *ngFor="let proj of projectTypes" [value]="proj.num">{{proj.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+            <mat-label>Frequency</mat-label>
+            <mat-select matInput name="status" [(ngModel)]="project.flowScheduleId" name="flowScheduleId">
+              <mat-option *ngFor="let fs of flowScheduleIds" [value]="fs.num">{{fs.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="34" fxFill>
+            <mat-label>Output Format</mat-label>
+            <mat-select matInput name="status" [(ngModel)]="project.outputFormat" name="outputFormat">
+              <mat-option *ngFor="let of of outputFormat" [value]="of.num">{{of.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+            <mat-label>SFTP Name</mat-label>
+            <input required matInput [(ngModel)]="project.ipAddress" placeholder="SFTP name" name="ipAddress">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+            <mat-label>Security Infrastructure Id</mat-label>
+            <mat-select matInput name="status" [(ngModel)]="project.securityInfrastructureId" name="securityInfrastructureId">
+              <mat-option *ngFor="let sec of securityInfrastructures" [value]="sec.num">{{sec.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="34" fxFill>
+            <mat-label>Security Architectures Id</mat-label>
+            <mat-select matInput name="status" [(ngModel)]="project.securityArchitectureId" name="securityArchitectureId">
+              <mat-option *ngFor="let arc of securityArchitectures" [value]="arc.num">{{arc.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+            <mat-label>Status</mat-label>
+            <mat-select matInput name="status" [disabled]="disableStatus" [(ngModel)]="project.projectStatusId" name="projectStatusId">
+              <mat-option *ngFor="let stat of status" [value]="stat.num">{{stat.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+            <mat-label>Start Date</mat-label>
+            <input matInput type="date" [(ngModel)]="project.startDate" placeholder="Start Date" name="startDate">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="34" fxFill>
+            <mat-label>End Date</mat-label>
+            <input matInput type="date" [(ngModel)]="project.endDate" placeholder="End Date" name="endDate">
+          </mat-form-field>
+        </div>
+        <br>
+      </div>
+    </form>
+    <mat-tab-group dynamicHeight>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{dsas?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dsas?.length < 1">Sharing Agreements</span>
+        </ng-template>
+        <app-generic-table #dsasTable
+                           [items]="dsas"
+                           [detailsToShow]="dsasDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="dsaClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDsas()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addDsa()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{publishers?.length}}" matBadgeOverlap="false" [matBadgeHidden]="publishers?.length < 1">Publishers</span>
+        </ng-template>
+        <app-generic-table #publishersTable
+                           [items]="publishers"
+                           [detailsToShow]="publishersDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="publisherClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePublishers()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPublisher()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{subscribers?.length}}" matBadgeOverlap="false" [matBadgeHidden]="subscribers?.length < 1">Subscribers</span>
+        </ng-template>
+        <app-generic-table #subscribersTable
+                           [items]="subscribers"
+                           [detailsToShow]="publishersDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="publisherClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteSubscribers()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPublisher()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{documentations?.length}}" matBadgeOverlap="false" [matBadgeHidden]="documentations?.length < 1">Documentations</span>
+        </ng-template>
+        <app-generic-table #documentationsTable
+                           [items]="documentations"
+                           [detailsToShow]="documentationsDetailsToShow"
+                           [allowSelect]="allowEdit">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDocumentations()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addDocumentation()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

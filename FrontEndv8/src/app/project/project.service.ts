@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import {Project} from "./models/Project";
 import {Observable} from "rxjs";
-import * as Http from "http";
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {Dpa} from "../data-processing-agreement/models/Dpa";
+import { Dsa } from "src/app/data-sharing-agreement/models/Dsa";
+import {Organisation} from "../organisation/models/Organisation";
 
 @Injectable({
   providedIn: 'root'
@@ -12,20 +12,41 @@ export class ProjectService {
 
   constructor(private http: HttpClient) { }
 
-  getAllProjects(userId: string): Observable<Dpa[]> {
+  getAllProjects(userId: string): Observable<Project[]> {
     const url = 'api/project';
     let params = new HttpParams();
     if (userId != null) {
       if (userId) params = params.append('userId', userId);
     }
-    return this.http.get<Dpa[]>(url,{params});
+    return this.http.get<Project[]>(url,{params});
   }
 
-  getProject(uuid: string): Observable<Dpa> {
+  getProject(uuid: string): Observable<Project> {
     const url = 'api/project';
     let params = new HttpParams();
     if (uuid) params = params.append('uuid', uuid);
-    return this.http.get<Dpa>(url,{params});
+    return this.http.get<Project>(url,{params});
+  }
+
+  getLinkedDsas(uuid: string):  Observable<Dsa[]> {
+    const url = 'api/project/dsas';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.get<Dsa[]>(url,{params});
+  }
+
+  getLinkedPublishers(uuid: string):  Observable<Organisation[]> {
+    const url = 'api/project/publishers';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.get<Organisation[]>(url,{params});
+  }
+
+  getLinkedSubscribers(uuid: string):  Observable<Organisation[]> {
+    const url = 'api/project/subscribers';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.get<Organisation[]>(url,{params});
   }
 
 }

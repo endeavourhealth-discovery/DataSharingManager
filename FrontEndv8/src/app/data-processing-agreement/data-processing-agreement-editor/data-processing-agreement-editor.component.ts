@@ -301,7 +301,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     });
   }
 
-
   save(close: boolean) {
 
     // Populate purposes before save

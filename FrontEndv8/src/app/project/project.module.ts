@@ -27,9 +27,10 @@ import {MatTabsModule} from "@angular/material/tabs";
 import {MatTableModule} from "@angular/material/table";
 import {MatSortModule} from "@angular/material/sort";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
+import { ProjectEditorComponent } from './project-editor/project-editor.component';
 
 @NgModule({
-  declarations: [ProjectComponent],
+  declarations: [ProjectComponent, ProjectEditorComponent],
   imports: [
     BrowserAnimationsModule,
     BrowserModule,

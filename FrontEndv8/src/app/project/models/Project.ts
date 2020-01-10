@@ -19,6 +19,7 @@ export class Project {
   storageProtocolId: number;
   businessCaseStatus: number;
   flowScheduleId: number;
+  outputFormat: number;
   projectStatusId: number;
   startDate: string;
   endDate: string;
