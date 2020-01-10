@@ -18,6 +18,7 @@ import {DataSharingAgreementModule} from "./data-sharing-agreement/data-sharing-
 import {DataSharingSummaryModule} from "./data-sharing-summary/data-sharing-summary.module";
 import {PurposeModule} from "./purpose/purpose.module";
 import {DocumentationModule} from "./documentation/documentation.module";
+import {ProjectModule} from "./project/project.module";
 
 
 const keycloakService = new KeycloakService();
@@ -40,6 +41,7 @@ const keycloakService = new KeycloakService();
     DataProcessingAgreementModule,
     DataSharingAgreementModule,
     DataSharingSummaryModule,
+    ProjectModule,
 
     LayoutModule,
     SecurityModule,
