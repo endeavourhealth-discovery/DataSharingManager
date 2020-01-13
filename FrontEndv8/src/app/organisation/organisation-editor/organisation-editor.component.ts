@@ -248,7 +248,7 @@ export class OrganisationEditorComponent implements OnInit {
 
   }
 
-  private addRegion() {
+  addRegion() {
     const dialogRef = this.dialog.open(RegionPickerComponent, {
       width: '800px',
       data: { uuid: '', limit: 0, userId : this.activeProject.userId }
@@ -267,7 +267,7 @@ export class OrganisationEditorComponent implements OnInit {
     })
   }
 
-  private addChildOrganisations() {
+  addChildOrganisations() {
 
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
       width: '800px',
@@ -288,7 +288,7 @@ export class OrganisationEditorComponent implements OnInit {
   }
 
 
-  private addParentOrganisations() {
+  addParentOrganisations() {
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
       width: '800px',
       data: { searchType: 'organisation', uuid: this.organisation.uuid, regionUUID: '', dsaUUID: '' }

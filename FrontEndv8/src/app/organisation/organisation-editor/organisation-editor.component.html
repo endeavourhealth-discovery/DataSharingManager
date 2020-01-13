@@ -6,7 +6,7 @@
     <mat-card-subtitle *ngIf="!organisation.name">New {{orgType}}</mat-card-subtitle>
     <div fxFlex></div>
     <mat-menu #visualiseMenu="matMenu">
-      <button *ngIf="(organisation.isService === 0) && (organisation.uuid) && (allowEdit)" mat-menu-item (click)="createServiceFromOrg(false)">Create service</button>
+      <button *ngIf="(organisation.isService === 0) && (organisation.uuid) && (allowEdit)" mat-menu-item (click)="createServiceFromOrg()">Create service</button>
       <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(false)">Save</button>
       <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(true)">Save & close</button>
     </mat-menu>
@@ -63,7 +63,7 @@
           [items]="addresses"
           [detailsToShow]="addressDetailsToShow"
           [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
         <!--<mat-card *ngFor="let orgAddress of addresses; let index = index">
@@ -106,8 +106,8 @@
           [items]="regions"
           [detailsToShow]="regionDetailsToShow"
           [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addRegion()"><mat-icon>add</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addChildOrganisations()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
       <mat-tab *ngIf="organisation.isService === 0">
@@ -119,8 +119,8 @@
           [detailsToShow]="dpaDetailsToShow"
           [allowSelect]="allowEdit"
           (clicked)="editDpa($event)">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addChildOrganisations()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
       <mat-tab *ngIf="organisation.isService === 0">
@@ -131,8 +131,8 @@
           [items]="dsaPublishing"
           [detailsToShow]="dsaDetailsToShow"
           [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button></app-generic-table>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addChildOrganisations()"><mat-icon>add</mat-icon></button></app-generic-table>
       </mat-tab>
       <mat-tab *ngIf="organisation.isService === 0">
         <ng-template mat-tab-label>
@@ -142,8 +142,8 @@
           [items]="dsaSubscribing"
           [detailsToShow]="dsaDetailsToShow"
           [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button></app-generic-table>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addChildOrganisations()"><mat-icon>add</mat-icon></button></app-generic-table>
       </mat-tab>
       <mat-tab *ngIf="organisation.isService === 0">
         <ng-template mat-tab-label>
@@ -153,7 +153,7 @@
           [items]="childOrganisations"
           [detailsToShow]="orgDetailsToShow"
           [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addChildOrganisations()"><mat-icon>add</mat-icon></button></app-generic-table>
       </mat-tab>
       <mat-tab>
@@ -164,7 +164,7 @@
           [items]="parentOrganisations"
           [detailsToShow]="orgDetailsToShow"
           [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addParentOrganisations()"><mat-icon>add</mat-icon></button></app-generic-table>
       </mat-tab>
       <mat-tab *ngIf="organisation.isService === 0">
@@ -175,7 +175,7 @@
           [items]="services"
           [detailsToShow]="orgDetailsToShow"
           [allowSelect]="allowEdit">`1
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress(orgAddress)"><mat-icon>delete</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
@@ -183,251 +183,3 @@
   </mat-card-content>
 </mat-card>
 
-
-<!--<div class="module">
-  <div class="container-fluid">
-    <div class="module-heading">
-      {{orgType}} details
-      <div class="pull-right">
-        <button *ngIf="(organisation.isService === 0) && (organisation.uuid) && (allowEdit)" type="button" class="btn btn-sm btn-success" (click)="createServiceFromOrg(false)">Create service</button>
-        <button *ngIf="allowEdit" [disabled]="!f.valid" type="button" class="btn btn-sm btn-success" (click)="save(false)">Save</button>
-        <button *ngIf="allowEdit" [disabled]="!f.valid" type="button" class="btn btn-sm btn-warning" (click)="save(true)">Save & close</button>
-        <button type="button" class="btn btn-sm btn-danger" (click)="close()">Cancel</button>
-      </div>
-    </div>
-    <div class="module-body">
-      <form class="form" #f="ngForm" novalidate>
-        <div class="form-group" #fgName="ngModelGroup" ngModelGroup="organisation" [class.has-error]="!fgName.valid">
-          <fieldset [disabled]="!allowEdit">
-            <legend>Organisation</legend>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label class="control-label required-field">{{orgType}} name</label>
-                <input required type="text" class="form-control" placeholder="Organisation name" [(ngModel)]="organisation.name" name="name">
-              </div>
-              <div class="form-group col-md-6">
-                <label class="control-label">Alternative name</label>
-                <input type="text" class="form-control" placeholder="Alternative Name" [(ngModel)]="organisation.alternativeName" name="alternativeName">
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label class="control-label required-field">ODS code</label>
-                <input required type="text" class="form-control" placeholder="ODS code" [(ngModel)]="organisation.odsCode" name="odsCode">
-              </div>
-              <div class="form-group col-md-6">
-                <label class="control-label">ICO code</label>
-                <input type="text" class="form-control" placeholder="ICO code" [(ngModel)]="organisation.icoCode" name="icoCode">
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label class="control-label">IG toolkit status</label>
-                <input type="text" class="form-control" placeholder="IG toolkit status" [(ngModel)]="organisation.igToolkitStatus" name="igToolkitStatus">
-              </div>
-              <div class="form-group col-md-6">
-                <label class="control-label">Date of registration</label>
-                <input type="date" class="form-control" placeholder="Date Of registration" [(ngModel)]="organisation.dateOfRegistration" name="dateOfRegistration">
-              </div>
-            </div>
-            <div class="row">
-              <div class="form-group col-md-6">
-                <label class="control-label required-field">Organisation type</label>
-                <div class="input-group">
-                  <select required class="form-control" [(ngModel)]="organisation.type" name="type">
-                    <option *ngFor="let ot of organisationTypes" [ngValue]="ot.id">{{ot.organisationType}}</option>
-                  </select>
-                </div>
-                <small class="required-field-note"></small>
-              </div>
-              &lt;!&ndash;<div class="form-group col-md-6">
-                <label class="control-label">Evidence of registration</label>
-                <input type="text" class="form-control" placeholder="Evidence of registration" [(ngModel)]="organisation.evidenceOfRegistration" name="evidenceOfRegistration">
-              </div>&ndash;&gt;
-            </div>
-
-            <button *ngIf="allowEdit && organisation.isService === 0" type="button" class="btn btn-sm btn-success" (click)="addAddress()">Add address</button>
-            <div *ngFor="let orgAddress of addresses;let index = index;">
-              <div class="card">
-                <div class="card-body">
-                  <div class="row">
-                      <p><em *ngIf="allowEdit" (click)="deleteAddress(orgAddress)" class="fa fa-trash delete-endeavour-button-top" aria-hidden="true" style="color:red"></em></p>
-                  </div>
-
-                  <div class="row">
-                    <div class="form-group col-md-4">
-                      <label class="control-label">Building name</label>
-                      <input type="text" class="form-control" placeholder="Building name" [(ngModel)]="orgAddress.buildingName" name="buildingName{{index}}">
-                    </div>
-                    <div class="form-group col-md-4">
-                      <label class="control-label">Number and street</label>
-                      <input type="text" class="form-control" placeholder="Number and street" [(ngModel)]="orgAddress.numberAndStreet" name="numberAndStreet{{index}}">
-                    </div>
-                    <div class="form-group col-md-4">
-                      <label class="control-label">Locality</label>
-                      <input type="text" class="form-control" placeholder="Locality" [(ngModel)]="orgAddress.locality" name="locality{{index}}">
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group col-md-4">
-                      <label class="control-label">City</label>
-                      <input type="text" class="form-control" placeholder="City" [(ngModel)]="orgAddress.city" name="city{{index}}">
-                    </div>
-                    <div class="form-group col-md-4">
-                      <label class="control-label">County</label>
-                      <input type="text" class="form-control" placeholder="County" [(ngModel)]="orgAddress.county" name="county{{index}}">
-                    </div>
-                    <div class="form-group col-md-4">
-                      <label class="control-label">Postcode</label>
-                      <input type="text" class="form-control" placeholder="Postcode" [(ngModel)]="orgAddress.postcode" name="postcode{{index}}">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <br>
-          </fieldset>
-        </div>
-
-        <ngb-tabset>
-          <ngb-tab *ngIf="organisation.isService === 0">
-            <ng-template ngbTabTitle><span class="tab-title">Regions </span><span class="badge badge-pill badge-primary">{{regions?.length}}</span></ng-template>
-            <ng-template ngbTabContent>
-              <entity-viewer
-                (onshowPicker)="editRegions()"
-                [items]="regions"
-                [primary]="'name'"
-                [primaryOrderText]="'Name'"
-                [displayClass]="'region'"
-                [secondary]="'description'"
-                [secondaryOrderText]="'Description'"
-                [typeDescription]="'Region'"
-                [model]="'region'"
-                [detailsToShow]="regionDetailsToShow"
-                [allowEdit]="allowEdit"
-                [showEditButton]="allowEdit">
-              </entity-viewer>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab *ngIf="organisation.isService === 0">
-            <ng-template ngbTabTitle><span class="tab-title">DPA publishing to </span><span class="badge badge-pill badge-primary">{{dpaPublishing?.length}}</span></ng-template>
-            <ng-template ngbTabContent>
-              <entity-viewer
-                (onshowPicker)="editDPAPublishing()"
-                [items]="dpaPublishing"
-                [primary]="'name'"
-                [primaryOrderText]="'Name'"
-                [displayClass]="'region'"
-                [secondary]="'description'"
-                [secondaryOrderText]="'Description'"
-                [typeDescription]="'Data processing agreement'"
-                [model]="'dpa'"
-                [detailsToShow]="dpaDetailsToShow"
-                [allowEdit]="allowEdit"
-                [showEditButton]="allowEdit">
-              </entity-viewer>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab *ngIf="organisation.isService === 0">
-            <ng-template ngbTabTitle><span class="tab-title">DSA Publishing to </span><span class="badge badge-pill badge-primary">{{dsaPublishing?.length}}</span></ng-template>
-            <ng-template ngbTabContent>
-              <entity-viewer
-                (onshowPicker)="editDSASubscribing()"
-                [items]="dsaPublishing"
-                [primary]="'name'"
-                [primaryOrderText]="'Name'"
-                [displayClass]="'region'"
-                [secondary]="'description'"
-                [secondaryOrderText]="'Description'"
-                [typeDescription]="'Data sharing agreement'"
-                [model]="'dsa'"
-                [detailsToShow]="dsaDetailsToShow"
-                [allowEdit]="allowEdit"
-                [showEditButton]="allowEdit">
-              </entity-viewer>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab *ngIf="organisation.isService === 0">
-            <ng-template ngbTabTitle><span class="tab-title">DSA subscribing to </span><span class="badge badge-pill badge-primary">{{dsaSubscribing?.length}}</span></ng-template>
-            <ng-template ngbTabContent>
-              <entity-viewer
-                (onshowPicker)="editDSASubscribing()"
-                [items]="dsaSubscribing"
-                [primary]="'name'"
-                [primaryOrderText]="'Name'"
-                [displayClass]="'region'"
-                [secondary]="'description'"
-                [secondaryOrderText]="'Description'"
-                [typeDescription]="'Data sharing agreement'"
-                [model]="'dsa'"
-                [detailsToShow]="dsaDetailsToShow"
-                [allowEdit]="allowEdit"
-                [showEditButton]="allowEdit">
-              </entity-viewer>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab *ngIf="organisation.isService === 0">
-            <ng-template ngbTabTitle><span class="tab-title">Child organisations </span><span class="badge badge-pill badge-primary">{{childOrganisations?.length}}</span></ng-template>
-            <ng-template ngbTabContent>
-              <entity-viewer
-                (onshowPicker)="editChildOrganisations()"
-                [items]="childOrganisations"
-                [primary]="'name'"
-                [primaryOrderText]="'Name'"
-                [displayClass]="'region'"
-                [secondary]="'odsCode'"
-                [secondaryOrderText]="'ODS Code'"
-                [typeDescription]="'Child organisation'"
-                [model]="'organisation'"
-                [detailsToShow]="orgDetailsToShow"
-                [allowEdit]="allowEdit"
-                [showEditButton]="allowEdit">
-              </entity-viewer>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab>
-            <ng-template ngbTabTitle><span class="tab-title">Parent organisations </span><span class="badge badge-pill badge-primary">{{parentOrganisations?.length}}</span></ng-template>
-            <ng-template ngbTabContent>
-              <entity-viewer
-                (onshowPicker)="editParentOrganisations()"
-                [items]="parentOrganisations"
-                [primary]="'name'"
-                [primaryOrderText]="'Name'"
-                [displayClass]="'region'"
-                [secondary]="'odsCode'"
-                [secondaryOrderText]="'ODS Code'"
-                [typeDescription]="'Parent organisation'"
-                [model]="'organisation'"
-                [detailsToShow]="orgDetailsToShow"
-                [allowEdit]="allowEdit"
-                [showEditButton]="allowEdit">
-              </entity-viewer>
-            </ng-template>
-          </ngb-tab>
-          <ngb-tab *ngIf="organisation.isService === 0">
-            <ng-template ngbTabTitle><span class="tab-title">Services </span><span class="badge badge-pill badge-primary">{{services?.length}}</span></ng-template>
-            <ng-template ngbTabContent>
-              <entity-viewer
-                (onshowPicker)="editServices()"
-                [items]="services"
-                [primary]="'name'"
-                [primaryOrderText]="'Name'"
-                [displayClass]="'region'"
-                [secondary]="'odsCode'"
-                [secondaryOrderText]="'ODS Code'"
-                [typeDescription]="'Service'"
-                [model]="'organisation'"
-                [detailsToShow]="orgDetailsToShow"
-                [allowEdit]="allowEdit"
-                [showEditButton]="allowEdit">
-              </entity-viewer>
-            </ng-template>
-          </ngb-tab>
-        </ngb-tabset>
-
-      </form>
-      <br>
-      <br>
-    </div>
-  </div>
-</div>-->

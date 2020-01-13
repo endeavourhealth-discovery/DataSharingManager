@@ -230,6 +230,10 @@ export class RegionEditorComponent implements OnInit {
       )
   }
 
+  addPublishers() {
+
+  }
+
   /*private editOrganisations() {
 
     OrganisationPickerComponent.open(this.$modal, this.organisations, 'organisations')

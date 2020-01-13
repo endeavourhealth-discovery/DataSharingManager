@@ -85,8 +85,8 @@
                            [detailsToShow]="regionDetailsToShow"
                            [allowSelect]="allowEdit"
                            (clicked)="regionClicked($event)">
-          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteRegions()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addRegion()"><mat-icon>add</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePurposes()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPurpose(-1)"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
       <mat-tab>
@@ -98,8 +98,8 @@
                            [detailsToShow]="projectDetailsToShow"
                            [allowSelect]="allowEdit"
                            (clicked)="projectClicked($event)">
-          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteProjects()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addProjects()"><mat-icon>add</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePurposes()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPurpose(-1)"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
       <mat-tab>
@@ -111,8 +111,8 @@
                            [detailsToShow]="publisherDetailsToShow"
                            [allowSelect]="allowEdit"
                            (clicked)="publisherClicked($event)">
-          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePublishers()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPublisher()"><mat-icon>add</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePurposes()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPurpose(-1)"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
       <mat-tab>
@@ -124,8 +124,8 @@
                            [detailsToShow]="subscriberDetailsToShow"
                            [allowSelect]="allowEdit"
                            (clicked)="subscriberClicked($event)">
-          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteSubscribers()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addSubscribers()"><mat-icon>add</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePurposes()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPurpose(-1)"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
       <mat-tab>
@@ -137,8 +137,8 @@
                            [detailsToShow]="documentDetailsToShow"
                            [allowSelect]="allowEdit"
                            (clicked)="documentationClicked($event)">
-          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDocumentations()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addDocumentation()"><mat-icon>add</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePurposes()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPurpose(-1)"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
     </mat-tab-group>

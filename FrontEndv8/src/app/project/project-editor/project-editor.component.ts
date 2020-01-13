@@ -159,6 +159,10 @@ export class ProjectEditorComponent implements OnInit {
     } as Project;
   }
 
+  save(close: boolean) {
+
+  }
+
   load(uuid: string) {
     this.projectService.getProject(uuid)
       .subscribe(result =>  {

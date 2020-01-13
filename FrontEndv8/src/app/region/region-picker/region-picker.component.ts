@@ -42,6 +42,10 @@ export class RegionPickerComponent implements OnInit {
     this.search();
   }
 
+  clear() {
+    this.searchData = '';
+  }
+
   search() {
     /*const vm = this;
     if (vm.searchData.length < 3) {
