@@ -22,9 +22,9 @@ export class DataSetService {
   }
 
   saveDataSet(dataset: DataSet): Observable<any> {
-	const httpOptions = { responseType: 'text' };
+	//const httpOptions = { responseType: 'text' };
     const url = 'api/dataSet';
-    return this.http.post<any>(url, dataset, httpOptions);
+    return this.http.post<any>(url, dataset);
   }
 
   deleteDataSet(uuid: string): Observable<any> {

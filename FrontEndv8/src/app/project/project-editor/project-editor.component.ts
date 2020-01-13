@@ -13,6 +13,8 @@ import {GenericTableComponent} from "../../generic-table/generic-table/generic-t
 import {Documentation} from "../../documentation/models/Documentation";
 import {DocumentationComponent} from "../../documentation/documentation/documentation.component";
 import {DocumentationService} from "../../documentation/documentation.service";
+import { Cohort } from "src/app/cohort/models/Cohort";
+import {OrganisationPickerComponent} from "../../organisation/organisation-picker/organisation-picker.component";
 
 @Component({
   selector: 'app-project-editor',
@@ -21,10 +23,11 @@ import {DocumentationService} from "../../documentation/documentation.service";
 })
 export class ProjectEditorComponent implements OnInit {
 
-  @ViewChild('dsasTable', { static: false }) purposesTable: GenericTableComponent;
+  @ViewChild('dsasTable', { static: false }) dsasTable: GenericTableComponent;
   @ViewChild('publishersTable', { static: false }) publishersTable: GenericTableComponent;
   @ViewChild('subscribersTable', { static: false }) subscribersTable: GenericTableComponent;
   @ViewChild('documentationsTable', { static: false }) documentationsTable: GenericTableComponent;
+  @ViewChild('cohortsTable', { static: false }) cohortsTable: GenericTableComponent;
 
   project: Project;
   public activeProject: UserProject;
@@ -41,6 +44,8 @@ export class ProjectEditorComponent implements OnInit {
   subscribers: Organisation[] = [];
   documentations: Documentation[] = [];
   documentationsDetailsToShow = new Documentation().getDisplayItems();
+  cohorts: Cohort[] = [];
+  cohortsDetailsToShow = new Cohort().getDisplayItems();
 
   businessCaseStatuses = [
     {num: 0, name: 'Submitted'},
@@ -165,6 +170,7 @@ export class ProjectEditorComponent implements OnInit {
           this.getPublishers();
           this.getSubscribers();
           this.getDocumentations();
+          this.getCohorts();
         },
         error => this.log.error('The data processing agreement could not be loaded. Please try again.')
       );
@@ -211,8 +217,8 @@ export class ProjectEditorComponent implements OnInit {
     }
     this.dsasTable.updateRows();  }
 
-  addDsa() {
-    this.router.navigate(['/dsa', 1, 'add']);
+  addDsas() {
+    //TODO
   }
 
   getPublishers() {
@@ -237,8 +243,23 @@ export class ProjectEditorComponent implements OnInit {
     this.publishersTable.updateRows();
   }
 
-  addPublisher() {
-    this.router.navigate(['/organisation', 1, 'add']);
+  addPublishers() {
+    if (!this.dsas[0]) {
+      this.log.error('The project must be associated with a data sharing agreement before editing publishers.');
+    } else {
+      const dialogRef = this.dialog.open(OrganisationPickerComponent, {
+        width: '800px',
+        data: { searchType: 'publisher', uuid: '', regionUUID: '', dsaUUID: this.dsas[0].uuid }
+      })
+      dialogRef.afterClosed().subscribe(result => {
+        for (let org of result) {
+          if (!this.publishers.some(x => x.uuid === org.uuid)) {
+            this.publishers.push(org);
+            this.publishersTable.updateRows();
+          }
+        }
+      })
+    }
   }
 
   getSubscribers() {
@@ -259,11 +280,30 @@ export class ProjectEditorComponent implements OnInit {
     this.subscribersTable.updateRows();
   }
 
+  addSubscribers() {
+    if (!this.dsas[0]) {
+      this.log.error('The project must be associated with a data sharing agreement before editing publishers.');
+    } else {
+      const dialogRef = this.dialog.open(OrganisationPickerComponent, {
+        width: '800px',
+        data: { searchType: 'subscriber', uuid: '', regionUUID: '', dsaUUID: this.dsas[0].uuid }
+      })
+      dialogRef.afterClosed().subscribe(result => {
+        for (let org of result) {
+          if (!this.subscribers.some(x => x.uuid === org.uuid)) {
+            this.subscribers.push(org);
+            this.subscribersTable.updateRows();
+          }
+        }
+      })
+    }
+  }
+
   getDocumentations() {
     this.documentationService.getAllAssociatedDocuments(this.project.uuid, '14')
       .subscribe(
         result => this.documentations = result,
-        error => this.log.error('The associated documentation could not be loaded. Please try again.')
+        error => this.log.error('The associated documentations could not be loaded. Please try again.')
       );
   }
 
@@ -289,5 +329,32 @@ export class ProjectEditorComponent implements OnInit {
       }
     });
   }
+
+  getCohorts() {
+    this.projectService.getLinkedBasePopulation(this.project.uuid)
+      .subscribe(
+        result => this.cohorts = result,
+        error => this.log.error('The associated cohort could not be loaded. Please try again.')
+      );
+  }
+
+  cohortClicked(item: Organisation) {
+    this.router.navigate(['/cohort', item.uuid, 'edit']);
+  }
+
+  deleteCohorts() {
+    for (var i = 0; i < this.cohortsTable.selection.selected.length; i++) {
+      let purpose = this.cohortsTable.selection.selected[i];
+      this.cohorts.forEach( (item, index) => {
+        if(item === purpose) this.cohorts.splice(index,1);
+      });
+    }
+    this.cohortsTable.updateRows();
+  }
+
+  addCohort() {
+    this.router.navigate(['/cohort', 1, 'add']);
+  }
+
 
 }

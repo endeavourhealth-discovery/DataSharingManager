@@ -4,6 +4,7 @@ import {Observable} from "rxjs";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import { Dsa } from "src/app/data-sharing-agreement/models/Dsa";
 import {Organisation} from "../organisation/models/Organisation";
+import {Cohort} from "../cohort/models/Cohort";
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +48,13 @@ export class ProjectService {
     let params = new HttpParams();
     if (uuid) params = params.append('uuid', uuid);
     return this.http.get<Organisation[]>(url,{params});
+  }
+
+  getLinkedBasePopulation(uuid: string):  Observable<Cohort[]> {
+    const url = 'api/project/basePopulations';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.get<Cohort[]>(url,{params});
   }
 
 }

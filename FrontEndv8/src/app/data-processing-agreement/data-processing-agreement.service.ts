@@ -32,9 +32,9 @@ export class DataProcessingAgreementService {
   }
 
   saveDpa(dpa: Dpa): Observable<any> {
-    const httpOptions = { responseType: 'text' };
+    //const httpOptions = { responseType: 'text' };
     const url = 'api/dpa';
-    return this.http.post<any>(url, dpa, httpOptions);
+    return this.http.post<any>(url, dpa);
   }
 
   deleteDpa(uuid: string): Observable<any> {

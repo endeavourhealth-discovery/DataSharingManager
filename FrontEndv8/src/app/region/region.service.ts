@@ -64,8 +64,8 @@ export class RegionService {
   }
 
   saveRegion(region: Region): Observable<any> {
-	const httpOptions = { responseType: 'text' };
-    return this.http.post<any>('api/region', region, httpOptions);
+	//const httpOptions = { responseType: 'text' };
+    return this.http.post<any>('api/region', region);
   }
 
   deleteRegion(uuid: string): Observable<any> {

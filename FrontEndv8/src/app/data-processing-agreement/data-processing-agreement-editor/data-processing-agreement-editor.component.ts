@@ -14,6 +14,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {PurposeComponent} from "../../purpose/purpose/purpose.component";
 import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
 import {DocumentationComponent} from "../../documentation/documentation/documentation.component";
+import {RegionPickerComponent} from "../../region/region-picker/region-picker.component";
 
 @Component({
   selector: 'app-data-processing-agreement-editor',
@@ -241,7 +242,18 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   addRegion() {
-    this.router.navigate(['/region', 1, 'add']);
+    const dialogRef = this.dialog.open(RegionPickerComponent, {
+      width: '800px',
+      data: { uuid: '', limit: 0, userId : this.activeProject.userId }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      for (let region of result) {
+        if (!this.regions.some(x => x.uuid === region.uuid)) {
+          this.regions.push(region);
+          this.regionsTable.updateRows();
+        }
+      }
+    })
   }
 
   getPublishers() {
