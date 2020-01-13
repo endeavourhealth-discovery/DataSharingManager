@@ -19,6 +19,7 @@ import {DataSharingSummaryModule} from "./data-sharing-summary/data-sharing-summ
 import {PurposeModule} from "./purpose/purpose.module";
 import {DocumentationModule} from "./documentation/documentation.module";
 import {ProjectModule} from "./project/project.module";
+import {AuditModule} from "./audit/audit.module";
 
 
 const keycloakService = new KeycloakService();
@@ -42,6 +43,7 @@ const keycloakService = new KeycloakService();
     DataSharingAgreementModule,
     DataSharingSummaryModule,
     ProjectModule,
+    AuditModule,
 
     LayoutModule,
     SecurityModule,

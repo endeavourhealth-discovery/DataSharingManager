@@ -20,6 +20,7 @@ import {DataSharingAgreementComponent} from './data-sharing-agreement/data-shari
 import {DataSharingAgreementEditorComponent} from "./data-sharing-agreement/data-sharing-agreement-editor/data-sharing-agreement-editor.component";
 import {ProjectComponent} from "./project/project/project.component";
 import { ProjectEditorComponent } from "src/app/project/project-editor/project-editor.component";
+import {AuditComponent} from "./audit/audit/audit.component";
 //import {DataSharingSummaryComponent} from './data-sharing-summary/data-sharing-summary/data-sharing-summary.component';
 //import {DataSharingSummaryEditorComponent} from './data-sharing-summary/data-sharing-summary-editor/data-sharing-summary-editor.component';
 
@@ -47,6 +48,7 @@ export class AppMenuService implements  AbstractMenuProvider {
       { path: 'dsa/:id/:mode', component: DataSharingAgreementEditorComponent, data: {role: 'Viewer'}},
       { path: 'projects', component: ProjectComponent, data: {role: 'Viewer'}},
       { path: 'project/:id/:mode', component: ProjectEditorComponent, data: {role: 'Viewer'}},
+      { path: 'audit', component: AuditComponent, data: {role: 'Viewer'}},
       //{ path: 'dataSharingSummaries', component: DataSharingSummaryComponent, data: {role: 'Viewer'}},
       //{ path: 'dataSharingSummary/:id/:mode', component: DataSharingSummaryEditorComponent, data: {role: 'Viewer'}},
     ];
@@ -70,6 +72,7 @@ export class AppMenuService implements  AbstractMenuProvider {
       {caption: 'Data sets', state: 'dataSets', icon: 'library_books'},
       {caption: 'Cohorts', state: 'cohorts', icon: 'library_books'},
       {caption: 'Projects', state: 'projects', icon: 'library_books'},
+      {caption: 'Audit', state: 'audit', icon: 'library_books'}
     ];
   }
 }
