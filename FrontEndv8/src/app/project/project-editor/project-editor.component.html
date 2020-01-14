@@ -177,9 +177,34 @@
         <app-generic-table #cohortsTable
                            [items]="cohorts"
                            [detailsToShow]="cohortsDetailsToShow"
-                           [allowSelect]="allowEdit">
+                           [allowSelect]="allowEdit"
+                           (clicked)="cohortClicked($event)">
           <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteCohorts()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addCohort()"><mat-icon>add</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addCohorts()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{dataSets?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dataSets?.length < 1">Data Sets</span>
+        </ng-template>
+        <app-generic-table #dataSetsTable
+                           [items]="dataSets"
+                           [detailsToShow]="dataSetsDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="dataSetClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDataSets()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addDataSets()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{authToShare?.length}}" matBadgeOverlap="false" [matBadgeHidden]="authToShare?.length < 1">Authority To Share</span>
+        </ng-template>
+        <app-generic-table #authToShareTable
+                           [items]="authToShare"
+                           [detailsToShow]="authToShareDetailsToShow"
+                           [allowSelect]="false">
         </app-generic-table>
       </mat-tab>
     </mat-tab-group>

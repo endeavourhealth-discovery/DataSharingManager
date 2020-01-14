@@ -15,6 +15,7 @@ import {PurposeComponent} from "../../purpose/purpose/purpose.component";
 import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
 import {DocumentationComponent} from "../../documentation/documentation/documentation.component";
 import {RegionPickerComponent} from "../../region/region-picker/region-picker.component";
+import {OrganisationPickerComponent} from "../../organisation/organisation-picker/organisation-picker.component";
 
 @Component({
   selector: 'app-data-processing-agreement-editor',
@@ -279,8 +280,22 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   addPublisher() {
-    this.router.navigate(['/organisation', 1, 'add']);
-  }
+    if (!this.regions[0]) {
+      this.log.error('The data processing agreement must be associated with a region before editing publishers.');
+    } else {
+      const dialogRef = this.dialog.open(OrganisationPickerComponent, {
+        width: '800px',
+        data: { searchType: 'publisher', uuid: '', regionUUID: this.regions[0].uuid, dsaUUID: '' }
+      })
+      dialogRef.afterClosed().subscribe(result => {
+        for (let org of result) {
+          if (!this.publishers.some(x => x.uuid === org.uuid)) {
+            this.publishers.push(org);
+            this.publishersTable.updateRows();
+          }
+        }
+      })
+    }  }
 
   getDocumentations() {
     this.documentationService.getAllAssociatedDocuments(this.dpa.uuid, '5')

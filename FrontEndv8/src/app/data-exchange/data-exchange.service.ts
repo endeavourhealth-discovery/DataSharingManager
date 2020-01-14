@@ -22,9 +22,8 @@ export class DataExchangeService {
   }
 
   saveDataExchange(cohort: DataExchange): Observable<any> {
-	//const httpOptions = { responseType: 'text' };
     const url = 'api/dataExchange';
-    return this.http.post<any>(url, cohort);
+    return this.http.post(url, cohort, { responseType: 'text' });
   }
 
   deleteDataExchange(uuid: string): Observable<any> {

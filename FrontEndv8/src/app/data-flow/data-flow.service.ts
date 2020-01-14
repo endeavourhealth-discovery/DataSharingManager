@@ -25,9 +25,8 @@ export class DataFlowService {
   }
 
   saveDataFlow(cohort: DataFlow): Observable<any> {
-	//const httpOptions = { responseType: 'text' };
     const url = 'api/dataFlow';
-    return this.http.post<any>(url, cohort);
+    return this.http.post(url, cohort, { responseType: 'text' });
   }
 
   deleteDataFlow(uuid: string): Observable<any> {
