@@ -11,4 +11,11 @@ export class Schedule {
     this.cronDescription = '';
     this.cronSettings = '';
   }
+
+  getDisplayItems(): any[] {
+    return [
+      {label: 'Expression', property: 'cronExpression'},
+      {label: 'Description', property: 'cronDescription'}
+    ];
+  }
 }

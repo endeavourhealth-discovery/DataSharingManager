@@ -22,6 +22,8 @@ import {AuthorityToShare} from "../models/AuthorityToShare";
 import { ApplicationPolicy } from '../models/ApplicationPolicy';
 import {ProjectApplicationPolicy} from "../models/ProjectApplicationPolicy";
 import {ExtractTechnicalDetails} from "../models/ExtractTechnicalDetails";
+import {Schedule} from "../../scheduler/models/Schedule";
+import {SchedulerComponent} from "../../scheduler/scheduler/scheduler.component";
 
 @Component({
   selector: 'app-project-editor',
@@ -37,6 +39,7 @@ export class ProjectEditorComponent implements OnInit {
   @ViewChild('cohortsTable', { static: false }) cohortsTable: GenericTableComponent;
   @ViewChild('dataSetsTable', { static: false }) dataSetsTable: GenericTableComponent;
   @ViewChild('authToShareTable', { static: false }) authToShareTable: GenericTableComponent;
+  @ViewChild('schedulesTable', { static: false }) schedulesTable: GenericTableComponent;
 
   project: Project;
   public activeProject: UserProject;
@@ -61,10 +64,9 @@ export class ProjectEditorComponent implements OnInit {
   availablePolicies: ApplicationPolicy[];
   selectedApplicationPolicy: ApplicationPolicy;
   projectApplicationPolicy: ProjectApplicationPolicy;
-
   extractTechnicalDetails: ExtractTechnicalDetails = <ExtractTechnicalDetails>{};
-
-
+  schedules: Schedule[] = [];
+  schedulesDetailsToShow = new Schedule().getDisplayItems();
 
   businessCaseStatuses = [
     {num: 0, name: 'Submitted'},
@@ -482,5 +484,92 @@ export class ProjectEditorComponent implements OnInit {
     changedPolicy.projectUuid = this.project.uuid;
     changedPolicy.applicationPolicyId = policyId;
     this.projectApplicationPolicy = changedPolicy;
+  }
+
+  uploadExtraTechDetails(whichFile: number) {
+    const dialogRef = this.dialog.open(DocumentationComponent, {
+      height: '350px',
+      width: '550px',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (whichFile == 1) {
+          this.log.success('Uploading SFTP host public key file complete.');
+          this.extractTechnicalDetails.sftpHostPublicKeyFilename = result.filename;
+          this.extractTechnicalDetails.sftpHostPublicKeyFileData = result.fileData;
+        } else if (whichFile == 2) {
+          this.log.success('Uploading SFTP client private key file complete.');
+          this.extractTechnicalDetails.sftpClientPrivateKeyFilename = result.filename;
+          this.extractTechnicalDetails.sftpClientPrivateKeyFileData = result.fileData;
+        } else if (whichFile == 3) {
+          this.log.success('Uploading customer public key file complete.');
+          this.extractTechnicalDetails.pgpCustomerPublicKeyFilename = result.filename;
+          this.extractTechnicalDetails.pgpCustomerPublicKeyFileData = result.fileData;
+        } else if (whichFile == 4) {
+          this.log.success('Uploading internal public key file complete.');
+          this.extractTechnicalDetails.pgpInternalPublicKeyFilename = result.filename;
+          this.extractTechnicalDetails.pgpInternalPublicKeyFileData = result.fileData;
+        }
+      }
+    });
+  }
+
+  clearExtraTechDetails(whichFile: number) {
+    if (whichFile == 1) {
+      this.extractTechnicalDetails.sftpHostPublicKeyFilename = null;
+      this.extractTechnicalDetails.sftpHostPublicKeyFileData = null;
+    } else if (whichFile == 2) {
+      this.extractTechnicalDetails.sftpClientPrivateKeyFilename = null;
+      this.extractTechnicalDetails.sftpClientPrivateKeyFileData = null;
+    } else if (whichFile == 3) {
+      this.extractTechnicalDetails.pgpCustomerPublicKeyFilename = null;
+      this.extractTechnicalDetails.pgpCustomerPublicKeyFileData = null;
+    } else if (whichFile == 4) {
+      this.extractTechnicalDetails.pgpInternalPublicKeyFilename = null;
+      this.extractTechnicalDetails.pgpInternalPublicKeyFileData = null;
+    }
+  }
+
+  getSchedules() {
+    //TODO
+  }
+
+  scheduleClicked(item: Schedule) {
+    let index = this.schedules.indexOf(item);
+    const dialogRef = this.dialog.open(SchedulerComponent, {
+      height: '610px',
+      width: '1200px',
+      data: {schedule: item, allowTime: true},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.schedules[index] = result;
+        this.schedulesTable.updateRows();
+      }
+    });
+  }
+
+  deleteSchedules() {
+    for (var i = 0; i < this.schedulesTable.selection.selected.length; i++) {
+      let purpose = this.schedulesTable.selection.selected[i];
+      this.schedules.forEach( (item, index) => {
+        if(item === purpose) this.schedules.splice(index,1);
+      });
+    }
+    this.schedulesTable.updateRows();
+  }
+
+  addSchedule() {
+    const dialogRef = this.dialog.open(SchedulerComponent, {
+      height: '610px',
+      width: '1200px',
+      data: {schedule: null, allowTime: true},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.schedules.push(result);
+        this.schedulesTable.updateRows();
+      }
+    });
   }
 }
