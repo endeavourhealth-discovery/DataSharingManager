@@ -13,8 +13,12 @@ import {GenericTableComponent} from "../../generic-table/generic-table/generic-t
 import {Documentation} from "../../documentation/models/Documentation";
 import {DocumentationComponent} from "../../documentation/documentation/documentation.component";
 import {DocumentationService} from "../../documentation/documentation.service";
-import { Cohort } from "src/app/cohort/models/Cohort";
+import {Cohort} from "src/app/cohort/models/Cohort";
 import {OrganisationPickerComponent} from "../../organisation/organisation-picker/organisation-picker.component";
+import {CohortPickerComponent} from "../../cohort/cohort-picker/cohort-picker.component";
+import {DataSet} from "src/app/data-set/models/Dataset";
+import {DataSetPickerComponent} from "src/app/data-set/data-set-picker/data-set-picker.component";
+import {AuthorityToShare} from "../models/AuthorityToShare";
 
 @Component({
   selector: 'app-project-editor',
@@ -28,6 +32,8 @@ export class ProjectEditorComponent implements OnInit {
   @ViewChild('subscribersTable', { static: false }) subscribersTable: GenericTableComponent;
   @ViewChild('documentationsTable', { static: false }) documentationsTable: GenericTableComponent;
   @ViewChild('cohortsTable', { static: false }) cohortsTable: GenericTableComponent;
+  @ViewChild('dataSetsTable', { static: false }) dataSetsTable: GenericTableComponent;
+  @ViewChild('authToShareTable', { static: false }) authToShareTable: GenericTableComponent;
 
   project: Project;
   public activeProject: UserProject;
@@ -46,6 +52,10 @@ export class ProjectEditorComponent implements OnInit {
   documentationsDetailsToShow = new Documentation().getDisplayItems();
   cohorts: Cohort[] = [];
   cohortsDetailsToShow = new Cohort().getDisplayItems();
+  dataSets: DataSet[] = [];
+  dataSetsDetailsToShow = new DataSet().getDisplayItems();
+  authToShare: AuthorityToShare[] = [];
+  authToShareDetailsToShow = new AuthorityToShare().getDisplayItems();
 
   businessCaseStatuses = [
     {num: 0, name: 'Submitted'},
@@ -175,6 +185,8 @@ export class ProjectEditorComponent implements OnInit {
           this.getSubscribers();
           this.getDocumentations();
           this.getCohorts();
+          this.getDataSets();
+          this.getAuthToShare();
         },
         error => this.log.error('The data processing agreement could not be loaded. Please try again.')
       );
@@ -286,7 +298,7 @@ export class ProjectEditorComponent implements OnInit {
 
   addSubscribers() {
     if (!this.dsas[0]) {
-      this.log.error('The project must be associated with a data sharing agreement before editing publishers.');
+      this.log.error('The project must be associated with a data sharing agreement before editing subscribers.');
     } else {
       const dialogRef = this.dialog.open(OrganisationPickerComponent, {
         width: '800px',
@@ -342,7 +354,7 @@ export class ProjectEditorComponent implements OnInit {
       );
   }
 
-  cohortClicked(item: Organisation) {
+  cohortClicked(item: Cohort) {
     this.router.navigate(['/cohort', item.uuid, 'edit']);
   }
 
@@ -356,8 +368,100 @@ export class ProjectEditorComponent implements OnInit {
     this.cohortsTable.updateRows();
   }
 
-  addCohort() {
-    this.router.navigate(['/cohort', 1, 'add']);
+  addCohorts() {
+    const dialogRef = this.dialog.open(CohortPickerComponent, {
+      height: '750px',
+      width: '1200px',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        for (let cohort of result) {
+          if (!this.subscribers.some(x => x.uuid === cohort.uuid)) {
+            this.cohorts.push(cohort);
+            this.cohortsTable.updateRows();
+          }
+        }
+      }
+    });
+  }
+
+  getDataSets() {
+    this.projectService.getLinkedDataSets(this.project.uuid)
+      .subscribe(
+        result => this.dataSets = result,
+        error => this.log.error('The associated data sets could not be loaded. Please try again.')
+      );
+  }
+
+  dataSetClicked(item: DataSet) {
+    this.router.navigate(['/dataSet', item.uuid, 'edit']);
+  }
+
+  deleteDataSets() {
+    for (var i = 0; i < this.dataSetsTable.selection.selected.length; i++) {
+      let purpose = this.dataSetsTable.selection.selected[i];
+      this.dataSets.forEach( (item, index) => {
+        if(item === purpose) this.dataSets.splice(index,1);
+      });
+    }
+    this.dataSetsTable.updateRows();
+  }
+
+  addDataSets() {
+    const dialogRef = this.dialog.open(DataSetPickerComponent, {
+      height: '750px',
+      width: '1200px',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        for (let dataSet of result) {
+          if (!this.subscribers.some(x => x.uuid === dataSet.uuid)) {
+            this.dataSets.push(dataSet);
+            this.dataSetsTable.updateRows();
+          }
+        }
+      }
+    });
+  }
+
+  getAuthToShare() {
+    this.projectService.getUsersAssignedToProject(this.project.uuid)
+      .subscribe(
+        result => this.authToShare = result,
+        error => this.log.error('Authority to share could not be loaded. Please try again.')
+      );
+  }
+
+  parseNamedUsers(users: User[]): string {
+    let value = '';
+    if (users) {
+      for (var i = 0; i < users.length; i++) {
+        if (i != users.length - 1) {
+          value += this.displayName(users[i]) + ", ";
+        } else {
+          value += this.displayName(users[i]);
+        }
+      }
+      value = value.trim();
+      return value;
+    }
+  }
+
+  displayName(user: User):string {
+    if(user.forename == null && user.surname == null) {
+      if(user.uuid != null) {
+        return user.uuid;
+      }
+      return 'Unknown User';
+    }
+
+    var displayName = user.forename + ' ' + user.surname;
+
+    if(user.title != null) {
+      displayName = user.title + ' ' + displayName;
+    }
+
+    return displayName.trim();
   }
 
 

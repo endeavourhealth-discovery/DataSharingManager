@@ -5,6 +5,8 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import { Dsa } from "src/app/data-sharing-agreement/models/Dsa";
 import {Organisation} from "../organisation/models/Organisation";
 import {Cohort} from "../cohort/models/Cohort";
+import {DataSet} from "../data-set/models/Dataset";
+import { AuthorityToShare } from "src/app/project/models/AuthorityToShare";
 
 @Injectable({
   providedIn: 'root'
@@ -56,5 +58,20 @@ export class ProjectService {
     if (uuid) params = params.append('uuid', uuid);
     return this.http.get<Cohort[]>(url,{params});
   }
+
+  getLinkedDataSets(uuid: string):  Observable<DataSet[]> {
+    const url = 'api/project/dataSets';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.get<DataSet[]>(url,{params});
+  }
+
+  getUsersAssignedToProject(uuid: string):  Observable<AuthorityToShare[]> {
+    const url = 'api/project/getUsersAssignedToProject';
+    let params = new HttpParams();
+    if (uuid) params = params.append('projectUuid', uuid);
+    return this.http.get<AuthorityToShare[]>(url,{params});
+  }
+
 
 }

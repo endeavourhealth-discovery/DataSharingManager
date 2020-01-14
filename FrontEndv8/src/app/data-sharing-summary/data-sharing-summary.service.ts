@@ -21,9 +21,8 @@ export class DataSharingSummaryService {
   }
 
   saveDataSharingSummary(cohort: DataSharingSummary): Observable<any> {
-	//const httpOptions = { responseType: 'text' };
     const url = 'api/dataSharingSummary';
-    return this.http.post<any>(url, cohort);
+    return this.http.post(url, cohort, { responseType: 'text' });
   }
 
   deleteDataSharingSummary(uuid: string): Observable<any> {
