@@ -19,6 +19,9 @@ import {CohortPickerComponent} from "../../cohort/cohort-picker/cohort-picker.co
 import {DataSet} from "src/app/data-set/models/Dataset";
 import {DataSetPickerComponent} from "src/app/data-set/data-set-picker/data-set-picker.component";
 import {AuthorityToShare} from "../models/AuthorityToShare";
+import { ApplicationPolicy } from '../models/ApplicationPolicy';
+import {ProjectApplicationPolicy} from "../models/ProjectApplicationPolicy";
+import {ExtractTechnicalDetails} from "../models/ExtractTechnicalDetails";
 
 @Component({
   selector: 'app-project-editor',
@@ -55,7 +58,13 @@ export class ProjectEditorComponent implements OnInit {
   dataSets: DataSet[] = [];
   dataSetsDetailsToShow = new DataSet().getDisplayItems();
   authToShare: AuthorityToShare[] = [];
-  authToShareDetailsToShow = new AuthorityToShare().getDisplayItems();
+  availablePolicies: ApplicationPolicy[];
+  selectedApplicationPolicy: ApplicationPolicy;
+  projectApplicationPolicy: ProjectApplicationPolicy;
+
+  extractTechnicalDetails: ExtractTechnicalDetails = <ExtractTechnicalDetails>{};
+
+
 
   businessCaseStatuses = [
     {num: 0, name: 'Submitted'},
@@ -150,6 +159,8 @@ export class ProjectEditorComponent implements OnInit {
       params => {
         this.performAction(params['mode'], params['id']);
       });
+    this.getAvailableApplicationPolicies();
+    this.getUserList();
   }
 
   protected performAction(action: string, itemUuid: string) {
@@ -187,8 +198,19 @@ export class ProjectEditorComponent implements OnInit {
           this.getCohorts();
           this.getDataSets();
           this.getAuthToShare();
+          this.getAvailableApplicationPolicies();
+          this.getProjectApplicationPolicy();
         },
         error => this.log.error('The data processing agreement could not be loaded. Please try again.')
+      );
+  }
+
+  getUserList() {
+    const vm = this;
+    vm.projectService.getUsers()
+      .subscribe(
+        (result) => vm.userList = result,
+        (error) => this.log.error('User list could not be loaded. Please try again.')
       );
   }
 
@@ -432,37 +454,33 @@ export class ProjectEditorComponent implements OnInit {
       );
   }
 
-  parseNamedUsers(users: User[]): string {
-    let value = '';
-    if (users) {
-      for (var i = 0; i < users.length; i++) {
-        if (i != users.length - 1) {
-          value += this.displayName(users[i]) + ", ";
-        } else {
-          value += this.displayName(users[i]);
+  getAvailableApplicationPolicies() {
+    this.projectService.getAvailableProjectApplicationPolicy()
+      .subscribe(
+        (result) => this.availablePolicies = result,
+        (error) => this.log.error('Available application policies could not be loaded. Please try again.')
+      );
+  }
+
+  getProjectApplicationPolicy() {
+    this.projectService.getProjectApplicationPolicy(this.project.uuid)
+      .subscribe(
+        (result) => {
+          this.projectApplicationPolicy = result;
+          this.selectedApplicationPolicy = this.availablePolicies.find(r => {
+            return r.id === this.projectApplicationPolicy.applicationPolicyId;
+          });
+        },
+        (error) => {
+          this.log.error('Project application policy could not be loaded. Please try again.');
         }
-      }
-      value = value.trim();
-      return value;
-    }
+      );
   }
 
-  displayName(user: User):string {
-    if(user.forename == null && user.surname == null) {
-      if(user.uuid != null) {
-        return user.uuid;
-      }
-      return 'Unknown User';
-    }
-
-    var displayName = user.forename + ' ' + user.surname;
-
-    if(user.title != null) {
-      displayName = user.title + ' ' + displayName;
-    }
-
-    return displayName.trim();
+  changeUserApplicationPolicy(policyId: string) {
+    let changedPolicy = new ProjectApplicationPolicy();
+    changedPolicy.projectUuid = this.project.uuid;
+    changedPolicy.applicationPolicyId = policyId;
+    this.projectApplicationPolicy = changedPolicy;
   }
-
-
 }

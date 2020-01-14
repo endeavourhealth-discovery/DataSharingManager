@@ -196,16 +196,113 @@
           <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addDataSets()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
-
       <mat-tab>
         <ng-template mat-tab-label>
           <span matBadge="{{authToShare?.length}}" matBadgeOverlap="false" [matBadgeHidden]="authToShare?.length < 1">Authority To Share</span>
         </ng-template>
-        <app-generic-table #authToShareTable
-                           [items]="authToShare"
-                           [detailsToShow]="authToShareDetailsToShow"
-                           [allowSelect]="false">
-        </app-generic-table>
+        <br>
+        <br>
+        <mat-tab-group dynamicHeight>
+          <mat-tab *ngFor="let org of authToShare">
+            <ng-template mat-tab-label>
+              <span matBadge="{{org.users?.length}}" matBadgeOverlap="false" [matBadgeHidden]="org.users?.length < 1">{{org.organisationName}}</span>
+            </ng-template>
+            <mat-list>
+              <mat-list-item *ngFor="let user of org.users">
+                {{user.forename}} {{user.surname}} ({{user.username}})
+              </mat-list-item>
+            </mat-list>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span>Application Policy</span>
+        </ng-template>
+        <br>
+        <br>
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+            <mat-label>Application Policy</mat-label>
+            <mat-select matInput name="status" [(ngModel)]="selectedApplicationPolicy" name="selectedApplicationPolicy" (change)="changeUserApplicationPolicy(selectedApplicationPolicy.id)">
+              <mat-option *ngFor="let pol of availablePolicies" [value]="pol">{{pol.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span>Extract Technical Details</span>
+        </ng-template>
+        <br>
+        <br>
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+          <mat-form-field appearance="outline" fxFlex="100" fxFill>
+            <mat-label>Name</mat-label>
+            <input required matInput [(ngModel)]="extractTechnicalDetails.name" placeholder="Name" name="extractTechnicalDetailsName">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+            <mat-label>SFTP Host Name</mat-label>
+            <input required matInput [(ngModel)]="extractTechnicalDetails.sftpHostName" placeholder="SFTP Host Name" name="sftpHostName">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+            <mat-label>SFTP Host Directory</mat-label>
+            <input required matInput [(ngModel)]="extractTechnicalDetails.sftpHostDirectory" placeholder="SFTP Host Directory, typically /ftp/" name="sftpHostDirectory">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="34" fxFill>
+            <mat-label>SFTP Host Port</mat-label>
+            <input required matInput [(ngModel)]="extractTechnicalDetails.sftpHostPort" placeholder="SFTP Host Port" name="sftpHostPort">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+            <mat-label>SFTP Client Username</mat-label>
+            <input required matInput [(ngModel)]="extractTechnicalDetails.sftpClientUsername" placeholder="SFTP Client Username" name="sftpClientUsername">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+            <mat-label>SFTP Client Private Key Password</mat-label>
+            <input matInput [(ngModel)]="extractTechnicalDetails.sftpClientPrivateKeyPassword" placeholder="SFTP Client Private Key Password, rarely used" name="sftpClientPrivateKeyPassword">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>SFTP Client Private Key (.ppk)</mat-label>
+            <input required readonly matInput [(ngModel)]="extractTechnicalDetails.sftpClientPrivateKeyFilename" placeholder="SFTP client private key" name="sftpClientPrivateKeyFilename">
+            <button mat-button matSuffix mat-stroked-button aria-label="upload">
+              <mat-icon>cloud_upload</mat-icon>
+            </button>
+            <button mat-button matSuffix mat-stroked-button aria-label="clear">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>SFTP Host Public Key (.pub)</mat-label>
+            <input readonly matInput [(ngModel)]="extractTechnicalDetails.sftpHostPublicKeyFilename" placeholder="SFTP host public key, rarely used" name="sftpHostPublicKeyFilename">
+            <button mat-button matSuffix mat-stroked-button aria-label="upload">
+              <mat-icon>cloud_upload</mat-icon>
+            </button>
+            <button mat-button matSuffix mat-stroked-button aria-label="clear">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Customer Public Key (.cer)</mat-label>
+            <input required readonly matInput [(ngModel)]="extractTechnicalDetails.pgpCustomerPublicKeyFilename" placeholder="Customer public key" name="pgpCustomerPublicKeyFilename">
+            <button mat-button matSuffix mat-stroked-button aria-label="upload">
+              <mat-icon>cloud_upload</mat-icon>
+            </button>
+            <button mat-button matSuffix mat-stroked-button aria-label="clear">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+            <mat-label>Internal Public Key (.cer)</mat-label>
+            <input required readonly matInput [(ngModel)]="extractTechnicalDetails.pgpInternalPublicKeyFilename" placeholder="Internal public key" name="pgpInternalPublicKeyFilename">
+            <button mat-button matSuffix mat-stroked-button aria-label="upload">
+              <mat-icon>cloud_upload</mat-icon>
+            </button>
+            <button mat-button matSuffix mat-stroked-button aria-label="clear">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </mat-form-field>
+
+        </div>
       </mat-tab>
     </mat-tab-group>
   </mat-card-content>

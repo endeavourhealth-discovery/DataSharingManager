@@ -1,12 +1,15 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Project} from "./models/Project";
 import {Observable} from "rxjs";
 import {HttpClient, HttpParams} from "@angular/common/http";
-import { Dsa } from "src/app/data-sharing-agreement/models/Dsa";
+import {Dsa} from "src/app/data-sharing-agreement/models/Dsa";
 import {Organisation} from "../organisation/models/Organisation";
 import {Cohort} from "../cohort/models/Cohort";
 import {DataSet} from "../data-set/models/Dataset";
-import { AuthorityToShare } from "src/app/project/models/AuthorityToShare";
+import {AuthorityToShare} from "src/app/project/models/AuthorityToShare";
+import {ProjectApplicationPolicy} from "./models/ProjectApplicationPolicy";
+import {ApplicationPolicy} from "./models/ApplicationPolicy";
+import {User} from './models/User';
 
 @Injectable({
   providedIn: 'root'
@@ -73,5 +76,21 @@ export class ProjectService {
     return this.http.get<AuthorityToShare[]>(url,{params});
   }
 
+  getAvailableProjectApplicationPolicy(): Observable<ApplicationPolicy[]> {
+    const url = 'api/project/getApplicationPolicies';
+    return this.http.get<ApplicationPolicy[]>(url);
+  }
+
+  getProjectApplicationPolicy(uuid: string): Observable<ProjectApplicationPolicy> {
+    const url = 'api/project/projectApplicationPolicy';
+    let params = new HttpParams();
+    if (uuid) params = params.append('projectUuid', uuid);
+    return this.http.get<ProjectApplicationPolicy>(url,{params});
+  }
+
+  getUsers(): Observable<User[]> {
+    const url = 'api/project/getUsers';
+    return this.http.get<User[]>(url);
+  }
 
 }
