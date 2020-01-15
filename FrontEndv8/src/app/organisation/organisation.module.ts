@@ -23,11 +23,6 @@ import {OrganisationService} from './organisation.service';
 import {OrganisationEditorComponent} from "./organisation-editor/organisation-editor.component";
 import {OrganisationPickerComponent} from './organisation-picker/organisation-picker.component';
 import {GenericTableModule} from "../generic-table/generic-table.module";
-//TODO remove temp code -start
-import {SchedulerComponent} from "../scheduler/scheduler/scheduler.component";
-import {DataSetPickerComponent} from "../data-set/data-set-picker/data-set-picker.component";
-import {CohortPickerComponent} from "../cohort/cohort-picker/cohort-picker.component";
-//TODO remove temp code -end
 
 @NgModule({
   imports: [
@@ -66,12 +61,7 @@ import {CohortPickerComponent} from "../cohort/cohort-picker/cohort-picker.compo
     OrganisationPickerComponent
   ],
   entryComponents : [
-    //TODO remove temp code -start
-    SchedulerComponent,
     OrganisationPickerComponent,
-    DataSetPickerComponent,
-    CohortPickerComponent,
-    //TODO remove temp code -end
   ],
   providers: [
     OrganisationService,

@@ -1,9 +1,9 @@
 <mat-card *ngIf="dpa">
   <mat-card-header>
     <div mat-card-avatar><mat-icon>lightbulb_outline</mat-icon></div>
-    <mat-card-title>Data Processing Agreement Details</mat-card-title>
+    <mat-card-title>Data processing agreement details</mat-card-title>
     <mat-card-subtitle *ngIf="dpa.name">{{dpa.name}}</mat-card-subtitle>
-    <mat-card-subtitle *ngIf="!dpa.name">New Data Processing Agreement</mat-card-subtitle>
+    <mat-card-subtitle *ngIf="!dpa.name">New data processing agreement</mat-card-subtitle>
     <div fxFlex></div>
     <mat-menu #visualiseMenu="matMenu">
       <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(false)">Save</button>
@@ -18,7 +18,7 @@
       <div class="form-group" #fgName="ngModelGroup" ngModelGroup="dpa" [class.has-error]="!fgName.valid">
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
           <mat-form-field appearance="outline" fxFlex="50" fxFill>
-            <mat-label>Name</mat-label>
+            <mat-label>Data processing agreement name</mat-label>
             <input required matInput [(ngModel)]="dpa.name" placeholder="Name" name="name">
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="50" fxFill>
@@ -32,16 +32,16 @@
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill>
-            <mat-label>Processor</mat-label>
-            <input required matInput [(ngModel)]="processor" placeholder="Processor" name="processor">
+            <mat-label>Data processor</mat-label>
+            <input required matInput [(ngModel)]="processor" placeholder="Data processor" name="processor">
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill>
-            <mat-label>Start Date</mat-label>
-            <input matInput type="date" [(ngModel)]="dpa.startDate" placeholder="Start Date" name="startDate">
+            <mat-label>Start date</mat-label>
+            <input matInput type="date" [(ngModel)]="dpa.startDate" placeholder="Start date" name="startDate">
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill>
-            <mat-label>End Date</mat-label>
-            <input matInput type="date" [(ngModel)]="dpa.endDate" placeholder="End Date" name="endDate">
+            <mat-label>End date</mat-label>
+            <input matInput type="date" [(ngModel)]="dpa.endDate" placeholder="End date" name="endDate">
           </mat-form-field>
         </div>
         <br>

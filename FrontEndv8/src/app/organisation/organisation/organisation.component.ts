@@ -1,14 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Organisation} from '../models/Organisation';
 import {OrganisationService} from '../organisation.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {LoggerService, UserManagerService} from "dds-angular8";
 import {MatDialog} from "@angular/material/dialog";
-import {DataSetPickerComponent} from "../../data-set/data-set-picker/data-set-picker.component";
-import {CohortPickerComponent} from "../../cohort/cohort-picker/cohort-picker.component";
-import {Schedule} from "../../scheduler/models/Schedule";
-import {SchedulerComponent} from "../../scheduler/scheduler/scheduler.component";
 
 @Component({
   selector: 'app-organisation',
@@ -167,50 +163,4 @@ export class OrganisationComponent implements OnInit {
     this.descending = $event.direction == 'desc' ? true : false;
     this.search();
   }
-
-  //TODO remove temp code -start
-  testDialog() {
-    // const dialogRef = this.dialog.open(ValueSetsComponent, {
-    //   height: '850px',
-    //   width: '1500px',
-    // });
-    // const dialogRef = this.dialog.open(DataSetPickerComponent, {
-    //   height: '750px',
-    //   width: '1200px',
-    // });
-    let schedule = new Schedule();
-    const dialogRef = this.dialog.open(SchedulerComponent, {
-      height: '610px',
-      width: '1200px',
-      data: {schedule: schedule, allowTime: true},
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log(result);
-      }
-    });
-  }
-
-  testDialog2() {
-    // const dialogRef = this.dialog.open(ValueSetsComponent, {
-    //   height: '850px',
-    //   width: '1500px',
-    // });
-    const dialogRef = this.dialog.open(CohortPickerComponent, {
-      height: '750px',
-      width: '1200px',
-    });
-    // let schedule = new Schedule();
-    // const dialogRef = this.dialog.open(SchedulerComponent, {
-    //   height: '610px',
-    //   width: '1200px',
-    //   data: {schedule: schedule, allowTime: true},
-    // });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        console.log(result);
-      }
-    });
-  }
-  //TODO remove temp code -end
 }

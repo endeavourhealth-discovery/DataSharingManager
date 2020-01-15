@@ -4,10 +4,9 @@ import {ProjectComponent} from './project/project.component';
 import {MatCardModule} from "@angular/material/card";
 import {MatIconModule} from "@angular/material/icon";
 import {MatMenuModule} from "@angular/material/menu";
-import {GenericTableModule} from "../generic-table/generic-table.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BrowserModule} from "@angular/platform-browser";
-import {CoreModule} from "dds-angular8";
+import {CoreModule, GenericTableModule, MessageBoxDialogComponent} from "dds-angular8";
 import {FlexModule} from "@angular/flex-layout";
 import {FormsModule} from "@angular/forms";
 import {RouterModule} from "@angular/router";
@@ -29,6 +28,8 @@ import {MatSortModule} from "@angular/material/sort";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {MatListModule} from "@angular/material/list";
 import {ProjectEditorComponent} from './project-editor/project-editor.component';
+import {DataSetPickerComponent} from "../data-set/data-set-picker/data-set-picker.component";
+import {CohortPickerComponent} from "../cohort/cohort-picker/cohort-picker.component";
 
 @NgModule({
   declarations: [ProjectComponent, ProjectEditorComponent],
@@ -50,6 +51,12 @@ import {ProjectEditorComponent} from './project-editor/project-editor.component'
         MatSelectModule, MatSnackBarModule, MatSortModule,
         MatTableModule, MatTabsModule, MatTreeModule,
         RouterModule, MatListModule,
-    ]
+    ],
+  entryComponents : [
+    DataSetPickerComponent,
+    CohortPickerComponent,
+    MessageBoxDialogComponent,
+  ],
+
 })
 export class ProjectModule { }

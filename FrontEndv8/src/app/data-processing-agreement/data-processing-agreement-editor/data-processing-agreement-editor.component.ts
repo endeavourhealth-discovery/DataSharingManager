@@ -3,7 +3,7 @@ import {Dpa} from "../models/Dpa";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Organisation} from "../../organisation/models/Organisation";
 import {Documentation} from "../../documentation/models/Documentation";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DataProcessingAgreementService} from "../data-processing-agreement.service";
 import {DatePipe} from "@angular/common";
@@ -160,13 +160,24 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   deletePurposes() {
-    for (var i = 0; i < this.purposesTable.selection.selected.length; i++) {
-      let purpose = this.purposesTable.selection.selected[i];
-      this.purposes.forEach( (item, index) => {
-        if(item === purpose) this.purposes.splice(index,1);
-      });
-    }
-    this.purposesTable.updateRows();
+    MessageBoxDialogComponent.open(this.dialog, 'Delete purpose', 'Are you sure you want to delete purpose(s)?',
+      'Delete purpose', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.purposesTable.selection.selected.length; i++) {
+              let purpose = this.purposesTable.selection.selected[i];
+              this.purposes.forEach( (item, index) => {
+                if(item === purpose) this.purposes.splice(index,1);
+              });
+            }
+            this.purposesTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        },
+      );
   }
 
   addPurpose(index: number) {
@@ -197,13 +208,24 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   deleteBenefits() {
-    for (var i = 0; i < this.benefitsTable.selection.selected.length; i++) {
-      let purpose = this.benefitsTable.selection.selected[i];
-      this.benefits.forEach( (item, index) => {
-        if(item === purpose) this.benefits.splice(index,1);
-      });
-    }
-    this.benefitsTable.updateRows();
+    MessageBoxDialogComponent.open(this.dialog, 'Delete benefit', 'Are you sure you want to delete benefit(s)?',
+      'Delete benefit', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.benefitsTable.selection.selected.length; i++) {
+              let purpose = this.benefitsTable.selection.selected[i];
+              this.benefits.forEach( (item, index) => {
+                if(item === purpose) this.benefits.splice(index,1);
+              });
+            }
+            this.benefitsTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        },
+      );
   }
 
   addBenefit(index: number) {
@@ -233,13 +255,24 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   deleteRegions() {
-    for (var i = 0; i < this.regionsTable.selection.selected.length; i++) {
-      let purpose = this.regionsTable.selection.selected[i];
-      this.regions.forEach( (item, index) => {
-        if(item === purpose) this.regions.splice(index,1);
-      });
-    }
-    this.regionsTable.updateRows();
+    MessageBoxDialogComponent.open(this.dialog, 'Delete region', 'Are you sure you want to delete region(s)?',
+      'Delete region', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.regionsTable.selection.selected.length; i++) {
+              let purpose = this.regionsTable.selection.selected[i];
+              this.regions.forEach( (item, index) => {
+                if(item === purpose) this.regions.splice(index,1);
+              });
+            }
+            this.regionsTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        },
+      );
   }
 
   addRegion() {
@@ -270,13 +303,24 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   deletePublishers() {
-    for (var i = 0; i < this.publishersTable.selection.selected.length; i++) {
-      let purpose = this.publishersTable.selection.selected[i];
-      this.publishers.forEach( (item, index) => {
-        if(item === purpose) this.publishers.splice(index,1);
-      });
-    }
-    this.publishersTable.updateRows();
+    MessageBoxDialogComponent.open(this.dialog, 'Delete publisher', 'Are you sure you want to delete publisher(s)?',
+      'Delete publisher', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.publishersTable.selection.selected.length; i++) {
+              let purpose = this.publishersTable.selection.selected[i];
+              this.publishers.forEach( (item, index) => {
+                if(item === purpose) this.publishers.splice(index,1);
+              });
+            }
+            this.publishersTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        },
+      );
   }
 
   addPublisher() {
@@ -306,13 +350,24 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   deleteDocumentations() {
-    for (var i = 0; i < this.documentationsTable.selection.selected.length; i++) {
-      let purpose = this.documentationsTable.selection.selected[i];
-      this.documentations.forEach( (item, index) => {
-        if(item === purpose) this.documentations.splice(index,1);
-      });
-    }
-    this.documentationsTable.updateRows();
+    MessageBoxDialogComponent.open(this.dialog, 'Delete document', 'Are you sure you want to delete document(s)?',
+      'Delete document', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.documentationsTable.selection.selected.length; i++) {
+              let purpose = this.documentationsTable.selection.selected[i];
+              this.documentations.forEach( (item, index) => {
+                if(item === purpose) this.documentations.splice(index,1);
+              });
+            }
+            this.documentationsTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        },
+      );
   }
 
   addDocumentation() {
