@@ -184,6 +184,77 @@ export class ProjectEditorComponent implements OnInit {
 
   save(close: boolean) {
 
+    // Populate Data Sharing Agreements before save
+    this.project.dsas = {};
+    for (let idx in this.dsas) {
+      const dsa: Dsa = this.dsas[idx];
+      this.project.dsas[dsa.uuid] = dsa.name;
+    }
+
+    // Populate publishers before save
+    this.project.publishers = {};
+    for (let idx in this.publishers) {
+      const pub: Organisation = this.publishers[idx];
+      this.project.publishers[pub.uuid] = pub.name;
+    }
+
+    // Populate subscribers before save
+    this.project.subscribers = {};
+    for (let idx in this.subscribers) {
+      const sub: Organisation = this.subscribers[idx];
+      this.project.subscribers[sub.uuid] = sub.name;
+    }
+
+    // Populate documents before save
+    this.project.documentations = [];
+    this.project.documentations = this.documentations;
+
+    // Populate cohorts before save
+    this.project.cohorts = {};
+    for (let idx in this.cohorts) {
+      const coh: Cohort = this.cohorts[idx];
+      this.project.cohorts[coh.uuid] = coh.name;
+    }
+
+    // Populate dataSets before save
+    this.project.dataSets = {};
+    for (let idx in this.dataSets) {
+      const ds: DataSet = this.dataSets[idx];
+      this.project.dataSets[ds.uuid] = ds.name;
+    }
+
+    // Populate extract technical details before save
+    this.project.extractTechnicalDetails = null;
+    this.project.extractTechnicalDetails = this.extractTechnicalDetails;
+
+    // Populate schedule before save
+    if (this.schedules[0]) {
+      this.project.schedule = this.schedules[0];
+      this.project.schedules = {};
+      if (this.project.schedule.uuid) {
+        this.project.schedules[this.project.schedule.uuid] = this.project.schedule.cronDescription;
+      }
+    }
+    this.projectService.saveProject(this.project)
+      .subscribe(saved => {
+          this.project.uuid = saved;
+          this.log.success('Project saved');
+          this.saveApplicationPolicy();
+          if (close) {
+            window.history.back();
+          }
+        },
+        error => this.log.error('The project could not be saved. Please try again.')
+      );
+  }
+
+  saveApplicationPolicy() {
+    this.projectService.saveProjectApplicationPolicy(this.projectApplicationPolicy)
+      .subscribe(
+        (response) => {
+        },
+        (error) => this.log.error('Project application policy could not be saved. Please try again.')
+      );
   }
 
   load(uuid: string) {
@@ -202,6 +273,8 @@ export class ProjectEditorComponent implements OnInit {
           this.getAuthToShare();
           this.getAvailableApplicationPolicies();
           this.getProjectApplicationPolicy();
+          this.getAssociatedExtractTechnicalDetails();
+          this.getSchedule();
         },
         error => this.log.error('The data processing agreement could not be loaded. Please try again.')
       );
@@ -486,6 +559,13 @@ export class ProjectEditorComponent implements OnInit {
     this.projectApplicationPolicy = changedPolicy;
   }
 
+  getAssociatedExtractTechnicalDetails() {
+    this.projectService.getAssociatedExtractTechDetails(this.project.uuid)
+      .subscribe(
+      result => this.extractTechnicalDetails = result
+    );
+  }
+
   uploadExtraTechDetails(whichFile: number) {
     const dialogRef = this.dialog.open(DocumentationComponent, {
       height: '350px',
@@ -530,8 +610,19 @@ export class ProjectEditorComponent implements OnInit {
     }
   }
 
-  getSchedules() {
-    //TODO
+  getSchedule() {
+    this.projectService.getLinkedSchedule(this.project.uuid)
+      .subscribe(
+        result => {
+          console.log(result);
+          if (result) {
+            this.schedules[0] = result;
+            this.schedulesTable.updateRows();
+          } else {
+            this.schedules = new Array<Schedule>();
+          }
+        }
+      );
   }
 
   scheduleClicked(item: Schedule) {
@@ -560,16 +651,20 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   addSchedule() {
-    const dialogRef = this.dialog.open(SchedulerComponent, {
-      height: '610px',
-      width: '1200px',
-      data: {schedule: null, allowTime: true},
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.schedules.push(result);
-        this.schedulesTable.updateRows();
-      }
-    });
+    if (this.schedules.length == 0) {
+      const dialogRef = this.dialog.open(SchedulerComponent, {
+        height: '610px',
+        width: '1200px',
+        data: {schedule: null, allowTime: true},
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.schedules.push(result);
+          this.schedulesTable.updateRows();
+        }
+      });
+    } else {
+      this.log.error('Cannot add multiple schedules.');
+    }
   }
 }

@@ -19,7 +19,7 @@
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
           <mat-form-field appearance="outline" fxFlex="50" fxFill>
             <mat-label>Project name</mat-label>
-            <input required matInput [(ngModel)]="project.name" placeholder="Project n" name="name">
+            <input required matInput [(ngModel)]="project.name" placeholder="Project name" name="name">
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="50" fxFill>
             <mat-label>Business case</mat-label>
@@ -313,7 +313,7 @@
                            [allowSelect]="allowEdit"
                            (clicked)="scheduleClicked($event)">
           <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteSchedules()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addSchedule()"><mat-icon>add</mat-icon></button>
+          <button *ngIf="allowEdit && schedules?.length < 1" mat-icon-button color="primary" (click)="addSchedule()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
     </mat-tab-group>

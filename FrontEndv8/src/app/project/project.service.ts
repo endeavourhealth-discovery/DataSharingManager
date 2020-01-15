@@ -10,6 +10,8 @@ import {AuthorityToShare} from "src/app/project/models/AuthorityToShare";
 import {ProjectApplicationPolicy} from "./models/ProjectApplicationPolicy";
 import {ApplicationPolicy} from "./models/ApplicationPolicy";
 import {User} from './models/User';
+import {Schedule} from "../scheduler/models/Schedule";
+import {ExtractTechnicalDetails} from "./models/ExtractTechnicalDetails";
 
 @Injectable({
   providedIn: 'root'
@@ -93,4 +95,30 @@ export class ProjectService {
     return this.http.get<User[]>(url);
   }
 
+  getLinkedSchedule(uuid: string):  Observable<Schedule> {
+    const url = 'api/project/schedule';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.get<Schedule>(url,{params});
+  }
+
+  getAssociatedExtractTechDetails(uuid: string): Observable<ExtractTechnicalDetails> {
+    const url = 'api/extractTechnicalDetails/associated';
+    let params = new HttpParams();
+    if (uuid) {
+      params = params.append('parentUuid', uuid);
+      params = params.append('parentType', '14');
+    }
+    return this.http.get<ExtractTechnicalDetails>(url,{params});
+  }
+
+  saveProject(project: Project): Observable<any> {
+    const url = 'api/project';
+    return this.http.post(url, project, {responseType: 'text'});
+  }
+
+  saveProjectApplicationPolicy(projectApplicationPolicy: ProjectApplicationPolicy): Observable<string> {
+    const url = 'api/project/setProjectApplicationPolicy';
+    return this.http.post(url, projectApplicationPolicy, {responseType: 'text'});
+  }
 }
