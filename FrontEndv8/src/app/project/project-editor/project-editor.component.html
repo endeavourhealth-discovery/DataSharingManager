@@ -18,11 +18,11 @@
       <div class="form-group" #fgName="ngModelGroup" ngModelGroup="dpa" [class.has-error]="!fgName.valid">
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
           <mat-form-field appearance="outline" fxFlex="50" fxFill>
-            <mat-label>Name</mat-label>
-            <input required matInput [(ngModel)]="project.name" placeholder="Name" name="name">
+            <mat-label>Project name</mat-label>
+            <input required matInput [(ngModel)]="project.name" placeholder="Project n" name="name">
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="50" fxFill>
-            <mat-label>Business Case</mat-label>
+            <mat-label>Business case</mat-label>
             <mat-select matInput name="status" [(ngModel)]="project.businessCaseStatus" name="businessCaseStatus">
               <mat-option *ngFor="let bc of businessCaseStatuses" [value]="bc.num">{{bc.name}}</mat-option>
             </mat-select>
@@ -36,37 +36,37 @@
             <textarea matInput [(ngModel)]="project.objectives" placeholder="Objectives" name="objectives" rows="6"></textarea>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="50" fxFill>
-            <mat-label>Project Lead</mat-label>
+            <mat-label>Project lead</mat-label>
             <mat-select matInput name="status" [(ngModel)]="project.leadUser" name="leadUser">
               <mat-option *ngFor="let leadUser of userList" [value]="leadUser.uuid">{{leadUser.forename}} {{leadUser.surname}}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="50" fxFill>
-            <mat-label>Project Technical Lead</mat-label>
+            <mat-label>Project technical lead</mat-label>
             <mat-select matInput name="status" [(ngModel)]="project.technicalLeadUser" name="technicalLeadUser">
               <mat-option *ngFor="let techUser of userList" [value]="techUser.uuid">{{techUser.forename}} {{techUser.surname}}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="33" fxFill>
-            <mat-label>Storage Protocol</mat-label>
+            <mat-label>Storage protocol</mat-label>
             <mat-select matInput name="status" [(ngModel)]="project.storageProtocolId" name="storageProtocolId">
               <mat-option *ngFor="let sps of storageProtocols" [value]="sps.num">{{sps.name}}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="33" fxFill>
-            <mat-label>Patient Consent Model</mat-label>
+            <mat-label>Patient consent model</mat-label>
             <mat-select matInput name="status" [(ngModel)]="project.consentModelId" name="consentModel">
               <mat-option *ngFor="let con of consents" [value]="con.num">{{con.name}}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="34" fxFill>
-            <mat-label>De-identification Level</mat-label>
+            <mat-label>De-identification level</mat-label>
             <mat-select matInput name="status" [(ngModel)]="project.deidentificationLevel" name="deIdentificationLevel">
               <mat-option *ngFor="let did of deidentificationLevel" [value]="did.num">{{did.name}}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="33" fxFill>
-            <mat-label>Project Type</mat-label>
+            <mat-label>Project type</mat-label>
             <mat-select matInput name="status" [(ngModel)]="project.projectTypeId" name="projectTypeId">
               <mat-option *ngFor="let proj of projectTypes" [value]="proj.num">{{proj.name}}</mat-option>
             </mat-select>
@@ -78,23 +78,23 @@
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="34" fxFill>
-            <mat-label>Output Format</mat-label>
+            <mat-label>Output format</mat-label>
             <mat-select matInput name="status" [(ngModel)]="project.outputFormat" name="outputFormat">
               <mat-option *ngFor="let of of outputFormat" [value]="of.num">{{of.name}}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="33" fxFill>
-            <mat-label>SFTP Name</mat-label>
+            <mat-label>SFTP name</mat-label>
             <input required matInput [(ngModel)]="project.ipAddress" placeholder="SFTP name" name="ipAddress">
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="33" fxFill>
-            <mat-label>Security Infrastructure Id</mat-label>
+            <mat-label>Security infrastructure Id</mat-label>
             <mat-select matInput name="status" [(ngModel)]="project.securityInfrastructureId" name="securityInfrastructureId">
               <mat-option *ngFor="let sec of securityInfrastructures" [value]="sec.num">{{sec.name}}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="34" fxFill>
-            <mat-label>Security Architectures Id</mat-label>
+            <mat-label>Security architectures Id</mat-label>
             <mat-select matInput name="status" [(ngModel)]="project.securityArchitectureId" name="securityArchitectureId">
               <mat-option *ngFor="let arc of securityArchitectures" [value]="arc.num">{{arc.name}}</mat-option>
             </mat-select>
@@ -107,12 +107,12 @@
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="33" fxFill>
-            <mat-label>Start Date</mat-label>
-            <input matInput type="date" [(ngModel)]="project.startDate" placeholder="Start Date" name="startDate">
+            <mat-label>Start date</mat-label>
+            <input matInput type="date" [(ngModel)]="project.startDate" placeholder="Start date" name="startDate">
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="34" fxFill>
-            <mat-label>End Date</mat-label>
-            <input matInput type="date" [(ngModel)]="project.endDate" placeholder="End Date" name="endDate">
+            <mat-label>End date</mat-label>
+            <input matInput type="date" [(ngModel)]="project.endDate" placeholder="End date" name="endDate">
           </mat-form-field>
         </div>
         <br>
@@ -121,7 +121,7 @@
     <mat-tab-group dynamicHeight>
       <mat-tab>
         <ng-template mat-tab-label>
-          <span matBadge="{{dsas?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dsas?.length < 1">Sharing Agreements</span>
+          <span matBadge="{{dsas?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dsas?.length < 1">Sharing agreements</span>
         </ng-template>
         <app-generic-table #dsasTable
                            [items]="dsas"
@@ -185,7 +185,7 @@
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>
-          <span matBadge="{{dataSets?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dataSets?.length < 1">Data Sets</span>
+          <span matBadge="{{dataSets?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dataSets?.length < 1">Data sets</span>
         </ng-template>
         <app-generic-table #dataSetsTable
                            [items]="dataSets"
@@ -198,7 +198,7 @@
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>
-          <span matBadge="{{authToShare?.length}}" matBadgeOverlap="false" [matBadgeHidden]="authToShare?.length < 1">Authority To Share</span>
+          <span matBadge="{{authToShare?.length}}" matBadgeOverlap="false" [matBadgeHidden]="authToShare?.length < 1">Authority to share</span>
         </ng-template>
         <br>
         <br>
@@ -217,7 +217,7 @@
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>
-          <span>Application Policy</span>
+          <span>Application policy</span>
         </ng-template>
         <br>
         <br>
@@ -232,7 +232,7 @@
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>
-          <span>Extract Technical Details</span>
+          <span>Extract technical details</span>
         </ng-template>
         <br>
         <br>
