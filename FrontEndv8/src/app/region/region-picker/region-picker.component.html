@@ -1,46 +1,28 @@
-<mat-card>
-  <mat-card-header>
-    <div mat-card-avatar>
-      <mat-icon>lightbulb_outline</mat-icon>
-    </div>
-    <mat-card-title>Add region</mat-card-title>
-    <mat-card-subtitle>Select region(s) to add</mat-card-subtitle>
-    <div fxFlex></div>
-    <mat-menu #visualiseMenu="matMenu">
-      <!--<button *ngIf="allowEdit" mat-menu-item (click)="add()">Add {{modeType | lowercase}}</button>-->
-      <button mat-menu-item (click)="cancel()">Cancel</button>
-    </mat-menu>
-    <div fxLayoutAlign="center" class="mat-action" matRipple>
-      <mat-icon [matMenuTriggerFor]="visualiseMenu">more_vert</mat-icon>
-    </div>
-  </mat-card-header>
-  <mat-card-content>
-      <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+<h1 mat-dialog-title>Add region(s)</h1>
+<div mat-dialog-content>
 
-        <mat-form-field appearance="outline" fxFlex="100" fxFill>
-          <mat-label>Search</mat-label>
-          <input matInput [(ngModel)]="searchData" (keyup.enter)="search()" placeholder="Search">
-          <button mat-button *ngIf="searchData" matSuffix mat-icon-button aria-label="Clear" (click)="clear()">
-            <mat-icon>close</mat-icon>
-          </button>
-        </mat-form-field>
-      </div>
+  <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
 
-      <br>
+    <mat-form-field appearance="outline" fxFlex="100" fxFill>
+      <mat-label>Search</mat-label>
+      <input matInput [(ngModel)]="searchData" (keyup.enter)="search()" placeholder="Search">
+      <button mat-button *ngIf="searchData" matSuffix mat-icon-button aria-label="Clear" (click)="clear()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
 
-      <div class="scroll-box-400">
-        <app-generic-table #picker
-                           [items]="searchResults"
-                           [detailsToShow]="regionDetailsToShow"
-                           [allowSelect]="true"></app-generic-table>
-      </div>
-      <br>
+  <br>
 
-
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="ok()" cdkFocusInitial>Ok</button>
-    <button mat-raised-button color="accent" (click)="cancel()" cdkFocusInitial>Cancel</button>
-  </mat-card-actions>
-</mat-card>
-
+  <div class="scroll-box-400">
+    <app-generic-table #picker
+                       [items]="searchResults"
+                       [detailsToShow]="regionDetailsToShow"
+                       [allowSelect]="true"></app-generic-table>
+  </div>
+  <br>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="ok()" cdkFocusInitial>Ok</button>
+  <button mat-raised-button color="accent" (click)="cancel()" cdkFocusInitial>Cancel</button>
+</div>

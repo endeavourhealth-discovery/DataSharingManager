@@ -3,11 +3,19 @@ import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import {AppMenuService} from './app-menu.service';
 import {RouterModule} from '@angular/router';
 import {HttpClientModule} from '@angular/common/http';
-import {AbstractMenuProvider, LayoutComponent, LayoutModule, LoggerModule, SecurityModule, UserManagerModule, DialogsModule} from 'dds-angular8';
+import {
+  AbstractMenuProvider,
+  LayoutComponent,
+  LayoutModule,
+  LoggerModule,
+  SecurityModule,
+  UserManagerModule,
+  DialogsModule,
+  GenericTableModule
+} from 'dds-angular8';
 import {OrganisationModule} from "./organisation/organisation.module";
 import {SchedulerModule} from "./scheduler/scheduler.module";
 import {ValueSetsModule} from "./value-sets/value-sets.module";
-import {GenericTableModule} from "./generic-table/generic-table.module";
 import {RegionModule} from "./region/region.module";
 import {CohortModule} from "./cohort/cohort.module";
 import {DataExchangeModule} from "./data-exchange/data-exchange.module";

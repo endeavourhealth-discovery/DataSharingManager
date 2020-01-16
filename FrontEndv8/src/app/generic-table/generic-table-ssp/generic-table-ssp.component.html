@@ -52,11 +52,11 @@
   </table>
   <div>
   </div>
-  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"
-                 [showFirstLastButtons]="true"
-                 [pageSize]="pageSize"
-                 [length]="totalItems"
-                 (page)="changePage($event)"
-                 fxFlex="100"
-                 fxFill></mat-paginator>
+    <mat-paginator [style.display]="(totalItems > pageSize) ? 'block' : 'none'" [pageSizeOptions]="[5, 10, 25, 100]"
+                   [showFirstLastButtons]="true"
+                   [pageSize]="pageSize"
+                   [length]="totalItems"
+                   (page)="changePage($event)"
+                   fxFlex="100"
+                   fxFill></mat-paginator>
 </div>

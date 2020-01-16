@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BrowserModule} from '@angular/platform-browser';
 import {CommonModule} from '@angular/common';
-import {CoreModule} from 'dds-angular8';
+import {CoreModule, GenericTableModule} from 'dds-angular8';
 import {FlexModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {
@@ -22,7 +22,6 @@ import {CohortComponent} from './cohort/cohort.component';
 import {CohortEditorComponent} from "./cohort-editor/cohort-editor.component";
 import {CohortPickerComponent} from './cohort-picker/cohort-picker.component';
 import {CohortService} from './cohort.service';
-import {GenericTableModule} from '../generic-table/generic-table.module';
 
 @NgModule({
   imports: [

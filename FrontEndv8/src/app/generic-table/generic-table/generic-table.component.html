@@ -46,7 +46,8 @@
   </table>
   <div>
   </div>
-  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"
+  <mat-paginator [style.display]="(dataSource?.length > pageSize) ? 'block' : 'none'"
+                 [pageSizeOptions]="[5, 10, 25, 100]"
                  [showFirstLastButtons]="true"
                  [pageSize]="pageSize"
                  fxFlex="100"
