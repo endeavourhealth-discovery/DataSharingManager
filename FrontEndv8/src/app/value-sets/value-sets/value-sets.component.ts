@@ -1,11 +1,10 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {ActivatedRoute, Router} from "@angular/router";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableSspComponent, LoggerService, UserManagerService} from "dds-angular8";
 import {MatDialogRef} from "@angular/material/dialog";
 import {ValueSetsService} from "../value-sets.service";
 import {ValueSets} from "../models/ValueSets";
-import {GenericTableSspComponent} from "../../generic-table/generic-table-ssp/generic-table-ssp.component";
 
 @Component({
   selector: 'app-value-sets',

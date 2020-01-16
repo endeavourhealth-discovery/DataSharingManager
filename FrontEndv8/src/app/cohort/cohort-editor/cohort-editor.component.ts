@@ -1,11 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Cohort} from "../models/Cohort";
 import {CohortService} from '../cohort.service';
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
 import {ActivatedRoute, Router} from '@angular/router';
 import {Dpa} from '../../data-processing-agreement/models/Dpa';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
 
 @Component({
   selector: 'app-cohort-editor',

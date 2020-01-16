@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Project} from "src/app/project/models/Project";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DatePipe} from "@angular/common";
 import {MatDialog} from "@angular/material/dialog";
@@ -9,7 +9,6 @@ import {ProjectService} from "../project.service";
 import {User} from "../models/User";
 import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {Organisation} from "../../organisation/models/Organisation";
-import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
 import {Documentation} from "../../documentation/models/Documentation";
 import {DocumentationComponent} from "../../documentation/documentation/documentation.component";
 import {DocumentationService} from "../../documentation/documentation.service";

@@ -2,9 +2,8 @@ import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {Organisation} from "../models/Organisation";
 import {OrganisationService} from "../organisation.service";
-import {LoggerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService} from "dds-angular8";
 import {OrganisationPickerData} from "../models/OrganisationPickerData";
-import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
 
 @Component({
   selector: 'app-organisation-picker',

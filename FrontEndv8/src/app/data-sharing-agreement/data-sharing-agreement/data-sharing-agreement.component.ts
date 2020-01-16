@@ -3,8 +3,7 @@ import {Dsa} from '../models/Dsa';
 import {DataSharingAgreementService} from '../data-sharing-agreement.service';
 import {Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {LoggerService, UserManagerService} from "dds-angular8";
-import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
+import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
 
 @Component({
   selector: 'app-data-sharing-agreement',

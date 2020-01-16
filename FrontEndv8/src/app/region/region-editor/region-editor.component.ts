@@ -7,8 +7,7 @@ import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {Marker} from "../models/Marker";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {LoggerService, UserManagerService} from "dds-angular8";
-import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
+import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
 
 @Component({
   selector: 'app-region-editor',

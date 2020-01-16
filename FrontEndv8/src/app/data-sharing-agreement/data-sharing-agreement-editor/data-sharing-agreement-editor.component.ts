@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {DatePipe} from '@angular/common';
 import {MatDialog} from "@angular/material/dialog";
 import {ActivatedRoute, Router} from '@angular/router';
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Dsa} from '../models/Dsa';
 import {DataSharingAgreementService} from '../data-sharing-agreement.service';
@@ -19,8 +19,6 @@ import {Organisation} from '../../organisation/models/Organisation';
 import {OrganisationPickerComponent} from '../../organisation/organisation-picker/organisation-picker.component';
 import {Documentation} from "../../documentation/models/Documentation";
 import {DocumentationService} from "../../documentation/documentation.service";
-import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
-
 
 @Component({
   selector: 'app-data-sharing-agreement-editor',

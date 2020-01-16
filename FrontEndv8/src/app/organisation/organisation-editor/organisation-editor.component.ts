@@ -7,12 +7,11 @@ import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {OrganisationType} from "../models/OrganisationType";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
 import {Organisation} from "../models/Organisation";
 import {Address} from "../models/Address";
 import {MatDialog} from '@angular/material/dialog';
 import {OrganisationPickerComponent} from "../organisation-picker/organisation-picker.component";
-import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
 import {RegionPickerComponent} from "../../region/region-picker/region-picker.component";
 
 @Component({

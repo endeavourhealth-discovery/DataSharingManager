@@ -1,8 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
 import {Cohort} from '../models/Cohort';
 import {CohortService} from '../cohort.service';
-import {LoggerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService} from "dds-angular8";
 import {MatDialogRef} from "@angular/material/dialog";
 
 @Component({

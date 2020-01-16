@@ -3,8 +3,7 @@ import {RegionService} from '../region.service';
 import {Region} from "../models/Region";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 import {StandardPickerData} from "../../models/StandardPickerData";
-import {LoggerService} from "dds-angular8";
-import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
+import {GenericTableComponent, LoggerService} from "dds-angular8";
 
 @Component({
   selector: 'app-region-picker',

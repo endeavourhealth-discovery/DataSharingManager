@@ -1,7 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
 import {DataSet} from "../models/Dataset";
-import {LoggerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService} from "dds-angular8";
 import {MatDialogRef} from "@angular/material/dialog";
 import {DataSetService} from "../data-set.service";
 
