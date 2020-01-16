@@ -1,9 +1,9 @@
 <mat-card>
   <mat-card-header>
     <div mat-card-avatar><mat-icon>lightbulb_outline</mat-icon></div>
-    <mat-card-title>Data Sharing Agreement details</mat-card-title>
+    <mat-card-title>Data sharing agreement details</mat-card-title>
     <mat-card-subtitle *ngIf="dsa.name">{{dsa.name}}</mat-card-subtitle>
-    <mat-card-subtitle *ngIf="!dsa.name">New Data Sharing Agreement</mat-card-subtitle>
+    <mat-card-subtitle *ngIf="!dsa.name">New data sharing agreement</mat-card-subtitle>
     <div fxFlex></div>
     <mat-menu #visualiseMenu="matMenu">
       <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(false)">Save</button>
@@ -85,8 +85,8 @@
                            [detailsToShow]="regionDetailsToShow"
                            [allowSelect]="allowEdit"
                            (clicked)="regionClicked($event)">
-          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePurposes()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPurpose(-1)"><mat-icon>add</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteRegions()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addRegion()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
       <mat-tab>
@@ -98,8 +98,8 @@
                            [detailsToShow]="projectDetailsToShow"
                            [allowSelect]="allowEdit"
                            (clicked)="projectClicked($event)">
-          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePurposes()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPurpose(-1)"><mat-icon>add</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteProjects()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addProject()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
       <mat-tab>
@@ -111,8 +111,8 @@
                            [detailsToShow]="publisherDetailsToShow"
                            [allowSelect]="allowEdit"
                            (clicked)="publisherClicked($event)">
-          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePurposes()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPurpose(-1)"><mat-icon>add</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePublishers()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPublisher()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
       <mat-tab>
@@ -124,21 +124,21 @@
                            [detailsToShow]="subscriberDetailsToShow"
                            [allowSelect]="allowEdit"
                            (clicked)="subscriberClicked($event)">
-          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePurposes()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPurpose(-1)"><mat-icon>add</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteSubscribers()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addSubscriber()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>
-          <span matBadge="{{documentations?.length}}" matBadgeOverlap="false" [matBadgeHidden]="documentations?.length < 1">Documentations</span>
+          <span matBadge="{{documentations?.length}}" matBadgeOverlap="false" [matBadgeHidden]="documentations?.length < 1">Documentation</span>
         </ng-template>
         <app-generic-table #documentationsTable
                            [items]="documentations"
                            [detailsToShow]="documentDetailsToShow"
                            [allowSelect]="allowEdit"
                            (clicked)="documentationClicked($event)">
-          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePurposes()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPurpose(-1)"><mat-icon>add</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDocumentations()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addDocumentation()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
     </mat-tab-group>

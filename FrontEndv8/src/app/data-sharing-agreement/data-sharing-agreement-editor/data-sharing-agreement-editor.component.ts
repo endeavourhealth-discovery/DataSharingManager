@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {DatePipe} from '@angular/common';
 import {MatDialog} from "@angular/material/dialog";
 import {ActivatedRoute, Router} from '@angular/router';
-import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Dsa} from '../models/Dsa';
 import {DataSharingAgreementService} from '../data-sharing-agreement.service';
@@ -14,11 +14,12 @@ import {Region} from '../../region/models/Region';
 import {Marker} from '../../region/models/Marker';
 import {RegionPickerComponent} from '../../region/region-picker/region-picker.component';
 import {Project} from "../../project/models/Project";
-//import {ProjectPickerComponent} from "../../project/project-picker/project-picker.component";
+import {ProjectPickerComponent} from "../../project/project-picker/project-picker.component";
 import {Organisation} from '../../organisation/models/Organisation';
 import {OrganisationPickerComponent} from '../../organisation/organisation-picker/organisation-picker.component';
 import {Documentation} from "../../documentation/models/Documentation";
 import {DocumentationService} from "../../documentation/documentation.service";
+import {DocumentationComponent} from "../../documentation/documentation/documentation.component";
 
 @Component({
   selector: 'app-data-sharing-agreement-editor',
@@ -44,8 +45,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   mapMarkers: Marker[] = [];
   showPub = true;
   allowEdit = false;
-  file: File;
-  pdfSrc: any;
   disableStatus = false;
   superUser = false;
   userId: string;
@@ -158,6 +157,24 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       );
   }
 
+  checkEndDate() {
+    if (this.dsa.endDate === null) {
+      this.disableStatus = false;
+      return;
+    }
+
+    let today = new Date();
+    today.setHours(0,0,0,0);
+    let endDate = new Date(this.dsa.endDate);
+
+    if (endDate < today) {
+      this.dsa.dsaStatusId = 1;
+      this.disableStatus = true;
+    } else {
+      this.disableStatus = false;
+    }
+  }
+
   save(close: boolean) {
 
     /*// Populate data flows before save
@@ -222,66 +239,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     window.history.back();
   }
 
-  /*private editDataFlow(item: DataFlow) {
-  this.router.navigate(['/dataFlow', item.uuid, 'edit']);
-  }
-
-  private editDataFlows() {
-    const vm = this;
-    DataflowPickerComponent.open(vm.$modal, vm.dataFlows)
-      .result.then(function
-      (result: DataFlow[]) { vm.dataFlows = result; },
-      () => vm.log.info('Edit data flows cancelled')
-    );
-  }*/
-
-  private editRegions() {
-    /*RegionPickerComponent.open(this.$modal, this.regions, '', 1)
-      .result.then(function
-      (result: Region[]) {this.regions = result;},
-      () => this.log.info('Edit regions cancelled')
-    );*/
-  }
-
-  private editProjects() {
-    /*ProjectPickerComponent.open(this.$modal, this.projects)
-      .result.then(function
-      (result: Project[]) {this.projects = result;},
-      () => this.log.info('Edit projects cancelled')
-    );*/
-  }
-
-
-  private editPublishers() {
-    /*if (!this.regions[0]) {
-      MessageBoxDialog.open(this.$modal, 'Edit publishers', 'The data sharing agreement must be associated with a region before editing publishers', 'Ok', '')
-        .result.then();
-    } else {
-      OrganisationPickerComponent.open(this.$modal, this.publishers, 'publisher', '', this.regions[0].uuid, '')
-        .result.then(function
-        (result: Organisation[]) {
-          this.publishers = result;
-        },
-        () => this.log.info('Edit publishers cancelled')
-      );
-    }*/
-  }
-
-  private editSubscribers() {
-    /*if (!this.regions[0]) {
-      MessageBoxDialog.open(this.$modal, 'Edit subscribers', 'The data sharing agreement must be associated with a region before editing subscribers', 'Ok', '')
-        .result.then();
-    } else {
-      OrganisationPickerComponent.open(this.$modal, this.subscribers, 'subscriber', '', this.regions[0].uuid, '')
-        .result.then(function
-        (result: Organisation[]) {
-          this.subscribers = result;
-        },
-        () => this.log.info('Edit subscribers cancelled')
-      );
-    }*/
-  }
-
   purposeClicked(item: Purpose) {
     let index = this.purposes.indexOf(item);
     this.addPurpose(index);
@@ -297,19 +254,19 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   projectClicked(item: Project) {
-    this.router.navigate(['/project]', item.uuid, 'edit']);
+    this.router.navigate(['/project', item.uuid, 'edit']);
   }
 
   publisherClicked(item: Organisation) {
-    this.router.navigate(['/organisation]', item.uuid, 'edit']);
+    this.router.navigate(['/organisation', item.uuid, 'edit']);
   }
 
   subscriberClicked(item: Organisation) {
-    this.router.navigate(['/organisation]', item.uuid, 'edit']);
+    this.router.navigate(['/organisation', item.uuid, 'edit']);
   }
 
   documentationClicked(item: Documentation) {
-    this.router.navigate(['/documentation]', item.uuid, 'edit']);
+    // Nothing needs to be done with this for the time being
   }
 
   /*private getLinkedDataFlows() {
@@ -424,9 +381,9 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   deleteBenefits() {
     for (var i = 0; i < this.benefitsTable.selection.selected.length; i++) {
-      let purpose = this.benefitsTable.selection.selected[i];
+      let benefit = this.benefitsTable.selection.selected[i];
       this.benefits.forEach( (item, index) => {
-        if(item === purpose) this.benefits.splice(index,1);
+        if(item === benefit) this.benefits.splice(index,1);
       });
     }
     this.benefitsTable.updateRows();
@@ -446,6 +403,187 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     });
   }
 
+  deleteRegions() {
+    MessageBoxDialogComponent.open(this.dialog, 'Delete region', 'Are you sure you want to delete region(s)?',
+      'Delete region', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.regionsTable.selection.selected.length; i++) {
+              let region = this.regionsTable.selection.selected[i];
+              this.regions.forEach( (item, index) => {
+                if(item === region) this.regions.splice(index,1);
+              });
+            }
+            this.regionsTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        });
+  }
+
+  addRegion() {
+    const dialogRef = this.dialog.open(RegionPickerComponent, {
+      width: '800px',
+      data: { uuid: '', limit: 0, userId : this.activeProject.userId }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      for (let region of result) {
+        if (!this.regions.some(x => x.uuid === region.uuid)) {
+          this.regions.push(region);
+          this.regionsTable.updateRows();
+        }
+      }
+    });
+  }
+
+  deleteProjects() {
+    MessageBoxDialogComponent.open(this.dialog, 'Delete project', 'Are you sure you want to delete project(s)?',
+      'Delete project', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.projectsTable.selection.selected.length; i++) {
+              let project = this.projectsTable.selection.selected[i];
+              this.projects.forEach( (item, index) => {
+                if(item === project) this.projects.splice(index,1);
+              });
+            }
+            this.projectsTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        });
+  }
+
+  addProject() {
+    //TODO Get this to work
+    /*const dialogRef = this.dialog.open(ProjectPickerComponent, {
+      width: '800px',
+      data: { uuid: '', limit: 0, userId : this.activeProject.userId }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      for (let project of result) {
+        if (!this.projects.some(x => x.uuid === project.uuid)) {
+          this.projects.push(project);
+          this.projectsTable.updateRows();
+        }
+      }
+    });*/
+  }
+
+  deletePublishers() {
+    MessageBoxDialogComponent.open(this.dialog, 'Delete publisher', 'Are you sure you want to delete publisher(s)?',
+      'Delete publisher', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.publishersTable.selection.selected.length; i++) {
+              let publisher = this.publishersTable.selection.selected[i];
+              this.publishers.forEach( (item, index) => {
+                if(item === publisher) this.publishers.splice(index,1);
+              });
+            }
+            this.publishersTable.updateRows();
+            this.log.success('Delete successful');
+          } else {
+            this.log.success('Delete cancelled')
+          }
+        });
+  }
+
+  addPublisher() {
+    if (!this.regions[0]) {
+      this.log.error('The data sharing agreement must be associated with a region before editing publishers.');
+    } else {
+      const dialogRef = this.dialog.open(OrganisationPickerComponent, {
+        width: '800px',
+        data: { searchType: 'organisation', uuid: '', regionUUID: this.regions[0].uuid, dsaUUID: '' }
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        for (let publisher of result) {
+          if (!this.publishers.some(x => x.uuid === publisher.uuid)) {
+            this.publishers.push(publisher);
+            this.publishersTable.updateRows();
+          }
+        }
+      });
+    }
+  }
+
+  deleteSubscribers() {
+    MessageBoxDialogComponent.open(this.dialog, 'Delete subscriber', 'Are you sure you want to delete subscriber(s)?',
+      'Delete subscriber', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.subscribersTable.selection.selected.length; i++) {
+              let subscriber = this.subscribersTable.selection.selected[i];
+              this.subscribers.forEach( (item, index) => {
+                if(item === subscriber) this.subscribers.splice(index,1);
+              });
+            }
+            this.subscribersTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        });
+  }
+
+  addSubscriber() {
+    if (!this.regions[0]) {
+      this.log.error('The data sharing agreement must be associated with a region before editing subscribers.');
+    } else {
+      const dialogRef = this.dialog.open(OrganisationPickerComponent, {
+        width: '800px',
+        data: { searchType: 'organisation', uuid: '', regionUUID: this.regions[0].uuid, dsaUUID: '' }
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        for (let subscriber of result) {
+          if (!this.subscribers.some(x => x.uuid === subscriber.uuid)) {
+            this.subscribers.push(subscriber);
+            this.subscribersTable.updateRows();
+          }
+        }
+      });
+    }
+  }
+
+  deleteDocumentations() {
+    MessageBoxDialogComponent.open(this.dialog, 'Delete document', 'Are you sure you want to delete document(s)?',
+      'Delete document', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.documentationsTable.selection.selected.length; i++) {
+              let document = this.documentationsTable.selection.selected[i];
+              this.documentations.forEach( (item, index) => {
+                if(item === document) this.documentations.splice(index,1);
+              });
+            }
+            this.documentationsTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        });
+  }
+
+  addDocumentation() {
+    const dialogRef = this.dialog.open(DocumentationComponent, {
+      width: '550px',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.documentations.push(result);
+        this.documentationsTable.updateRows();
+      }
+    });
+  }
+
   swapMarkers() {
     if (this.showPub) {
       this.mapMarkers = this.publisherMarkers;
@@ -454,58 +592,63 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     }
   }
 
-  private uploadFile() {
-    const vm = this;
-    const myReader: FileReader = new FileReader();
-
-    myReader.onloadend = function(e){
-      // you can perform an action with readed data here
-      vm.log.success('Uploading document'/*, null, 'Upload document'*/);
-      vm.pdfSrc = myReader.result;
-      const newDoc: Documentation = new Documentation();
-      // Compile error for line below: Type 'string | ArrayBuffer' is not assignable to type 'string'.
-      // newDoc.fileData = myReader.result;
-      newDoc.title = vm.file.name;
-      newDoc.filename = vm.file.name;
-      vm.documentations.push(newDoc);
-    };
-
-    myReader.readAsDataURL(vm.file);
+  /*private editDataFlow(item: DataFlow) {
+  this.router.navigate(['/dataFlow', item.uuid, 'edit']);
   }
 
-  fileChange(event) {
-    const fileList: FileList = event.target.files;
-    if (fileList.length > 0) {
-      this.file = fileList[0];
+  private editDataFlows() {
+  const vm = this;
+  DataflowPickerComponent.open(vm.$modal, vm.dataFlows)
+    .result.then(function
+    (result: DataFlow[]) { vm.dataFlows = result; },
+    () => vm.log.info('Edit data flows cancelled')
+  );
+  }*/
+
+  /*private editRegions() {
+    RegionPickerComponent.open(this.$modal, this.regions, '', 1)
+      .result.then(function
+      (result: Region[]) {this.regions = result;},
+      () => this.log.info('Edit regions cancelled')
+    );
+  }
+
+  private editProjects() {
+    ProjectPickerComponent.open(this.$modal, this.projects)
+      .result.then(function
+      (result: Project[]) {this.projects = result;},
+      () => this.log.info('Edit projects cancelled')
+    );
+  }
+
+  private editPublishers() {
+    if (!this.regions[0]) {
+      MessageBoxDialog.open(this.$modal, 'Edit publishers', 'The data sharing agreement must be associated with a region before editing publishers', 'Ok', '')
+        .result.then();
     } else {
-      this.file = null;
+      OrganisationPickerComponent.open(this.$modal, this.publishers, 'publisher', '', this.regions[0].uuid, '')
+        .result.then(function
+        (result: Organisation[]) {
+          this.publishers = result;
+        },
+        () => this.log.info('Edit publishers cancelled')
+      );
     }
   }
 
-  ok() {
-    this.uploadFile();
-  }
-
-  cancel() {
-    this.file = null;
-  }
-
-  checkEndDate() {
-    if (this.dsa.endDate === null) {
-      this.disableStatus = false;
-      return;
-    }
-
-    let today = new Date();
-    today.setHours(0,0,0,0);
-    let endDate = new Date(this.dsa.endDate);
-
-    if (endDate < today) {
-      this.dsa.dsaStatusId = 1;
-      this.disableStatus = true;
+  private editSubscribers() {
+    if (!this.regions[0]) {
+      MessageBoxDialog.open(this.$modal, 'Edit subscribers', 'The data sharing agreement must be associated with a region before editing subscribers', 'Ok', '')
+        .result.then();
     } else {
-      this.disableStatus = false;
+      OrganisationPickerComponent.open(this.$modal, this.subscribers, 'subscriber', '', this.regions[0].uuid, '')
+        .result.then(function
+        (result: Organisation[]) {
+          this.subscribers = result;
+        },
+        () => this.log.info('Edit subscribers cancelled')
+      );
     }
-  }
+  }*/
 
 }
