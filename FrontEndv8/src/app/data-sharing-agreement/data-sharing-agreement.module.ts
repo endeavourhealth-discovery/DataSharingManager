@@ -21,6 +21,7 @@ import {RouterModule} from '@angular/router';
 import {DataSharingAgreementComponent} from './data-sharing-agreement/data-sharing-agreement.component';
 import {DataSharingAgreementEditorComponent} from './data-sharing-agreement-editor/data-sharing-agreement-editor.component';
 import {DataSharingAgreementService} from './data-sharing-agreement.service';
+import { DataSharingAgreementPickerComponent } from './data-sharing-agreement-picker/data-sharing-agreement-picker.component';
 
 @NgModule({
   imports: [
@@ -45,6 +46,7 @@ import {DataSharingAgreementService} from './data-sharing-agreement.service';
   declarations: [
     DataSharingAgreementComponent,
     DataSharingAgreementEditorComponent,
+    DataSharingAgreementPickerComponent,
     //DataSharingAgreementPickerComponent,
     //PurposeAddComponent
   ],

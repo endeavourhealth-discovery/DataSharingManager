@@ -99,7 +99,6 @@
               <mat-option *ngFor="let arc of securityArchitectures" [value]="arc.num">{{arc.name}}</mat-option>
             </mat-select>
           </mat-form-field>
-
           <mat-form-field appearance="outline" fxFlex="33" fxFill>
             <mat-label>Status</mat-label>
             <mat-select matInput name="status" [disabled]="disableStatus" [(ngModel)]="project.projectStatusId" name="projectStatusId">

@@ -29,6 +29,13 @@ export class ProjectService {
     return this.http.get<Project[]>(url,{params});
   }
 
+  search(searchData: string): Observable<Project[]> {
+    const url = 'api/project';
+    let params = new HttpParams();
+    if (searchData) params = params.append('searchData', searchData);
+    return this.http.get<Project[]>(url,{params});
+  }
+
   getProject(uuid: string): Observable<Project> {
     const url = 'api/project';
     let params = new HttpParams();

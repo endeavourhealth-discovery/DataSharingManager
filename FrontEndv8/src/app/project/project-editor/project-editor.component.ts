@@ -23,6 +23,9 @@ import {ProjectApplicationPolicy} from "../models/ProjectApplicationPolicy";
 import {ExtractTechnicalDetails} from "../models/ExtractTechnicalDetails";
 import {Schedule} from "../../scheduler/models/Schedule";
 import {SchedulerComponent} from "../../scheduler/scheduler/scheduler.component";
+import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
+import {DataSharingAgreementPickerComponent} from "../../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component";
+import {ValueSetsComponent} from "../../value-sets/value-sets/value-sets.component";
 
 @Component({
   selector: 'app-project-editor',
@@ -330,7 +333,17 @@ export class ProjectEditorComponent implements OnInit {
     this.dsasTable.updateRows();  }
 
   addDsas() {
-    //TODO
+    const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
+      width: '800px',
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      for (let dsa of result) {
+        if (!this.dsas.some(x => x.uuid === dsa.uuid)) {
+          this.dsas.push(dsa);
+          this.dsasTable.updateRows();
+        }
+      }
+    })
   }
 
   getPublishers() {

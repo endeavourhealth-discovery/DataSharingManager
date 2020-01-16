@@ -1,30 +1,18 @@
-<mat-card>
-  <mat-card-header>
-    <div mat-card-avatar>
-      <mat-icon>lightbulb_outline</mat-icon>
-    </div>
-    <mat-card-title>Value Sets</mat-card-title>
-    <mat-card-subtitle>Available value sets</mat-card-subtitle>
-    <div fxFlex></div>
-  </mat-card-header>
-  <mat-card-content>
-    <mat-card-content style="height: 600px; overflow-y: auto">
-      <app-generic-table-ssp #valueSetsTable
-        [items]="valueSets"
-        [totalItems]="totalItems"
-        [detailsToShow]="detailsToShow"
-        [pageSize]="pageSize"
-        [allowSelect]="allowEdit"
-        (deleted)="delete($event)"
-        (clicked)="itemClicked($event)"
-        (onPageChange)="pageChange($event)"
-        (onOrderChange)="onOrderChange($event)"
-        (search)="onSearch($event)">
-      </app-generic-table-ssp>
-    </mat-card-content>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="ok()" cdkFocusInitial>Ok</button>
-    <button mat-raised-button color="accent" (click)="cancel()" cdkFocusInitial>Cancel</button>
-  </mat-card-actions>
-</mat-card>
+<h1 mat-dialog-title>Add value set(s)</h1>
+<div mat-dialog-content>
+  <div class="scroll-box-400">
+    <app-generic-table-ssp #valueSetsTable
+                           [items]="valueSets"
+                           [totalItems]="totalItems"
+                           [detailsToShow]="detailsToShow"
+                           [pageSize]="pageSize"
+                           [allowSelect]="true"
+                           (search)="onSearch($event)">
+    </app-generic-table-ssp>
+  </div>
+  <br>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="ok()" cdkFocusInitial>Ok</button>
+  <button mat-raised-button color="accent" (click)="cancel()" cdkFocusInitial>Cancel</button>
+</div>

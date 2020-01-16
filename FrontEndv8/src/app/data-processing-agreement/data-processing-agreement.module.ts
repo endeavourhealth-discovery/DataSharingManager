@@ -24,6 +24,7 @@ import {DataProcessingAgreementEditorComponent} from "./data-processing-agreemen
 import {DataProcessingAgreementService} from "./data-processing-agreement.service";
 import {PurposeComponent} from "../purpose/purpose/purpose.component";
 import {DocumentationComponent} from "../documentation/documentation/documentation.component";
+import { DataProcessingAgreementPickerComponent } from './data-processing-agreement-picker/data-processing-agreement-picker.component';
 
 @NgModule({
   imports: [
@@ -48,6 +49,7 @@ import {DocumentationComponent} from "../documentation/documentation/documentati
   declarations: [
     DataProcessingAgreementComponent,
     DataProcessingAgreementEditorComponent,
+    DataProcessingAgreementPickerComponent,
     //DataProcessingAgreementPickerComponent
   ],
   entryComponents : [

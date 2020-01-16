@@ -30,9 +30,13 @@ import {MatListModule} from "@angular/material/list";
 import {ProjectEditorComponent} from './project-editor/project-editor.component';
 import {DataSetPickerComponent} from "../data-set/data-set-picker/data-set-picker.component";
 import {CohortPickerComponent} from "../cohort/cohort-picker/cohort-picker.component";
+import {DataProcessingAgreementPickerComponent} from "../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
+import {DataSharingAgreementPickerComponent} from "../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component";
+import { ProjectPickerComponent } from './project-picker/project-picker.component';
+import {ValueSetsComponent} from "../value-sets/value-sets/value-sets.component";
 
 @NgModule({
-  declarations: [ProjectComponent, ProjectEditorComponent],
+  declarations: [ProjectComponent, ProjectEditorComponent, ProjectPickerComponent],
     imports: [
         BrowserAnimationsModule,
         BrowserModule,
@@ -56,7 +60,8 @@ import {CohortPickerComponent} from "../cohort/cohort-picker/cohort-picker.compo
     DataSetPickerComponent,
     CohortPickerComponent,
     MessageBoxDialogComponent,
+    DataSharingAgreementPickerComponent,
+    ValueSetsComponent,
   ],
-
 })
 export class ProjectModule { }
