@@ -182,7 +182,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
   addPurpose(index: number) {
     const dialogRef = this.dialog.open(PurposeComponent, {
-      height: '580px',
       width: '550px',
       data: {resultData: this.purposes, type: 'Purpose', index: index},
     });
@@ -230,7 +229,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
   addBenefit(index: number) {
     const dialogRef = this.dialog.open(PurposeComponent, {
-      height: '580px',
       width: '550px',
       data: {resultData: this.benefits, type: 'Benefit', index: index},
     });
@@ -372,7 +370,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
   addDocumentation() {
     const dialogRef = this.dialog.open(DocumentationComponent, {
-      height: '350px',
       width: '550px',
     });
     dialogRef.afterClosed().subscribe(result => {

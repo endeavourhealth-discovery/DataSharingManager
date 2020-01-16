@@ -432,7 +432,6 @@ export class ProjectEditorComponent implements OnInit {
 
   addDocumentation() {
     const dialogRef = this.dialog.open(DocumentationComponent, {
-      height: '350px',
       width: '550px',
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -467,7 +466,6 @@ export class ProjectEditorComponent implements OnInit {
 
   addCohorts() {
     const dialogRef = this.dialog.open(CohortPickerComponent, {
-      height: '750px',
       width: '1200px',
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -506,7 +504,6 @@ export class ProjectEditorComponent implements OnInit {
 
   addDataSets() {
     const dialogRef = this.dialog.open(DataSetPickerComponent, {
-      height: '750px',
       width: '1200px',
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -568,7 +565,6 @@ export class ProjectEditorComponent implements OnInit {
 
   uploadExtraTechDetails(whichFile: number) {
     const dialogRef = this.dialog.open(DocumentationComponent, {
-      height: '350px',
       width: '550px',
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -614,8 +610,8 @@ export class ProjectEditorComponent implements OnInit {
     this.projectService.getLinkedSchedule(this.project.uuid)
       .subscribe(
         result => {
-          console.log(result);
           if (result) {
+            this.schedules = new Array<Schedule>();
             this.schedules[0] = result;
             this.schedulesTable.updateRows();
           } else {
@@ -628,7 +624,6 @@ export class ProjectEditorComponent implements OnInit {
   scheduleClicked(item: Schedule) {
     let index = this.schedules.indexOf(item);
     const dialogRef = this.dialog.open(SchedulerComponent, {
-      height: '610px',
       width: '1200px',
       data: {schedule: item, allowTime: true},
     });
@@ -653,7 +648,6 @@ export class ProjectEditorComponent implements OnInit {
   addSchedule() {
     if (this.schedules.length == 0) {
       const dialogRef = this.dialog.open(SchedulerComponent, {
-        height: '610px',
         width: '1200px',
         data: {schedule: null, allowTime: true},
       });

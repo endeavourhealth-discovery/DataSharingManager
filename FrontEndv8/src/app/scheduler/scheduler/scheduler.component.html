@@ -1,12 +1,6 @@
-<mat-card>
-  <mat-card-header>
-    <div mat-card-avatar>
-      <mat-icon>alarm</mat-icon>
-    </div>
-    <mat-card-title>Scheduler</mat-card-title>
-    <mat-card-subtitle>Create a Quartz Cron Expression</mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
+<h1 mat-dialog-title>Scheduler</h1>
+<div mat-dialog-content>
+  <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
     <mat-tab-group (selectedTabChange)="setTab($event)" [selectedIndex]="selectedTab">
       <mat-tab label="Minutes" *ngIf="allowTime">
         <br>
@@ -321,9 +315,9 @@
         <input matInput class="description" placeholder="Cron description" [(ngModel)]="cronDescription" readonly>
       </mat-form-field>
     </div>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-raised-button color="primary" [disabled]="formIsInvalid" [mat-dialog-close]="schedule">Ok</button>
-    <button mat-raised-button color="accent" (click)="cancel()">Cancel</button>
-  </mat-card-actions>
-</mat-card>
+  </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" [disabled]="formIsInvalid" [mat-dialog-close]="schedule">Ok</button>
+  <button mat-raised-button color="accent" (click)="cancel()">Cancel</button>
+</div>
