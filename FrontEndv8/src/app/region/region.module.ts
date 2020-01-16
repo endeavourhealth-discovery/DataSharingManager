@@ -19,6 +19,9 @@ import {BrowserModule} from "@angular/platform-browser";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {FormsModule} from "@angular/forms";
 import {RegionPickerComponent} from "./region-picker/region-picker.component";
+import {DataSharingAgreementPickerComponent} from "../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component";
+import {DataProcessingAgreementPickerComponent} from "../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
+import {OrganisationPickerComponent} from "../organisation/organisation-picker/organisation-picker.component";
 
 @NgModule({
   imports: [
@@ -57,7 +60,10 @@ import {RegionPickerComponent} from "./region-picker/region-picker.component";
     RegionPickerComponent
   ],
   entryComponents : [
-    RegionPickerComponent
+    RegionPickerComponent,
+    DataSharingAgreementPickerComponent,
+    DataProcessingAgreementPickerComponent,
+    OrganisationPickerComponent,
   ],
   providers: [
     RegionService]

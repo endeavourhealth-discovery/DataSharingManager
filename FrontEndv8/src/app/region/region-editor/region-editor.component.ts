@@ -7,7 +7,12 @@ import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {Marker} from "../models/Marker";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
+import {DataSharingAgreementPickerComponent} from "../../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component";
+import {MatDialog} from "@angular/material/dialog";
+import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
+import {RegionPickerComponent} from "../region-picker/region-picker.component";
+import {OrganisationPickerComponent} from "../../organisation/organisation-picker/organisation-picker.component";
 
 @Component({
   selector: 'app-region-editor',
@@ -49,7 +54,8 @@ export class RegionEditorComponent implements OnInit {
               private regionService: RegionService,
               private router: Router,
               private route: ActivatedRoute,
-              private userManagerService: UserManagerService) {}
+              private userManagerService: UserManagerService,
+              public dialog: MatDialog) {}
 
   ngOnInit() {
 
@@ -60,8 +66,6 @@ export class RegionEditorComponent implements OnInit {
   }
 
   roleChanged() {
-
-
     if (this.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Super User') != null) {
       this.allowEdit = true;
       this.superUser = true;
@@ -229,49 +233,70 @@ export class RegionEditorComponent implements OnInit {
       )
   }
 
-  addPublishers() {
-
+  addDSAs() {
+    const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
+      width: '800px',
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      for (let dsa of result) {
+        if (!this.sharingAgreements.some(x => x.uuid === dsa.uuid)) {
+          this.sharingAgreements.push(dsa);
+          this.dsaTable.updateRows();
+        }
+      }
+    })
   }
 
-  /*private editOrganisations() {
-
-    OrganisationPickerComponent.open(this.$modal, this.organisations, 'organisations')
-      .result.then(function (result: Organisation[]) {
-      this.organisations = result;
-    });
+  addDPAs() {
+    const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
+      width: '800px',
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      for (let dpa of result) {
+        if (!this.processingAgreements.some(x => x.uuid === dpa.uuid)) {
+          this.processingAgreements.push(dpa);
+          this.dpaTable.updateRows();
+        }
+      }
+    })
   }
 
-  private editParentRegions() {
-
-    RegionPickerComponent.open(this.$modal, this.parentRegions, this.region.uuid)
-      .result.then(function (result: Region[]) {
-      this.parentRegions = result;
-    });
+  addRegions(isParent: boolean) {
+    const dialogRef = this.dialog.open(RegionPickerComponent, {
+      width: '800px',
+      data: { uuid: '', limit: 0, userId : this.activeProject.userId }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+        for (let region of result) {
+          if (isParent) {
+            if (!this.parentRegions.some(x => x.uuid === region.uuid)) {
+              this.parentRegions.push(region);
+              this.parentRegionTable.updateRows();
+            }
+          } else {
+            if (!this.childRegions.some(x => x.uuid === region.uuid)) {
+              this.childRegions.push(region);
+              this.childRegionTable.updateRows();
+            }
+          }
+        }
+    })
   }
 
-  private editChildRegions() {
-
-    RegionPickerComponent.open(this.$modal, this.childRegions, this.region.uuid)
-      .result.then(function (result: Region[]) {
-      this.childRegions = result;
-    });
+  addOrganisation() {
+    const dialogRef = this.dialog.open(OrganisationPickerComponent, {
+      width: '800px',
+      data: { searchType: 'organisation', uuid: '', regionUUID: this.region.uuid, dsaUUID: '' }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      for (let org of result) {
+        if (!this.organisations.some(x => x.uuid === org.uuid)) {
+          this.organisations.push(org);
+          this.orgTable.updateRows();
+        }
+      }
+    })
   }
-
-  private editSharingAgreements() {
-
-    DataSharingAgreementPickerComponent.open(this.$modal, this.sharingAgreements)
-      .result.then(function (result: Dsa[]) {
-      this.sharingAgreements = result;
-    });
-  }
-
-  private editProcessingAgreements() {
-
-    DataProcessingAgreementPickerComponent.open(this.$modal, this.processingAgreements)
-      .result.then(function (result: Dpa[]) {
-      this.processingAgreements = result;
-    });
-  }*/
 
   organisationClicked(item: Organisation) {
     this.router.navigate(['/organisation', item.uuid, 'edit']);
@@ -290,23 +315,108 @@ export class RegionEditorComponent implements OnInit {
   }
 
   deleteOrganisations() {
-    console.log(this.orgTable.selection.selected);
+    MessageBoxDialogComponent.open(this.dialog, 'Delete organisation', 'Are you sure you want to delete organisation(s)?',
+      'Delete organisation', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.orgTable.selection.selected.length; i++) {
+              let org = this.orgTable.selection.selected[i];
+              this.organisations.forEach( (item, index) => {
+                if(item === org) this.organisations.splice(index,1);
+              });
+            }
+            this.orgTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        },
+      );
   }
 
   deleteParentRegions() {
-    console.log(this.parentRegionTable.selection.selected);
+    MessageBoxDialogComponent.open(this.dialog, 'Delete region', 'Are you sure you want to delete parent region(s)?',
+      'Delete region', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.parentRegionTable.selection.selected.length; i++) {
+              let org = this.parentRegionTable.selection.selected[i];
+              this.parentRegions.forEach( (item, index) => {
+                if(item === org) this.parentRegions.splice(index,1);
+              });
+            }
+            this.parentRegionTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        },
+      );
   }
 
   deleteChildRegions() {
-    console.log(this.childRegionTable.selection.selected);
+    MessageBoxDialogComponent.open(this.dialog, 'Delete region', 'Are you sure you want to delete child region(s)?',
+      'Delete region', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.childRegionTable.selection.selected.length; i++) {
+              let org = this.childRegionTable.selection.selected[i];
+              this.childRegions.forEach( (item, index) => {
+                if(item === org) this.childRegions.splice(index,1);
+              });
+            }
+            this.childRegionTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        },
+      );
   }
 
   deleteDSAs() {
-    console.log(this.dsaTable.selection.selected);
+    MessageBoxDialogComponent.open(this.dialog, 'Delete DSA', 'Are you sure you want to delete DSA(s)?',
+      'Delete DSA', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.dsaTable.selection.selected.length; i++) {
+              let org = this.dsaTable.selection.selected[i];
+              this.sharingAgreements.forEach( (item, index) => {
+                if(item === org) this.sharingAgreements.splice(index,1);
+              });
+            }
+            this.dsaTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        },
+      );
   }
 
   deleteDPAs() {
-    console.log(this.dpaTable.selection.selected);
+    MessageBoxDialogComponent.open(this.dialog, 'Delete DPA', 'Are you sure you want to delete DPA(s)?',
+      'Delete DPA', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.dpaTable.selection.selected.length; i++) {
+              let org = this.dpaTable.selection.selected[i];
+              this.processingAgreements.forEach( (item, index) => {
+                if(item === org) this.processingAgreements.splice(index,1);
+              });
+            }
+            this.dpaTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        },
+      );
   }
 
 }

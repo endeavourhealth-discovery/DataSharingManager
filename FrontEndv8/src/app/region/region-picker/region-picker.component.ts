@@ -19,22 +19,11 @@ export class RegionPickerComponent implements OnInit {
 
   @ViewChild('picker', { static: false }) picker: GenericTableComponent;
 
-  /*public static open(modalService: NgbModal, regions: Region[], uuid: string = '', limit: number = 0) {
-    const modalRef = modalService.open(RegionPickerComponent, { backdrop : 'static'});
-    modalRef.componentInstance.resultData = Object.assign([], regions);
-    modalRef.componentInstance.uuid = uuid;
-    modalRef.componentInstance.limit = limit;
-
-    return modalRef;
-  }*/
-
   constructor(
     public dialogRef: MatDialogRef<RegionPickerComponent>,
     @Inject(MAT_DIALOG_DATA) public data: StandardPickerData,
     private regionService: RegionService,
     private log: LoggerService) {
-
-
   }
 
   ngOnInit() {
@@ -46,10 +35,6 @@ export class RegionPickerComponent implements OnInit {
   }
 
   search() {
-    /*const vm = this;
-    if (vm.searchData.length < 3) {
-      return;
-    }*/
     console.log('data', this.data);
     const regionUUID = this.data.uuid;
     this.regionService.getAllRegions(this.data.userId)
@@ -58,26 +43,6 @@ export class RegionPickerComponent implements OnInit {
         (error) => this.log.error(error)
       );
   }
-/*
-
-  private addToSelection(match: Region) {
-    if (!this.resultData.some(x => x.uuid === match.uuid)) {
-      if (this.limit == 1) {
-        this.resultData = [];
-        this.resultData.push(match);
-      } else {
-        this.resultData.push(match);
-      }
-    }
-  }
-
-  private removeFromSelection(match: Region) {
-    const index = this.resultData.indexOf(match, 0);
-    if (index > -1) {
-      this.resultData.splice(index, 1);
-    }
-  }
-*/
 
   ok() {
     this.dialogRef.close(this.picker.selection.selected);
