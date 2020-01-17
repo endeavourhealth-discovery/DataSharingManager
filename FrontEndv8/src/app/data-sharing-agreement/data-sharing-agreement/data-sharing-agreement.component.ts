@@ -3,7 +3,8 @@ import {Dsa} from '../models/Dsa';
 import {DataSharingAgreementService} from '../data-sharing-agreement.service';
 import {Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-data-sharing-agreement',
@@ -29,7 +30,8 @@ export class DataSharingAgreementComponent implements OnInit {
   constructor(private dsaService: DataSharingAgreementService,
               private router: Router,
               private userManagerNotificationService: UserManagerService,
-              private log: LoggerService) {
+              private log: LoggerService,
+              public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -84,26 +86,30 @@ export class DataSharingAgreementComponent implements OnInit {
     this.router.navigate(['/dsa', dsa.uuid, 'edit']);
   }
 
-  /*delete(item: Dsa) {*/
   delete() {
-    console.log(this.dsasTable.selection.selected);
-    /*MessageBoxDialog.open(this.$modal, 'Delete data sharing agreement', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete data sharing agreement', 'Cancel')
-      .result.then(
-      () => this.doDelete(item),
-      () => this.log.info('Delete cancelled')
-    );*/
-  }
-
-  doDelete(item: Dsa) {
-    this.dsaService.deleteDsa(item.uuid)
+    MessageBoxDialogComponent.open(this.dialog, 'Delete DSA', 'Are you sure you want to delete DSA(s)?',
+      'Delete DSA', 'Cancel')
       .subscribe(
-        () => {
-          const index = this.dsas.indexOf(item);
-          this.dsas.splice(index, 1);
-          this.log.success('Data sharing agreement deleted'/*, item, 'Delete data sharing agreement'*/);
-        },
-        (error) => this.log.error('The data sharing agreement could not be deleted. Please try again.'/*, error, 'Delete data sharing agreement'*/)
-      );
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.dsasTable.selection.selected.length; i++) {
+              let dsa = this.dsasTable.selection.selected[i];
+              this.dsas.forEach( (item, index) => {
+                if(item === dsa) {
+                  this.dsaService.deleteDsa(dsa.uuid).subscribe(
+                    () => {
+                      this.dsas.splice(index,1);
+                      this.dsasTable.updateRows();
+                    }
+                  );
+                }
+              });
+            }
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        });
   }
 
   close() {

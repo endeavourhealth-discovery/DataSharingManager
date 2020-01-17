@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Dpa} from '../models/Dpa';
 import {DataProcessingAgreementService} from '../data-processing-agreement.service';
 import {Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-data-processing-agreement',
@@ -24,10 +25,13 @@ export class DataProcessingAgreementComponent implements OnInit {
 
   public activeProject: UserProject;
 
+  @ViewChild('dpasTable', {static: false}) dpasTable: GenericTableComponent;
+
   constructor(private dpaService: DataProcessingAgreementService,
               private router: Router,
               private userManagerNotificationService: UserManagerService,
-              private log: LoggerService) {
+              private log: LoggerService,
+              public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -63,7 +67,7 @@ export class DataProcessingAgreementComponent implements OnInit {
           this.loadingComplete = true;
         },
             error => {
-          this.log.error('The data processing agreements could not be loaded. Please try again.'/*, error, 'Load data processing agreements'*/);
+          this.log.error('The data processing agreements could not be loaded. Please try again.');
           this.loadingComplete = true;
         }
       );
@@ -81,25 +85,30 @@ export class DataProcessingAgreementComponent implements OnInit {
     this.router.navigate(['/dpa', dpa.uuid, 'edit']);
   }
 
-  delete(item: Dpa) {
-    /*MessageBoxDialog.open(this.$modal, 'Delete data processing agreement',
-      'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete data processing agreement', 'Cancel')
-      .result.then(
-      () => this.doDelete(item),
-      () => this.log.info('Delete cancelled')
-    );*/
-  }
-
-  doDelete(item: Dpa) {
-    this.dpaService.deleteDpa(item.uuid)
+  delete() {
+    MessageBoxDialogComponent.open(this.dialog, 'Delete DPA', 'Are you sure you want to delete DPA(s)?',
+      'Delete DPA', 'Cancel')
       .subscribe(
-        () => {
-          const index = this.dpas.indexOf(item);
-          this.dpas.splice(index, 1);
-          this.log.success('Data processing agreement deleted'/*, item, 'Delete data processing agreement'*/);
-        },
-        (error) => this.log.error('The data processing agreement could not be deleted. Please try again.'/*, error, 'Delete data processing agreement'*/)
-      );
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.dpasTable.selection.selected.length; i++) {
+              let dpa = this.dpasTable.selection.selected[i];
+              this.dpas.forEach( (item, index) => {
+                if(item === dpa) {
+                  this.dpaService.deleteDpa(dpa.uuid).subscribe(
+                    () => {
+                      this.dpas.splice(index,1);
+                      this.dpasTable.updateRows();
+                    }
+                  );
+                }
+              });
+            }
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        });
   }
 
   close() {

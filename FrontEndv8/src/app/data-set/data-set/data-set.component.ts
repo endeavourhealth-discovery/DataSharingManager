@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {DataSet} from '../models/Dataset';
 import {DataSetService} from '../data-set.service';
 import {Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-data-set',
@@ -11,6 +12,9 @@ import {LoggerService, UserManagerService} from "dds-angular8";
   styleUrls: ['./data-set.component.css']
 })
 export class DataSetComponent implements OnInit {
+
+  @ViewChild('datasetsTable', { static: false }) datasetsTable: GenericTableComponent;
+
   datasets: DataSet[];
   pageNumber = 1;
   pageSize = 20;
@@ -25,7 +29,8 @@ export class DataSetComponent implements OnInit {
   constructor(private dataSetService: DataSetService,
               private router: Router,
               private userManagerNotificationService: UserManagerService,
-              private log: LoggerService) {
+              private log: LoggerService,
+              public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -71,24 +76,30 @@ export class DataSetComponent implements OnInit {
     this.router.navigate(['/dataSet', dataset.uuid, 'edit']);
   }
 
-  delete(item: DataSet) {
-    /*MessageBoxDialog.open(this.$modal, 'Delete data set', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete data set', 'Cancel')
-      .result.then(
-      () => this.doDelete(item),
-      () => this.log.info('Delete cancelled')
-    );*/
-  }
-
-  doDelete(item: DataSet) {
-    this.dataSetService.deleteDataSet(item.uuid)
+  delete() {
+    MessageBoxDialogComponent.open(this.dialog, 'Delete data set', 'Are you sure you want to delete data set(s)?',
+      'Delete data set', 'Cancel')
       .subscribe(
-        () => {
-          const index = this.datasets.indexOf(item);
-          this.datasets.splice(index, 1);
-          this.log.success('Data set deleted'/*, item, 'Delete data set'*/);
-        },
-        (error) => this.log.error('The data set could not be deleted. Please try again.'/*, error, 'Delete data set'*/)
-      );
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.datasetsTable.selection.selected.length; i++) {
+              let dataset = this.datasetsTable.selection.selected[i];
+              this.datasets.forEach( (item, index) => {
+                if(item === dataset) {
+                  this.dataSetService.deleteDataSet(dataset.uuid).subscribe(
+                    () => {
+                      this.datasets.splice(index,1);
+                      this.datasetsTable.updateRows();
+                    }
+                  );
+                }
+              });
+            }
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        });
   }
 
   close() {

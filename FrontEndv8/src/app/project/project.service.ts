@@ -128,4 +128,11 @@ export class ProjectService {
     const url = 'api/project/setProjectApplicationPolicy';
     return this.http.post(url, projectApplicationPolicy, {responseType: 'text'});
   }
+
+  deleteProject(uuid: string): Observable<any> {
+    const url = 'api/project';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.delete(url,{params});
+  }
 }

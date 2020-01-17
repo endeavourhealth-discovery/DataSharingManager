@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Project} from "../models/Project";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Router} from "@angular/router";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {ProjectService} from "../project.service";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-project',
@@ -11,6 +12,8 @@ import {ProjectService} from "../project.service";
   styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent implements OnInit {
+
+  @ViewChild('projectsTable', {static: false}) projectsTable: GenericTableComponent;
 
   projects: Project[];
   pageNumber = 1;
@@ -28,7 +31,8 @@ export class ProjectComponent implements OnInit {
   constructor(private projectService: ProjectService,
               private router: Router,
               private userManagerNotificationService: UserManagerService,
-              private log: LoggerService) {
+              private log: LoggerService,
+              public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -80,6 +84,32 @@ export class ProjectComponent implements OnInit {
 
   itemClicked(item: Project) {
     this.router.navigate(['/project', item.uuid, 'edit']);
+  }
+
+  delete() {
+    MessageBoxDialogComponent.open(this.dialog, 'Delete project', 'Are you sure you want to delete project(s)?',
+      'Delete project', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.projectsTable.selection.selected.length; i++) {
+              let project = this.projectsTable.selection.selected[i];
+              this.projects.forEach( (item, index) => {
+                if(item === project) {
+                  this.projectService.deleteProject(project.uuid).subscribe(
+                    () => {
+                      this.projects.splice(index,1);
+                      this.projectsTable.updateRows();
+                    }
+                  );
+                }
+              });
+            }
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        });
   }
 
   close() {

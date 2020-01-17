@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Project} from "src/app/project/models/Project";
-import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DatePipe} from "@angular/common";
 import {MatDialog} from "@angular/material/dialog";
@@ -240,8 +240,8 @@ export class ProjectEditorComponent implements OnInit {
     this.projectService.saveProject(this.project)
       .subscribe(saved => {
           this.project.uuid = saved;
-          this.log.success('Project saved');
           this.saveApplicationPolicy();
+          this.log.success('Project saved');
           if (close) {
             window.history.back();
           }
@@ -324,13 +324,25 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   deleteDsas() {
-    for (var i = 0; i < this.dsasTable.selection.selected.length; i++) {
-      let purpose = this.dsasTable.selection.selected[i];
-      this.dsas.forEach( (item, index) => {
-        if(item === purpose) this.dsas.splice(index,1);
-      });
-    }
-    this.dsasTable.updateRows();  }
+    MessageBoxDialogComponent.open(this.dialog, 'Remove DSA', 'Are you sure you want to remove DSA(s)?',
+      'Remove DSA', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.dsasTable.selection.selected.length; i++) {
+              let dsa = this.dsasTable.selection.selected[i];
+              this.dsas.forEach( (item, index) => {
+                if(item === dsa) this.dsas.splice(index,1);
+              });
+            }
+            this.dsasTable.updateRows();
+            this.log.success('Remove successful.');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
+  }
 
   addDsas() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
@@ -359,13 +371,23 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   deletePublishers() {
-    for (var i = 0; i < this.publishersTable.selection.selected.length; i++) {
-      let purpose = this.publishersTable.selection.selected[i];
-      this.publishers.forEach( (item, index) => {
-        if(item === purpose) this.publishers.splice(index,1);
-      });
-    }
-    this.publishersTable.updateRows();
+    MessageBoxDialogComponent.open(this.dialog, 'Remove publisher', 'Are you sure you want to remove publisher(s)?',
+      'Remove publisher', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.publishersTable.selection.selected.length; i++) {
+              let publisher = this.publishersTable.selection.selected[i];
+              this.publishers.forEach( (item, index) => {
+                if(item === publisher) this.publishers.splice(index,1);
+              });
+            }
+            this.publishersTable.updateRows();
+            this.log.success('Remove successful');
+          } else {
+            this.log.success('Remove cancelled')
+          }
+        });
   }
 
   addPublishers() {
@@ -396,13 +418,23 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   deleteSubscribers() {
-    for (var i = 0; i < this.subscribersTable.selection.selected.length; i++) {
-      let purpose = this.subscribersTable.selection.selected[i];
-      this.subscribers.forEach( (item, index) => {
-        if(item === purpose) this.subscribers.splice(index,1);
-      });
-    }
-    this.subscribersTable.updateRows();
+    MessageBoxDialogComponent.open(this.dialog, 'Remove subscriber', 'Are you sure you want to remove subscriber(s)?',
+      'Remove subscriber', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.subscribersTable.selection.selected.length; i++) {
+              let subscriber = this.subscribersTable.selection.selected[i];
+              this.subscribers.forEach( (item, index) => {
+                if(item === subscriber) this.subscribers.splice(index,1);
+              });
+            }
+            this.subscribersTable.updateRows();
+            this.log.success('Remove successful.');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        });
   }
 
   addSubscribers() {
@@ -433,13 +465,23 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   deleteDocumentations() {
-    for (var i = 0; i < this.documentationsTable.selection.selected.length; i++) {
-      let purpose = this.documentationsTable.selection.selected[i];
-      this.documentations.forEach( (item, index) => {
-        if(item === purpose) this.documentations.splice(index,1);
-      });
-    }
-    this.documentationsTable.updateRows();
+    MessageBoxDialogComponent.open(this.dialog, 'Delete document', 'Are you sure you want to delete document(s)?',
+      'Delete document', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.documentationsTable.selection.selected.length; i++) {
+              let document = this.documentationsTable.selection.selected[i];
+              this.documentations.forEach( (item, index) => {
+                if(item === document) this.documentations.splice(index,1);
+              });
+            }
+            this.documentationsTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        });
   }
 
   addDocumentation() {
@@ -467,13 +509,23 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   deleteCohorts() {
-    for (var i = 0; i < this.cohortsTable.selection.selected.length; i++) {
-      let purpose = this.cohortsTable.selection.selected[i];
-      this.cohorts.forEach( (item, index) => {
-        if(item === purpose) this.cohorts.splice(index,1);
-      });
-    }
-    this.cohortsTable.updateRows();
+    MessageBoxDialogComponent.open(this.dialog, 'Remove cohort', 'Are you sure you want to remove cohort(s)?',
+      'Remove cohort', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.cohortsTable.selection.selected.length; i++) {
+              let cohort = this.cohortsTable.selection.selected[i];
+              this.cohorts.forEach( (item, index) => {
+                if(item === cohort) this.cohorts.splice(index,1);
+              });
+            }
+            this.cohortsTable.updateRows();
+            this.log.success('Remove successful.');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        });
   }
 
   addCohorts() {
@@ -505,13 +557,23 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   deleteDataSets() {
-    for (var i = 0; i < this.dataSetsTable.selection.selected.length; i++) {
-      let purpose = this.dataSetsTable.selection.selected[i];
-      this.dataSets.forEach( (item, index) => {
-        if(item === purpose) this.dataSets.splice(index,1);
-      });
-    }
-    this.dataSetsTable.updateRows();
+    MessageBoxDialogComponent.open(this.dialog, 'Remove data set', 'Are you sure you want to remove data set(s)?',
+      'Remove data set', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.dataSetsTable.selection.selected.length; i++) {
+              let dataset = this.dataSetsTable.selection.selected[i];
+              this.dataSets.forEach( (item, index) => {
+                if(item === dataset) this.dataSets.splice(index,1);
+              });
+            }
+            this.dataSetsTable.updateRows();
+            this.log.success('Remove successful.');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        });
   }
 
   addDataSets() {
@@ -648,13 +710,23 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   deleteSchedules() {
-    for (var i = 0; i < this.schedulesTable.selection.selected.length; i++) {
-      let purpose = this.schedulesTable.selection.selected[i];
-      this.schedules.forEach( (item, index) => {
-        if(item === purpose) this.schedules.splice(index,1);
-      });
-    }
-    this.schedulesTable.updateRows();
+    MessageBoxDialogComponent.open(this.dialog, 'Delete schedule', 'Are you sure you want to delete schedule(s)?',
+      'Delete schedule', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.schedulesTable.selection.selected.length; i++) {
+              let schedule = this.schedulesTable.selection.selected[i];
+              this.schedules.forEach( (item, index) => {
+                if(item === schedule) this.schedules.splice(index,1);
+              });
+            }
+            this.schedulesTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        });
   }
 
   addSchedule() {

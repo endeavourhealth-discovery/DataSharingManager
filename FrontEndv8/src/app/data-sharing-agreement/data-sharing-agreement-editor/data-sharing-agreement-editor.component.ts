@@ -356,13 +356,25 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   deletePurposes() {
-    for (var i = 0; i < this.purposesTable.selection.selected.length; i++) {
-      let purpose = this.purposesTable.selection.selected[i];
-      this.purposes.forEach( (item, index) => {
-        if(item === purpose) this.purposes.splice(index,1);
-      });
-    }
-    this.purposesTable.updateRows();
+    MessageBoxDialogComponent.open(this.dialog, 'Delete purpose', 'Are you sure you want to delete purpose(s)?',
+      'Delete purpose', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.purposesTable.selection.selected.length; i++) {
+              let purpose = this.purposesTable.selection.selected[i];
+              this.purposes.forEach( (item, index) => {
+                if(item === purpose) this.purposes.splice(index,1);
+              });
+            }
+            this.purposesTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        },
+      );
+
   }
 
   addPurpose(index: number) {
@@ -380,13 +392,24 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   deleteBenefits() {
-    for (var i = 0; i < this.benefitsTable.selection.selected.length; i++) {
-      let benefit = this.benefitsTable.selection.selected[i];
-      this.benefits.forEach( (item, index) => {
-        if(item === benefit) this.benefits.splice(index,1);
-      });
-    }
-    this.benefitsTable.updateRows();
+    MessageBoxDialogComponent.open(this.dialog, 'Delete benefit', 'Are you sure you want to delete benefit(s)?',
+      'Delete benefit', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.benefitsTable.selection.selected.length; i++) {
+              let purpose = this.benefitsTable.selection.selected[i];
+              this.benefits.forEach( (item, index) => {
+                if(item === purpose) this.benefits.splice(index,1);
+              });
+            }
+            this.benefitsTable.updateRows();
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        },
+      );
   }
 
   addBenefit(index: number) {
@@ -404,8 +427,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   deleteRegions() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete region', 'Are you sure you want to delete region(s)?',
-      'Delete region', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove region', 'Are you sure you want to remove region(s)?',
+      'Remove region', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -416,9 +439,9 @@ export class DataSharingAgreementEditorComponent implements OnInit {
               });
             }
             this.regionsTable.updateRows();
-            this.log.success('Delete successful.');
+            this.log.success('Remove successful.');
           } else {
-            this.log.success('Delete cancelled.')
+            this.log.success('Remove cancelled.')
           }
         });
   }
@@ -439,8 +462,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   deleteProjects() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete project', 'Are you sure you want to delete project(s)?',
-      'Delete project', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove project', 'Are you sure you want to remove project(s)?',
+      'Remove project', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -451,16 +474,15 @@ export class DataSharingAgreementEditorComponent implements OnInit {
               });
             }
             this.projectsTable.updateRows();
-            this.log.success('Delete successful.');
+            this.log.success('Remove successful.');
           } else {
-            this.log.success('Delete cancelled.')
+            this.log.success('Remove cancelled.')
           }
         });
   }
 
   addProject() {
-    //TODO Get this to work
-    /*const dialogRef = this.dialog.open(ProjectPickerComponent, {
+    const dialogRef = this.dialog.open(ProjectPickerComponent, {
       width: '800px',
       data: { uuid: '', limit: 0, userId : this.activeProject.userId }
     });
@@ -471,12 +493,12 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           this.projectsTable.updateRows();
         }
       }
-    });*/
+    });
   }
 
   deletePublishers() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete publisher', 'Are you sure you want to delete publisher(s)?',
-      'Delete publisher', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove publisher', 'Are you sure you want to remove publisher(s)?',
+      'Remove publisher', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -487,9 +509,9 @@ export class DataSharingAgreementEditorComponent implements OnInit {
               });
             }
             this.publishersTable.updateRows();
-            this.log.success('Delete successful');
+            this.log.success('Remove successful');
           } else {
-            this.log.success('Delete cancelled')
+            this.log.success('Remove cancelled')
           }
         });
   }
@@ -514,8 +536,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   deleteSubscribers() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete subscriber', 'Are you sure you want to delete subscriber(s)?',
-      'Delete subscriber', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove subscriber', 'Are you sure you want to remove subscriber(s)?',
+      'Remove subscriber', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -526,9 +548,9 @@ export class DataSharingAgreementEditorComponent implements OnInit {
               });
             }
             this.subscribersTable.updateRows();
-            this.log.success('Delete successful.');
+            this.log.success('Remove successful.');
           } else {
-            this.log.success('Delete cancelled.')
+            this.log.success('Remove cancelled.')
           }
         });
   }
@@ -604,51 +626,4 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     () => vm.log.info('Edit data flows cancelled')
   );
   }*/
-
-  /*private editRegions() {
-    RegionPickerComponent.open(this.$modal, this.regions, '', 1)
-      .result.then(function
-      (result: Region[]) {this.regions = result;},
-      () => this.log.info('Edit regions cancelled')
-    );
-  }
-
-  private editProjects() {
-    ProjectPickerComponent.open(this.$modal, this.projects)
-      .result.then(function
-      (result: Project[]) {this.projects = result;},
-      () => this.log.info('Edit projects cancelled')
-    );
-  }
-
-  private editPublishers() {
-    if (!this.regions[0]) {
-      MessageBoxDialog.open(this.$modal, 'Edit publishers', 'The data sharing agreement must be associated with a region before editing publishers', 'Ok', '')
-        .result.then();
-    } else {
-      OrganisationPickerComponent.open(this.$modal, this.publishers, 'publisher', '', this.regions[0].uuid, '')
-        .result.then(function
-        (result: Organisation[]) {
-          this.publishers = result;
-        },
-        () => this.log.info('Edit publishers cancelled')
-      );
-    }
-  }
-
-  private editSubscribers() {
-    if (!this.regions[0]) {
-      MessageBoxDialog.open(this.$modal, 'Edit subscribers', 'The data sharing agreement must be associated with a region before editing subscribers', 'Ok', '')
-        .result.then();
-    } else {
-      OrganisationPickerComponent.open(this.$modal, this.subscribers, 'subscriber', '', this.regions[0].uuid, '')
-        .result.then(function
-        (result: Organisation[]) {
-          this.subscribers = result;
-        },
-        () => this.log.info('Edit subscribers cancelled')
-      );
-    }
-  }*/
-
 }

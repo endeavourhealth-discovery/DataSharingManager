@@ -223,7 +223,7 @@
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
           <mat-form-field appearance="outline" fxFlex="33" fxFill>
             <mat-label>Application Policy</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="selectedApplicationPolicy" name="selectedApplicationPolicy" (change)="changeUserApplicationPolicy(selectedApplicationPolicy.id)">
+            <mat-select matInput name="status" [(ngModel)]="selectedApplicationPolicy" name="selectedApplicationPolicy" (selectionChange)="changeUserApplicationPolicy(selectedApplicationPolicy.id)">
               <mat-option *ngFor="let pol of availablePolicies" [value]="pol">{{pol.name}}</mat-option>
             </mat-select>
           </mat-form-field>

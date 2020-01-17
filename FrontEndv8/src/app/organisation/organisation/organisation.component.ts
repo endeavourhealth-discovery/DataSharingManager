@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Organisation} from '../models/Organisation';
 import {OrganisationService} from '../organisation.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {MatDialog} from "@angular/material/dialog";
+import {GenericTableSspComponent} from "../../generic-table/generic-table-ssp/generic-table-ssp.component";
 
 @Component({
   selector: 'app-organisation',
@@ -12,6 +13,9 @@ import {MatDialog} from "@angular/material/dialog";
   styleUrls: ['./organisation.component.css']
 })
 export class OrganisationComponent implements OnInit {
+
+  @ViewChild('organisationsTable', {static: false}) organisationsTable: GenericTableSspComponent;
+
   private paramSubscriber: any;
   organisations: Organisation[];
   modeType: string;
@@ -98,26 +102,30 @@ export class OrganisationComponent implements OnInit {
     this.router.navigate(['/organisation', item.uuid, 'edit']);
   }
 
-  delete(items: Organisation[]) {
-
-    console.log(items);
-    /*MessageBoxDialog.open(this.$modal, 'Delete organisation', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete organisation', 'Cancel')
-      .result.then(
-      () => this.doDelete(item),
-      () => this.log.info('Delete cancelled')
-    );*/
-  }
-
-  doDelete(item: Organisation) {
-    /*
-    this.organisationService.deleteOrganisation(item.uuid)
+  delete() {
+    MessageBoxDialogComponent.open(this.dialog, 'Delete organisation', 'Are you sure you want to delete organisation(s)?',
+      'Delete organisation', 'Cancel')
       .subscribe(
-        () => {
-          this.search();
-          this.log.success('Organisation deleted')/!*, item, 'Delete organisation')*!/;
-        },
-        (error) => this.log.error('The organisation could not be deleted. Please try again.'/!*, error, 'Delete organisation'*!/)
-      );*/
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.organisationsTable.selection.selected.length; i++) {
+              let org = this.organisationsTable.selection.selected[i];
+              this.organisations.forEach( (item, index) => {
+                if(item === org) {
+                  this.organisationService.deleteOrganisation(org.uuid).subscribe(
+                    () => {
+                      this.organisations.splice(index,1);
+                      this.organisationsTable.updateRows();
+                    }
+                  );
+                }
+              });
+            }
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        });
   }
 
   close() {

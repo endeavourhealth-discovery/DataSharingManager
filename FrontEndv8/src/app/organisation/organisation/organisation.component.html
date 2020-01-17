@@ -15,16 +15,17 @@
     </div>
   </mat-card-header>
   <mat-card-content>
-    <app-generic-table-ssp
+    <app-generic-table-ssp #organisationsTable
       [items]="organisations"
       [totalItems]="totalItems"
       [detailsToShow]="orgDetailsToShow"
       [pageSize]="20"
       [allowSelect]="allowEdit"
-      (deleted)="delete($event)"
+      (deleted)="delete()"
       (clicked)="itemClicked($event)"
       (onPageChange)="pageChange($event)"
       (onOrderChange)="onOrderChange($event)"
-      (search)="onSearch($event)"></app-generic-table-ssp>
+      (search)="onSearch($event)">
+    </app-generic-table-ssp>
   </mat-card-content>
 </mat-card>

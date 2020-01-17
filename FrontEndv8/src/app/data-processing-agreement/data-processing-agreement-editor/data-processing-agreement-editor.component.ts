@@ -252,8 +252,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   deleteRegions() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete region', 'Are you sure you want to delete region(s)?',
-      'Delete region', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove region', 'Are you sure you want to remove region(s)?',
+      'Remove region', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -264,9 +264,9 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
               });
             }
             this.regionsTable.updateRows();
-            this.log.success('Delete successful.');
+            this.log.success('Remove successful.');
           } else {
-            this.log.success('Delete cancelled.')
+            this.log.success('Remove cancelled.')
           }
         },
       );
@@ -300,8 +300,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   deletePublishers() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete publisher', 'Are you sure you want to delete publisher(s)?',
-      'Delete publisher', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove publisher', 'Are you sure you want to remove publisher(s)?',
+      'Remove publisher', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -312,9 +312,9 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
               });
             }
             this.publishersTable.updateRows();
-            this.log.success('Delete successful.');
+            this.log.success('Remove successful.');
           } else {
-            this.log.success('Delete cancelled.')
+            this.log.success('Remove cancelled.')
           }
         },
       );

@@ -1,10 +1,12 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {DataSet} from "../models/Dataset";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DataSetService} from "../data-set.service";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
+import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-data-set-editor',
@@ -12,6 +14,8 @@ import {Dpa} from "../../data-processing-agreement/models/Dpa";
   styleUrls: ['./data-set-editor.component.scss']
 })
 export class DataSetEditorComponent implements OnInit {
+
+  @ViewChild('dpaTable', { static: false }) dpaTable: GenericTableComponent;
 
   dataset: DataSet;
   processingAgreements: Dpa[] = [];
@@ -26,7 +30,8 @@ export class DataSetEditorComponent implements OnInit {
               private dataSetService: DataSetService,
               private router: Router,
               private route: ActivatedRoute,
-              private userManagerService: UserManagerService) {
+              private userManagerService: UserManagerService,
+              public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -98,11 +103,38 @@ export class DataSetEditorComponent implements OnInit {
   }
 
   deleteDPAs() {
-    //TODO
+    MessageBoxDialogComponent.open(this.dialog, 'Remove DPA', 'Are you sure you want to remove DPA(s)?',
+      'Remove DPA', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.dpaTable.selection.selected.length; i++) {
+              let org = this.dpaTable.selection.selected[i];
+              this.processingAgreements.forEach( (item, index) => {
+                if(item === org) this.processingAgreements.splice(index,1);
+              });
+            }
+            this.dpaTable.updateRows();
+            this.log.success('Remove successful.');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
   }
 
-  addAddress() {
-    //TODO
+  addDPAs() {
+    const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
+      width: '800px',
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      for (let dpa of result) {
+        if (!this.processingAgreements.some(x => x.uuid === dpa.uuid)) {
+          this.processingAgreements.push(dpa);
+          this.dpaTable.updateRows();
+        }
+      }
+    })
   }
 
   save(close: boolean) {

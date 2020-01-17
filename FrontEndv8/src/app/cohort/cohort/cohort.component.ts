@@ -3,8 +3,9 @@ import {Cohort} from '../models/Cohort';
 import {CohortService} from '../cohort.service';
 import {Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-cohort',
@@ -28,7 +29,8 @@ export class CohortComponent implements OnInit {
   constructor(private cohortService: CohortService,
               private router: Router,
               private userManagerNotificationService: UserManagerService,
-              private log: LoggerService) {
+              private log: LoggerService,
+              public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -71,26 +73,30 @@ export class CohortComponent implements OnInit {
     this.router.navigate(['/cohort', cohort.uuid, 'edit']);
   }
 
-  /*delete(item: Cohort) {*/
   delete() {
-      console.log(this.cohortsTable.selection.selected);
-    /*MessageBoxDialog.open(this.$modal, 'Delete cohort', 'Are you sure that you want to delete <b>' + item.name + '</b>?', 'Delete cohort', 'Cancel')
-      .result.then(
-      () => this.doDelete(item),
-      () => this.log.info('Delete cancelled')
-    );*/
-  }
-
-  doDelete(item: Cohort) {
-    this.cohortService.deleteCohort(item.uuid)
-      .subscribe(
-        () => {
-          const index = this.cohorts.indexOf(item);
-          this.cohorts.splice(index, 1);
-          this.log.success('Cohort deleted'/*, item, 'Delete cohort'*/);
-        },
-        (error) => this.log.error('The cohort could not be deleted. Please try again.'/*, error, 'Delete cohort'*/)
-      );
+    MessageBoxDialogComponent.open(this.dialog, 'Delete cohort', 'Are you sure you want to delete cohort(s)?',
+        'Delete cohort', 'Cancel')
+        .subscribe(
+            (result) => {
+              if(result) {
+                for (var i = 0; i < this.cohortsTable.selection.selected.length; i++) {
+                  let cohort = this.cohortsTable.selection.selected[i];
+                  this.cohorts.forEach( (item, index) => {
+                    if(item === cohort) {
+                      this.cohortService.deleteCohort(cohort.uuid).subscribe(
+                        () => {
+                          this.cohorts.splice(index,1);
+                          this.cohortsTable.updateRows();
+                        }
+                      );
+                    }
+                  });
+                }
+                this.log.success('Delete successful.');
+              } else {
+                this.log.success('Delete cancelled.')
+              }
+            });
   }
 
   close() {

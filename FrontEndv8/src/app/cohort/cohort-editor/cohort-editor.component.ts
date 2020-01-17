@@ -1,10 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Cohort} from "../models/Cohort";
 import {CohortService} from '../cohort.service';
-import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {ActivatedRoute, Router} from '@angular/router';
 import {Dpa} from '../../data-processing-agreement/models/Dpa';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
+import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-cohort-editor',
@@ -25,7 +27,8 @@ export class CohortEditorComponent implements OnInit {
               private cohortService: CohortService,
               private router: Router,
               private route: ActivatedRoute,
-              private userManagerNotificationService: UserManagerService) {
+              private userManagerNotificationService: UserManagerService,
+              public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -97,22 +100,6 @@ export class CohortEditorComponent implements OnInit {
     window.history.back();
   }
 
-  private editDataProcessingAgreements() {
-    /*DataProcessingAgreementPickerComponent.open(this.$modal, this.dpas)
-      .result.then(function
-      (result: Dpa[]) {this.dpas = result;},
-      () => this.log.info('Edit data processing agreements cancelled')
-    );*/
-  }
-
-  private editDataProcessingAgreement(item: Dpa) {
-    /*DataProcessingAgreementPickerComponent.open(this.$modal, this.dpas)
-      .result.then(function
-      (result: Dpa[]) {this.dpas = result;},
-      () => this.log.info('Edit data processing agreements cancelled')
-    );*/
-  }
-
   private getLinkedDpas() {
     this.cohortService.getLinkedDpas(this.cohort.uuid)
       .subscribe(
@@ -127,11 +114,38 @@ export class CohortEditorComponent implements OnInit {
     this.router.navigate(['/dpa', item.uuid, 'edit']);
   }
 
-  deleteDpa() {
-    console.log(this.dpaTable.selection.selected);
+  deleteDPAs() {
+    MessageBoxDialogComponent.open(this.dialog, 'Remove DPA', 'Are you sure you want to remove DPA(s)?',
+      'Remove DPA', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.dpaTable.selection.selected.length; i++) {
+              let org = this.dpaTable.selection.selected[i];
+              this.dpas.forEach( (item, index) => {
+                if(item === org) this.dpas.splice(index,1);
+              });
+            }
+            this.dpaTable.updateRows();
+            this.log.success('Remove successful.');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
   }
 
-  addDpa() {
+  addDPAs() {
+    const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
+      width: '800px',
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      for (let dpa of result) {
+        if (!this.dpas.some(x => x.uuid === dpa.uuid)) {
+          this.dpas.push(dpa);
+          this.dpaTable.updateRows();
+        }
+      }
+    })
   }
-
 }

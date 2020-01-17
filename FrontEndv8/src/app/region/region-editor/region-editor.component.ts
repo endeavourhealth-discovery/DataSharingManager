@@ -315,8 +315,8 @@ export class RegionEditorComponent implements OnInit {
   }
 
   deleteOrganisations() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete organisation', 'Are you sure you want to delete organisation(s)?',
-      'Delete organisation', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove organisation', 'Are you sure you want to remove organisation(s)?',
+      'Remove organisation', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -327,17 +327,17 @@ export class RegionEditorComponent implements OnInit {
               });
             }
             this.orgTable.updateRows();
-            this.log.success('Delete successful.');
+            this.log.success('Remove successful.');
           } else {
-            this.log.success('Delete cancelled.')
+            this.log.success('Remove cancelled.')
           }
         },
       );
   }
 
   deleteParentRegions() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete region', 'Are you sure you want to delete parent region(s)?',
-      'Delete region', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete region', 'Are you sure you want to remove parent region(s)?',
+      'Remove region', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -348,17 +348,17 @@ export class RegionEditorComponent implements OnInit {
               });
             }
             this.parentRegionTable.updateRows();
-            this.log.success('Delete successful.');
+            this.log.success('Remove successful.');
           } else {
-            this.log.success('Delete cancelled.')
+            this.log.success('Remove cancelled.')
           }
         },
       );
   }
 
   deleteChildRegions() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete region', 'Are you sure you want to delete child region(s)?',
-      'Delete region', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove region', 'Are you sure you want to remove child region(s)?',
+      'Remove region', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -369,16 +369,16 @@ export class RegionEditorComponent implements OnInit {
               });
             }
             this.childRegionTable.updateRows();
-            this.log.success('Delete successful.');
+            this.log.success('Remove successful.');
           } else {
-            this.log.success('Delete cancelled.')
+            this.log.success('Remove cancelled.')
           }
         },
       );
   }
 
   deleteDSAs() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete DSA', 'Are you sure you want to delete DSA(s)?',
+    MessageBoxDialogComponent.open(this.dialog, 'Remove DSA', 'Are you sure you want to remove DSA(s)?',
       'Delete DSA', 'Cancel')
       .subscribe(
         (result) => {
@@ -390,17 +390,17 @@ export class RegionEditorComponent implements OnInit {
               });
             }
             this.dsaTable.updateRows();
-            this.log.success('Delete successful.');
+            this.log.success('Remove successful.');
           } else {
-            this.log.success('Delete cancelled.')
+            this.log.success('Remove cancelled.')
           }
         },
       );
   }
 
   deleteDPAs() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete DPA', 'Are you sure you want to delete DPA(s)?',
-      'Delete DPA', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove DPA', 'Are you sure you want to remove DPA(s)?',
+      'Remove DPA', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -411,9 +411,9 @@ export class RegionEditorComponent implements OnInit {
               });
             }
             this.dpaTable.updateRows();
-            this.log.success('Delete successful.');
+            this.log.success('Remove successful.');
           } else {
-            this.log.success('Delete cancelled.')
+            this.log.success('Remove cancelled.')
           }
         },
       );

@@ -49,7 +49,7 @@
                            [allowSelect]="allowEdit"
                            (clicked)="processingAgreementClicked($event)">
           <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDPAs()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addDPAs()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
     </mat-tab-group>

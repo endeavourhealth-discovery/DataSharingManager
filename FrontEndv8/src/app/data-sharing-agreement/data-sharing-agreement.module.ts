@@ -21,7 +21,12 @@ import {RouterModule} from '@angular/router';
 import {DataSharingAgreementComponent} from './data-sharing-agreement/data-sharing-agreement.component';
 import {DataSharingAgreementEditorComponent} from './data-sharing-agreement-editor/data-sharing-agreement-editor.component';
 import {DataSharingAgreementService} from './data-sharing-agreement.service';
-import { DataSharingAgreementPickerComponent } from './data-sharing-agreement-picker/data-sharing-agreement-picker.component';
+import {DataSharingAgreementPickerComponent} from './data-sharing-agreement-picker/data-sharing-agreement-picker.component';
+import {ProjectPickerComponent} from "../project/project-picker/project-picker.component";
+import {PurposeComponent} from "../purpose/purpose/purpose.component";
+import {RegionPickerComponent} from "../region/region-picker/region-picker.component";
+import {OrganisationPickerComponent} from "../organisation/organisation-picker/organisation-picker.component";
+import {DocumentationComponent} from "../documentation/documentation/documentation.component";
 
 @NgModule({
   imports: [
@@ -47,12 +52,14 @@ import { DataSharingAgreementPickerComponent } from './data-sharing-agreement-pi
     DataSharingAgreementComponent,
     DataSharingAgreementEditorComponent,
     DataSharingAgreementPickerComponent,
-    //DataSharingAgreementPickerComponent,
-    //PurposeAddComponent
   ],
   entryComponents : [
-    //DataSharingAgreementPickerComponent,
-    //PurposeAddComponent
+    DataSharingAgreementPickerComponent,
+    ProjectPickerComponent,
+    PurposeComponent,
+    RegionPickerComponent,
+    OrganisationPickerComponent,
+    DocumentationComponent,
   ],
   providers: [
     DataSharingAgreementService,
