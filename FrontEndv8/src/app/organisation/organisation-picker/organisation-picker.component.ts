@@ -4,6 +4,8 @@ import {Organisation} from "../models/Organisation";
 import {OrganisationService} from "../organisation.service";
 import {GenericTableComponent, LoggerService} from "dds-angular8";
 import {OrganisationPickerData} from "../models/OrganisationPickerData";
+import {RegionService} from "../../region/region.service";
+import {DataSharingAgreementService} from "../../data-sharing-agreement/data-sharing-agreement.service";
 
 @Component({
   selector: 'app-organisation-picker',
@@ -20,6 +22,7 @@ export class OrganisationPickerComponent implements OnInit {
   multipleAddedCount = 0;
   showMultipleMessage = false;
   odsCodes: string;
+  listSearch = true;
   orgDetailsToShow = new Organisation().getDisplayItems();
 
   @ViewChild('orgPicker', { static: false }) orgPicker: GenericTableComponent;
@@ -28,119 +31,68 @@ export class OrganisationPickerComponent implements OnInit {
     public dialogRef: MatDialogRef<OrganisationPickerComponent>,
               @Inject(MAT_DIALOG_DATA) public data: OrganisationPickerData,
               private organisationService: OrganisationService,
+              private regionService: RegionService,
+              private dsaService: DataSharingAgreementService,
               private log: LoggerService) {
 
 
   }
 
   ngOnInit() {
-    /*if (this.regionUUID != '') {
-      this.getRegionOrganisations(this.regionUUID);
-    } else if (this.dsaUUID != '') {
-      if (this.searchType == 'publisher') {
-        this.getDSAPublishers(this.dsaUUID);
-      } else if (this.searchType == 'subscriber') {
-        this.getDSASubscribers(this.dsaUUID);
+    if (!this.data.regionUUID && !this.data.dsaUUID) {
+      this.listSearch = false;
+    }
+    if (this.data.regionUUID != '') {
+      this.getRegionOrganisations(this.data.regionUUID);
+    } else if (this.data.dsaUUID != '') {
+      if (this.data.searchType == 'publisher') {
+        this.getDSAPublishers(this.data.dsaUUID);
+      } else if (this.data.searchType == 'subscriber') {
+        this.getDSASubscribers(this.data.dsaUUID);
       }
-    }*/
+    }
   }
 
-  search($event: KeyboardEvent) {
+  search() {
     if (this.searchData.length < 3) {
       return;
     }
+    const orgUUID = this.data.uuid;
+    this.organisationService.search(this.searchData, this.data.searchType, 1, 100)
+      .subscribe(
+        (result) => {this.searchResults = this.filterResults(result)},
+        (error) => this.log.error(error)
+      );
+  }
 
-    if (this.data.regionUUID != '') {
-      this.organisationService.searchOrganisationsInParentRegion(this.data.regionUUID, this.searchData)
-        .subscribe(
-          (result) => this.searchResults = result.filter(function (x) {
-            return x.uuid != this.uuid;
-          }),
-          (error) => this.log.error(error)
-        );
-    } else if (this.data.dsaUUID != '' && this.data.searchType == 'publisher') {
-      this.organisationService.searchPublishersInDSA(this.data.dsaUUID, this.searchData)
-        .subscribe(
-          (result) => this.searchResults = result.filter(function (x) {
-            return x.uuid != this.uuid;
-          }),
-          (error) => this.log.error(error)
-        );
-    } else if (this.data.dsaUUID != '' && this.data.searchType == 'subscriber') {
-      this.organisationService.searchSubscribersInDSA(this.data.dsaUUID, this.searchData)
-        .subscribe(
-          (result) => this.searchResults = result.filter(function (x) {
-            return x.uuid != this.uuid;
-          }),
-          (error) => this.log.error(error)
-        );
-    } else {
-      console.log('searching');
-      const orgUUID = this.data.uuid;
-      this.organisationService.search(this.searchData, this.data.searchType)
-        .subscribe(
-          (result) => {console.log(result); this.searchResults = result.filter(function (x) {
-            return x.uuid != orgUUID;
-          })},
-          (error) => this.log.error(error)
-        );
+  filterResults(results: Organisation[]) {
+    let filterResults: Organisation[];
+    const existing = this.data.existingOrgs;
+
+    filterResults = results.filter((x) => !existing.filter(y => y.uuid === x.uuid).length);
+
+    if (this.data.uuid) {
+      filterResults = filterResults.filter(function (x) {
+        return x.uuid != this.data.uuid;
+      })
     }
+
+    return filterResults;
   }
 
   searchMultiple() {
     this.showMultipleMessage = false;
     var odsList = this.odsCodes.replace(/\n/g, ',').split(',');
 
-    if (this.data.regionUUID != '') {
-      this.organisationService.searchOrganisationsInParentRegionWithOdsList(this.data.regionUUID, odsList)
-        .subscribe(
-          (result) => {
-            this.multipleSearchResults = result,
-              this.multipleSearchMissing = odsList.filter((x) => !result.filter(y => y.odsCode === x).length);
-          },
-          (error) => this.log.error(error)
-        );
-    } else if (this.data.dsaUUID != '' && this.data.searchType == 'publisher') {
-      this.organisationService.searchPublishersFromDSAWithOdsList(this.data.dsaUUID, odsList)
-        .subscribe(
-          (result) => {
-            this.multipleSearchResults = result,
-              this.multipleSearchMissing = odsList.filter((x) => !result.filter(y => y.odsCode === x).length);
-          },
-          (error) => this.log.error(error)
-        );
-    } else if (this.data.dsaUUID != '' && this.data.searchType == 'subscriber') {
-      this.organisationService.searchSubscribersFromDSAWithOdsList(this.data.dsaUUID, odsList)
-        .subscribe(
-          (result) => {
-            this.multipleSearchResults = result,
-              this.multipleSearchMissing = odsList.filter((x) => !result.filter(y => y.odsCode === x).length);
-          },
-          (error) => this.log.error(error)
-        );
-    } else {
-      this.organisationService.getMultipleOrganisationsFromODSList(odsList)
-        .subscribe(
-          (result) => {
-            this.multipleSearchResults = result,
-              this.multipleSearchMissing = odsList.filter((x) => !result.filter(y => y.odsCode === x).length);
-          },
-          (error) => this.log.error(error)
-        );
-    }
-  }
+    this.organisationService.getMultipleOrganisationsFromODSList(odsList)
+      .subscribe(
+        (result) => {
+          this.multipleSearchResults = result,
+            this.multipleSearchMissing = odsList.filter((x) => !result.filter(y => y.odsCode === x).length);
+        },
+        (error) => this.log.error(error)
+      );
 
-  private addToSelection(match: Organisation) {
-    if (!this.resultData.some(x => x.uuid === match.uuid)) {
-      this.resultData.push(match);
-    }
-  }
-
-  private removeFromSelection(match: Organisation) {
-    const index = this.resultData.indexOf(match, 0);
-    if (index > -1) {
-      this.resultData.splice(index, 1);
-    }
   }
 
   addMultiple() {
@@ -157,7 +109,6 @@ export class OrganisationPickerComponent implements OnInit {
 
   ok() {
     this.moveSelectedOrgsIntoResultData();
-    console.log();
     this.dialogRef.close(this.orgPicker.selection.selected);
   }
 
@@ -165,17 +116,11 @@ export class OrganisationPickerComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  checkAllOrganisations(ev) {
-    console.log('selecting all');
-    this.availableOrgs.forEach(x => x.selected = ev.target.checked);
-  }
-
-  /*getRegionOrganisations(regionUUID: string) {
+  getRegionOrganisations(regionUUID: string) {
     this.regionService.getRegionOrganisations(regionUUID)
       .subscribe(
         result => {
-          this.availableOrgs = result;
-          this.availableOrgs.forEach(x => x.selected = false);
+          this.availableOrgs = this.filterResults(result);
         },
         error => this.log.error('The region organisations could not be loaded. Please try again.')
       );
@@ -185,8 +130,8 @@ export class OrganisationPickerComponent implements OnInit {
     this.dsaService.getPublishers(dsaUUID)
       .subscribe(
         result => {
-          this.availableOrgs = result;
-          this.availableOrgs.forEach(x => x.selected = false);
+          this.availableOrgs = this.filterResults(result);
+
         },
         error => this.log.error('The dsa publishers could not be loaded. Please try again.')
       );
@@ -196,15 +141,13 @@ export class OrganisationPickerComponent implements OnInit {
     this.dsaService.getSubscribers(dsaUUID)
       .subscribe(
         result => {
-          this.availableOrgs = result;
-          this.availableOrgs.forEach(x => x.selected = false);
+          this.availableOrgs = this.filterResults(result);
         },
         error => this.log.error('The dsa subscribers could not be loaded. Please try again.')
       );
-  }*/
+  }
 
   onTabChange(ev) {
-    console.log(this.availableOrgs);
     if (ev.nextId == 'select') {
       for (let match of this.resultData) {
         let foundOrg = this.availableOrgs.findIndex(o => o.uuid === match.uuid);

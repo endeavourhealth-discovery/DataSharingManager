@@ -286,7 +286,7 @@ export class RegionEditorComponent implements OnInit {
   addOrganisation() {
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
       width: '800px',
-      data: { searchType: 'organisation', uuid: '', regionUUID: this.region.uuid, dsaUUID: '' }
+      data: { searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '' }
     })
     dialogRef.afterClosed().subscribe(result => {
       for (let org of result) {

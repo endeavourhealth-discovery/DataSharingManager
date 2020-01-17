@@ -1,10 +1,10 @@
 <mat-card>
   <mat-card-header>
     <div mat-card-avatar>
-      <mat-icon>lightbulb_outline</mat-icon>
+      <i class="fas fa-hospital-alt"></i>
     </div>
-    <mat-card-title>{{modeType}}s</mat-card-title>
-    <mat-card-subtitle>All the {{modeType}}s currently defined in the Data Sharing Manager</mat-card-subtitle>
+    <mat-card-title> {{modeType}}s</mat-card-title>
+    <mat-card-subtitle> All the {{modeType}}s currently defined in the Data Sharing Manager</mat-card-subtitle>
     <div fxFlex></div>
     <mat-menu #visualiseMenu="matMenu">
       <button *ngIf="allowEdit" mat-menu-item (click)="add()">Add {{modeType | lowercase}}</button>

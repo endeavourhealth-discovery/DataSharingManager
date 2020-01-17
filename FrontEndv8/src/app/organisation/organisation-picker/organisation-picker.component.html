@@ -1,37 +1,61 @@
 <h1 mat-dialog-title>Add organisations</h1>
 <div mat-dialog-content>
-  <mat-tab-group dynamicHeight (selectedTabChange)="onTabChange($event)">
-    <mat-tab label="Add individual" id="individual">
-      <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+    <mat-tab-group *ngIf="!listSearch" dynamicHeight (selectedTabChange)="onTabChange($event)">
+      <mat-tab label="Add individual" id="individual">
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
 
-        <mat-form-field appearance="outline" fxFlex="100">
-          <mat-label>Search</mat-label>
-          <input matInput [(ngModel)]="searchData" (keyup.enter)="search($event.target.value)" placeholder="Search">
-          <button mat-button *ngIf="searchData" matSuffix mat-icon-button aria-label="Clear" (click)="clear()">
-            <mat-icon>close</mat-icon>
-          </button>
-        </mat-form-field>
-      </div>
+          <mat-form-field appearance="outline" fxFlex="100">
+            <mat-label>Search</mat-label>
+            <input matInput [(ngModel)]="searchData" (keyup.enter)="search()" placeholder="Search">
+            <button mat-button *ngIf="searchData" matSuffix mat-icon-button aria-label="Clear" (click)="clear()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
 
-      <br>
+        <br>
 
-      <div class="scroll-box-400">
-        <app-generic-table #orgPicker
-                           [items]="searchResults"
-                           [detailsToShow]="orgDetailsToShow"
-                           [allowSelect]="true"></app-generic-table>
-      </div>
-      <br>
-    </mat-tab>
-    <mat-tab label="Add multiple" id="multiple">
-      <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-        <mat-form-field appearance="outline" fxFlex="100" fxFill>
-          <mat-label>Search</mat-label>
-          <textarea rows="6" matInput placeholder="Add ODS codes here on separate lines or separated by a comma" [(ngModel)]="odsCodes" name="odsCodes"></textarea>
-        </mat-form-field>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+        <div class="scroll-box-400">
+          <app-generic-table #orgPicker
+                             [items]="searchResults"
+                             [detailsToShow]="orgDetailsToShow"
+                             [allowSelect]="true"
+                              [pageSize]="10"></app-generic-table>
+        </div>
+        <br>
+      </mat-tab>
+      <mat-tab label="Add multiple" id="multiple">
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+          <mat-form-field appearance="outline" fxFlex="100" fxFill>
+            <mat-label>Search</mat-label>
+            <textarea rows="6" matInput placeholder="Add ODS codes here on separate lines or separated by a comma" [(ngModel)]="odsCodes" name="odsCodes" (keyup.enter)="searchMultiple()"></textarea>
+          </mat-form-field>
+
+        </div>
+
+        <div class="scroll-box-400">
+          <app-generic-table #multiple
+                             [items]="multipleSearchResults"
+                             [detailsToShow]="orgDetailsToShow"
+                             [allowSelect]="true"
+                             [pageSize]="10"></app-generic-table>
+
+
+          <!--<app-generic-table #multipleMissing
+                             [items]="multipleSearchMissing"
+                             [detailsToShow]="orgDetailsToShow"
+                             [allowSelect]="true"
+                             [pageSize]="10"></app-generic-table>-->
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+    <div *ngIf="listSearch">
+      <app-generic-table #listPicker
+                         [items]="availableOrgs"
+                         [detailsToShow]="orgDetailsToShow"
+                         [allowSelect]="true"
+                         [pageSize]="10"></app-generic-table>
+    </div>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="primary" (click)="ok()" cdkFocusInitial>Ok</button>

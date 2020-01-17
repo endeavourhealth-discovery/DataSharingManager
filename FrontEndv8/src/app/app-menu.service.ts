@@ -64,15 +64,15 @@ export class AppMenuService implements  AbstractMenuProvider {
 
   getMenuOptions(): MenuOption[] {
     return [
-      {caption: 'Regions', state: 'regions', icon: 'library_books'},
-      {caption: 'Organisations', state: 'organisations/organisations', icon: 'library_books'},
-      {caption: 'Services', state: 'organisations/services', icon: 'library_books'},
-      {caption: 'Data sharing agreements', state: 'dsas', icon: 'library_books'},
-      {caption: 'Data processing agreements', state: 'dpas', icon: 'library_books'},
-      {caption: 'Data sets', state: 'dataSets', icon: 'library_books'},
-      {caption: 'Cohorts', state: 'cohorts', icon: 'library_books'},
-      {caption: 'Projects', state: 'projects', icon: 'library_books'},
-      {caption: 'Audit', state: 'audit', icon: 'library_books'}
+      {caption: 'Regions', state: 'regions', icon: 'fas fa-hospital-alt'},
+      {caption: 'Organisations', state: 'organisations/organisations', icon: 'fas fa-hospital-alt'},
+      {caption: 'Services', state: 'organisations/services', icon: 'fas fa-hospital-alt'},
+      {caption: 'Data sharing agreements', state: 'dsas', icon: 'fas fa-hospital-alt'},
+      {caption: 'Data processing agreements', state: 'dpas', icon: 'fas fa-hospital-alt'},
+      {caption: 'Data sets', state: 'dataSets', icon: 'fas fa-hospital-alt'},
+      {caption: 'Cohorts', state: 'cohorts', icon: 'fas fa-hospital-alt'},
+      {caption: 'Projects', state: 'projects', icon: 'fas fa-hospital-alt'},
+      {caption: 'Audit', state: 'audit', icon: 'fas fa-hospital-alt'}
     ];
   }
 }
