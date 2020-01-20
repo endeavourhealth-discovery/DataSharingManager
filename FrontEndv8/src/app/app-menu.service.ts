@@ -21,6 +21,7 @@ import {DataSharingAgreementEditorComponent} from "./data-sharing-agreement/data
 import {ProjectComponent} from "./project/project/project.component";
 import { ProjectEditorComponent } from "src/app/project/project-editor/project-editor.component";
 import {AuditComponent} from "./audit/audit/audit.component";
+import {MySharingOverviewComponent} from "./my-sharing/my-sharing-overview/my-sharing-overview.component";
 //import {DataSharingSummaryComponent} from './data-sharing-summary/data-sharing-summary/data-sharing-summary.component';
 //import {DataSharingSummaryEditorComponent} from './data-sharing-summary/data-sharing-summary-editor/data-sharing-summary-editor.component';
 
@@ -28,7 +29,7 @@ import {AuditComponent} from "./audit/audit/audit.component";
 export class AppMenuService implements  AbstractMenuProvider {
   static getRoutes(): Routes {
     return [
-      { path: '', redirectTo : '/organisations/organisations', pathMatch: 'full' }, // Default route
+      { path: '', redirectTo : 'mySharingOverview', pathMatch: 'full' }, // Default route
       { path: 'organisations/:mode', component: OrganisationComponent, data: {role: 'Viewer'}},
       { path: 'organisation/:id/:mode', component: OrganisationEditorComponent, data: {role: 'Viewer'}},
       { path: 'regions', component: RegionComponent, data: {role: 'Viewer'}},
@@ -49,6 +50,7 @@ export class AppMenuService implements  AbstractMenuProvider {
       { path: 'projects', component: ProjectComponent, data: {role: 'Viewer'}},
       { path: 'project/:id/:mode', component: ProjectEditorComponent, data: {role: 'Viewer'}},
       { path: 'audit', component: AuditComponent, data: {role: 'Viewer'}},
+      { path: 'mySharingOverview', component: MySharingOverviewComponent, data: {role: 'Viewer'}},
       //{ path: 'dataSharingSummaries', component: DataSharingSummaryComponent, data: {role: 'Viewer'}},
       //{ path: 'dataSharingSummary/:id/:mode', component: DataSharingSummaryEditorComponent, data: {role: 'Viewer'}},
     ];
@@ -64,6 +66,7 @@ export class AppMenuService implements  AbstractMenuProvider {
 
   getMenuOptions(): MenuOption[] {
     return [
+      {caption: 'My sharing', state: 'mySharingOverview', icon: 'fas fa-hospital-alt'},
       {caption: 'Regions', state: 'regions', icon: 'fas fa-hospital-alt'},
       {caption: 'Organisations', state: 'organisations/organisations', icon: 'fas fa-hospital-alt'},
       {caption: 'Services', state: 'organisations/services', icon: 'fas fa-hospital-alt'},

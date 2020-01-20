@@ -78,7 +78,7 @@ export class OrganisationService  {
   getDPAPublishingFromList(uuid: string[]):  Observable<Dpa[]> {
     let params = new HttpParams();
     for (let ix in uuid) {
-      params.append('uuids', uuid[ix]);
+      params = params.append('uuids', uuid[ix]);
     }
     return this.http.get<Dpa[]>('api/organisation/dpasPublishingFromList', {params});
   }
@@ -92,7 +92,7 @@ export class OrganisationService  {
   getDSAPublishingFromList(uuid: string[]):  Observable<Dsa[]> {
     let params = new HttpParams();
     for (let ix in uuid) {
-      params.append('uuids', uuid[ix]);
+      params = params.append('uuids', uuid[ix]);
     }
     return this.http.get<Dsa[]>('api/organisation/dsasPublishingFromList', {params});
   }
@@ -106,7 +106,7 @@ export class OrganisationService  {
   getDSASubscribingFromList(uuid: string[]):  Observable<Dsa[]> {
     let params = new HttpParams();
     for (let ix in uuid) {
-      params.append('uuids', uuid[ix]);
+      params = params.append('uuids', uuid[ix]);
     }
     return this.http.get<Dsa[]>('api/organisation/dsasSubscribingFromList', {params});
   }
