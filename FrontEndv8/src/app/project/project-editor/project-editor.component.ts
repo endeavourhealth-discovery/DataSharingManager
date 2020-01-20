@@ -24,6 +24,7 @@ import {ExtractTechnicalDetails} from "../models/ExtractTechnicalDetails";
 import {Schedule} from "../../scheduler/models/Schedule";
 import {SchedulerComponent} from "../../scheduler/scheduler/scheduler.component";
 import {DataSharingAgreementPickerComponent} from "../../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component";
+import {ValueSetsComponent} from "../../value-sets/value-sets/value-sets.component";
 
 @Component({
   selector: 'app-project-editor',
@@ -248,6 +249,10 @@ export class ProjectEditorComponent implements OnInit {
       );
   }
 
+  close() {
+    window.history.back();
+  }
+
   saveApplicationPolicy() {
     this.projectService.saveProjectApplicationPolicy(this.projectApplicationPolicy)
       .subscribe(
@@ -354,6 +359,14 @@ export class ProjectEditorComponent implements OnInit {
         }
       }
     })
+    // const dialogRef = this.dialog.open(ValueSetsComponent, {
+    //   width: '1000px',
+    // })
+    // dialogRef.afterClosed().subscribe(result => {
+    //   for (let vs of result) {
+    //     console.log(vs);
+    //   }
+    // })
   }
 
   getPublishers() {

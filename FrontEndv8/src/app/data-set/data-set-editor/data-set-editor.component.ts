@@ -153,4 +153,8 @@ export class DataSetEditorComponent implements OnInit {
         error => this.log.error('The Data Set could not be saved. Please try again.')
       );
   }
+
+  close() {
+    window.history.back();
+  }
 }

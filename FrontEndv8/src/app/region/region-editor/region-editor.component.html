@@ -8,6 +8,7 @@
     <mat-menu #visualiseMenu="matMenu">
       <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(false)">Save</button>
       <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(true)">Save & close</button>
+      <button mat-menu-item (click)="close()">Cancel</button>
     </mat-menu>
     <div fxLayoutAlign="center" class="mat-action" matRipple>
       <mat-icon [matMenuTriggerFor]="visualiseMenu">more_vert</mat-icon>

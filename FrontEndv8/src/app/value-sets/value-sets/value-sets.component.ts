@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {ActivatedRoute, Router} from "@angular/router";
 import {GenericTableSspComponent, LoggerService, UserManagerService} from "dds-angular8";
@@ -57,15 +57,13 @@ export class ValueSetsComponent implements OnInit {
 
   private search() {
     this.loadingComplete = false;
-    console.log('searching', this.pageNumber);
     this.valueSetService.search(this.searchData, this.pageNumber, this.pageSize, this.orderColumn, this.descending)
       .subscribe(result => {
           this.valueSets = result;
-          console.log(result);
           this.loadingComplete = true;
         },
         error => {
-          this.log.error('The value sets could not be loaded. Please try again.'/*, error, 'Load value sets'*/);
+          this.log.error('The value sets could not be loaded. Please try again.');
           this.loadingComplete = true;
         }
       );

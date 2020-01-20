@@ -418,4 +418,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
         error => this.log.error('The data processing agreement could not be saved. Please try again.')
       );
   }
+
+  close() {
+    window.history.back();
+  }
 }

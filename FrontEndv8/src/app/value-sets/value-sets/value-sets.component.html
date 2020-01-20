@@ -2,15 +2,16 @@
 <div mat-dialog-content>
   <div class="scroll-box-400">
     <app-generic-table-ssp #valueSetsTable
-                           [items]="valueSets"
-                           [totalItems]="totalItems"
-                           [detailsToShow]="detailsToShow"
-                           [pageSize]="pageSize"
-                           [allowSelect]="true"
-                           (search)="onSearch($event)">
+       [items]="valueSets"
+       [totalItems]="totalItems"
+       [detailsToShow]="detailsToShow"
+       [pageSize]="pageSize"
+       [allowSelect]="true"
+       (onPageChange)="pageChange($event)"
+       (onOrderChange)="onOrderChange($event)"
+       (search)="onSearch($event)">
     </app-generic-table-ssp>
   </div>
-  <br>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="primary" (click)="ok()" cdkFocusInitial>Ok</button>
