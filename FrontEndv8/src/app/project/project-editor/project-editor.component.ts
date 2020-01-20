@@ -535,7 +535,7 @@ export class ProjectEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         for (let cohort of result) {
-          if (!this.subscribers.some(x => x.uuid === cohort.uuid)) {
+          if (!this.cohorts.some(x => x.uuid === cohort.uuid)) {
             this.cohorts.push(cohort);
             this.cohortsTable.updateRows();
           }
@@ -583,7 +583,7 @@ export class ProjectEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         for (let dataSet of result) {
-          if (!this.subscribers.some(x => x.uuid === dataSet.uuid)) {
+          if (!this.dataSets.some(x => x.uuid === dataSet.uuid)) {
             this.dataSets.push(dataSet);
             this.dataSetsTable.updateRows();
           }
