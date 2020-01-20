@@ -4,7 +4,7 @@
     <mat-label>Search</mat-label>
     <input matInput [(ngModel)]="filterText" (keyup.enter)="applyFilter($event.target.value)" placeholder="Search">
     <button mat-button *ngIf="filterText" matSuffix mat-icon-button aria-label="Clear" (click)="clear()">
-      <mat-icon>close</mat-icon>
+      <i class="far fa-fw fa-times"></i>
     </button>
   </mat-form-field>
 </div>
@@ -31,11 +31,6 @@
 
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>
-        <mat-checkbox (change)="$event ? masterToggle() : null"
-                      [checked]="selection.hasValue() && isAllSelected()"
-                      [indeterminate]="selection.hasValue() && !isAllSelected()"
-                      [aria-label]="checkboxLabel()">
-        </mat-checkbox>
       </th>
       <td mat-cell *matCellDef="let row">
         <mat-checkbox (click)="$event.stopPropagation()"
@@ -48,7 +43,8 @@
 
     <tr mat-header-row *matHeaderRowDef="propertiesToShow"></tr>
     <tr mat-row *matRowDef="let row; columns: propertiesToShow;"
-        (click)="clickItem(row)"></tr>
+        (click)="clickItem(row, $event)"
+        [style.background]="highlightedRows === row ? 'lightblue' : ''"></tr>
   </table>
   <div>
   </div>

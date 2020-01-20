@@ -28,9 +28,7 @@ export class ReportsComponent implements OnInit {
   reportName: string;
   public activeProject: UserProject;
 
-  dpaDetailsToShow = new Dpa().getDisplayItems();
-  dsaDetailsToShow = new Dsa().getDisplayItems();
-  projectDetailsToShow = new Project().getDisplayItems();
+  dpaDetailsToShow = [{label: 'Name', property: 'name'}];
   reportDetailsToShow = new ReportData().getDisplayItems();
 
   dpas: Dpa[];

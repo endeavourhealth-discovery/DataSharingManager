@@ -3,9 +3,8 @@ import {Organisation} from '../models/Organisation';
 import {OrganisationService} from '../organisation.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
+import {GenericTableSspComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {MatDialog} from "@angular/material/dialog";
-import {GenericTableSspComponent} from "../../generic-table/generic-table-ssp/generic-table-ssp.component";
 
 @Component({
   selector: 'app-organisation',

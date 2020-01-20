@@ -1,18 +1,11 @@
 <mat-card>
   <mat-card-header>
     <div mat-card-avatar>
-      <mat-icon>lightbulb_outline</mat-icon>
+      <i class="fad fa-globe-europe"></i>
     </div>
     <mat-card-title>Regions</mat-card-title>
     <mat-card-subtitle>All the Regions currently defined in the Data Sharing Manager</mat-card-subtitle>
     <div fxFlex></div>
-    <mat-menu #visualiseMenu="matMenu">
-      <button *ngIf="allowEdit" mat-menu-item (click)="add()">Add Region</button>
-      <button mat-menu-item (click)="close()">Cancel</button>
-    </mat-menu>
-    <div fxLayoutAlign="center" class="mat-action" matRipple>
-      <mat-icon [matMenuTriggerFor]="visualiseMenu">more_vert</mat-icon>
-    </div>
   </mat-card-header>
   <mat-card-content>
     <app-generic-table #regionsTable
@@ -21,7 +14,8 @@
       [pageSize]="20"
       [allowSelect]="allowEdit"
       (clicked)="itemClicked($event)">
-      <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="delete()"><mat-icon>delete</mat-icon></button>
+      <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button (click)="delete()"><mat-icon>delete</mat-icon></button>
+      <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="add()"><mat-icon>add</mat-icon></button>
     </app-generic-table>
   </mat-card-content>
 </mat-card>

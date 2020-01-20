@@ -68,17 +68,17 @@ export class AppMenuService implements  AbstractMenuProvider {
 
   getMenuOptions(): MenuOption[] {
     return [
-      {caption: 'My sharing', state: 'mySharingOverview', icon: 'fas fa-hospital-alt'},
-      {caption: 'Regions', state: 'regions', icon: 'fas fa-hospital-alt'},
-      {caption: 'Organisations', state: 'organisations/organisations', icon: 'fas fa-hospital-alt'},
-      {caption: 'Services', state: 'organisations/services', icon: 'fas fa-hospital-alt'},
-      {caption: 'Data sharing agreements', state: 'dsas', icon: 'fas fa-hospital-alt'},
-      {caption: 'Data processing agreements', state: 'dpas', icon: 'fas fa-hospital-alt'},
-      {caption: 'Data sets', state: 'dataSets', icon: 'fas fa-hospital-alt'},
-      {caption: 'Cohorts', state: 'cohorts', icon: 'fas fa-hospital-alt'},
-      {caption: 'Projects', state: 'projects', icon: 'fas fa-hospital-alt'},
-      {caption: 'Audit', state: 'audit', icon: 'fas fa-hospital-alt'},
-      {caption: 'Reporting', state: 'reporting', icon: 'fas fa-hospital-alt'}
+      {caption: 'My sharing', state: 'mySharingOverview', icon: 'fas fa-handshake'},
+      {caption: 'Regions', state: 'regions', icon: 'fas fa-globe-europe'},
+      {caption: 'Organisations', state: 'organisations/organisations', icon: 'fas fa-hospital'},
+      {caption: 'Services', state: 'organisations/services', icon: 'fas fa-clinic-medical'},
+      {caption: 'Data sharing agreements', state: 'dsas', icon: 'fas fa-file-export'},
+      {caption: 'Data processing agreements', state: 'dpas', icon: 'fas fa-file-import'},
+      {caption: 'Data sets', state: 'dataSets', icon: 'fas fa-layer-group'},
+      {caption: 'Cohorts', state: 'cohorts', icon: 'fas fa-users-class'},
+      {caption: 'Projects', state: 'projects', icon: 'fas fa-folders'},
+      {caption: 'Reporting', state: 'reporting', icon: 'fas fa-analytics'},
+      {caption: 'Audit', state: 'audit', icon: 'fas fa-history'}
     ];
   }
 }

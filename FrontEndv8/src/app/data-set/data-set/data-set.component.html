@@ -1,18 +1,11 @@
 <mat-card>
   <mat-card-header>
     <div mat-card-avatar>
-      <mat-icon>lightbulb_outline</mat-icon>
+      <i class="fad fa-layer-group"></i>
     </div>
     <mat-card-title>Data sets</mat-card-title>
     <mat-card-subtitle>All the Data sets currently defined in the Data Sharing Manager</mat-card-subtitle>
     <div fxFlex></div>
-    <mat-menu #visualiseMenu="matMenu">
-      <button *ngIf="allowEdit" mat-menu-item (click)="add()">Add Data set</button>
-      <button mat-menu-item (click)="close()">Cancel</button>
-    </mat-menu>
-    <div fxLayoutAlign="center" class="mat-action" matRipple>
-      <mat-icon [matMenuTriggerFor]="visualiseMenu">more_vert</mat-icon>
-    </div>
   </mat-card-header>
   <mat-card-content>
     <app-generic-table #datasetsTable

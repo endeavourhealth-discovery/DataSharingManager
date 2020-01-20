@@ -1,6 +1,7 @@
 <mat-card>
   <mat-card-header>
-    <div mat-card-avatar><mat-icon>lightbulb_outline</mat-icon></div>
+    <div mat-card-avatar>
+      <i class="fad fa-analytics"></i></div>
     <mat-card-title>Reporting</mat-card-title>
     <mat-card-subtitle>Run reports on agreements within the Data sharing manager</mat-card-subtitle>
     <div fxFlex></div>
@@ -8,7 +9,7 @@
   <mat-card-content>
     <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
       <div fxFlex="33">
-        <h2>Data processing agreements</h2>
+        <h3>Data processing agreements</h3>
         <app-generic-table #dpaTable
                            [items]="dpas"
                            [detailsToShow]="dpaDetailsToShow"
@@ -17,19 +18,19 @@
         </app-generic-table>
       </div>
       <div fxFlex="33">
-        <h2>Data sharing agreements</h2>
+        <h3>Data sharing agreements</h3>
         <app-generic-table #dsaPubTable
                            [items]="dsas"
-                           [detailsToShow]="dsaDetailsToShow"
+                           [detailsToShow]="dpaDetailsToShow"
                            [allowSelect]="false"
                            (clicked)="runDSAPublisherReport($event)">
         </app-generic-table>
       </div>
       <div fxFlex="34">
-        <h2>Projects</h2>
+        <h3>Projects</h3>
         <app-generic-table #dsaPubTable
                            [items]="projects"
-                           [detailsToShow]="projectDetailsToShow"
+                           [detailsToShow]="dpaDetailsToShow"
                            [allowSelect]="false"
                            (clicked)="runProjectPublisherReport($event)">
         </app-generic-table>
@@ -39,7 +40,7 @@
     <br>
     <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
       <div [hidden]="!reportData" fxFlex="100">
-        <h2>Results</h2>
+        <h3>{{reportName}}</h3>
         <app-generic-table #dsaPubTable
                            [items]="reportData"
                            [detailsToShow]="reportDetailsToShow"
