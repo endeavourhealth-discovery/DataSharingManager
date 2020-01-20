@@ -22,6 +22,7 @@ import {ProjectComponent} from "./project/project/project.component";
 import { ProjectEditorComponent } from "src/app/project/project-editor/project-editor.component";
 import {AuditComponent} from "./audit/audit/audit.component";
 import {MySharingOverviewComponent} from "./my-sharing/my-sharing-overview/my-sharing-overview.component";
+import {ReportsComponent} from "./reporting/reports/reports.component";
 //import {DataSharingSummaryComponent} from './data-sharing-summary/data-sharing-summary/data-sharing-summary.component';
 //import {DataSharingSummaryEditorComponent} from './data-sharing-summary/data-sharing-summary-editor/data-sharing-summary-editor.component';
 
@@ -51,6 +52,7 @@ export class AppMenuService implements  AbstractMenuProvider {
       { path: 'project/:id/:mode', component: ProjectEditorComponent, data: {role: 'Viewer'}},
       { path: 'audit', component: AuditComponent, data: {role: 'Viewer'}},
       { path: 'mySharingOverview', component: MySharingOverviewComponent, data: {role: 'Viewer'}},
+      { path: 'reporting', component: ReportsComponent, data: {role: 'Admin'}},
       //{ path: 'dataSharingSummaries', component: DataSharingSummaryComponent, data: {role: 'Viewer'}},
       //{ path: 'dataSharingSummary/:id/:mode', component: DataSharingSummaryEditorComponent, data: {role: 'Viewer'}},
     ];
@@ -75,7 +77,8 @@ export class AppMenuService implements  AbstractMenuProvider {
       {caption: 'Data sets', state: 'dataSets', icon: 'fas fa-hospital-alt'},
       {caption: 'Cohorts', state: 'cohorts', icon: 'fas fa-hospital-alt'},
       {caption: 'Projects', state: 'projects', icon: 'fas fa-hospital-alt'},
-      {caption: 'Audit', state: 'audit', icon: 'fas fa-hospital-alt'}
+      {caption: 'Audit', state: 'audit', icon: 'fas fa-hospital-alt'},
+      {caption: 'Reporting', state: 'reporting', icon: 'fas fa-hospital-alt'}
     ];
   }
 }

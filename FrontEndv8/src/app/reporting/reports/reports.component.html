@@ -1,0 +1,52 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar><mat-icon>lightbulb_outline</mat-icon></div>
+    <mat-card-title>Reporting</mat-card-title>
+    <mat-card-subtitle>Run reports on agreements within the Data sharing manager</mat-card-subtitle>
+    <div fxFlex></div>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+      <div fxFlex="33">
+        <h2>Data processing agreements</h2>
+        <app-generic-table #dpaTable
+                           [items]="dpas"
+                           [detailsToShow]="dpaDetailsToShow"
+                           [allowSelect]="false"
+                           (clicked)="runDPAPublisherReport($event)">
+        </app-generic-table>
+      </div>
+      <div fxFlex="33">
+        <h2>Data sharing agreements</h2>
+        <app-generic-table #dsaPubTable
+                           [items]="dsas"
+                           [detailsToShow]="dsaDetailsToShow"
+                           [allowSelect]="false"
+                           (clicked)="runDSAPublisherReport($event)">
+        </app-generic-table>
+      </div>
+      <div fxFlex="34">
+        <h2>Projects</h2>
+        <app-generic-table #dsaPubTable
+                           [items]="projects"
+                           [detailsToShow]="projectDetailsToShow"
+                           [allowSelect]="false"
+                           (clicked)="runProjectPublisherReport($event)">
+        </app-generic-table>
+      </div>
+    </div>
+
+    <br>
+    <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+      <div [hidden]="!reportData" fxFlex="100">
+        <h2>Results</h2>
+        <app-generic-table #dsaPubTable
+                           [items]="reportData"
+                           [detailsToShow]="reportDetailsToShow"
+                           [allowSelect]="false">
+        </app-generic-table>
+      </div>
+    </div>
+
+  </mat-card-content>
+</mat-card>

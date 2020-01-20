@@ -29,6 +29,7 @@ import {DocumentationModule} from "./documentation/documentation.module";
 import {ProjectModule} from "./project/project.module";
 import {AuditModule} from "./audit/audit.module";
 import {MySharingModule} from "./my-sharing/my-sharing.module";
+import {ReportingModule} from "./reporting/reporting.module";
 
 
 const keycloakService = new KeycloakService();
@@ -60,6 +61,7 @@ const keycloakService = new KeycloakService();
     UserManagerModule,
     GenericTableModule,
     MySharingModule,
+    ReportingModule,
     DialogsModule,
 
     RouterModule.forRoot(AppMenuService.getRoutes(), {useHash: true}),
