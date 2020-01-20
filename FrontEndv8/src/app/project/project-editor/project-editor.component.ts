@@ -23,9 +23,7 @@ import {ProjectApplicationPolicy} from "../models/ProjectApplicationPolicy";
 import {ExtractTechnicalDetails} from "../models/ExtractTechnicalDetails";
 import {Schedule} from "../../scheduler/models/Schedule";
 import {SchedulerComponent} from "../../scheduler/scheduler/scheduler.component";
-import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
 import {DataSharingAgreementPickerComponent} from "../../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component";
-import {ValueSetsComponent} from "../../value-sets/value-sets/value-sets.component";
 
 @Component({
   selector: 'app-project-editor',

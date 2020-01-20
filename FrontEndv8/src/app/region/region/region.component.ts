@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {RegionService} from '../region.service';
 import {Router} from '@angular/router';
 import {Region} from "../models/Region";
 import {Organisation} from "../../organisation/models/Organisation";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-region',
@@ -22,11 +23,13 @@ export class RegionComponent implements OnInit {
   public activeProject: UserProject;
 
   regionDetailsToShow = new Region().getDisplayItems();
+  @ViewChild('regionsTable', {static: false}) regionsTable: GenericTableComponent;
 
   constructor(private regionService: RegionService,
               private log: LoggerService,
               private router: Router,
-              private userManagerService: UserManagerService) {
+              private userManagerService: UserManagerService,
+              public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -83,25 +86,30 @@ export class RegionComponent implements OnInit {
     this.router.navigate(['/region', region.uuid, 'edit']);
   }
 
-  delete(item: Region) {
-    /*MessageBoxDialog.open(this.$modal, 'Delete region', 'Are you sure that you want to delete the <b>' + item.name + '</b> region?', 'Delete region', 'Cancel')
-      .result.then(
-      () => this.doDelete(item),
-      () => this.log.info('Delete cancelled')
-    );*/
-  }
-
-  doDelete(item: Region) {
-
-    this.regionService.deleteRegion(item.uuid)
+  delete() {
+    MessageBoxDialogComponent.open(this.dialog, 'Delete region', 'Are you sure you want to delete region(s)?',
+      'Delete region', 'Cancel')
       .subscribe(
-        () => {
-          const index = this.regions.indexOf(item);
-          this.regions.splice(index, 1);
-          this.log.success('Region deleted');
-        },
-        (error) => this.log.error('The region could not be deleted. Please try again.')
-      );
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.regionsTable.selection.selected.length; i++) {
+              let region = this.regionsTable.selection.selected[i];
+              this.regions.forEach( (item, index) => {
+                if(item === region) {
+                  this.regionService.deleteRegion(region.uuid).subscribe(
+                    () => {
+                      this.regions.splice(index,1);
+                      this.regionsTable.updateRows();
+                    }
+                  );
+                }
+              });
+            }
+            this.log.success('Delete successful.');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        });
   }
 
   close() {

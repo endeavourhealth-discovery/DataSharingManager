@@ -103,8 +103,8 @@ export class OrganisationComponent implements OnInit {
   }
 
   delete() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete organisation', 'Are you sure you want to delete organisation(s)?',
-      'Delete organisation', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete ' + this.modeType.toLowerCase(), 'Are you sure you want to delete ' + this.modeType.toLowerCase() + '(s)?',
+      'Delete ' + this.modeType.toLowerCase(), 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
