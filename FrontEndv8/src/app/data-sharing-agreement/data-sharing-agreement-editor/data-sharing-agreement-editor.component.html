@@ -1,6 +1,8 @@
 <mat-card>
   <mat-card-header>
-    <div mat-card-avatar><mat-icon>lightbulb_outline</mat-icon></div>
+    <div mat-card-avatar>
+      <i class="fad fa-file-export"></i>
+    </div>
     <mat-card-title>Data sharing agreement details</mat-card-title>
     <mat-card-subtitle *ngIf="dsa.name">{{dsa.name}}</mat-card-subtitle>
     <mat-card-subtitle *ngIf="!dsa.name">New data sharing agreement</mat-card-subtitle>
