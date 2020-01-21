@@ -68,7 +68,7 @@ export class AppMenuService implements  AbstractMenuProvider {
 
   getMenuOptions(): MenuOption[] {
     return [
-      {caption: 'My sharing', state: 'mySharingOverview', icon: 'fas fa-handshake'},
+      {caption: 'My sharing', state: 'mySharingOverview', icon: 'fas fa-handshake-alt'},
       {caption: 'Regions', state: 'regions', icon: 'fas fa-globe-europe'},
       {caption: 'Organisations', state: 'organisations/organisations', icon: 'fas fa-hospital'},
       {caption: 'Services', state: 'organisations/services', icon: 'fas fa-clinic-medical'},
