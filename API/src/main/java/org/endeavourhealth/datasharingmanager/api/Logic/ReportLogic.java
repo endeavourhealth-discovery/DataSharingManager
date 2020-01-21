@@ -12,8 +12,6 @@ public class ReportLogic {
 
         List<JsonDDSOrganisationStatus> statuses = new SecurityDDSDAL().getOrganisationStatus(odsCodes, agreementName);
 
-        System.out.println(statuses);
-
         return Response
                 .ok()
                 .entity(statuses)

@@ -203,10 +203,13 @@ export class ReportsComponent implements OnInit {
 
   getDDSInformation(orgs: Organisation[], agreementName: string) {
 
+    if (orgs.length === 0) {
+      this.log.error('The selected report has no organisations associated with it.');
+      return;
+    }
     this.reportingService.getPublisherReport(orgs, agreementName)
       .subscribe(
         result => {
-          console.log(result);
           this.reportData = result;
           this.sort('practiceName');
           this.reportComplete = true;
