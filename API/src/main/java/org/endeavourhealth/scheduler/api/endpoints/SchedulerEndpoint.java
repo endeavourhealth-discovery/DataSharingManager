@@ -1,12 +1,10 @@
 package org.endeavourhealth.scheduler.api.endpoints;
 
 import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
-import org.endeavourhealth.scheduler.api.json.JsonCron;
 import org.endeavourhealth.scheduler.api.json.JsonSchedule;
 import org.endeavourhealth.scheduler.api.logic.SchedulerLogic;
 import org.slf4j.Logger;
@@ -19,7 +17,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 @Path("/scheduler")
-@Metrics(registry = "EdsRegistry")
 @Api(description = "API endpoint related to the Scheduler")
 public class SchedulerEndpoint extends AbstractEndpoint {
 

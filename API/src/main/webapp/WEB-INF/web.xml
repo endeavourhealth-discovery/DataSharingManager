@@ -152,22 +152,6 @@
     </filter-mapping>
 
 
-    <listener>
-        <listener-class>org.endeavourhealth.datasharingmanager.api.metrics.DataSharingManagerMetricListener</listener-class>
-    </listener>
-    <listener>
-        <listener-class>org.endeavourhealth.datasharingmanager.api.metrics.DataSharingManagerInstrumentedFilterContextListener</listener-class>
-    </listener>
-    <servlet>
-        <servlet-name>metrics</servlet-name>
-        <servlet-class>com.codahale.metrics.servlets.MetricsServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>metrics</servlet-name>
-        <url-pattern>/metrics/*</url-pattern>
-    </servlet-mapping>
-
-
     <filter>
         <filter-name>instrumentedFilter</filter-name>
         <filter-class>com.codahale.metrics.servlet.InstrumentedFilter</filter-class>

@@ -1,7 +1,6 @@
 package org.endeavourhealth.datasharingmanager.api.endpoints;
 
 import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -24,11 +23,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
-import java.util.List;
 
 @Path("/documentation")
-@Metrics(registry = "EdsRegistry")
 @Api(description = "API endpoint related to associated Documentation")
 public final class DocumentEndpoint extends AbstractEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentEndpoint.class);

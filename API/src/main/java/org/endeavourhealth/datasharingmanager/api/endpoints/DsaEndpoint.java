@@ -1,7 +1,6 @@
 package org.endeavourhealth.datasharingmanager.api.endpoints;
 
 import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -9,7 +8,6 @@ import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDSA;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
@@ -27,7 +25,6 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 @Path("/dsa")
-@Metrics(registry = "EdsRegistry")
 @Api(description = "API endpoint related to the data sharing agreements")
 public final class DsaEndpoint extends AbstractEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(DsaEndpoint.class);

@@ -1,8 +1,6 @@
 package org.endeavourhealth.datasharingmanager.api.endpoints;
 
-import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -18,7 +16,6 @@ import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.OrganisationDAL;
 import org.endeavourhealth.datasharingmanager.api.Logic.OrganisationLogic;
-import org.endeavourhealth.datasharingmanager.api.metrics.DataSharingManagerMetricListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,16 +24,12 @@ import javax.ws.rs.core.*;
 import java.util.*;
 
 @Path("/organisation")
-@Metrics(registry = "EdsRegistry")
 @Api(description = "API endpoint related to the organisations and services.  " +
         "Services are just organisations with a flag indicating they are a service.")
 public final class OrganisationEndpoint extends AbstractEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(OrganisationEndpoint.class);
 
     private static final UserAuditRepository userAudit = new UserAuditRepository(AuditModule.EdsUiModule.Organisation);
-    private static final MetricRegistry metricRegistry = DataSharingManagerMetricListener.dataSharingManagerMetricRegistry;
-
-
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

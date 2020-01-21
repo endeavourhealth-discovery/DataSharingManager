@@ -1,7 +1,6 @@
 package org.endeavourhealth.datasharingmanager.api.endpoints;
 
 import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -32,7 +31,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Path("/cohort")
-@Metrics(registry = "EdsRegistry")
 @Api(description = "API endpoint related to the Cohorts")
 public final class CohortEndpoint extends AbstractEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(CohortEndpoint.class);
