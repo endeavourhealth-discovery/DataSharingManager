@@ -89,10 +89,12 @@ export class CohortEditorComponent implements OnInit {
     this.cohortService.saveCohort(this.cohort)
       .subscribe(saved => {
           this.cohort.uuid = saved;
-          this.log.success('Cohort saved successfully'/*, vm.cohort, 'Save cohort'*/);
-          if (close) {this.close();}
+          this.log.success('Cohort saved successfully');
+          if (close) {
+            this.close();
+          }
         },
-        error => this.log.error('The Cohort could not be saved. Please try again.'/*, error, 'Save cohort'*/)
+        error => this.log.error('The Cohort could not be saved. Please try again.')
       );
   }
 
