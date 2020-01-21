@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {Organisation} from "../models/Organisation";
 import {OrganisationService} from "../organisation.service";
 import {GenericTableComponent, LoggerService} from "dds-angular8";
@@ -26,6 +26,7 @@ export class OrganisationPickerComponent implements OnInit {
   orgDetailsToShow = new Organisation().getDisplayItems();
 
   @ViewChild('orgPicker', { static: false }) orgPicker: GenericTableComponent;
+  @ViewChild('listPicker', { static: false }) listPicker: GenericTableComponent;
 
   constructor(
     public dialogRef: MatDialogRef<OrganisationPickerComponent>,
@@ -109,7 +110,11 @@ export class OrganisationPickerComponent implements OnInit {
 
   ok() {
     this.moveSelectedOrgsIntoResultData();
-    this.dialogRef.close(this.orgPicker.selection.selected);
+    if (this.listSearch) {
+      this.dialogRef.close(this.listPicker.selection.selected);
+    } else {
+      this.dialogRef.close(this.orgPicker.selection.selected);
+    }
   }
 
   cancel() {

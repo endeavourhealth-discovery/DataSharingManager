@@ -326,7 +326,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     } else {
       const dialogRef = this.dialog.open(OrganisationPickerComponent, {
         width: '800px',
-        data: { searchType: 'organisation', uuid: '', regionUUID: this.regions[0].uuid, dsaUUID: '' }
+        data: { searchType: 'organisation', uuid: '', regionUUID: this.regions[0].uuid, dsaUUID: '', existingOrgs: this.publishers }
       })
       dialogRef.afterClosed().subscribe(result => {
         for (let org of result) {
