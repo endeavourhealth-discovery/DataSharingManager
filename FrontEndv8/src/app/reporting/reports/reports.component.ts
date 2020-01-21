@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ReportingService} from "../reporting.service";
 import {DataProcessingAgreementService} from "../../data-processing-agreement/data-processing-agreement.service";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
@@ -9,7 +9,7 @@ import {Project} from "../../project/models/Project";
 import {DataSharingAgreementService} from "../../data-sharing-agreement/data-sharing-agreement.service";
 import {ProjectService} from "../../project/project.service";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
 
 @Component({
   selector: 'app-reports',
@@ -30,6 +30,10 @@ export class ReportsComponent implements OnInit {
 
   dpaDetailsToShow = [{label: 'Name', property: 'name'}];
   reportDetailsToShow = new ReportData().getDisplayItems();
+
+  @ViewChild('dpaTable', { static: false }) dpaTable: GenericTableComponent;
+  @ViewChild('dsaTable', { static: false }) dsaTable: GenericTableComponent;
+  @ViewChild('projectTable', { static: false }) projectTable: GenericTableComponent;
 
   dpas: Dpa[];
   dsas: Dsa[];
@@ -129,7 +133,22 @@ export class ReportsComponent implements OnInit {
       );
   }
 
+  clearDPASelection() {
+    this.dpaTable.clearHighlights();
+  }
+
+  clearDSASelection() {
+    this.dsaTable.clearHighlights();
+  }
+
+  clearProjectSelection() {
+    this.projectTable.clearHighlights();
+  }
+
   runDPAPublisherReport(dpa: Dpa) {
+
+    this.clearDSASelection();
+    this.clearProjectSelection();
 
     this.reportComplete = false;
 
@@ -147,6 +166,8 @@ export class ReportsComponent implements OnInit {
   }
 
   runDSAPublisherReport(dsa: Dsa) {
+    this.clearDPASelection();
+    this.clearProjectSelection();
 
     this.reportComplete = false;
     this.reportName = dsa.name + ' : Publisher Report';
@@ -163,6 +184,8 @@ export class ReportsComponent implements OnInit {
   }
 
   runProjectPublisherReport(project: Project) {
+    this.clearDSASelection();
+    this.clearDPASelection();
 
     this.reportComplete = false;
     this.reportName = project.name + ' : Publisher Report';
