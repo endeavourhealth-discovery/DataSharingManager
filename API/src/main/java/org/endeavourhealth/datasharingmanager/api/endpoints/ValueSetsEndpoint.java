@@ -1,11 +1,9 @@
 package org.endeavourhealth.datasharingmanager.api.endpoints;
 import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
-import org.endeavourhealth.common.security.annotations.RequiresAdmin;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonValueSets;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
@@ -23,7 +21,6 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 @Path("/value_sets")
-@Metrics(registry = "ValueSetsMetricRegistry")
 @Api(description = "Api for all calls relating to the Value Sets")
 public class ValueSetsEndpoint extends AbstractEndpoint {
 

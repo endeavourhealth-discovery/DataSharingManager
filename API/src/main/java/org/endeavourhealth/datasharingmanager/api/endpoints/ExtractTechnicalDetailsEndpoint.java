@@ -1,7 +1,6 @@
 package org.endeavourhealth.datasharingmanager.api.endpoints;
 
 import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -25,7 +24,6 @@ import javax.ws.rs.core.SecurityContext;
 
 
 @Path("/extractTechnicalDetails")
-@Metrics(registry = "EdsRegistry")
 @Api(description = "API endpoint related to associated Extract Technical Details")
 public final class ExtractTechnicalDetailsEndpoint extends AbstractEndpoint {
 

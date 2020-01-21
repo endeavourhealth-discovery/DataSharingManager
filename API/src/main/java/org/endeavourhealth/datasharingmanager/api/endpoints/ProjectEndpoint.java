@@ -1,7 +1,6 @@
 package org.endeavourhealth.datasharingmanager.api.endpoints;
 
 import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -35,7 +34,6 @@ import java.util.List;
 import static org.endeavourhealth.common.security.SecurityUtils.getCurrentUserId;
 
 @Path("/project")
-@Metrics(registry = "EdsRegistry")
 @Api(description = "API endpoint related to the projects")
 public class ProjectEndpoint extends AbstractEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(ProjectEndpoint.class);

@@ -2,7 +2,6 @@ package org.endeavourhealth.datasharingmanager.api.endpoints;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -28,7 +27,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 @Path("/region")
-@Metrics(registry = "EdsRegistry")
 @Api(description = "API endpoint related to the regions")
 public final class RegionEndpoint extends AbstractEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(RegionEndpoint.class);
