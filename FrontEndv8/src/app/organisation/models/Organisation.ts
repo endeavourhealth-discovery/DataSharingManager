@@ -15,6 +15,9 @@ export class Organisation {
     bulkItemUpdated: number;
     bulkConflictedWith: string;
     type: string;
+    systemSupplierSystemId: number;
+    systemSupplierReference: string;
+    systemSupplierSharingActivated: number;
     selected: boolean;
     regions: { [key: string]: string; };
     parentOrganisations: { [key: string]: string; };

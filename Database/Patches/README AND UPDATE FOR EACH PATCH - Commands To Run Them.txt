@@ -12,4 +12,4 @@ cmd /K "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql.exe" –uXXX –pXXX
 *** Update, commit and push this file to the DSM repo, along with your new Patch, so that it's easy for anybody else to run all of the patches just by running the below.
 *** Cheers!
 
-source c:/stuff/DSMDB_Patch0.sql; source c:/stuff/DSMDB_Patch1.sql; source c:/stuff/DSMDB_Patch2.sql; source c:/stuff/DSMDB_Patch3.sql;
+source c:/stuff/DSMDB_Patch0.sql; source c:/stuff/DSMDB_Patch1.sql; source c:/stuff/DSMDB_Patch2.sql; source c:/stuff/DSMDB_Patch3.sql; source c:/stuff/DSMDB_Patch4.sql; source c:/stuff/DSMDB_Patch5.sql;

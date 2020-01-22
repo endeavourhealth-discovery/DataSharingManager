@@ -48,6 +48,20 @@ export class OrganisationEditorComponent implements OnInit {
   dsaDetailsToShow = new Dsa().getDisplayItems();
   addressDetailsToShow = new Address().getDisplayItems();
 
+  systemSupplierSystems = [
+    {num: 0, name: 'Not entered'},
+    {num: 1, name: 'EMIS Web'},
+    {num: 2, name: 'SystmOne'},
+    {num: 3, name: 'Vision'},
+    {num: 4, name: 'Adastra'},
+    {num: 5, name: 'Cerner Millennium'},
+    {num: 6, name: 'Rio'}
+  ];
+
+  systemSupplierSharingActivated = [
+    {num: 0, name: 'No'},
+    {num: 1, name: 'Yes'},
+  ];
 
   @ViewChild('childOrg', { static: false }) childOrgTable: GenericTableComponent;
   @ViewChild('parentOrg', { static: false }) parentOrgTable: GenericTableComponent;

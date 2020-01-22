@@ -52,9 +52,24 @@
             <mat-label>IG toolkit status</mat-label>
             <input matInput [(ngModel)]="organisation.igToolkitStatus" placeholder="IG toolkit status" name="igToolkitStatus">
           </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="20" fxFill>
+            <mat-label>System supplier</mat-label>
+            <mat-select matInput name="systemSupplier" [(ngModel)]="organisation.systemSupplierSystemId" name="systemSupplierSystemId">
+                <mat-option *ngFor="let sssids of systemSupplierSystems" [value]="sssids.num">{{sssids.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="20" fxFill>
+            <mat-label>System supplier reference</mat-label>
+            <input matInput [(ngModel)]="organisation.systemSupplierReference" placeholder="System supplier reference" name="systemSupplierReference">
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="20" fxFill>
+            <mat-label>System supplier sharing activated</mat-label>
+            <mat-select matInput name="systemSupplierSharingActivated" [(ngModel)]="organisation.systemSupplierSharingActivated" name="systemSupplierSharingActivated">
+              <mat-option *ngFor="let sssa of systemSupplierSharingActivated" [value]="sssa.num">{{sssa.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
         <br>
-
       </div>
     </form>
 
