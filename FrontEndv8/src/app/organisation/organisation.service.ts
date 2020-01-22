@@ -121,9 +121,11 @@ export class OrganisationService  {
     return this.http.post('api/organisation', organisation, { responseType: 'text' });
   }
 
-  deleteOrganisation(uuid: string): Observable<any> {
+  deleteOrganisation(uuid: string[]): Observable<any> {
     let params = new HttpParams();
-    if (uuid) params = params.append('uuid', uuid);
+    for (let ix in uuid) {
+      params = params.append('uuids', uuid[ix]);
+    }
     return this.http.delete<any>('api/organisation', {params});
   }
 

@@ -107,20 +107,21 @@ export class OrganisationComponent implements OnInit {
       .subscribe(
         (result) => {
           if(result) {
+            let ids = [];
             for (var i = 0; i < this.organisationsTable.selection.selected.length; i++) {
               let org = this.organisationsTable.selection.selected[i];
               this.organisations.forEach( (item, index) => {
                 if(item === org) {
-                  this.organisationService.deleteOrganisation(org.uuid).subscribe(
-                    () => {
-                      this.organisations.splice(index,1);
-                      this.organisationsTable.updateRows();
-                    }
-                  );
+                  ids.push(item.uuid);
                 }
               });
             }
-            this.log.success('Delete successful.');
+            this.organisationService.deleteOrganisation(ids).subscribe(
+              () => {
+                this.log.success('Delete successful.');
+                this.search();
+              }
+            );
           } else {
             this.log.success('Delete cancelled.')
           }

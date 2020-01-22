@@ -775,4 +775,14 @@ public class OrganisationLogic {
 
         return addressEntity;
     }
+
+    public void deleteOrganisation(List<String> uuids, String userProjectId, UUID userId) throws Exception {
+        for (String uuid : uuids) {
+            new OrganisationDAL().deleteOrganisation(uuid, userProjectId);
+        }
+        Map<UUID, String> cache = new SecurityOrganisationDAL().getCachedSearchTerm();
+        if (cache != null && cache.containsKey(userId)) {
+            cache.remove(userId);
+        }
+    }
 }

@@ -91,14 +91,14 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
     @RequiresAdmin
     public Response deleteOrganisation(@Context SecurityContext sc,
                                        @HeaderParam("userProjectId") String userProjectId,
-                                       @ApiParam(value = "UUID of the organisation to be deleted") @QueryParam("uuid") String uuid
+                                       @ApiParam(value = "UUID of the organisations to be deleted") @QueryParam("uuids") List<String> uuids
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "Organisation",
-                "Organisation Id", uuid);
+                "Organisation Id", uuids);
 
-        new OrganisationDAL().deleteOrganisation(uuid, userProjectId);
+        new OrganisationLogic().deleteOrganisation(uuids, userProjectId, SecurityUtils.getCurrentUserId(sc));
 
         clearLogbackMarkers();
         return Response
