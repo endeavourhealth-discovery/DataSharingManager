@@ -35,10 +35,12 @@ export class DataSharingAgreementService {
     return this.http.post(url, dsa, { responseType: 'text' });
   }
 
-  deleteDsa(uuid: string): Observable<any> {
+  deleteDsa(uuid: string[]): Observable<any> {
     const url = 'api/dsa';
     let params = new HttpParams();
-    if (uuid) params = params.append('uuid', uuid);
+    for (let ix in uuid) {
+      params = params.append('uuids', uuid[ix]);
+    }
     return this.http.delete<any>(url,{params});
   }
 

@@ -36,10 +36,12 @@ export class DataProcessingAgreementService {
     return this.http.post(url, dpa, {responseType: 'text'});
   }
 
-  deleteDpa(uuid: string): Observable<any> {
+  deleteDpa(uuid: string[]): Observable<any> {
     const url = 'api/dpa';
     let params = new HttpParams();
-    if (uuid) params = params.append('uuid', uuid);
+    for (let ix in uuid) {
+      params = params.append('uuids', uuid[ix]);
+    }
     return this.http.delete<any>(url,{params});
   }
 

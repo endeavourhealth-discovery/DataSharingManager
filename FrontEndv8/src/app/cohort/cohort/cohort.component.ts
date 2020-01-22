@@ -79,20 +79,22 @@ export class CohortComponent implements OnInit {
         .subscribe(
             (result) => {
               if(result) {
+                let ids = [];
                 for (var i = 0; i < this.cohortsTable.selection.selected.length; i++) {
                   let cohort = this.cohortsTable.selection.selected[i];
                   this.cohorts.forEach( (item, index) => {
                     if(item === cohort) {
-                      this.cohortService.deleteCohort(cohort.uuid).subscribe(
-                        () => {
-                          this.cohorts.splice(index,1);
-                          this.cohortsTable.updateRows();
-                        }
-                      );
+                      this.cohorts.splice(index,1);
+                      this.cohortsTable.updateRows();
+                      ids.push(item.uuid);
                     }
                   });
                 }
-                this.log.success('Delete successful.');
+                this.cohortService.deleteCohort(ids).subscribe(
+                  () => {
+                    this.log.success('Delete successful.');
+                  }
+                );
               } else {
                 this.log.success('Delete cancelled.')
               }

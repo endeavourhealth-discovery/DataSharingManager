@@ -111,14 +111,16 @@ public final class DataSetEndpoint extends AbstractEndpoint {
     @RequiresAdmin
     public Response deleteDataSet(@Context SecurityContext sc,
                                   @HeaderParam("userProjectId") String userProjectId,
-                                 @ApiParam(value = "UUID of the data set to be deleted") @QueryParam("uuid") String uuid
+                                  @ApiParam(value = "UUID of the data sets to be deleted") @QueryParam("uuids") List<String> uuids
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "data set",
-                "data set Id", uuid);
+                "data set Id", uuids);
 
-        new DatasetDAL().deleteDataSet(uuid, userProjectId);
+        for (String uuid : uuids) {
+            new DatasetDAL().deleteDataSet(uuid, userProjectId);
+        }
 
         clearLogbackMarkers();
         return Response

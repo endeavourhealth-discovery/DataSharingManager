@@ -91,20 +91,22 @@ export class DataProcessingAgreementComponent implements OnInit {
       .subscribe(
         (result) => {
           if(result) {
+            let ids = [];
             for (var i = 0; i < this.dpasTable.selection.selected.length; i++) {
               let dpa = this.dpasTable.selection.selected[i];
               this.dpas.forEach( (item, index) => {
                 if(item === dpa) {
-                  this.dpaService.deleteDpa(dpa.uuid).subscribe(
-                    () => {
-                      this.dpas.splice(index,1);
-                      this.dpasTable.updateRows();
-                    }
-                  );
+                  this.dpas.splice(index,1);
+                  this.dpasTable.updateRows();
+                  ids.push(item.uuid);
                 }
               });
             }
-            this.log.success('Delete successful.');
+            this.dpaService.deleteDpa(ids).subscribe(
+              () => {
+                this.log.success('Delete successful.');
+              }
+            );
           } else {
             this.log.success('Delete cancelled.')
           }

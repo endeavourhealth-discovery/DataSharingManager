@@ -87,14 +87,16 @@ public final class DsaEndpoint extends AbstractEndpoint {
     @RequiresAdmin
     public Response deleteDSA(@Context SecurityContext sc,
                               @HeaderParam("userProjectId") String userProjectId,
-                              @ApiParam(value = "UUID of the data sharing agreement to be deleted") @QueryParam("uuid") String uuid
+                              @ApiParam(value = "UUID of the data sharing agreements to be deleted") @QueryParam("uuids") List<String> uuids
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "DSA",
-                "DSA Id", uuid);
+                "DSA Id", uuids);
 
-        new DataSharingAgreementDAL().deleteDSA(uuid, userProjectId);
+        for (String uuid : uuids) {
+            new DataSharingAgreementDAL().deleteDSA(uuid, userProjectId);
+        }
 
         clearLogbackMarkers();
         return Response

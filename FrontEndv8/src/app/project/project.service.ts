@@ -129,10 +129,12 @@ export class ProjectService {
     return this.http.post(url, projectApplicationPolicy, {responseType: 'text'});
   }
 
-  deleteProject(uuid: string): Observable<any> {
+  deleteProject(uuid: string[]): Observable<any> {
     const url = 'api/project';
     let params = new HttpParams();
-    if (uuid) params = params.append('uuid', uuid);
+    for (let ix in uuid) {
+      params = params.append('uuids', uuid[ix]);
+    }
     return this.http.delete(url,{params});
   }
 }

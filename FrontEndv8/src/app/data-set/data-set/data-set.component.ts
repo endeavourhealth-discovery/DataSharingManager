@@ -82,20 +82,22 @@ export class DataSetComponent implements OnInit {
       .subscribe(
         (result) => {
           if(result) {
+            let ids = [];
             for (var i = 0; i < this.datasetsTable.selection.selected.length; i++) {
               let dataset = this.datasetsTable.selection.selected[i];
               this.datasets.forEach( (item, index) => {
                 if(item === dataset) {
-                  this.dataSetService.deleteDataSet(dataset.uuid).subscribe(
-                    () => {
-                      this.datasets.splice(index,1);
-                      this.datasetsTable.updateRows();
-                    }
-                  );
+                  this.datasets.splice(index,1);
+                  this.datasetsTable.updateRows();
+                  ids.push(item.uuid);
                 }
               });
             }
-            this.log.success('Delete successful.');
+            this.dataSetService.deleteDataSet(ids).subscribe(
+              () => {
+                this.log.success('Delete successful.');
+              }
+            );
           } else {
             this.log.success('Delete cancelled.')
           }

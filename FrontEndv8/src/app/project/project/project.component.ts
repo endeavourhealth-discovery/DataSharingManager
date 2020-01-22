@@ -92,20 +92,22 @@ export class ProjectComponent implements OnInit {
       .subscribe(
         (result) => {
           if(result) {
+            let ids = [];
             for (var i = 0; i < this.projectsTable.selection.selected.length; i++) {
               let project = this.projectsTable.selection.selected[i];
               this.projects.forEach( (item, index) => {
                 if(item === project) {
-                  this.projectService.deleteProject(project.uuid).subscribe(
-                    () => {
-                      this.projects.splice(index,1);
-                      this.projectsTable.updateRows();
-                    }
-                  );
+                  this.projects.splice(index,1);
+                  this.projectsTable.updateRows();
+                  ids.push(item.uuid);
                 }
               });
             }
-            this.log.success('Delete successful.');
+            this.projectService.deleteProject(ids).subscribe(
+              () => {
+                this.log.success('Delete successful.');
+              }
+            );
           } else {
             this.log.success('Delete cancelled.')
           }

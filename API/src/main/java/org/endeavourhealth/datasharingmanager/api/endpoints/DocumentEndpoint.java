@@ -23,6 +23,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.List;
 
 @Path("/documentation")
 @Api(description = "API endpoint related to associated Documentation")
@@ -82,14 +83,16 @@ public final class DocumentEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Delete a document based on UUID that is passed to the API.  Warning! This is permanent.")
     @RequiresAdmin
     public Response deleteDocument(@Context SecurityContext sc,
-                                   @ApiParam(value = "UUID of the document to be deleted") @QueryParam("uuid") String uuid
+                                   @ApiParam(value = "UUID of the documents to be deleted") @QueryParam("uuids") List<String> uuids
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "Document",
-                "Document Id", uuid);
+                "Document Id", uuids);
 
-        new DocumentationDAL(ConnectionManager.getDsmEntityManager()).deleteDocument(uuid);
+        for (String uuid : uuids) {
+            new DocumentationDAL(ConnectionManager.getDsmEntityManager()).deleteDocument(uuid);
+        }
 
         clearLogbackMarkers();
         return Response

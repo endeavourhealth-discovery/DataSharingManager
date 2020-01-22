@@ -25,6 +25,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.List;
 
 @Path("/region")
 @Api(description = "API endpoint related to the regions")
@@ -86,14 +87,16 @@ public final class RegionEndpoint extends AbstractEndpoint {
     @RequiresAdmin
     public Response deleteRegion(@Context SecurityContext sc,
                                  @HeaderParam("userProjectId") String userProjectId,
-                                 @ApiParam(value = "UUID of the region to be deleted") @QueryParam("uuid") String uuid
+                                 @ApiParam(value = "UUID of the regions to be deleted") @QueryParam("uuids") List<String> uuids
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "Region",
-                "Region Id", uuid);
+                "Region Id", uuids);
 
-        new RegionDAL().deleteRegion(uuid, userProjectId);
+        for (String uuid : uuids) {
+            new RegionDAL().deleteRegion(uuid, userProjectId);
+        }
 
         clearLogbackMarkers();
         return Response

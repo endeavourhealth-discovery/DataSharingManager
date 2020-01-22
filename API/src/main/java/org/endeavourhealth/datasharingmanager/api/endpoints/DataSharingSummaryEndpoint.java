@@ -103,14 +103,17 @@ public final class DataSharingSummaryEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Delete a data flow based on UUID that is passed to the API.  Warning! This is permanent.")
     @RequiresAdmin
     public Response deleteDataSharingSummary(@Context SecurityContext sc,
-                           @ApiParam(value = "UUID of the data sharing summary to be deleted") @QueryParam("uuid") String uuid
+                                             @ApiParam(value = "UUID of the data sharing summaries to be deleted") @QueryParam("uuids") List<String> uuids
+
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "Data Sharing Summary",
-                "Data Sharing Summary Id", uuid);
+                "Data Sharing Summary Id", uuids);
 
-        new DataSharingSummaryDAL().deleteDataSharingSummary(uuid);
+        for (String uuid : uuids) {
+            new DataSharingSummaryDAL().deleteDataSharingSummary(uuid);
+        }
 
         clearLogbackMarkers();
         return Response

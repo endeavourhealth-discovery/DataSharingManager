@@ -26,10 +26,12 @@ export class DataSetService {
     return this.http.post(url, dataset, { responseType: 'text' });
   }
 
-  deleteDataSet(uuid: string): Observable<any> {
+  deleteDataSet(uuid: string[]): Observable<any> {
     const url = 'api/dataSet';
     let params = new HttpParams();
-    if (uuid) params = params.append('uuid', uuid);
+    for (let ix in uuid) {
+      params = params.append('uuids', uuid[ix]);
+    }
     return this.http.delete<any>(url, {params});
   }
 

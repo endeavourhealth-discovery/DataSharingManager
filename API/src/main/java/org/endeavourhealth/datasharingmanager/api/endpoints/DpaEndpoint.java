@@ -24,6 +24,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Path("/dpa")
@@ -97,14 +98,16 @@ public final class DpaEndpoint extends AbstractEndpoint {
     @RequiresAdmin
     public Response deleteDPA(@Context SecurityContext sc,
                               @HeaderParam("userProjectId") String userProjectId,
-                              @ApiParam(value = "UUID of the data processing agreement to be deleted") @QueryParam("uuid") String uuid
+                              @ApiParam(value = "UUID of the data processing agreements to be deleted") @QueryParam("uuids") List<String> uuids
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "DPA",
-                "DPA Id", uuid);
+                "DPA Id", uuids);
 
-        new DataProcessingAgreementDAL().deleteDPA(uuid, userProjectId);
+        for (String uuid : uuids) {
+            new DataProcessingAgreementDAL().deleteDPA(uuid, userProjectId);
+        }
 
         clearLogbackMarkers();
         return Response

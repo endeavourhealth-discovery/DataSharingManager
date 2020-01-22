@@ -26,10 +26,12 @@ export class CohortService {
     return this.http.post(url, cohort, { responseType: 'text' });
   }
 
-  deleteCohort(uuid: string): Observable<any> {
+  deleteCohort(uuid: string[]): Observable<any> {
     const url = 'api/cohort';
     let params = new HttpParams();
-    if (uuid) params = params.append('uuid', uuid);
+    for (let ix in uuid) {
+      params = params.append('uuids', uuid[ix]);
+    }
     return this.http.delete<any>(url, {params});
   }
 

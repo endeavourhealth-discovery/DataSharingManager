@@ -92,20 +92,22 @@ export class DataSharingAgreementComponent implements OnInit {
       .subscribe(
         (result) => {
           if(result) {
+            let ids = [];
             for (var i = 0; i < this.dsasTable.selection.selected.length; i++) {
               let dsa = this.dsasTable.selection.selected[i];
               this.dsas.forEach( (item, index) => {
                 if(item === dsa) {
-                  this.dsaService.deleteDsa(dsa.uuid).subscribe(
-                    () => {
-                      this.dsas.splice(index,1);
-                      this.dsasTable.updateRows();
-                    }
-                  );
+                  this.dsas.splice(index,1);
+                  this.dsasTable.updateRows();
+                  ids.push(item.uuid);
                 }
               });
             }
-            this.log.success('Delete successful.');
+            this.dsaService.deleteDsa(ids).subscribe(
+              () => {
+                this.log.success('Delete successful.');
+              }
+            );
           } else {
             this.log.success('Delete cancelled.')
           }

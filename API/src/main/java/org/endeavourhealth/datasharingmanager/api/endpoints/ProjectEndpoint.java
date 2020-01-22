@@ -93,14 +93,16 @@ public class ProjectEndpoint extends AbstractEndpoint {
     @RequiresAdmin
     public Response deleteProject(@Context SecurityContext sc,
                                   @HeaderParam("userProjectId") String userProjectId,
-                                   @ApiParam(value = "UUID of the project to be deleted") @QueryParam("uuid") String uuid
+                                  @ApiParam(value = "UUID of the projects to be deleted") @QueryParam("uuids") List<String> uuids
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "Project",
-                "Project UUID", uuid);
+                "Project UUID", uuids);
 
-        new ProjectDAL().deleteProject(uuid, userProjectId);
+        for (String uuid : uuids) {
+            new ProjectDAL().deleteProject(uuid, userProjectId);
+        }
 
         clearLogbackMarkers();
         return Response

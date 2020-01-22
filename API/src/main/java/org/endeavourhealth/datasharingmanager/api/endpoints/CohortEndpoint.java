@@ -113,14 +113,16 @@ public final class CohortEndpoint extends AbstractEndpoint {
     @RequiresAdmin
     public Response deleteCohort(@Context SecurityContext sc,
                                  @HeaderParam("userProjectId") String userProjectId,
-                                 @ApiParam(value = "UUID of the cohort to be deleted") @QueryParam("uuid") String uuid
+                                 @ApiParam(value = "UUID of the cohorts to be deleted") @QueryParam("uuids") List<String> uuids
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 COHORT,
-                COHORT_ID, uuid);
+                COHORT_ID, uuids);
 
-        new CohortDAL().deleteCohort(uuid, userProjectId);
+        for (String uuid : uuids) {
+            new CohortDAL().deleteCohort(uuid, userProjectId);
+        }
 
         clearLogbackMarkers();
         return Response
