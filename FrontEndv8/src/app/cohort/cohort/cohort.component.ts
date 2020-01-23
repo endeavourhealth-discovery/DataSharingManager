@@ -6,6 +6,9 @@ import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
 import {MatDialog} from "@angular/material/dialog";
+import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
+import {SchedulerComponent} from "../../scheduler/scheduler/scheduler.component";
+import {CohortDialogComponent} from "../cohort-dialog/cohort-dialog.component";
 
 @Component({
   selector: 'app-cohort',
@@ -66,7 +69,15 @@ export class CohortComponent implements OnInit {
   }
 
   add() {
-    this.router.navigate(['/cohort', 1, 'add']);
+    const dialogRef = this.dialog.open(CohortDialogComponent, {
+      width: '800px',
+      data: {mode: 'add', uuid: 'true'},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.router.navigate(['/cohort', result.uuid, 'edit']);
+      }
+    });
   }
 
   itemClicked(cohort: Cohort) {

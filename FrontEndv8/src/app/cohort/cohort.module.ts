@@ -22,6 +22,7 @@ import {CohortComponent} from './cohort/cohort.component';
 import {CohortEditorComponent} from "./cohort-editor/cohort-editor.component";
 import {CohortPickerComponent} from './cohort-picker/cohort-picker.component';
 import {CohortService} from './cohort.service';
+import { CohortDialogComponent } from './cohort-dialog/cohort-dialog.component';
 
 @NgModule({
   imports: [
@@ -46,10 +47,12 @@ import {CohortService} from './cohort.service';
   declarations: [
     CohortComponent,
     CohortEditorComponent,
-    CohortPickerComponent
+    CohortPickerComponent,
+    CohortDialogComponent,
   ],
   entryComponents : [
-    CohortPickerComponent
+    CohortPickerComponent,
+    CohortDialogComponent,
   ],
   providers: [
     CohortService,

@@ -51,7 +51,7 @@ public class CohortDAL {
         }
     }
 
-    public void updateCohort(JsonCohort cohort, String userProjectId) throws Exception {
+    public void updateCohort(JsonCohort cohort, String userProjectId, boolean withMapping) throws Exception {
         CohortEntity oldCohortEntity = _entityManager.find(CohortEntity.class, cohort.getUuid());
         oldCohortEntity.setMappingsFromDAL();
 
@@ -61,7 +61,9 @@ public class CohortDAL {
             CohortEntity newCohort = new CohortEntity(cohort);
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Cohort edited", oldCohortEntity, newCohort);
 
-            _masterMappingDAL.updateCohortMappings(cohort, oldCohortEntity, auditJson);
+            if (withMapping) {
+                _masterMappingDAL.updateCohortMappings(cohort, oldCohortEntity, auditJson);
+            }
 
             oldCohortEntity.updateFromJson(cohort);
 
@@ -87,7 +89,7 @@ public class CohortDAL {
 
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Cohort created", null, cohortEntity);
 
-            _masterMappingDAL.updateCohortMappings(cohort, null, auditJson);
+            //_masterMappingDAL.updateCohortMappings(cohort, null, auditJson);
 
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.COHORT, auditJson);
 

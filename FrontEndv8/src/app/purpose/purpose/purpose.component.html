@@ -13,9 +13,9 @@
   </div>
 </div>
 <div mat-dialog-actions align="end">
-  <button *ngIf="!editMode" mat-raised-button color="primary" (click)="add()" cdkFocusInitial>Add {{type | lowercase}}</button>
-  <button *ngIf="!editMode" mat-raised-button color="primary" (click)="addAnother()" cdkFocusInitial>Add another {{type | lowercase}}</button>
-  <button *ngIf="editMode" mat-raised-button color="primary" (click)="save();">Save</button>
-  <button *ngIf="editMode" mat-raised-button color="primary" (click)="saveAndAddAnother();">Save and add another {{type | lowercase}}</button>
-  <button mat-raised-button color="accent" (click)="cancel()" cdkFocusInitial>Cancel</button>
+  <button *ngIf="!editMode" mat-flat-button color="accent" (click)="add()" cdkFocusInitial>Add {{type | lowercase}}</button>
+  <button *ngIf="!editMode" mat-flat-button color="accent" (click)="addAnother()" cdkFocusInitial>Add another {{type | lowercase}}</button>
+  <button *ngIf="editMode" mat-flat-button color="accent" (click)="save();">Save</button>
+  <button *ngIf="editMode" mat-flat-button color="accent" (click)="saveAndAddAnother();">Save and add another {{type | lowercase}}</button>
+  <button mat-raised-button (click)="cancel()" cdkFocusInitial>Cancel</button>
 </div>

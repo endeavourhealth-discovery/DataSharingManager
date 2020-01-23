@@ -7,6 +7,7 @@ import {Dpa} from '../../data-processing-agreement/models/Dpa';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
 import {MatDialog} from "@angular/material/dialog";
+import {CohortDialogComponent} from "../cohort-dialog/cohort-dialog.component";
 
 @Component({
   selector: 'app-cohort-editor',
@@ -98,6 +99,37 @@ export class CohortEditorComponent implements OnInit {
       );
   }
 
+  updateDPAMapping() {
+    // Populate Data Processing Agreements before save
+    this.cohort.dpas = {};
+    for (const idx in this.dpas) {
+      let dpa: Dpa = this.dpas[idx];
+      this.cohort.dpas[dpa.uuid] = dpa.name;
+    }
+
+    this.cohortService.updateDPAMapping(this.cohort)
+      .subscribe(saved => {
+          this.cohort.uuid = saved;
+          this.log.success('Cohort saved successfully');
+        },
+        error => this.log.error('The Cohort could not be saved. Please try again.')
+      );
+  }
+
+  editCohort() {
+    const dialogRef = this.dialog.open(CohortDialogComponent, {
+      width: '800px',
+      data: {mode: 'edit', uuid: this.cohort.uuid },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.cohort = result;
+        this.save(false);
+      }
+    });
+
+  }
+
   close() {
     window.history.back();
   }
@@ -129,7 +161,7 @@ export class CohortEditorComponent implements OnInit {
               });
             }
             this.dpaTable.updateRows();
-            this.log.success('Remove successful.');
+            this.updateDPAMapping();
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -147,6 +179,7 @@ export class CohortEditorComponent implements OnInit {
           this.dpas.push(dpa);
           this.dpaTable.updateRows();
         }
+        this.updateDPAMapping();
       }
     })
   }

@@ -2,7 +2,7 @@
 <div mat-dialog-content>
   <div>
     <input #fileUploader type="file" (click)="fileUploader.value = null" (change)="fileChange($event)" accept="*" placeholder="File" name="file" style="display: none">
-    <button mat-raised-button color="primary" for="fileUpload" id="fileUpload" (click)="fileUploader.click()">Select files</button>
+    <button mat-flat-button color="flat" for="fileUpload" id="fileUpload" (click)="fileUploader.click()">Select files</button>
   </div>
   <br>
   <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
@@ -14,6 +14,6 @@
   </div>
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-raised-button color="primary" [disabled]="!file" (click)="ok()">Ok</button>
-  <button mat-raised-button color="accent" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="accent" [disabled]="!file" (click)="ok()">Ok</button>
+  <button mat-flat-button (click)="cancel()">Cancel</button>
 </div>

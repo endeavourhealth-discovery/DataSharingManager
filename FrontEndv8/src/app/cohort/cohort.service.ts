@@ -26,6 +26,11 @@ export class CohortService {
     return this.http.post(url, cohort, { responseType: 'text' });
   }
 
+  updateDPAMapping(cohort: Cohort): Observable<any> {
+    const url = 'api/cohort/updateDPAMapping';
+    return this.http.post(url, cohort, { responseType: 'text' });
+  }
+
   deleteCohort(uuid: string[]): Observable<any> {
     const url = 'api/cohort';
     let params = new HttpParams();

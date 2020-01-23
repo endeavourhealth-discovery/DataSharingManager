@@ -27,6 +27,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -89,12 +90,44 @@ public final class CohortEndpoint extends AbstractEndpoint {
                 COHORT,
                 "Cohort", cohort);
 
+        if (cohort.getDpas() == null) {
+            cohort.setDpas(new HashMap());
+        }
         if (cohort.getUuid() != null) {
-            new CohortDAL().updateCohort(cohort, userProjectId);
+            new CohortDAL().updateCohort(cohort, userProjectId, false);
         } else {
             cohort.setUuid(UUID.randomUUID().toString());
             new CohortDAL().saveCohort(cohort, userProjectId);
         }
+
+        clearLogbackMarkers();
+
+        return Response
+                .ok()
+                .entity(cohort.getUuid())
+                .build();
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.CohortEndpoint.Post")
+    @Path("/updateDPAMapping")
+    @ApiOperation(value = "Updates the DPA mapping.  Accepts a JSON representation of a cohort.")
+    @RequiresAdmin
+    public Response updateDPAMapping(@Context SecurityContext sc,
+                               @HeaderParam("userProjectId") String userProjectId,
+                               @ApiParam(value = "Json representation of cohort to save or update") JsonCohort cohort
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
+                COHORT,
+                "Cohort", cohort);
+
+        if (cohort.getDpas() == null) {
+            cohort.setDpas(new HashMap());
+        }
+        new CohortDAL().updateCohort(cohort, userProjectId, true);
 
         clearLogbackMarkers();
 
