@@ -49,4 +49,8 @@ export class DataSetService {
     return this.http.get<Dpa[]>(url, {params});
   }
 
+  updateDPAMapping(dataset: DataSet): Observable<any> {
+    const url = 'api/dataSet/updateDPAMapping';
+    return this.http.post(url, dataset, { responseType: 'text' });
+  }
 }

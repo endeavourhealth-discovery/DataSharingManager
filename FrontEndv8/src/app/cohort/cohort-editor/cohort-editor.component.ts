@@ -127,7 +127,6 @@ export class CohortEditorComponent implements OnInit {
         this.save(false);
       }
     });
-
   }
 
   close() {

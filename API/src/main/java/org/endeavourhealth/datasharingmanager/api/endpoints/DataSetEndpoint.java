@@ -27,11 +27,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 @Path("/dataSet")
-@Api(description = "API endpoint related to the Cohorts")
+@Api(description = "API endpoint related to the DataSets")
 public final class DataSetEndpoint extends AbstractEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(DataSetEndpoint.class);
 
@@ -76,7 +77,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
     @Timed(absolute = true, name="DataSharingManager.DataSetEndpoint.Post")
     @Path("/")
     @ApiOperation(value = "Save a new data set or update an existing one.  Accepts a JSON representation " +
-            "of a cohort.")
+            "of a dataset.")
     @RequiresAdmin
     public Response postDataSet(@Context SecurityContext sc,
                                 @HeaderParam("userProjectId") String userProjectId,
@@ -87,12 +88,44 @@ public final class DataSetEndpoint extends AbstractEndpoint {
                 "Data set",
                 "Data set", dataSet);
 
+        if (dataSet.getDpas() == null) {
+            dataSet.setDpas(new HashMap());
+        }
         if (dataSet.getUuid() != null) {
-            new DatasetDAL().updateDataSet(dataSet, userProjectId);
+            new DatasetDAL().updateDataSet(dataSet, userProjectId, false);
         } else {
             dataSet.setUuid(UUID.randomUUID().toString());
             new DatasetDAL().saveDataSet(dataSet, userProjectId);
         }
+
+        clearLogbackMarkers();
+
+        return Response
+                .ok()
+                .entity(dataSet.getUuid())
+                .build();
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.DataSetEndpoint.Post")
+    @Path("/updateDPAMapping")
+    @ApiOperation(value = "Updates the DPA mapping.  Accepts a JSON representation of a data set.")
+    @RequiresAdmin
+    public Response updateDPAMapping(@Context SecurityContext sc,
+                                     @HeaderParam("userProjectId") String userProjectId,
+                                     @ApiParam(value = "Json representation of data set to save or update") JsonDataSet dataSet
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
+                "Data set",
+                "Data set", dataSet);
+
+        if (dataSet.getDpas() == null) {
+            dataSet.setDpas(new HashMap());
+        }
+        new DatasetDAL().updateDataSet(dataSet, userProjectId, true);
 
         clearLogbackMarkers();
 
@@ -135,8 +168,8 @@ public final class DataSetEndpoint extends AbstractEndpoint {
     @Path("/dpas")
     @ApiOperation(value = "Returns a list of Json representations of Data Processing Agreements that are linked " +
             "to the data set.  Accepts a UUID of a data set.")
-    public Response getDpaForCohort(@Context SecurityContext sc,
-                                    @ApiParam(value = "UUID of cohort") @QueryParam("uuid") String uuid
+    public Response getDpaForDataSet(@Context SecurityContext sc,
+                                    @ApiParam(value = "UUID of dataset") @QueryParam("uuid") String uuid
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
@@ -177,9 +210,9 @@ public final class DataSetEndpoint extends AbstractEndpoint {
                 .build();
     }
 
-    private Response getLinkedDpas(String cohortUuid) throws Exception {
+    private Response getLinkedDpas(String datasetUuid) throws Exception {
 
-        List<String> dpaUuids = new SecurityMasterMappingDAL().getParentMappings(cohortUuid, MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        List<String> dpaUuids = new SecurityMasterMappingDAL().getParentMappings(datasetUuid, MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
 
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 

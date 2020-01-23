@@ -3,13 +3,14 @@
     <div mat-card-avatar>
       <i class="fad fa-layer-group"></i>
     </div>
-    <mat-card-title>Data Set details</mat-card-title>
+    <mat-card-title>Data set details</mat-card-title>
     <mat-card-subtitle *ngIf="dataset.name">{{dataset.name}}</mat-card-subtitle>
     <mat-card-subtitle *ngIf="!dataset.name">New Data Set</mat-card-subtitle>
     <div fxFlex></div>
+    <div fxLayoutAlign="center" class="mat-action" matRipple (click)="editDataset()">
+      <i class="fas fa-fw fa-pencil"></i>
+    </div>
     <mat-menu #visualiseMenu="matMenu">
-      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(false)">Save</button>
-      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(true)">Save & close</button>
       <button mat-menu-item (click)="close()">Cancel</button>
     </mat-menu>
     <div fxLayoutAlign="center" class="mat-action" matRipple>
@@ -20,21 +21,21 @@
     <form class="form" #f="ngForm" novalidate>
       <div class="form-group" #fgName="ngModelGroup" ngModelGroup="organisation" [class.has-error]="!fgName.valid">
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
             <mat-label>Data set name</mat-label>
-            <input required matInput [(ngModel)]="dataset.name" placeholder="Name" name="name">
+            <input required matInput [(ngModel)]="dataset.name" placeholder="Name" name="name" readonly>
           </mat-form-field>
           <div></div>
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
             <mat-label>Description</mat-label>
             <textarea matInput [(ngModel)]="dataset.description" placeholder="Description"
-                      name="description" rows="15">
+                      name="description" rows="15" readonly>
             </textarea>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
             <mat-label>Technical definition</mat-label>
             <textarea matInput [(ngModel)]="dataset.technicalDefinition" placeholder="Technical definition"
-                      name="definition" rows="15">
+                      name="definition" rows="15" readonly>
             </textarea>
           </mat-form-field>
         </div>

@@ -1,10 +1,10 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {Cohort} from "../models/Cohort";
-import {LoggerService, UserManagerService} from "dds-angular8";
-import {CohortService} from "../cohort.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {DataSet} from "../models/Dataset";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {LoggerService, UserManagerService} from "dds-angular8";
+import {ActivatedRoute, Router} from "@angular/router";
+import {DataSetService} from "../data-set.service";
 
 export interface DialogData {
   mode: string;
@@ -12,21 +12,21 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'app-cohort-dialog',
-  templateUrl: './cohort-dialog.component.html',
-  styleUrls: ['./cohort-dialog.component.scss']
+  selector: 'app-data-set-dialog',
+  templateUrl: './data-set-dialog.component.html',
+  styleUrls: ['./data-set-dialog.component.scss']
 })
-export class CohortDialogComponent implements OnInit {
+export class DataSetDialogComponent implements OnInit {
 
-  cohort: Cohort = <Cohort>{};
+  dataset: DataSet = <DataSet>{};
   public activeProject: UserProject;
   mode: string;
   uuid: string;
 
-  constructor(public dialogRef: MatDialogRef<CohortDialogComponent>,
+  constructor(public dialogRef: MatDialogRef<DataSetDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
               private log: LoggerService,
-              private cohortService: CohortService,
+              private datasetService: DataSetService,
               private router: Router,
               private route: ActivatedRoute,
               private userManagerNotificationService: UserManagerService,
@@ -59,27 +59,27 @@ export class CohortDialogComponent implements OnInit {
   }
 
   create() {
-    this.cohort = {
+    this.dataset = {
       name : ''
-    } as Cohort;
+    } as DataSet;
   }
 
   load(uuid: string) {
-    this.cohortService.getCohort(uuid)
+    this.datasetService.getDataSet(uuid)
       .subscribe(result => {
-          this.cohort = result;
+          this.dataset = result;
         },
-        error => this.log.error('The Cohort could not be loaded. Please try again.')
+        error => this.log.error('The Data set could not be loaded. Please try again.')
       );
   }
 
   ok() {
-    this.cohortService.saveCohort(this.cohort)
+    this.datasetService.saveDataSet(this.dataset)
       .subscribe(saved => {
-          this.cohort.uuid = saved;
-          this.dialogRef.close(this.cohort);
+          this.dataset.uuid = saved;
+          this.dialogRef.close(this.dataset);
         },
-        error => this.log.error('The Cohort could not be saved. Please try again.')
+        error => this.log.error('The Data set could not be saved. Please try again.')
       );
   }
 

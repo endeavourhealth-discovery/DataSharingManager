@@ -21,6 +21,7 @@ import {DataSetComponent} from './data-set/data-set.component';
 import {DataSetService} from "./data-set.service";
 import {DataSetEditorComponent} from './data-set-editor/data-set-editor.component';
 import {DataSetPickerComponent} from './data-set-picker/data-set-picker.component';
+import {DataSetDialogComponent} from './data-set-dialog/data-set-dialog.component';
 
 @NgModule({
   imports: [
@@ -46,8 +47,10 @@ import {DataSetPickerComponent} from './data-set-picker/data-set-picker.componen
     DataSetComponent,
     DataSetEditorComponent,
     DataSetPickerComponent,
+    DataSetDialogComponent,
   ],
   entryComponents : [
+    DataSetDialogComponent,
   ],
   providers: [
     DataSetService,

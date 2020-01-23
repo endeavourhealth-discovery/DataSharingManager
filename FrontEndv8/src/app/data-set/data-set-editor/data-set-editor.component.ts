@@ -7,6 +7,8 @@ import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
 import {MatDialog} from "@angular/material/dialog";
+import {CohortDialogComponent} from "../../cohort/cohort-dialog/cohort-dialog.component";
+import {DataSetDialogComponent} from "../data-set-dialog/data-set-dialog.component";
 
 @Component({
   selector: 'app-data-set-editor',
@@ -115,7 +117,7 @@ export class DataSetEditorComponent implements OnInit {
               });
             }
             this.dpaTable.updateRows();
-            this.log.success('Remove successful.');
+            this.updateDPAMapping();
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -133,8 +135,26 @@ export class DataSetEditorComponent implements OnInit {
           this.processingAgreements.push(dpa);
           this.dpaTable.updateRows();
         }
+        this.updateDPAMapping();
       }
     })
+  }
+
+  updateDPAMapping() {
+    // Populate Data Processing Agreements before save
+    this.dataset.dpas = {};
+    for (const idx in this.processingAgreements) {
+      let dpa: Dpa = this.processingAgreements[idx];
+      this.dataset.dpas[dpa.uuid] = dpa.name;
+    }
+
+    this.dataSetService.updateDPAMapping(this.dataset)
+      .subscribe(saved => {
+          this.dataset.uuid = saved;
+          this.log.success('Data Set saved successfully');
+        },
+        error => this.log.error('The Data Set could not be saved. Please try again.')
+      );
   }
 
   save(close: boolean) {
@@ -156,5 +176,18 @@ export class DataSetEditorComponent implements OnInit {
 
   close() {
     window.history.back();
+  }
+
+  editDataset() {
+    const dialogRef = this.dialog.open(DataSetDialogComponent, {
+      width: '800px',
+      data: {mode: 'edit', uuid: this.dataset.uuid },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.dataset = result;
+        this.save(false);
+      }
+    });
   }
 }

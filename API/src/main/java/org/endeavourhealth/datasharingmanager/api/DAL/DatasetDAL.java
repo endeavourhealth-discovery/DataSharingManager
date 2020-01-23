@@ -53,7 +53,7 @@ public class DatasetDAL {
 
     }
 
-    public void updateDataSet(JsonDataSet dataset, String userProjectId) throws Exception {
+    public void updateDataSet(JsonDataSet dataset, String userProjectId, boolean withMapping) throws Exception {
         DatasetEntity oldDataSetEntity = _entityManager.find(DatasetEntity.class, dataset.getUuid());
         oldDataSetEntity.setMappingsFromDAL();
 
@@ -63,7 +63,9 @@ public class DatasetDAL {
             DatasetEntity newDataSet = new DatasetEntity(dataset);
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data set edited", oldDataSetEntity, newDataSet);
 
-            _masterMappingDAL.updateDataSetMappings(dataset, oldDataSetEntity, auditJson);
+            if (withMapping) {
+                _masterMappingDAL.updateDataSetMappings(dataset, oldDataSetEntity, auditJson);
+            }
 
             oldDataSetEntity.updateFromJson(dataset);
 
@@ -89,7 +91,7 @@ public class DatasetDAL {
 
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data set created", null, dataSetEntity);
 
-            _masterMappingDAL.updateDataSetMappings(dataset, null, auditJson);
+            //_masterMappingDAL.updateDataSetMappings(dataset, null, auditJson);
 
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.DATASET, auditJson);
 
