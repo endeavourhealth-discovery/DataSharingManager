@@ -37,11 +37,21 @@ public class DataProcessingAgreementLogic {
     public Response postDPA(JsonDPA dpa, String userProjectID) throws Exception {
 
         if (dpa.getUuid() != null) {
-            new DataProcessingAgreementDAL().updateDPA(dpa, userProjectID);
+            new DataProcessingAgreementDAL().updateDPA(dpa, userProjectID, false);
         } else {
             dpa.setUuid(UUID.randomUUID().toString());
             new DataProcessingAgreementDAL().saveDPA(dpa, userProjectID);
         }
+
+        return Response
+                .ok()
+                .entity(dpa.getUuid())
+                .build();
+    }
+
+    public Response updateMappings(JsonDPA dpa, String userProjectID) throws Exception {
+
+        new DataProcessingAgreementDAL().updateDPA(dpa, userProjectID, true);
 
         return Response
                 .ok()

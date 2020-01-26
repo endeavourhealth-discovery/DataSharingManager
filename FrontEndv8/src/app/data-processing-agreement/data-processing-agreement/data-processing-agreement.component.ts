@@ -5,6 +5,7 @@ import {Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {MatDialog} from "@angular/material/dialog";
+import {DataProcessingAgreementDialogComponent} from "../data-processing-agreement-dialog/data-processing-agreement-dialog.component";
 
 @Component({
   selector: 'app-data-processing-agreement',
@@ -74,7 +75,16 @@ export class DataProcessingAgreementComponent implements OnInit {
   }
 
   add() {
-    this.router.navigate(['/dpa', 1, 'add']);
+    const dialogRef = this.dialog.open(DataProcessingAgreementDialogComponent, {
+      width: '800px',
+      data: {mode: 'add', uuid: 'true'},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.router.navigate(['/dpa', result.uuid, 'edit']);
+        this.log.success('Data processing agreement saved.');
+      }
+    });
   }
 
   edit(item: Dpa) {

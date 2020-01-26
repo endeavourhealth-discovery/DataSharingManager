@@ -15,6 +15,7 @@ import {PurposeComponent} from "../../purpose/purpose/purpose.component";
 import {DocumentationComponent} from "../../documentation/documentation/documentation.component";
 import {RegionPickerComponent} from "../../region/region-picker/region-picker.component";
 import {OrganisationPickerComponent} from "../../organisation/organisation-picker/organisation-picker.component";
+import {DataProcessingAgreementDialogComponent} from "../data-processing-agreement-dialog/data-processing-agreement-dialog.component";
 
 @Component({
   selector: 'app-data-processing-agreement-editor',
@@ -171,7 +172,10 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
               });
             }
             this.purposesTable.updateRows();
-            this.log.success('Delete successful.');
+            this.clearMappings();
+            this.dpa.purposes = [];
+            this.dpa.purposes = this.purposes;
+            this.updateMappings('Purposes');
           } else {
             this.log.success('Delete cancelled.')
           }
@@ -188,6 +192,10 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
       if (result) {
         this.purposes = result;
         this.purposesTable.updateRows();
+        this.clearMappings();
+        this.dpa.purposes = [];
+        this.dpa.purposes = this.purposes;
+        this.updateMappings('Purposes');
       }
     });
   }
@@ -218,7 +226,10 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
               });
             }
             this.benefitsTable.updateRows();
-            this.log.success('Delete successful.');
+            this.clearMappings();
+            this.dpa.benefits = [];
+            this.dpa.benefits = this.benefits;
+            this.updateMappings('Benefits');
           } else {
             this.log.success('Delete cancelled.')
           }
@@ -235,6 +246,10 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
       if (result) {
         this.benefits = result;
         this.benefitsTable.updateRows();
+        this.clearMappings();
+        this.dpa.benefits = [];
+        this.dpa.benefits = this.benefits;
+        this.updateMappings('Benefits');
       }
     });
   }
@@ -264,7 +279,13 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
               });
             }
             this.regionsTable.updateRows();
-            this.log.success('Remove successful.');
+            this.clearMappings();
+            this.dpa.regions = {};
+            for (const idx in this.regions) {
+              const region: Region = this.regions[idx];
+              this.dpa.regions[region.uuid] = region.name;
+            }
+            this.updateMappings('Regions');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -284,6 +305,13 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
           this.regionsTable.updateRows();
         }
       }
+      this.clearMappings();
+      this.dpa.regions = {};
+      for (const idx in this.regions) {
+        const region: Region = this.regions[idx];
+        this.dpa.regions[region.uuid] = region.name;
+      }
+      this.updateMappings('Regions');
     })
   }
 
@@ -312,7 +340,13 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
               });
             }
             this.publishersTable.updateRows();
-            this.log.success('Remove successful.');
+            this.clearMappings();
+            this.dpa.publishers = {};
+            for (const idx in this.publishers) {
+              const pub: Organisation = this.publishers[idx];
+              this.dpa.publishers[pub.uuid] = pub.name;
+            }
+            this.updateMappings('Publishers');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -335,6 +369,13 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
             this.publishersTable.updateRows();
           }
         }
+        this.clearMappings();
+        this.dpa.publishers = {};
+        for (const idx in this.publishers) {
+          const pub: Organisation = this.publishers[idx];
+          this.dpa.publishers[pub.uuid] = pub.name;
+        }
+        this.updateMappings('Publishers');
       })
     }  }
 
@@ -359,7 +400,10 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
               });
             }
             this.documentationsTable.updateRows();
-            this.log.success('Delete successful.');
+            this.clearMappings();
+            this.dpa.documentations = [];
+            this.dpa.documentations = this.documentations;
+            this.updateMappings('Documentations');
           } else {
             this.log.success('Delete cancelled.')
           }
@@ -375,48 +419,49 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
       if (result) {
         this.documentations.push(result);
         this.documentationsTable.updateRows();
+        this.clearMappings();
+        this.dpa.documentations = [];
+        this.dpa.documentations = this.documentations;
+        this.updateMappings('Documentations');
       }
     });
   }
 
-  save(close: boolean) {
+  editDPA() {
+    const dialogRef = this.dialog.open(DataProcessingAgreementDialogComponent, {
+      width: '800px',
+      data: {mode: 'edit', uuid: this.dpa.uuid },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.dpa = result;
+        this.dpaService.saveDpa(this.dpa)
+          .subscribe(saved => {
+              this.dpa.uuid = saved;
+              this.log.success('Data processing agreement saved.');
+            },
+            error => this.log.error('The data processing agreement could not be saved. Please try again.')
+          );
+      }
+    });
+  }
 
-    // Populate purposes before save
-    this.dpa.purposes = [];
-    this.dpa.purposes = this.purposes;
-
-    // Populate benefits before save
-    this.dpa.benefits = [];
-    this.dpa.benefits = this.benefits;
-
-    // Populate regions before save
-    this.dpa.regions = {};
-    for (const idx in this.regions) {
-      const region: Region = this.regions[idx];
-      this.dpa.regions[region.uuid] = region.name;
-    }
-
-    // Populate publishers before save
-    this.dpa.publishers = {};
-    for (const idx in this.publishers) {
-      const pub: Organisation = this.publishers[idx];
-      this.dpa.publishers[pub.uuid] = pub.name;
-    }
-
-    // Populate documents before save
-    this.dpa.documentations = [];
-    this.dpa.documentations = this.documentations;
-
-    this.dpaService.saveDpa(this.dpa)
+  updateMappings(type: string) {
+    this.dpaService.updateMappings(this.dpa)
       .subscribe(saved => {
           this.dpa.uuid = saved;
-          this.log.success('Data processing agreement saved');
-          if (close) {
-            window.history.back();
-          }
+          this.log.success(type + ' updated successfully.');
         },
-        error => this.log.error('The data processing agreement could not be saved. Please try again.')
+        error => this.log.error('The Cohort could not be saved. Please try again.')
       );
+  }
+
+  clearMappings() {
+    this.dpa.purposes = null;
+    this.dpa.benefits = null;
+    this.dpa.regions = null;
+    this.dpa.publishers = null;
+    this.dpa.documentations = null;
   }
 
   close() {

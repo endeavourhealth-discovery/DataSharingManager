@@ -7,12 +7,15 @@ import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonCohort;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDPA;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.AddressDAL;
+import org.endeavourhealth.datasharingmanager.api.DAL.CohortDAL;
 import org.endeavourhealth.datasharingmanager.api.DAL.DataProcessingAgreementDAL;
 import org.endeavourhealth.datasharingmanager.api.Logic.DataProcessingAgreementLogic;
 import org.slf4j.Logger;
@@ -23,8 +26,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Path("/dpa")
@@ -75,7 +77,6 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "DPA", dpa);
 
         clearLogbackMarkers();
-
         if (dpa.getPublishers() != null) {
             CompletableFuture.runAsync(() -> {
                 try {
@@ -85,8 +86,33 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 }
             });
         }
-
         return new DataProcessingAgreementLogic().postDPA(dpa, userProjectId);
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.DpaEndpoint.Post")
+    @Path("/updateMappings")
+    @ApiOperation(value = "Updates the mappings.  Accepts a JSON representation of a DPA.")
+    @RequiresAdmin
+    public Response updateMappings(@Context SecurityContext sc,
+                                   @HeaderParam("userProjectId") String userProjectId,
+                                   @ApiParam(value = "Json representation of cohort to save or update") JsonDPA dpa
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
+                "DPA",
+                "DPA", dpa);
+
+        new DataProcessingAgreementLogic().updateMappings(dpa, userProjectId);
+
+        clearLogbackMarkers();
+
+        return Response
+                .ok()
+                .entity(dpa.getUuid())
+                .build();
     }
 
     @DELETE
@@ -312,5 +338,4 @@ public final class DpaEndpoint extends AbstractEndpoint {
 
         return new AddressDAL().getOrganisationMarkers(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType());
     }
-
 }

@@ -26,8 +26,8 @@ export class CohortService {
     return this.http.post(url, cohort, { responseType: 'text' });
   }
 
-  updateDPAMapping(cohort: Cohort): Observable<any> {
-    const url = 'api/cohort/updateDPAMapping';
+  updateMappings(cohort: Cohort): Observable<any> {
+    const url = 'api/cohort/updateMappings';
     return this.http.post(url, cohort, { responseType: 'text' });
   }
 

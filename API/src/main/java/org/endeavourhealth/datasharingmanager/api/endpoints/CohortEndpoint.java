@@ -90,9 +90,6 @@ public final class CohortEndpoint extends AbstractEndpoint {
                 COHORT,
                 "Cohort", cohort);
 
-        if (cohort.getDpas() == null) {
-            cohort.setDpas(new HashMap());
-        }
         if (cohort.getUuid() != null) {
             new CohortDAL().updateCohort(cohort, userProjectId, false);
         } else {
@@ -112,10 +109,10 @@ public final class CohortEndpoint extends AbstractEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.CohortEndpoint.Post")
-    @Path("/updateDPAMapping")
+    @Path("/updateMappings")
     @ApiOperation(value = "Updates the DPA mapping.  Accepts a JSON representation of a cohort.")
     @RequiresAdmin
-    public Response updateDPAMapping(@Context SecurityContext sc,
+    public Response updateMappings(@Context SecurityContext sc,
                                @HeaderParam("userProjectId") String userProjectId,
                                @ApiParam(value = "Json representation of cohort to save or update") JsonCohort cohort
     ) throws Exception {
@@ -124,9 +121,6 @@ public final class CohortEndpoint extends AbstractEndpoint {
                 COHORT,
                 "Cohort", cohort);
 
-        if (cohort.getDpas() == null) {
-            cohort.setDpas(new HashMap());
-        }
         new CohortDAL().updateCohort(cohort, userProjectId, true);
 
         clearLogbackMarkers();

@@ -88,9 +88,6 @@ public final class DataSetEndpoint extends AbstractEndpoint {
                 "Data set",
                 "Data set", dataSet);
 
-        if (dataSet.getDpas() == null) {
-            dataSet.setDpas(new HashMap());
-        }
         if (dataSet.getUuid() != null) {
             new DatasetDAL().updateDataSet(dataSet, userProjectId, false);
         } else {
@@ -110,10 +107,10 @@ public final class DataSetEndpoint extends AbstractEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.DataSetEndpoint.Post")
-    @Path("/updateDPAMapping")
+    @Path("/updateMappings")
     @ApiOperation(value = "Updates the DPA mapping.  Accepts a JSON representation of a data set.")
     @RequiresAdmin
-    public Response updateDPAMapping(@Context SecurityContext sc,
+    public Response updateMappings(@Context SecurityContext sc,
                                      @HeaderParam("userProjectId") String userProjectId,
                                      @ApiParam(value = "Json representation of data set to save or update") JsonDataSet dataSet
     ) throws Exception {
@@ -122,9 +119,6 @@ public final class DataSetEndpoint extends AbstractEndpoint {
                 "Data set",
                 "Data set", dataSet);
 
-        if (dataSet.getDpas() == null) {
-            dataSet.setDpas(new HashMap());
-        }
         new DatasetDAL().updateDataSet(dataSet, userProjectId, true);
 
         clearLogbackMarkers();

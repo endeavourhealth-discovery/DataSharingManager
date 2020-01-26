@@ -148,7 +148,7 @@ export class DataSetEditorComponent implements OnInit {
       this.dataset.dpas[dpa.uuid] = dpa.name;
     }
 
-    this.dataSetService.updateDPAMapping(this.dataset)
+    this.dataSetService.updateMappings(this.dataset)
       .subscribe(saved => {
           this.dataset.uuid = saved;
           this.log.success('Data Set saved successfully');

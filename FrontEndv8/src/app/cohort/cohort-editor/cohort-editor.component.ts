@@ -107,7 +107,7 @@ export class CohortEditorComponent implements OnInit {
       this.cohort.dpas[dpa.uuid] = dpa.name;
     }
 
-    this.cohortService.updateDPAMapping(this.cohort)
+    this.cohortService.updateMappings(this.cohort)
       .subscribe(saved => {
           this.cohort.uuid = saved;
           this.log.success('Cohort saved successfully');

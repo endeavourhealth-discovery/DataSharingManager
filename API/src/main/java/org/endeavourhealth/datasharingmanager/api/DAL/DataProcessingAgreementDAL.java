@@ -52,7 +52,7 @@ public class DataProcessingAgreementDAL {
 
     }
 
-    public void updateDPA(JsonDPA dpa, String userProjectId) throws Exception {
+    public void updateDPA(JsonDPA dpa, String userProjectId, boolean withMapping) throws Exception {
         DataProcessingAgreementEntity oldDPAEntity = _entityManager.find(DataProcessingAgreementEntity.class, dpa.getUuid());
         oldDPAEntity.setMappingsFromDAL();
 
@@ -62,7 +62,9 @@ public class DataProcessingAgreementDAL {
             DataProcessingAgreementEntity newDPA = new DataProcessingAgreementEntity(dpa);
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data Processing Agreement edited", oldDPAEntity, newDPA);
 
-            _masterMappingDAL.updateDataProcessingAgreementMappings(dpa, oldDPAEntity, auditJson);
+            if (withMapping) {
+                _masterMappingDAL.updateDataProcessingAgreementMappings(dpa, oldDPAEntity, auditJson);
+            }
 
             oldDPAEntity.updateFromJson(dpa);
 
@@ -87,7 +89,7 @@ public class DataProcessingAgreementDAL {
 
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data Processing Agreement created", null, dpaEntity);
 
-            _masterMappingDAL.updateDataProcessingAgreementMappings(dpa, null, auditJson);
+            //_masterMappingDAL.updateDataProcessingAgreementMappings(dpa, null, auditJson);
 
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.DPA, auditJson);
 

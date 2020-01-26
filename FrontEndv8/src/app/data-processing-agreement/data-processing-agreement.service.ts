@@ -36,6 +36,11 @@ export class DataProcessingAgreementService {
     return this.http.post(url, dpa, {responseType: 'text'});
   }
 
+  updateMappings(dpa: Dpa): Observable<any> {
+    const url = 'api/dpa/updateMappings';
+    return this.http.post(url, dpa, {responseType: 'text'});
+  }
+
   deleteDpa(uuid: string[]): Observable<any> {
     const url = 'api/dpa';
     let params = new HttpParams();
