@@ -6,6 +6,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.databa
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.OrganisationEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.RegionEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDSA;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonRegion;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.*;
 import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
@@ -48,11 +49,21 @@ public class RegionLogic {
     public Response postRegion(JsonRegion region, String userProjectID) throws Exception {
 
         if (region.getUuid() != null) {
-            new RegionDAL().updateRegion(region, userProjectID);
+            new RegionDAL().updateRegion(region, userProjectID, false);
         } else {
             region.setUuid(UUID.randomUUID().toString());
             new RegionDAL().saveRegion(region, userProjectID);
         }
+
+        return Response
+                .ok()
+                .entity(region.getUuid())
+                .build();
+    }
+
+    public Response updateMappings(JsonRegion region, String userProjectID) throws Exception {
+
+        new RegionDAL().updateRegion(region, userProjectID, true);
 
         return Response
                 .ok()

@@ -3,7 +3,6 @@ import {Dsa} from "../models/Dsa";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {LoggerService, UserManagerService} from "dds-angular8";
-import {ActivatedRoute, Router} from "@angular/router";
 import {DatePipe} from "@angular/common";
 import {DialogData} from "../../data-processing-agreement/data-processing-agreement-dialog/data-processing-agreement-dialog.component";
 import {DataSharingAgreementService} from "../data-sharing-agreement.service";
@@ -40,8 +39,6 @@ export class DataSharingAgreementDialogComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
               private log: LoggerService,
               private dsaService: DataSharingAgreementService,
-              private router: Router,
-              private route: ActivatedRoute,
               private datePipe: DatePipe,
               private userManagerNotificationService: UserManagerService,
               public dialog: MatDialog) {

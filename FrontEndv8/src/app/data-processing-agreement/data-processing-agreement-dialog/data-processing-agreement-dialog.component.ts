@@ -3,7 +3,6 @@ import {Dpa} from "../models/Dpa";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {LoggerService, UserManagerService} from "dds-angular8";
-import {ActivatedRoute, Router} from "@angular/router";
 import {DataProcessingAgreementService} from "../data-processing-agreement.service";
 import {DatePipe} from "@angular/common";
 
@@ -34,8 +33,6 @@ export class DataProcessingAgreementDialogComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
               private log: LoggerService,
               private dpaService: DataProcessingAgreementService,
-              private router: Router,
-              private route: ActivatedRoute,
               private datePipe: DatePipe,
               private userManagerNotificationService: UserManagerService,
               public dialog: MatDialog) {

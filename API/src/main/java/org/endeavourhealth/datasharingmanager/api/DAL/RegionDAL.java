@@ -37,7 +37,7 @@ public class RegionDAL {
         RegionCache.clearRegionCache(regionID);
     }
 
-    public void updateRegion(JsonRegion region, String userProjectId) throws Exception {
+    public void updateRegion(JsonRegion region, String userProjectId, boolean withMappings) throws Exception {
         RegionEntity oldRegionEntity = _entityManager.find(RegionEntity.class, region.getUuid());
         oldRegionEntity.setMappingsFromDAL();
 
@@ -47,7 +47,9 @@ public class RegionDAL {
             RegionEntity newRegion = new RegionEntity(region);
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Region edited", oldRegionEntity, newRegion);
 
-            _masterMappingDAL.updateRegionMappings(region, oldRegionEntity, auditJson);
+            if (withMappings) {
+                _masterMappingDAL.updateRegionMappings(region, oldRegionEntity, auditJson);
+            }
 
             oldRegionEntity.updateFromJson(region);
 

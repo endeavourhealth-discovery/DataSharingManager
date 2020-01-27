@@ -3,7 +3,6 @@ import {DataSet} from "../models/Dataset";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {LoggerService, UserManagerService} from "dds-angular8";
-import {ActivatedRoute, Router} from "@angular/router";
 import {DataSetService} from "../data-set.service";
 
 export interface DialogData {
@@ -27,8 +26,6 @@ export class DataSetDialogComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
               private log: LoggerService,
               private datasetService: DataSetService,
-              private router: Router,
-              private route: ActivatedRoute,
               private userManagerNotificationService: UserManagerService,
               public dialog: MatDialog) {
 

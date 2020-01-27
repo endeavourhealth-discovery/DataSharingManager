@@ -22,6 +22,7 @@ import {RegionPickerComponent} from "./region-picker/region-picker.component";
 import {DataSharingAgreementPickerComponent} from "../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component";
 import {DataProcessingAgreementPickerComponent} from "../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
 import {OrganisationPickerComponent} from "../organisation/organisation-picker/organisation-picker.component";
+import {RegionDialogComponent} from './region-dialog/region-dialog.component';
 
 @NgModule({
   imports: [
@@ -57,13 +58,15 @@ import {OrganisationPickerComponent} from "../organisation/organisation-picker/o
   declarations: [
     RegionComponent,
     RegionEditorComponent,
-    RegionPickerComponent
+    RegionPickerComponent,
+    RegionDialogComponent
   ],
   entryComponents : [
     RegionPickerComponent,
     DataSharingAgreementPickerComponent,
     DataProcessingAgreementPickerComponent,
     OrganisationPickerComponent,
+    RegionDialogComponent,
   ],
   providers: [
     RegionService]

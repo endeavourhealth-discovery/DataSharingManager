@@ -9,6 +9,7 @@ import org.endeavourhealth.common.config.ConfigManager;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDSA;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonRegion;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
@@ -16,6 +17,7 @@ import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.AddressDAL;
 import org.endeavourhealth.datasharingmanager.api.DAL.RegionDAL;
+import org.endeavourhealth.datasharingmanager.api.Logic.DataSharingAgreementLogic;
 import org.endeavourhealth.datasharingmanager.api.Logic.RegionLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +78,32 @@ public final class RegionEndpoint extends AbstractEndpoint {
 
         clearLogbackMarkers();
         return new RegionLogic().postRegion(region, userProjectId);
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.RegionEndpoint.Post")
+    @Path("/updateMappings")
+    @ApiOperation(value = "Updates the mappings.  Accepts a JSON representation of a region.")
+    @RequiresAdmin
+    public Response updateMappings(@Context SecurityContext sc,
+                                   @HeaderParam("userProjectId") String userProjectId,
+                                   @ApiParam(value = "Json representation of dsa to update") JsonRegion region
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
+                "Region",
+                "Region", region);
+
+        new RegionLogic().updateMappings(region, userProjectId);
+
+        clearLogbackMarkers();
+
+        return Response
+                .ok()
+                .entity(region.getUuid())
+                .build();
     }
 
     @DELETE

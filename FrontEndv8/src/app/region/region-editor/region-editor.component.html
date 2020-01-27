@@ -7,9 +7,10 @@
     <mat-card-subtitle *ngIf="region.name">{{region.name}}</mat-card-subtitle>
     <mat-card-subtitle *ngIf="!region.name">New Region</mat-card-subtitle>
     <div fxFlex></div>
+    <div fxLayoutAlign="center" class="mat-action" matRipple (click)="editRegion()">
+      <i class="fas fa-fw fa-pencil"></i>
+    </div>
     <mat-menu #visualiseMenu="matMenu">
-      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(false)">Save</button>
-      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(true)">Save & close</button>
       <button mat-menu-item (click)="close()">Cancel</button>
     </mat-menu>
     <div fxLayoutAlign="center" class="mat-action" matRipple>

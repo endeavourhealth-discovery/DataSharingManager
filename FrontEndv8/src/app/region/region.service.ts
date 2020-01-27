@@ -93,4 +93,8 @@ export class RegionService {
     return this.http.get<Marker[]>('api/region/markers', { params });
   }
 
+  updateMappings(region: Region): Observable<any> {
+    const url = 'api/region/updateMappings';
+    return this.http.post(url, region, {responseType: 'text'});
+  }
 }

@@ -1,9 +1,9 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {Cohort} from "../models/Cohort";
-import {LoggerService, UserManagerService} from "dds-angular8";
-import {CohortService} from "../cohort.service";
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
+import {Region} from "../models/Region";
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {LoggerService, UserManagerService} from "dds-angular8";
+import {RegionService} from "../region.service";
 
 export interface DialogData {
   mode: string;
@@ -11,21 +11,23 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'app-cohort-dialog',
-  templateUrl: './cohort-dialog.component.html',
-  styleUrls: ['./cohort-dialog.component.scss']
+  selector: 'app-region-dialog',
+  templateUrl: './region-dialog.component.html',
+  styleUrls: ['./region-dialog.component.scss']
 })
-export class CohortDialogComponent implements OnInit {
+export class RegionDialogComponent implements OnInit {
 
-  cohort: Cohort = <Cohort>{};
-  public activeProject: UserProject;
+  region: Region = <Region>{};
+  superUser = false;
+  userId: string;
   mode: string;
   uuid: string;
+  public activeProject: UserProject;
 
-  constructor(public dialogRef: MatDialogRef<CohortDialogComponent>,
+  constructor(public dialogRef: MatDialogRef<RegionDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
               private log: LoggerService,
-              private cohortService: CohortService,
+              private regionService: RegionService,
               private userManagerNotificationService: UserManagerService,
               public dialog: MatDialog) {
 
@@ -56,27 +58,27 @@ export class CohortDialogComponent implements OnInit {
   }
 
   create() {
-    this.cohort = {
+    this.region = {
       name : ''
-    } as Cohort;
+    } as Region;
   }
 
   load(uuid: string) {
-    this.cohortService.getCohort(uuid)
+    this.regionService.getRegion(uuid)
       .subscribe(result => {
-          this.cohort = result;
+          this.region = result;
         },
-        error => this.log.error('The Cohort could not be loaded. Please try again.')
+        error => this.log.error('The region could not be loaded. Please try again.')
       );
   }
 
   ok() {
-    this.cohortService.saveCohort(this.cohort)
+    this.regionService.saveRegion(this.region)
       .subscribe(saved => {
-          this.cohort.uuid = saved;
-          this.dialogRef.close(this.cohort);
+          this.region.uuid = saved;
+          this.dialogRef.close(this.region);
         },
-        error => this.log.error('The Cohort could not be saved. Please try again.')
+        error => this.log.error('The region could not be saved. Please try again.')
       );
   }
 

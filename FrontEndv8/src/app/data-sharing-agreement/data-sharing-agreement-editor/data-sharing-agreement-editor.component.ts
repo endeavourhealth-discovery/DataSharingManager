@@ -177,62 +177,14 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   save(close: boolean) {
-
-    /*// Populate data flows before save
-    vm.dsa.dataFlows = {};
-    for (const idx in this.dataFlows) {
-      const dataflow: DataFlow = this.dataFlows[idx];
-      this.dsa.dataFlows[dataflow.uuid] = dataflow.name;
-    }*/
-
-    // Populate purposes before save
-    this.dsa.purposes = [];
-    this.dsa.purposes = this.purposes;
-
-    // Populate benefits before save
-    this.dsa.benefits = [];
-    this.dsa.benefits = this.benefits;
-
-    // Populate regions before save
-    this.dsa.regions = {};
-    for (const idx in this.regions) {
-      const region: Region = this.regions[idx];
-      this.dsa.regions[region.uuid] = region.name;
-    }
-
-    // Populate projects before save
-    this.dsa.projects = {};
-    for (const idx in this.projects) {
-      const proj: Project = this.projects[idx];
-      this.dsa.projects[proj.uuid] = proj.name;
-    }
-
-    // Populate publishers before save
-    this.dsa.publishers = {};
-    for (const idx in this.publishers) {
-      const pub: Organisation = this.publishers[idx];
-      this.dsa.publishers[pub.uuid] = pub.name;
-    }
-
-    // Populate subscribers before save
-    this.dsa.subscribers = {};
-    for (const idx in this.subscribers) {
-      const sub: Organisation = this.subscribers[idx];
-      this.dsa.subscribers[sub.uuid] = sub.name;
-    }
-
-    // Populate documents before save
-    this.dsa.documentations = [];
-    this.dsa.documentations = this.documentations;
-
     this.dsaService.saveDsa(this.dsa)
       .subscribe(saved => {
           this.dsa.uuid = saved;
-          this.log.success('Data sharing agreement saved'/*, vm.dsa, 'Save data sharing agreement'*/);
+          this.log.success('Data sharing agreement saved');
 
           if (close) {this.close();}
         },
-        error => this.log.error('The data sharing agreement could not be saved. Please try again.'/*, error, 'Save data sharing agreement'*/)
+        error => this.log.error('The data sharing agreement could not be saved. Please try again.')
       );
   }
 

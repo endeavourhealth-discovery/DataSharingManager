@@ -13,6 +13,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
 import {RegionPickerComponent} from "../region-picker/region-picker.component";
 import {OrganisationPickerComponent} from "../../organisation/organisation-picker/organisation-picker.component";
+import {RegionDialogComponent} from "../region-dialog/region-dialog.component";
 
 @Component({
   selector: 'app-region-editor',
@@ -120,43 +121,6 @@ export class RegionEditorComponent implements OnInit {
   }
 
   save(close: boolean) {
-
-
-    // Populate organisations before save
-    this.region.organisations = {};
-    for (const idx in this.organisations) {
-      const organisation: Organisation = this.organisations[idx];
-      this.region.organisations[organisation.uuid] = organisation.name;
-    }
-
-    // populate Parent Regions
-    this.region.parentRegions = {};
-    for (const idx in this.parentRegions) {
-      const region: Region = this.parentRegions[idx];
-      this.region.parentRegions[region.uuid] = region.name;
-    }
-
-    // populate Parent Regions
-    this.region.childRegions = {};
-    for (const idx in this.childRegions) {
-      const region: Region = this.childRegions[idx];
-      this.region.childRegions[region.uuid] = region.name;
-    }
-
-    // populate sharing agreements
-    this.region.sharingAgreements = {};
-    for (const idx in this.sharingAgreements) {
-      const dsa: Dsa = this.sharingAgreements[idx];
-      this.region.sharingAgreements[dsa.uuid] = dsa.name;
-    }
-
-    // populate processing agreements
-    this.region.processingAgreements = {};
-    for (const idx in this.processingAgreements) {
-      const dpa: Dpa = this.processingAgreements[idx];
-      this.region.processingAgreements[dpa.uuid] = dpa.name;
-    }
-
     this.regionService.saveRegion(this.region)
       .subscribe(saved => {
           this.region.uuid = saved;
@@ -165,6 +129,25 @@ export class RegionEditorComponent implements OnInit {
         },
         error => this.log.error('The region could not be saved. Please try again.')
       );
+  }
+
+  editRegion() {
+    const dialogRef = this.dialog.open(RegionDialogComponent, {
+      width: '800px',
+      data: {mode: 'edit', uuid: this.region.uuid},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.region = result;
+        this.regionService.saveRegion(this.region)
+          .subscribe(saved => {
+              this.region.uuid = saved;
+              this.log.success('Region saved.');
+            },
+            error => this.log.error('The region could not be saved. Please try again.')
+          );
+      }
+    });
   }
 
   close() {
@@ -241,9 +224,16 @@ export class RegionEditorComponent implements OnInit {
       for (let dsa of result) {
         if (!this.sharingAgreements.some(x => x.uuid === dsa.uuid)) {
           this.sharingAgreements.push(dsa);
-          this.dsaTable.updateRows();
         }
       }
+      this.dsaTable.updateRows();
+      this.clearMappings();
+      this.region.sharingAgreements = {};
+      for (const idx in this.sharingAgreements) {
+        const dsa: Dsa = this.sharingAgreements[idx];
+        this.region.sharingAgreements[dsa.uuid] = dsa.name;
+      }
+      this.updateMappings('DSA');
     })
   }
 
@@ -255,9 +245,16 @@ export class RegionEditorComponent implements OnInit {
       for (let dpa of result) {
         if (!this.processingAgreements.some(x => x.uuid === dpa.uuid)) {
           this.processingAgreements.push(dpa);
-          this.dpaTable.updateRows();
         }
       }
+      this.dpaTable.updateRows();
+      this.clearMappings();
+      this.region.processingAgreements = {};
+      for (const idx in this.processingAgreements) {
+        const dpa: Dpa = this.processingAgreements[idx];
+        this.region.processingAgreements[dpa.uuid] = dpa.name;
+      }
+      this.updateMappings('DPA');
     })
   }
 
@@ -271,14 +268,30 @@ export class RegionEditorComponent implements OnInit {
           if (isParent) {
             if (!this.parentRegions.some(x => x.uuid === region.uuid)) {
               this.parentRegions.push(region);
-              this.parentRegionTable.updateRows();
             }
           } else {
             if (!this.childRegions.some(x => x.uuid === region.uuid)) {
               this.childRegions.push(region);
-              this.childRegionTable.updateRows();
             }
           }
+        }
+        this.clearMappings();
+        if (isParent) {
+          this.parentRegionTable.updateRows();
+          this.region.parentRegions = {};
+          for (const idx in this.parentRegions) {
+            const reg: Region = this.parentRegions[idx];
+            this.region.parentRegions[reg.uuid] = reg.name;
+          }
+          this.updateMappings('Parent regions');
+        } else {
+          this.childRegionTable.updateRows();
+          this.region.childRegions = {};
+          for (const idx in this.childRegions) {
+            const reg: Region = this.childRegions[idx];
+            this.region.childRegions[reg.uuid] = reg.name;
+          }
+          this.updateMappings('Child regions');
         }
     })
   }
@@ -292,9 +305,16 @@ export class RegionEditorComponent implements OnInit {
       for (let org of result) {
         if (!this.organisations.some(x => x.uuid === org.uuid)) {
           this.organisations.push(org);
-          this.orgTable.updateRows();
         }
       }
+      this.orgTable.updateRows();
+      this.clearMappings();
+      this.region.organisations = {};
+      for (const idx in this.organisations) {
+        const org: Organisation = this.organisations[idx];
+        this.region.organisations[org.uuid] = org.name;
+      }
+      this.updateMappings('Organisations');
     })
   }
 
@@ -327,7 +347,13 @@ export class RegionEditorComponent implements OnInit {
               });
             }
             this.orgTable.updateRows();
-            this.log.success('Remove successful.');
+            this.clearMappings();
+            this.region.organisations = {};
+            for (const idx in this.organisations) {
+              const org: Organisation = this.organisations[idx];
+              this.region.organisations[org.uuid] = org.name;
+            }
+            this.updateMappings('Organisations');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -348,7 +374,13 @@ export class RegionEditorComponent implements OnInit {
               });
             }
             this.parentRegionTable.updateRows();
-            this.log.success('Remove successful.');
+            this.clearMappings();
+            this.region.parentRegions = {};
+            for (const idx in this.parentRegions) {
+              const reg: Region = this.parentRegions[idx];
+              this.region.parentRegions[reg.uuid] = reg.name;
+            }
+            this.updateMappings('Parent regions');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -369,7 +401,13 @@ export class RegionEditorComponent implements OnInit {
               });
             }
             this.childRegionTable.updateRows();
-            this.log.success('Remove successful.');
+            this.clearMappings();
+            this.region.childRegions = {};
+            for (const idx in this.childRegions) {
+              const reg: Region = this.childRegions[idx];
+              this.region.childRegions[reg.uuid] = reg.name;
+            }
+            this.updateMappings('Child regions');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -390,7 +428,13 @@ export class RegionEditorComponent implements OnInit {
               });
             }
             this.dsaTable.updateRows();
-            this.log.success('Remove successful.');
+            this.clearMappings();
+            this.region.sharingAgreements = {};
+            for (const idx in this.sharingAgreements) {
+              const dsa: Dsa = this.sharingAgreements[idx];
+              this.region.sharingAgreements[dsa.uuid] = dsa.name;
+            }
+            this.updateMappings('DSA');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -411,7 +455,13 @@ export class RegionEditorComponent implements OnInit {
               });
             }
             this.dpaTable.updateRows();
-            this.log.success('Remove successful.');
+            this.clearMappings();
+            this.region.processingAgreements = {};
+            for (const idx in this.processingAgreements) {
+              const dpa: Dpa = this.processingAgreements[idx];
+              this.region.processingAgreements[dpa.uuid] = dpa.name;
+            }
+            this.updateMappings('DPA');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -419,4 +469,21 @@ export class RegionEditorComponent implements OnInit {
       );
   }
 
+  updateMappings(type: string) {
+    this.regionService.updateMappings(this.region)
+      .subscribe(saved => {
+          this.region.uuid = saved;
+          this.log.success(type + ' updated successfully.');
+        },
+        error => this.log.error('The region could not be saved. Please try again.')
+      );
+  }
+
+  clearMappings() {
+    this.region.organisations = null;
+    this.region.parentRegions = null;
+    this.region.childRegions = null;
+    this.region.sharingAgreements = null;
+    this.region.processingAgreements = null;
+  }
 }

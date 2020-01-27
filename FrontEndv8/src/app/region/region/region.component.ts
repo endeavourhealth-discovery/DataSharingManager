@@ -6,6 +6,7 @@ import {Organisation} from "../../organisation/models/Organisation";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {MatDialog} from "@angular/material/dialog";
+import {RegionDialogComponent} from "../region-dialog/region-dialog.component";
 
 @Component({
   selector: 'app-region',
@@ -75,7 +76,16 @@ export class RegionComponent implements OnInit {
   }
 
   add() {
-    this.router.navigate(['/region', 1, 'add']);
+    const dialogRef = this.dialog.open(RegionDialogComponent, {
+      width: '800px',
+      data: {mode: 'add', uuid: 'true'},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.router.navigate(['/region', result.uuid, 'edit']);
+        this.log.success('Region saved.');
+      }
+    });
   }
 
   edit(item: Region) {
