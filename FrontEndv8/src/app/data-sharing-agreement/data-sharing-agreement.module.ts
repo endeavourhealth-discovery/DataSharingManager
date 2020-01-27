@@ -27,6 +27,7 @@ import {PurposeComponent} from "../purpose/purpose/purpose.component";
 import {RegionPickerComponent} from "../region/region-picker/region-picker.component";
 import {OrganisationPickerComponent} from "../organisation/organisation-picker/organisation-picker.component";
 import {DocumentationComponent} from "../documentation/documentation/documentation.component";
+import {DataSharingAgreementDialogComponent} from './data-sharing-agreement-dialog/data-sharing-agreement-dialog.component';
 
 @NgModule({
   imports: [
@@ -52,6 +53,7 @@ import {DocumentationComponent} from "../documentation/documentation/documentati
     DataSharingAgreementComponent,
     DataSharingAgreementEditorComponent,
     DataSharingAgreementPickerComponent,
+    DataSharingAgreementDialogComponent,
   ],
   entryComponents : [
     DataSharingAgreementPickerComponent,
@@ -60,6 +62,7 @@ import {DocumentationComponent} from "../documentation/documentation/documentati
     RegionPickerComponent,
     OrganisationPickerComponent,
     DocumentationComponent,
+    DataSharingAgreementDialogComponent,
   ],
   providers: [
     DataSharingAgreementService,

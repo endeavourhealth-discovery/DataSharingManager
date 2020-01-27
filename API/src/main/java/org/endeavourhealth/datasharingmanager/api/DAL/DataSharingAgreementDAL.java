@@ -55,7 +55,7 @@ public class DataSharingAgreementDAL {
 
     }
 
-    public void updateDSA(JsonDSA dsa, String userProjectId) throws Exception {
+    public void updateDSA(JsonDSA dsa, String userProjectId, boolean withMapping) throws Exception {
         DataSharingAgreementEntity oldDSAEntity = _entityManager.find(DataSharingAgreementEntity.class, dsa.getUuid());
         oldDSAEntity.setMappingsFromDAL();
 
@@ -65,8 +65,10 @@ public class DataSharingAgreementDAL {
             DataSharingAgreementEntity newDSA = new DataSharingAgreementEntity(dsa);
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data Sharing Agreement edited", oldDSAEntity, newDSA);
 
-            _masterMappingDAL.updateDataSharingAgreementMappings(dsa, oldDSAEntity, auditJson);
-            
+            if (withMapping) {
+                _masterMappingDAL.updateDataSharingAgreementMappings(dsa, oldDSAEntity, auditJson);
+            }
+
             oldDSAEntity.updateFromJson(dsa);
 
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.DSA, auditJson);
@@ -90,7 +92,7 @@ public class DataSharingAgreementDAL {
 
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data Sharing Agreement created", null, dsaEntity);
 
-            _masterMappingDAL.updateDataSharingAgreementMappings(dsa, null, auditJson);
+            //_masterMappingDAL.updateDataSharingAgreementMappings(dsa, null, auditJson);
 
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.DSA, auditJson);
 

@@ -20,6 +20,7 @@ import {OrganisationPickerComponent} from '../../organisation/organisation-picke
 import {Documentation} from "../../documentation/models/Documentation";
 import {DocumentationService} from "../../documentation/documentation.service";
 import {DocumentationComponent} from "../../documentation/documentation/documentation.component";
+import {DataSharingAgreementDialogComponent} from "src/app/data-sharing-agreement/data-sharing-agreement-dialog/data-sharing-agreement-dialog.component";
 
 @Component({
   selector: 'app-data-sharing-agreement-editor',
@@ -368,7 +369,10 @@ export class DataSharingAgreementEditorComponent implements OnInit {
               });
             }
             this.purposesTable.updateRows();
-            this.log.success('Delete successful.');
+            this.clearMappings();
+            this.dsa.purposes = [];
+            this.dsa.purposes = this.purposes;
+            this.updateMappings('Purposes');
           } else {
             this.log.success('Delete cancelled.')
           }
@@ -387,6 +391,10 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       if (result) {
         this.purposes = result;
         this.purposesTable.updateRows();
+        this.clearMappings();
+        this.dsa.purposes = [];
+        this.dsa.purposes = this.purposes;
+        this.updateMappings('Purposes');
       }
     });
   }
@@ -404,7 +412,10 @@ export class DataSharingAgreementEditorComponent implements OnInit {
               });
             }
             this.benefitsTable.updateRows();
-            this.log.success('Delete successful.');
+            this.clearMappings();
+            this.dsa.benefits = [];
+            this.dsa.benefits = this.benefits;
+            this.updateMappings('Benefits');
           } else {
             this.log.success('Delete cancelled.')
           }
@@ -422,6 +433,10 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       if (result) {
         this.benefits = result;
         this.benefitsTable.updateRows();
+        this.clearMappings();
+        this.dsa.benefits = [];
+        this.dsa.benefits = this.benefits;
+        this.updateMappings('Benefits');
       }
     });
   }
@@ -439,7 +454,13 @@ export class DataSharingAgreementEditorComponent implements OnInit {
               });
             }
             this.regionsTable.updateRows();
-            this.log.success('Remove successful.');
+            this.clearMappings();
+            this.dsa.regions = {};
+            for (const idx in this.regions) {
+              const region: Region = this.regions[idx];
+              this.dsa.regions[region.uuid] = region.name;
+            }
+            this.updateMappings('Regions');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -455,9 +476,16 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       for (let region of result) {
         if (!this.regions.some(x => x.uuid === region.uuid)) {
           this.regions.push(region);
-          this.regionsTable.updateRows();
         }
       }
+      this.regionsTable.updateRows();
+      this.clearMappings();
+      this.dsa.regions = {};
+      for (const idx in this.regions) {
+        const region: Region = this.regions[idx];
+        this.dsa.regions[region.uuid] = region.name;
+      }
+      this.updateMappings('Regions');
     });
   }
 
@@ -474,7 +502,13 @@ export class DataSharingAgreementEditorComponent implements OnInit {
               });
             }
             this.projectsTable.updateRows();
-            this.log.success('Remove successful.');
+            this.clearMappings();
+            this.dsa.projects = {};
+            for (const idx in this.projects) {
+              const project: Project = this.projects[idx];
+              this.dsa.projects[project.uuid] = project.name;
+            }
+            this.updateMappings('Projects');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -490,9 +524,16 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       for (let project of result) {
         if (!this.projects.some(x => x.uuid === project.uuid)) {
           this.projects.push(project);
-          this.projectsTable.updateRows();
         }
       }
+      this.projectsTable.updateRows();
+      this.clearMappings();
+      this.dsa.projects = {};
+      for (const idx in this.projects) {
+        const project: Project = this.projects[idx];
+        this.dsa.projects[project.uuid] = project.name;
+      }
+      this.updateMappings('Projects');
     });
   }
 
@@ -509,7 +550,13 @@ export class DataSharingAgreementEditorComponent implements OnInit {
               });
             }
             this.publishersTable.updateRows();
-            this.log.success('Remove successful');
+            this.clearMappings();
+            this.dsa.publishers = {};
+            for (const idx in this.publishers) {
+              const publisher: Organisation = this.publishers[idx];
+              this.dsa.publishers[publisher.uuid] = publisher.name;
+            }
+            this.updateMappings('Publishers');
           } else {
             this.log.success('Remove cancelled')
           }
@@ -528,9 +575,16 @@ export class DataSharingAgreementEditorComponent implements OnInit {
         for (let publisher of result) {
           if (!this.publishers.some(x => x.uuid === publisher.uuid)) {
             this.publishers.push(publisher);
-            this.publishersTable.updateRows();
           }
         }
+        this.publishersTable.updateRows();
+        this.clearMappings();
+        this.dsa.publishers = {};
+        for (const idx in this.publishers) {
+          const publisher: Organisation = this.publishers[idx];
+          this.dsa.publishers[publisher.uuid] = publisher.name;
+        }
+        this.updateMappings('Publishers');
       });
     }
   }
@@ -548,7 +602,13 @@ export class DataSharingAgreementEditorComponent implements OnInit {
               });
             }
             this.subscribersTable.updateRows();
-            this.log.success('Remove successful.');
+            this.clearMappings();
+            this.dsa.subscribers = {};
+            for (const idx in this.subscribers) {
+              const subscriber: Organisation = this.subscribers[idx];
+              this.dsa.subscribers[subscriber.uuid] = subscriber.name;
+            }
+            this.updateMappings('Subscribers');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -567,9 +627,16 @@ export class DataSharingAgreementEditorComponent implements OnInit {
         for (let subscriber of result) {
           if (!this.subscribers.some(x => x.uuid === subscriber.uuid)) {
             this.subscribers.push(subscriber);
-            this.subscribersTable.updateRows();
           }
         }
+        this.subscribersTable.updateRows();
+        this.clearMappings();
+        this.dsa.subscribers = {};
+        for (const idx in this.subscribers) {
+          const subscriber: Organisation = this.subscribers[idx];
+          this.dsa.subscribers[subscriber.uuid] = subscriber.name;
+        }
+        this.updateMappings('Subscribers');
       });
     }
   }
@@ -587,7 +654,10 @@ export class DataSharingAgreementEditorComponent implements OnInit {
               });
             }
             this.documentationsTable.updateRows();
-            this.log.success('Delete successful.');
+            this.clearMappings();
+            this.dsa.documentations = [];
+            this.dsa.documentations = this.documentations;
+            this.updateMappings('Documentations');
           } else {
             this.log.success('Delete cancelled.')
           }
@@ -602,6 +672,10 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       if (result) {
         this.documentations.push(result);
         this.documentationsTable.updateRows();
+        this.clearMappings();
+        this.dsa.documentations = [];
+        this.dsa.documentations = this.documentations;
+        this.updateMappings('Documentations');
       }
     });
   }
@@ -626,4 +700,43 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     () => vm.log.info('Edit data flows cancelled')
   );
   }*/
+
+  editDSA() {
+    const dialogRef = this.dialog.open(DataSharingAgreementDialogComponent, {
+      width: '800px',
+      data: {mode: 'edit', uuid: this.dsa.uuid },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.dsa = result;
+        this.dsaService.saveDsa(this.dsa)
+          .subscribe(saved => {
+              this.dsa.uuid = saved;
+              this.log.success('Data sharing agreement saved.');
+            },
+            error => this.log.error('The data sharing agreement could not be saved. Please try again.')
+          );
+      }
+    });
+  }
+
+  updateMappings(type: string) {
+    this.dsaService.updateMappings(this.dsa)
+      .subscribe(saved => {
+          this.dsa.uuid = saved;
+          this.log.success(type + ' updated successfully.');
+        },
+        error => this.log.error('The DSA could not be saved. Please try again.')
+      );
+  }
+
+  clearMappings() {
+    this.dsa.purposes = null;
+    this.dsa.benefits = null;
+    this.dsa.regions = null;
+    this.dsa.projects = null;
+    this.dsa.publishers = null;
+    this.dsa.subscribers = null;
+    this.dsa.documentations = null;
+  }
 }

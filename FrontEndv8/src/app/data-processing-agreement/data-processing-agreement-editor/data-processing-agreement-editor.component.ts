@@ -273,9 +273,9 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
         (result) => {
           if(result) {
             for (var i = 0; i < this.regionsTable.selection.selected.length; i++) {
-              let purpose = this.regionsTable.selection.selected[i];
+              let region = this.regionsTable.selection.selected[i];
               this.regions.forEach( (item, index) => {
-                if(item === purpose) this.regions.splice(index,1);
+                if(item === region) this.regions.splice(index,1);
               });
             }
             this.regionsTable.updateRows();
@@ -452,7 +452,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
           this.dpa.uuid = saved;
           this.log.success(type + ' updated successfully.');
         },
-        error => this.log.error('The Cohort could not be saved. Please try again.')
+        error => this.log.error('The DPA could not be saved. Please try again.')
       );
   }
 

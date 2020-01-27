@@ -5,6 +5,7 @@ import {Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {MatDialog} from "@angular/material/dialog";
+import {DataSharingAgreementDialogComponent} from "../data-sharing-agreement-dialog/data-sharing-agreement-dialog.component";
 
 @Component({
   selector: 'app-data-sharing-agreement',
@@ -75,7 +76,16 @@ export class DataSharingAgreementComponent implements OnInit {
   }
 
   add() {
-    this.router.navigate(['/dsa', 1, 'add']);
+    const dialogRef = this.dialog.open(DataSharingAgreementDialogComponent, {
+      width: '800px',
+      data: {mode: 'add', uuid: 'true'},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.router.navigate(['/dsa', result.uuid, 'edit']);
+        this.log.success('Data sharing agreement saved.');
+      }
+    });
   }
 
   edit(item: Dsa) {

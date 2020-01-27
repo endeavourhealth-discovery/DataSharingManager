@@ -49,7 +49,7 @@ public class DataSharingAgreementLogic {
     public Response postDSA(JsonDSA dsa, String userProjectID) throws Exception {
 
         if (dsa.getUuid() != null) {
-            new DataSharingAgreementDAL().updateDSA(dsa, userProjectID);
+            new DataSharingAgreementDAL().updateDSA(dsa, userProjectID, false);
         } else {
             dsa.setUuid(UUID.randomUUID().toString());
             new DataSharingAgreementDAL().saveDSA(dsa, userProjectID);
@@ -59,6 +59,16 @@ public class DataSharingAgreementLogic {
                 .ok(dsa.getUuid())
                 .build();
 
+    }
+
+    public Response updateMappings(JsonDSA dsa, String userProjectID) throws Exception {
+
+        new DataSharingAgreementDAL().updateDSA(dsa, userProjectID, true);
+
+        return Response
+                .ok()
+                .entity(dsa.getUuid())
+                .build();
     }
 
     private Response getDSAList() throws Exception {

@@ -7,7 +7,7 @@ import {DataFlow} from '../data-flow/models/DataFlow';
 import {Dsa} from './models/Dsa';
 import {Marker} from '../region/models/Marker';
 import {Project} from "../project/models/Project";
-import { Purpose } from "src/app/models/Purpose";
+import {Purpose} from "src/app/models/Purpose";
 
 @Injectable()
 export class DataSharingAgreementService {
@@ -33,6 +33,11 @@ export class DataSharingAgreementService {
   saveDsa(dsa: Dsa): Observable<any> {
     const url = 'api/dsa';
     return this.http.post(url, dsa, { responseType: 'text' });
+  }
+
+  updateMappings(dsa: Dsa): Observable<any> {
+    const url = 'api/dsa/updateMappings';
+    return this.http.post(url, dsa, {responseType: 'text'});
   }
 
   deleteDsa(uuid: string[]): Observable<any> {

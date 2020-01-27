@@ -98,7 +98,7 @@ public final class DpaEndpoint extends AbstractEndpoint {
     @RequiresAdmin
     public Response updateMappings(@Context SecurityContext sc,
                                    @HeaderParam("userProjectId") String userProjectId,
-                                   @ApiParam(value = "Json representation of cohort to save or update") JsonDPA dpa
+                                   @ApiParam(value = "Json representation of dpa to update") JsonDPA dpa
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,

@@ -1,11 +1,12 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {Dpa} from "../models/Dpa";
+import {Dsa} from "../models/Dsa";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {LoggerService, UserManagerService} from "dds-angular8";
 import {ActivatedRoute, Router} from "@angular/router";
-import {DataProcessingAgreementService} from "../data-processing-agreement.service";
 import {DatePipe} from "@angular/common";
+import {DialogData} from "../../data-processing-agreement/data-processing-agreement-dialog/data-processing-agreement-dialog.component";
+import {DataSharingAgreementService} from "../data-sharing-agreement.service";
 
 export interface DialogData {
   mode: string;
@@ -13,27 +14,32 @@ export interface DialogData {
 }
 
 @Component({
-  selector: 'app-data-processing-agreement-dialog',
-  templateUrl: './data-processing-agreement-dialog.component.html',
-  styleUrls: ['./data-processing-agreement-dialog.component.scss']
+  selector: 'app-data-sharing-agreement-dialog',
+  templateUrl: './data-sharing-agreement-dialog.component.html',
+  styleUrls: ['./data-sharing-agreement-dialog.component.scss']
 })
-export class DataProcessingAgreementDialogComponent implements OnInit {
+export class DataSharingAgreementDialogComponent implements OnInit {
 
-  dpa: Dpa;
-  public activeProject: UserProject;
+  dsa: Dsa = <Dsa>{};
+  disableStatus = false;
+  superUser = false;
+  userId: string;
   mode: string;
   uuid: string;
   status = [
     {num: 0, name: 'Active'},
     {num: 1, name: 'Inactive'}
   ];
-  disableStatus = false;
-  processor = 'Discovery';
+  consents = [
+    {num: 0, name : 'Explicit Consent'},
+    {num: 1, name : 'Implied Consent'}
+  ];
+  public activeProject: UserProject;
 
-  constructor(public dialogRef: MatDialogRef<DataProcessingAgreementDialogComponent>,
+  constructor(public dialogRef: MatDialogRef<DataSharingAgreementDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
               private log: LoggerService,
-              private dpaService: DataProcessingAgreementService,
+              private dsaService: DataSharingAgreementService,
               private router: Router,
               private route: ActivatedRoute,
               private datePipe: DatePipe,
@@ -67,35 +73,35 @@ export class DataProcessingAgreementDialogComponent implements OnInit {
   }
 
   create() {
-    this.dpa = {
+    this.dsa = {
       name : ''
-    } as Dpa;
+    } as Dsa;
   }
 
   load(uuid: string) {
-    this.dpaService.getDpa(uuid)
+    this.dsaService.getDsa(uuid)
       .subscribe(result => {
-          this.dpa = result;
-          this.dpa.startDate = this.datePipe.transform(this.dpa.startDate,"yyyy-MM-dd");
-          this.dpa.endDate = this.datePipe.transform(this.dpa.endDate,"yyyy-MM-dd");
+          this.dsa = result;
+          this.dsa.startDate = this.datePipe.transform(this.dsa.startDate,"yyyy-MM-dd");
+          this.dsa.endDate = this.datePipe.transform(this.dsa.endDate,"yyyy-MM-dd");
           this.checkEndDate();
         },
-        error => this.log.error('The data processing agreement could not be loaded. Please try again.')
+        error => this.log.error('The data sharing agreement could not be loaded. Please try again.')
       );
   }
 
   checkEndDate() {
-    if (this.dpa.endDate === null) {
+    if (this.dsa.endDate === null) {
       this.disableStatus = false;
       return;
     }
 
     let today = new Date();
     today.setHours(0,0,0,0);
-    let endDate = new Date(this.dpa.endDate);
+    let endDate = new Date(this.dsa.endDate);
 
     if (endDate < today) {
-      this.dpa.dsaStatusId = 1;
+      this.dsa.dsaStatusId = 1;
       this.disableStatus = true;
     } else {
       this.disableStatus = false;
@@ -103,13 +109,13 @@ export class DataProcessingAgreementDialogComponent implements OnInit {
   }
 
   ok() {
-    console.log(this.dpa);
-    this.dpaService.saveDpa(this.dpa)
+    console.log(this.dsa);
+    this.dsaService.saveDsa(this.dsa)
       .subscribe(saved => {
-          this.dpa.uuid = saved;
-          this.dialogRef.close(this.dpa);
+          this.dsa.uuid = saved;
+          this.dialogRef.close(this.dsa);
         },
-        error => this.log.error('The DPA could not be saved. Please try again.')
+        error => this.log.error('The DSA could not be saved. Please try again.')
       );
   }
 

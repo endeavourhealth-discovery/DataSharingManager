@@ -7,9 +7,10 @@
     <mat-card-subtitle *ngIf="dsa.name">{{dsa.name}}</mat-card-subtitle>
     <mat-card-subtitle *ngIf="!dsa.name">New data sharing agreement</mat-card-subtitle>
     <div fxFlex></div>
+    <div fxLayoutAlign="center" class="mat-action" matRipple (click)="editDSA()">
+      <i class="fas fa-fw fa-pencil"></i>
+    </div>
     <mat-menu #visualiseMenu="matMenu">
-      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(false)">Save</button>
-      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(true)">Save & close</button>
       <button mat-menu-item (click)="close()">Cancel</button>
     </mat-menu>
     <div fxLayoutAlign="center" class="mat-action" matRipple>
@@ -30,7 +31,7 @@
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill>
             <mat-label>Status</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="dsa.dsaStatusId" name="status">
+            <mat-select required matInput name="status" [(ngModel)]="dsa.dsaStatusId" name="status">
               <mat-option *ngFor="let stat of status" [value]="stat.num">{{stat.name}}</mat-option>
             </mat-select>
           </mat-form-field>

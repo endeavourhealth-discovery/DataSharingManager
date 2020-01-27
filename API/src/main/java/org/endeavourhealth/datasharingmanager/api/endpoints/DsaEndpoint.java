@@ -27,10 +27,9 @@ import java.util.List;
 @Path("/dsa")
 @Api(description = "API endpoint related to the data sharing agreements")
 public final class DsaEndpoint extends AbstractEndpoint {
+
     private static final Logger LOG = LoggerFactory.getLogger(DsaEndpoint.class);
-
     private static final UserAuditRepository userAudit = new UserAuditRepository(AuditModule.EdsUiModule.Organisation);
-
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -76,6 +75,32 @@ public final class DsaEndpoint extends AbstractEndpoint {
         clearLogbackMarkers();
 
         return new DataSharingAgreementLogic().postDSA(dsa, userProjectId);
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.DsaEndpoint.Post")
+    @Path("/updateMappings")
+    @ApiOperation(value = "Updates the mappings.  Accepts a JSON representation of a DSA.")
+    @RequiresAdmin
+    public Response updateMappings(@Context SecurityContext sc,
+                                   @HeaderParam("userProjectId") String userProjectId,
+                                   @ApiParam(value = "Json representation of dsa to update") JsonDSA dsa
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
+                "DSA",
+                "DSA", dsa);
+
+        new DataSharingAgreementLogic().updateMappings(dsa, userProjectId);
+
+        clearLogbackMarkers();
+
+        return Response
+                .ok()
+                .entity(dsa.getUuid())
+                .build();
     }
 
     @DELETE
