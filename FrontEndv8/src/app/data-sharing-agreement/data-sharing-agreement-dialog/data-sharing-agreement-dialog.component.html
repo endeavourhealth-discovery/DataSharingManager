@@ -1,33 +1,33 @@
 <h1 mat-dialog-title>Data sharing agreement details</h1>
 <div mat-dialog-content *ngIf="dsa">
   <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
-    <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Name</mat-label>
-      <input required matInput [(ngModel)]="dsa.name" placeholder="Name" name="name" readonly>
+      <input required matInput [(ngModel)]="dsa.name" placeholder="Name" name="name">
     </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Description</mat-label>
       <input required matInput [(ngModel)]="dsa.description" placeholder="Description" name="description">
     </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly readonly>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Status</mat-label>
-      <mat-select required matInput name="status" [(ngModel)]="dsa.dsaStatusId" name="status" readonly>
+      <mat-select required matInput name="status" [(ngModel)]="dsa.dsaStatusId" name="status">
         <mat-option *ngFor="let stat of status" [value]="stat.num">{{stat.name}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Consent Model</mat-label>
-      <mat-select matInput name="consentModel" [(ngModel)]="dsa.consentModelId" name="consentModel" readonly>
+      <mat-select matInput name="consentModel" [(ngModel)]="dsa.consentModelId" name="consentModel">
         <mat-option *ngFor="let cons of consents" [value]="cons.num">{{cons.name}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Start Date</mat-label>
-      <input matInput type="date" [(ngModel)]="dsa.startDate" placeholder="Start Date" name="startDate" readonly>
+      <input matInput type="date" [(ngModel)]="dsa.startDate" placeholder="Start Date" name="startDate">
     </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>End Date</mat-label>
-      <input matInput type="date" [(ngModel)]="dsa.endDate" placeholder="End Date" name="endDate" readonly>
+      <input matInput type="date" [(ngModel)]="dsa.endDate" placeholder="End Date" name="endDate">
     </mat-form-field>
   </div>
 </div>
