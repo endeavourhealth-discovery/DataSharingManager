@@ -173,6 +173,9 @@ export class CohortEditorComponent implements OnInit {
       width: '800px',
     })
     dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
       for (let dpa of result) {
         if (!this.dpas.some(x => x.uuid === dpa.uuid)) {
           this.dpas.push(dpa);

@@ -335,7 +335,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   addPurpose(index: number) {
     const dialogRef = this.dialog.open(PurposeComponent, {
-      height: '580px',
       width: '550px',
       data: {resultData: this.purposes, type: 'Purpose', index: index},
     });
@@ -377,7 +376,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   addBenefit(index: number) {
     const dialogRef = this.dialog.open(PurposeComponent, {
-      height: '580px',
       width: '550px',
       data: {resultData: this.benefits, type: 'Benefit', index: index},
     });
@@ -425,6 +423,9 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       data: { uuid: '', limit: 0, userId : this.activeProject.userId }
     });
     dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
       for (let region of result) {
         if (!this.regions.some(x => x.uuid === region.uuid)) {
           this.regions.push(region);
@@ -473,6 +474,9 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       data: { uuid: '', limit: 0, userId : this.activeProject.userId }
     });
     dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
       for (let project of result) {
         if (!this.projects.some(x => x.uuid === project.uuid)) {
           this.projects.push(project);
@@ -524,6 +528,9 @@ export class DataSharingAgreementEditorComponent implements OnInit {
         data: { searchType: 'organisation', uuid: '', regionUUID: this.regions[0].uuid, dsaUUID: '', existingOrgs: this.publishers }
       });
       dialogRef.afterClosed().subscribe(result => {
+        if (!result) {
+          return;
+        }
         for (let publisher of result) {
           if (!this.publishers.some(x => x.uuid === publisher.uuid)) {
             this.publishers.push(publisher);
@@ -576,6 +583,9 @@ export class DataSharingAgreementEditorComponent implements OnInit {
         data: { searchType: 'organisation', uuid: '', regionUUID: this.regions[0].uuid, dsaUUID: '', existingOrgs: this.subscribers }
       });
       dialogRef.afterClosed().subscribe(result => {
+        if (!result) {
+          return;
+        }
         for (let subscriber of result) {
           if (!this.subscribers.some(x => x.uuid === subscriber.uuid)) {
             this.subscribers.push(subscriber);

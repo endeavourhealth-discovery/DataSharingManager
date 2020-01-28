@@ -299,6 +299,9 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
       data: { uuid: '', limit: 0, userId : this.activeProject.userId }
     })
     dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
       for (let region of result) {
         if (!this.regions.some(x => x.uuid === region.uuid)) {
           this.regions.push(region);
@@ -363,6 +366,9 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
         data: { searchType: 'organisation', uuid: '', regionUUID: this.regions[0].uuid, dsaUUID: '', existingOrgs: this.publishers }
       })
       dialogRef.afterClosed().subscribe(result => {
+        if (!result) {
+          return;
+        }
         for (let org of result) {
           if (!this.publishers.some(x => x.uuid === org.uuid)) {
             this.publishers.push(org);

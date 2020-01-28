@@ -130,6 +130,9 @@ export class DataSetEditorComponent implements OnInit {
       width: '800px',
     })
     dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
       for (let dpa of result) {
         if (!this.processingAgreements.some(x => x.uuid === dpa.uuid)) {
           this.processingAgreements.push(dpa);

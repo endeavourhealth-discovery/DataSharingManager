@@ -221,6 +221,9 @@ export class RegionEditorComponent implements OnInit {
       width: '800px',
     })
     dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
       for (let dsa of result) {
         if (!this.sharingAgreements.some(x => x.uuid === dsa.uuid)) {
           this.sharingAgreements.push(dsa);
@@ -242,6 +245,9 @@ export class RegionEditorComponent implements OnInit {
       width: '800px',
     })
     dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
       for (let dpa of result) {
         if (!this.processingAgreements.some(x => x.uuid === dpa.uuid)) {
           this.processingAgreements.push(dpa);
@@ -264,35 +270,38 @@ export class RegionEditorComponent implements OnInit {
       data: { uuid: '', limit: 0, userId : this.activeProject.userId }
     })
     dialogRef.afterClosed().subscribe(result => {
-        for (let region of result) {
-          if (isParent) {
-            if (!this.parentRegions.some(x => x.uuid === region.uuid)) {
-              this.parentRegions.push(region);
-            }
-          } else {
-            if (!this.childRegions.some(x => x.uuid === region.uuid)) {
-              this.childRegions.push(region);
-            }
-          }
-        }
-        this.clearMappings();
+      if (!result) {
+        return;
+      }
+      for (let region of result) {
         if (isParent) {
-          this.parentRegionTable.updateRows();
-          this.region.parentRegions = {};
-          for (const idx in this.parentRegions) {
-            const reg: Region = this.parentRegions[idx];
-            this.region.parentRegions[reg.uuid] = reg.name;
+          if (!this.parentRegions.some(x => x.uuid === region.uuid)) {
+            this.parentRegions.push(region);
           }
-          this.updateMappings('Parent regions');
         } else {
-          this.childRegionTable.updateRows();
-          this.region.childRegions = {};
-          for (const idx in this.childRegions) {
-            const reg: Region = this.childRegions[idx];
-            this.region.childRegions[reg.uuid] = reg.name;
+          if (!this.childRegions.some(x => x.uuid === region.uuid)) {
+            this.childRegions.push(region);
           }
-          this.updateMappings('Child regions');
         }
+      }
+      this.clearMappings();
+      if (isParent) {
+        this.parentRegionTable.updateRows();
+        this.region.parentRegions = {};
+        for (const idx in this.parentRegions) {
+          const reg: Region = this.parentRegions[idx];
+          this.region.parentRegions[reg.uuid] = reg.name;
+        }
+        this.updateMappings('Parent regions');
+      } else {
+        this.childRegionTable.updateRows();
+        this.region.childRegions = {};
+        for (const idx in this.childRegions) {
+          const reg: Region = this.childRegions[idx];
+          this.region.childRegions[reg.uuid] = reg.name;
+        }
+        this.updateMappings('Child regions');
+      }
     })
   }
 
@@ -302,6 +311,9 @@ export class RegionEditorComponent implements OnInit {
       data: { searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '', existingOrgs: this.organisations }
     })
     dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
       for (let org of result) {
         if (!this.organisations.some(x => x.uuid === org.uuid)) {
           this.organisations.push(org);
