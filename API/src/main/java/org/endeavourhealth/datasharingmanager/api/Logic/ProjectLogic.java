@@ -48,12 +48,21 @@ public class ProjectLogic {
     public Response postProject(JsonProject project, String userProjectId) throws Exception {
 
         if (project.getUuid() != null) {
-            new ProjectDAL().updateProject(project, userProjectId);
+            new ProjectDAL().updateProject(project, userProjectId, false);
         } else {
             project.setUuid(UUID.randomUUID().toString());
             new ProjectDAL().saveProject(project, userProjectId);
         }
 
+        return Response
+                .ok()
+                .entity(project.getUuid())
+                .build();
+    }
+
+    public Response updateMappings(JsonProject project, String userProjectId) throws Exception {
+
+        new ProjectDAL().updateProject(project, userProjectId, true);
         return Response
                 .ok()
                 .entity(project.getUuid())

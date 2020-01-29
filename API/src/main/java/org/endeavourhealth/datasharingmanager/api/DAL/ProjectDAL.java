@@ -57,7 +57,7 @@ public class ProjectDAL {
 
     }
 
-    public void updateProject(JsonProject project, String userProjectId) throws Exception {
+    public void updateProject(JsonProject project, String userProjectId, boolean withMappings) throws Exception {
         ProjectEntity oldProjectEntity = _entityManager.find(ProjectEntity.class, project.getUuid());
         oldProjectEntity.setMappingsFromDAL();
 
@@ -67,7 +67,9 @@ public class ProjectDAL {
             ProjectEntity newProject = new ProjectEntity(project);
             JsonNode auditJson = new AuditCompareLogic().getAuditJsonNode("Project edited", oldProjectEntity, newProject);
 
-            _masterMappingDAL.updateProjectMappings(project, oldProjectEntity, auditJson);
+            if (withMappings) {
+                _masterMappingDAL.updateProjectMappings(project, oldProjectEntity, auditJson);
+            }
 
             oldProjectEntity.updateFromJson(project);
 

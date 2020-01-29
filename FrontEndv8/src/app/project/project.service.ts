@@ -124,6 +124,11 @@ export class ProjectService {
     return this.http.post(url, project, {responseType: 'text'});
   }
 
+  updateMappings(project: Project): Observable<any> {
+    const url = 'api/project/updateMappings';
+    return this.http.post(url, project, {responseType: 'text'});
+  }
+
   saveProjectApplicationPolicy(projectApplicationPolicy: ProjectApplicationPolicy): Observable<string> {
     const url = 'api/project/setProjectApplicationPolicy';
     return this.http.post(url, projectApplicationPolicy, {responseType: 'text'});

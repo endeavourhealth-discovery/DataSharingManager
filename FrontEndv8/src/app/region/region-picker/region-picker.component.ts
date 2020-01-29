@@ -49,7 +49,7 @@ export class RegionPickerComponent implements OnInit {
   }
 
   cancel() {
-    this.dialogRef.close([]);
+    this.dialogRef.close();
   }
 
 }

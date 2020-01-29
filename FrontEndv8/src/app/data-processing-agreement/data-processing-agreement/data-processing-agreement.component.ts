@@ -77,7 +77,7 @@ export class DataProcessingAgreementComponent implements OnInit {
   add() {
     const dialogRef = this.dialog.open(DataProcessingAgreementDialogComponent, {
       width: '800px',
-      data: {mode: 'add', uuid: 'true'},
+      data: {mode: 'add', uuid: ''},
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

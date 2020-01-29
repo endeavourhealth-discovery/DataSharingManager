@@ -84,6 +84,28 @@ public class ProjectEndpoint extends AbstractEndpoint {
         return new ProjectLogic().postProject(project, userProjectId);
     }
 
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.ProjectEndpoint.updateMappings")
+    @Path("/updateMappings")
+    @ApiOperation(value = "Save a new project or update an existing one.  Accepts a JSON representation " +
+            "of a project.")
+    @RequiresAdmin
+    public Response updateMappings(@Context SecurityContext sc,
+                                @HeaderParam("userProjectId") String userProjectId,
+                                @ApiParam(value = "Json representation of project to save or update") JsonProject project
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
+                "Project",
+                "Project", project);
+
+        clearLogbackMarkers();
+
+        return new ProjectLogic().updateMappings(project, userProjectId);
+    }
+
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)

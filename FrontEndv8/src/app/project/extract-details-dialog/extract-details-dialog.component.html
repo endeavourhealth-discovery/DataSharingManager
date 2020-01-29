@@ -1,0 +1,77 @@
+<h1 mat-dialog-title>Extract technical details</h1>
+<div mat-dialog-content *ngIf="extractTechnicalDetail">
+  <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
+    <mat-form-field appearance="outline" fxFlex="100" fxFill>
+      <mat-label>Name</mat-label>
+      <input required matInput [(ngModel)]="extractTechnicalDetail.name" placeholder="Name" name="extractTechnicalDetailsName">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>SFTP Host Name</mat-label>
+      <input required matInput [(ngModel)]="extractTechnicalDetail.sftpHostName" placeholder="SFTP Host Name" name="sftpHostName">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>SFTP Host Directory</mat-label>
+      <input required matInput [(ngModel)]="extractTechnicalDetail.sftpHostDirectory" placeholder="SFTP Host Directory, typically /ftp/" name="sftpHostDirectory">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="34" fxFill>
+      <mat-label>SFTP Host Port</mat-label>
+      <input required matInput [(ngModel)]="extractTechnicalDetail.sftpHostPort" placeholder="SFTP Host Port" name="sftpHostPort">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>SFTP Client Username</mat-label>
+      <input required matInput [(ngModel)]="extractTechnicalDetail.sftpClientUsername" placeholder="SFTP Client Username" name="sftpClientUsername">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>SFTP Client Private Key Password</mat-label>
+      <input matInput [(ngModel)]="extractTechnicalDetail.sftpClientPrivateKeyPassword" placeholder="SFTP Client Private Key Password, rarely used" name="sftpClientPrivateKeyPassword">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
+      <mat-label>SFTP Client Private Key (.ppk)</mat-label>
+      <input readonly matInput [(ngModel)]="extractTechnicalDetail.sftpClientPrivateKeyFilename" placeholder="SFTP client private key" name="sftpClientPrivateKeyFilename">
+      <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="file2.click();">
+        <mat-icon>cloud_upload</mat-icon>
+      </button>
+      <button mat-button matSuffix mat-stroked-button aria-label="clear" (click)="clearExtraTechDetails(2)">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
+      <mat-label>SFTP Host Public Key (.pub)</mat-label>
+      <input readonly matInput [(ngModel)]="extractTechnicalDetail.sftpHostPublicKeyFilename" placeholder="SFTP host public key, rarely used" name="sftpHostPublicKeyFilename">
+      <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="file1.click()">
+        <mat-icon>cloud_upload</mat-icon>
+      </button>
+      <button mat-button matSuffix mat-stroked-button aria-label="clear" (click)="clearExtraTechDetails(1)">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
+      <mat-label>Customer Public Key (.cer)</mat-label>
+      <input readonly matInput [(ngModel)]="extractTechnicalDetail.pgpCustomerPublicKeyFilename" placeholder="Customer public key" name="pgpCustomerPublicKeyFilename">
+      <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="file3.click()">
+        <mat-icon>cloud_upload</mat-icon>
+      </button>
+      <button mat-button matSuffix mat-stroked-button aria-label="clear" (click)="clearExtraTechDetails(3)">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
+      <mat-label>Internal Public Key (.cer)</mat-label>
+      <input readonly matInput [(ngModel)]="extractTechnicalDetail.pgpInternalPublicKeyFilename" placeholder="Internal public key" name="pgpInternalPublicKeyFilename">
+      <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="file4.click()">
+        <mat-icon>cloud_upload</mat-icon>
+      </button>
+      <button mat-button matSuffix mat-stroked-button aria-label="clear" (click)="clearExtraTechDetails(4)">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+    <input #file1 type="file" (click)="file1.value = null" (change)="file1Change($event)" accept="*" placeholder="File" name="file" style="display: none">
+    <input #file2 type="file" (click)="file2.value = null" (change)="file2Change($event)" accept="*" placeholder="File" name="file" style="display: none">
+    <input #file3 type="file" (click)="file3.value = null" (change)="file3Change($event)" accept="*" placeholder="File" name="file" style="display: none">
+    <input #file4 type="file" (click)="file4.value = null" (change)="file4Change($event)" accept="*" placeholder="File" name="file" style="display: none">
+  </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button color="accent" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="accent" (click)="ok()">OK</button>
+</div>

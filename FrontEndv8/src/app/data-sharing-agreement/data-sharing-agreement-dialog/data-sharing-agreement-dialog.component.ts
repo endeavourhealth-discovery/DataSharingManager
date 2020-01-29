@@ -106,7 +106,6 @@ export class DataSharingAgreementDialogComponent implements OnInit {
   }
 
   ok() {
-    console.log(this.dsa);
     this.dsaService.saveDsa(this.dsa)
       .subscribe(saved => {
           this.dsa.uuid = saved;

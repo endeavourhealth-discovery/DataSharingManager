@@ -441,13 +441,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.dpa = result;
-        this.dpaService.saveDpa(this.dpa)
-          .subscribe(saved => {
-              this.dpa.uuid = saved;
-              this.log.success('Data processing agreement saved.');
-            },
-            error => this.log.error('The data processing agreement could not be saved. Please try again.')
-          );
+        this.log.success('Data processing agreement saved.');
       }
     });
   }

@@ -189,7 +189,7 @@ export class DataSetEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.dataset = result;
-        this.save(false);
+        this.log.success('Data Set saved successfully.');
       }
     });
   }

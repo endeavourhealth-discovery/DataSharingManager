@@ -124,7 +124,7 @@ export class CohortEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.cohort = result;
-        this.save(false);
+        this.log.success('Cohort saved successfully');
       }
     });
   }

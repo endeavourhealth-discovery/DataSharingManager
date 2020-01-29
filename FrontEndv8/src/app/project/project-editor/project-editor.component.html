@@ -7,9 +7,10 @@
     <mat-card-subtitle *ngIf="project.name">{{project.name}}</mat-card-subtitle>
     <mat-card-subtitle *ngIf="!project.name">New Project</mat-card-subtitle>
     <div fxFlex></div>
+    <div fxLayoutAlign="center" class="mat-action" matRipple (click)="editProject()">
+      <i class="fas fa-fw fa-pencil"></i>
+    </div>
     <mat-menu #visualiseMenu="matMenu">
-      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(false)">Save</button>
-      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(true)">Save & close</button>
       <button mat-menu-item (click)="close()">Cancel</button>
     </mat-menu>
     <div fxLayoutAlign="center" class="mat-action" matRipple>
@@ -20,101 +21,103 @@
     <form class="form" #f="ngForm" novalidate>
       <div class="form-group" #fgName="ngModelGroup" ngModelGroup="dpa" [class.has-error]="!fgName.valid">
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
             <mat-label>Project name</mat-label>
-            <input required matInput [(ngModel)]="project.name" placeholder="Project name" name="name">
+            <input required matInput [(ngModel)]="project.name" placeholder="Project name" name="name" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
             <mat-label>Business case</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="project.businessCaseStatus" name="businessCaseStatus">
+            <mat-select matInput name="status" [(ngModel)]="project.businessCaseStatus" name="businessCaseStatus" readonly>
               <mat-option *ngFor="let bc of businessCaseStatuses" [value]="bc.num">{{bc.name}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
             <mat-label>Summary</mat-label>
-            <textarea matInput [(ngModel)]="project.summary" placeholder="Summary" name="summary" rows="6"></textarea>
+            <textarea matInput [(ngModel)]="project.summary" placeholder="Summary" name="summary" rows="6" readonly></textarea>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
             <mat-label>Objectives</mat-label>
-            <textarea matInput [(ngModel)]="project.objectives" placeholder="Objectives" name="objectives" rows="6"></textarea>
+            <textarea matInput [(ngModel)]="project.objectives" placeholder="Objectives" name="objectives" rows="6" readonly></textarea>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
             <mat-label>Project lead</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="project.leadUser" name="leadUser">
+            <mat-select matInput name="status" [(ngModel)]="project.leadUser" name="leadUser" readonly>
               <mat-option *ngFor="let leadUser of userList" [value]="leadUser.uuid">{{leadUser.forename}} {{leadUser.surname}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
             <mat-label>Project technical lead</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="project.technicalLeadUser" name="technicalLeadUser">
+            <mat-select matInput name="status" [(ngModel)]="project.technicalLeadUser" name="technicalLeadUser" readonly>
               <mat-option *ngFor="let techUser of userList" [value]="techUser.uuid">{{techUser.forename}} {{techUser.surname}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
             <mat-label>Storage protocol</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="project.storageProtocolId" name="storageProtocolId">
+            <mat-select matInput name="status" [(ngModel)]="project.storageProtocolId" name="storageProtocolId" readonly>
               <mat-option *ngFor="let sps of storageProtocols" [value]="sps.num">{{sps.name}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
             <mat-label>Patient consent model</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="project.consentModelId" name="consentModel">
+            <mat-select matInput name="status" [(ngModel)]="project.consentModelId" name="consentModel" readonly>
               <mat-option *ngFor="let con of consents" [value]="con.num">{{con.name}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="34" fxFill>
+          <mat-form-field appearance="outline" fxFlex="34" fxFill mat-readonly>
             <mat-label>De-identification level</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="project.deidentificationLevel" name="deIdentificationLevel">
+            <mat-select matInput name="status" [(ngModel)]="project.deidentificationLevel" name="deIdentificationLevel" readonly>
               <mat-option *ngFor="let did of deidentificationLevel" [value]="did.num">{{did.name}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
             <mat-label>Project type</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="project.projectTypeId" name="projectTypeId">
+            <mat-select matInput name="status" [(ngModel)]="project.projectTypeId" name="projectTypeId" readonly>
               <mat-option *ngFor="let proj of projectTypes" [value]="proj.num">{{proj.name}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
             <mat-label>Frequency</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="project.flowScheduleId" name="flowScheduleId">
+            <mat-select matInput name="status" [(ngModel)]="project.flowScheduleId" name="flowScheduleId" readonly>
               <mat-option *ngFor="let fs of flowScheduleIds" [value]="fs.num">{{fs.name}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="34" fxFill>
+          <mat-form-field appearance="outline" fxFlex="34" fxFill mat-readonly>
             <mat-label>Output format</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="project.outputFormat" name="outputFormat">
+            <mat-select matInput name="status" [(ngModel)]="project.outputFormat" name="outputFormat" readonly>
               <mat-option *ngFor="let of of outputFormat" [value]="of.num">{{of.name}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill>
-            <mat-label>SFTP name</mat-label>
-            <input required matInput [(ngModel)]="project.ipAddress" placeholder="SFTP name" name="ipAddress">
+          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
+            <mat-label>Application Policy</mat-label>
+            <mat-select matInput name="status" [(ngModel)]="selectedApplicationPolicy" name="selectedApplicationPolicy" (selectionChange)="changeUserApplicationPolicy(selectedApplicationPolicy.id)" readonly>
+              <mat-option *ngFor="let pol of availablePolicies" [value]="pol">{{pol.name}}</mat-option>
+            </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
             <mat-label>Security infrastructure Id</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="project.securityInfrastructureId" name="securityInfrastructureId">
+            <mat-select matInput name="status" [(ngModel)]="project.securityInfrastructureId" name="securityInfrastructureId" readonly>
               <mat-option *ngFor="let sec of securityInfrastructures" [value]="sec.num">{{sec.name}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="34" fxFill>
+          <mat-form-field appearance="outline" fxFlex="34" fxFill mat-readonly>
             <mat-label>Security architectures Id</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="project.securityArchitectureId" name="securityArchitectureId">
+            <mat-select matInput name="status" [(ngModel)]="project.securityArchitectureId" name="securityArchitectureId" readonly>
               <mat-option *ngFor="let arc of securityArchitectures" [value]="arc.num">{{arc.name}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
             <mat-label>Status</mat-label>
-            <mat-select matInput name="status" [disabled]="disableStatus" [(ngModel)]="project.projectStatusId" name="projectStatusId">
+            <mat-select matInput name="status" [disabled]="disableStatus" [(ngModel)]="project.projectStatusId" name="projectStatusId" readonly>
               <mat-option *ngFor="let stat of status" [value]="stat.num">{{stat.name}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill>
+          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
             <mat-label>Start date</mat-label>
-            <input matInput type="date" [(ngModel)]="project.startDate" placeholder="Start date" name="startDate">
+            <input matInput type="date" [(ngModel)]="project.startDate" placeholder="Start date" name="startDate" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="34" fxFill>
+          <mat-form-field appearance="outline" fxFlex="34" fxFill mat-readonly>
             <mat-label>End date</mat-label>
-            <input matInput type="date" [(ngModel)]="project.endDate" placeholder="End date" name="endDate">
+            <input matInput type="date" [(ngModel)]="project.endDate" placeholder="End date" name="endDate" readonly>
           </mat-form-field>
         </div>
         <br>
@@ -219,91 +222,16 @@
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>
-          <span>Application policy</span>
+          <span matBadge="{{extractTechnicalDetails?.length}}" matBadgeOverlap="false" [matBadgeHidden]="extractTechnicalDetails?.length < 1">Extract technical details</span>
         </ng-template>
-        <br>
-        <br>
-        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-          <mat-form-field appearance="outline" fxFlex="33" fxFill>
-            <mat-label>Application Policy</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="selectedApplicationPolicy" name="selectedApplicationPolicy" (selectionChange)="changeUserApplicationPolicy(selectedApplicationPolicy.id)">
-              <mat-option *ngFor="let pol of availablePolicies" [value]="pol">{{pol.name}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </mat-tab>
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <span>Extract technical details</span>
-        </ng-template>
-        <br>
-        <br>
-        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-          <mat-form-field appearance="outline" fxFlex="100" fxFill>
-            <mat-label>Name</mat-label>
-            <input required matInput [(ngModel)]="extractTechnicalDetails.name" placeholder="Name" name="extractTechnicalDetailsName">
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill>
-            <mat-label>SFTP Host Name</mat-label>
-            <input required matInput [(ngModel)]="extractTechnicalDetails.sftpHostName" placeholder="SFTP Host Name" name="sftpHostName">
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill>
-            <mat-label>SFTP Host Directory</mat-label>
-            <input required matInput [(ngModel)]="extractTechnicalDetails.sftpHostDirectory" placeholder="SFTP Host Directory, typically /ftp/" name="sftpHostDirectory">
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="34" fxFill>
-            <mat-label>SFTP Host Port</mat-label>
-            <input required matInput [(ngModel)]="extractTechnicalDetails.sftpHostPort" placeholder="SFTP Host Port" name="sftpHostPort">
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill>
-            <mat-label>SFTP Client Username</mat-label>
-            <input required matInput [(ngModel)]="extractTechnicalDetails.sftpClientUsername" placeholder="SFTP Client Username" name="sftpClientUsername">
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill>
-            <mat-label>SFTP Client Private Key Password</mat-label>
-            <input matInput [(ngModel)]="extractTechnicalDetails.sftpClientPrivateKeyPassword" placeholder="SFTP Client Private Key Password, rarely used" name="sftpClientPrivateKeyPassword">
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
-            <mat-label>SFTP Client Private Key (.ppk)</mat-label>
-            <input readonly matInput [(ngModel)]="extractTechnicalDetails.sftpClientPrivateKeyFilename" placeholder="SFTP client private key" name="sftpClientPrivateKeyFilename">
-            <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="uploadExtraTechDetails(2)">
-              <mat-icon>cloud_upload</mat-icon>
-            </button>
-            <button mat-button matSuffix mat-stroked-button aria-label="clear" (click)="clearExtraTechDetails(2)">
-              <mat-icon>clear</mat-icon>
-            </button>
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
-            <mat-label>SFTP Host Public Key (.pub)</mat-label>
-            <input readonly matInput [(ngModel)]="extractTechnicalDetails.sftpHostPublicKeyFilename" placeholder="SFTP host public key, rarely used" name="sftpHostPublicKeyFilename">
-            <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="uploadExtraTechDetails(1)">
-              <mat-icon>cloud_upload</mat-icon>
-            </button>
-            <button mat-button matSuffix mat-stroked-button aria-label="clear" (click)="clearExtraTechDetails(1)">
-              <mat-icon>clear</mat-icon>
-            </button>
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
-            <mat-label>Customer Public Key (.cer)</mat-label>
-            <input readonly matInput [(ngModel)]="extractTechnicalDetails.pgpCustomerPublicKeyFilename" placeholder="Customer public key" name="pgpCustomerPublicKeyFilename">
-            <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="uploadExtraTechDetails(3)">
-              <mat-icon>cloud_upload</mat-icon>
-            </button>
-            <button mat-button matSuffix mat-stroked-button aria-label="clear" (click)="clearExtraTechDetails(3)">
-              <mat-icon>clear</mat-icon>
-            </button>
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
-            <mat-label>Internal Public Key (.cer)</mat-label>
-            <input readonly matInput [(ngModel)]="extractTechnicalDetails.pgpInternalPublicKeyFilename" placeholder="Internal public key" name="pgpInternalPublicKeyFilename">
-            <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="uploadExtraTechDetails(4)">
-              <mat-icon>cloud_upload</mat-icon>
-            </button>
-            <button mat-button matSuffix mat-stroked-button aria-label="clear" (click)="clearExtraTechDetails(4)">
-              <mat-icon>clear</mat-icon>
-            </button>
-          </mat-form-field>
-        </div>
+        <app-generic-table #extractTechnicalDetailsTable
+                           [items]="extractTechnicalDetails"
+                           [detailsToShow]="extractTechnicalDetailToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="extractTechnicalDetailClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteExtractTechnicalDetail()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit && extractTechnicalDetails?.length < 1" mat-icon-button color="primary" (click)="addExtractTechnicalDetail()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>

@@ -671,13 +671,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.dsa = result;
-        this.dsaService.saveDsa(this.dsa)
-          .subscribe(saved => {
-              this.dsa.uuid = saved;
-              this.log.success('Data sharing agreement saved.');
-            },
-            error => this.log.error('The data sharing agreement could not be saved. Please try again.')
-          );
+        this.log.success('Data sharing agreement saved.');
       }
     });
   }

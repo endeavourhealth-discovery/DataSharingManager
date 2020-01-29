@@ -5,6 +5,8 @@ import {Router} from "@angular/router";
 import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {ProjectService} from "../project.service";
 import {MatDialog} from "@angular/material/dialog";
+import {DataSharingAgreementDialogComponent} from "../../data-sharing-agreement/data-sharing-agreement-dialog/data-sharing-agreement-dialog.component";
+import {ProjectDialogComponent} from "../project-dialog/project-dialog.component";
 
 @Component({
   selector: 'app-project',
@@ -75,7 +77,16 @@ export class ProjectComponent implements OnInit {
   }
 
   add() {
-    this.router.navigate(['/project', 1, 'add']);
+    const dialogRef = this.dialog.open(ProjectDialogComponent, {
+      width: '1000px',
+      data: {mode: 'add', uuid: ''},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.router.navigate(['/project', result.uuid, 'edit']);
+        this.log.success('Project saved');
+      }
+    });
   }
 
   edit(item: Project) {

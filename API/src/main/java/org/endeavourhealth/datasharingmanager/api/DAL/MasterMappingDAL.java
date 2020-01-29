@@ -191,29 +191,35 @@ public class MasterMappingDAL {
         Short thisMapTypeID = MapType.PROJECT.getMapType();
 
         // Publishers
-        updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getPublishers()),
-                (updatedProject == null ? null : updatedProject.getPublishers()), thisMapTypeID, MapType.PUBLISHER.getMapType(), auditJson);
-
+        if (updatedProject != null && updatedProject.getPublishers() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getPublishers()),
+                    (updatedProject == null ? null : updatedProject.getPublishers()), thisMapTypeID, MapType.PUBLISHER.getMapType(), auditJson);
+        }
         // Subscriber
-        updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getSubscribers()),
-                (updatedProject == null ? null : updatedProject.getSubscribers()), thisMapTypeID, MapType.SUBSCRIBER.getMapType(), auditJson);
-
+        if (updatedProject != null && updatedProject.getSubscribers() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getSubscribers()),
+                    (updatedProject == null ? null : updatedProject.getSubscribers()), thisMapTypeID, MapType.SUBSCRIBER.getMapType(), auditJson);
+        }
         // Cohorts
-        updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getCohorts()),
-                (updatedProject == null ? null : updatedProject.getCohorts()), thisMapTypeID, MapType.COHORT.getMapType(), auditJson);
-
+        if (updatedProject != null && updatedProject.getCohorts() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getCohorts()),
+                    (updatedProject == null ? null : updatedProject.getCohorts()), thisMapTypeID, MapType.COHORT.getMapType(), auditJson);
+        }
         // DataSets
-        updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getDataSets()),
-                (updatedProject == null ? null : updatedProject.getDataSets()), thisMapTypeID, MapType.DATASET.getMapType(), auditJson);
-
+        if (updatedProject != null && updatedProject.getDataSets() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getDataSets()),
+                    (updatedProject == null ? null : updatedProject.getDataSets()), thisMapTypeID, MapType.DATASET.getMapType(), auditJson);
+        }
         // DSA
-        updateMappingsAndAddToAudit(true, uuid, (oldProject == null ? null : oldProject.getDsas()),
-                (updatedProject == null ? null : updatedProject.getDsas()), thisMapTypeID, MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
-
+        if (updatedProject != null && updatedProject.getDsas() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldProject == null ? null : oldProject.getDsas()),
+                    (updatedProject == null ? null : updatedProject.getDsas()), thisMapTypeID, MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
+        }
         // Documents
-        updateDocumentsAndAddToAudit(uuid, (oldProject == null ? null : oldProject.getDocumentations()),
-                (updatedProject == null ? null : updatedProject.getDocumentations()), thisMapTypeID, auditJson);
-
+        if (updatedProject != null && updatedProject.getDocumentations() != null) {
+            updateDocumentsAndAddToAudit(uuid, (oldProject == null ? null : oldProject.getDocumentations()),
+                    (updatedProject == null ? null : updatedProject.getDocumentations()), thisMapTypeID, auditJson);
+        }
         // Extract Technical Details
         updateExtractTechnicalDetailsAndAddToAudit(uuid, (oldProject == null ? null : oldProject.getExtractTechnicalDetails()),
                 (updatedProject == null ? null : updatedProject.getExtractTechnicalDetails()), auditJson);

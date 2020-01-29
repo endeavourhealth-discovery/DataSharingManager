@@ -139,13 +139,7 @@ export class RegionEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.region = result;
-        this.regionService.saveRegion(this.region)
-          .subscribe(saved => {
-              this.region.uuid = saved;
-              this.log.success('Region saved.');
-            },
-            error => this.log.error('The region could not be saved. Please try again.')
-          );
+        this.log.success('Region saved.');
       }
     });
   }

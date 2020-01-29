@@ -12,7 +12,7 @@ public class ExtractTechnicalDetailsLogic {
     public ExtractTechnicalDetailsEntity getAssociatedExtractTechnicalDetails(String parentUuid, Short parentType) throws Exception {
 
         List<String> detailsUuids = new SecurityMasterMappingDAL().getChildMappings(parentUuid, parentType, MapType.EXTRACTTECHNICALDETAILS.getMapType());
-        ExtractTechnicalDetailsEntity ret = new ExtractTechnicalDetailsEntity();
+        ExtractTechnicalDetailsEntity ret = null;
 
         if (!detailsUuids.isEmpty()) {
             ret = new ExtractTechnicalDetailsDAL().getExtractTechnicalDetails(detailsUuids.get(0));

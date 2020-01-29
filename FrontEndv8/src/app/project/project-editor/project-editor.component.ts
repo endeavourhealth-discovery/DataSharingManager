@@ -18,13 +18,14 @@ import {CohortPickerComponent} from "../../cohort/cohort-picker/cohort-picker.co
 import {DataSet} from "src/app/data-set/models/Dataset";
 import {DataSetPickerComponent} from "src/app/data-set/data-set-picker/data-set-picker.component";
 import {AuthorityToShare} from "../models/AuthorityToShare";
-import { ApplicationPolicy } from '../models/ApplicationPolicy';
+import {ApplicationPolicy} from '../models/ApplicationPolicy';
 import {ProjectApplicationPolicy} from "../models/ProjectApplicationPolicy";
 import {ExtractTechnicalDetails} from "../models/ExtractTechnicalDetails";
 import {Schedule} from "../../scheduler/models/Schedule";
 import {SchedulerComponent} from "../../scheduler/scheduler/scheduler.component";
 import {DataSharingAgreementPickerComponent} from "../../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component";
-import {ValueSetsComponent} from "../../value-sets/value-sets/value-sets.component";
+import {ProjectDialogComponent} from "../project-dialog/project-dialog.component";
+import {ExtractDetailsDialogComponent} from "../extract-details-dialog/extract-details-dialog.component";
 
 @Component({
   selector: 'app-project-editor',
@@ -40,6 +41,7 @@ export class ProjectEditorComponent implements OnInit {
   @ViewChild('cohortsTable', { static: false }) cohortsTable: GenericTableComponent;
   @ViewChild('dataSetsTable', { static: false }) dataSetsTable: GenericTableComponent;
   @ViewChild('authToShareTable', { static: false }) authToShareTable: GenericTableComponent;
+  @ViewChild('extractTechnicalDetailsTable', { static: false }) extractTechnicalDetailsTable: GenericTableComponent;
   @ViewChild('schedulesTable', { static: false }) schedulesTable: GenericTableComponent;
 
   project: Project;
@@ -65,7 +67,8 @@ export class ProjectEditorComponent implements OnInit {
   availablePolicies: ApplicationPolicy[];
   selectedApplicationPolicy: ApplicationPolicy;
   projectApplicationPolicy: ProjectApplicationPolicy;
-  extractTechnicalDetails: ExtractTechnicalDetails = <ExtractTechnicalDetails>{};
+  extractTechnicalDetails: ExtractTechnicalDetails[] = [];
+  extractTechnicalDetailToShow = new ExtractTechnicalDetails().getDisplayItems();
   schedules: Schedule[] = [];
   schedulesDetailsToShow = new Schedule().getDisplayItems();
 
@@ -162,7 +165,6 @@ export class ProjectEditorComponent implements OnInit {
       params => {
         this.performAction(params['mode'], params['id']);
       });
-    this.getAvailableApplicationPolicies();
     this.getUserList();
   }
 
@@ -184,58 +186,6 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   save(close: boolean) {
-
-    // Populate Data Sharing Agreements before save
-    this.project.dsas = {};
-    for (let idx in this.dsas) {
-      const dsa: Dsa = this.dsas[idx];
-      this.project.dsas[dsa.uuid] = dsa.name;
-    }
-
-    // Populate publishers before save
-    this.project.publishers = {};
-    for (let idx in this.publishers) {
-      const pub: Organisation = this.publishers[idx];
-      this.project.publishers[pub.uuid] = pub.name;
-    }
-
-    // Populate subscribers before save
-    this.project.subscribers = {};
-    for (let idx in this.subscribers) {
-      const sub: Organisation = this.subscribers[idx];
-      this.project.subscribers[sub.uuid] = sub.name;
-    }
-
-    // Populate documents before save
-    this.project.documentations = [];
-    this.project.documentations = this.documentations;
-
-    // Populate cohorts before save
-    this.project.cohorts = {};
-    for (let idx in this.cohorts) {
-      const coh: Cohort = this.cohorts[idx];
-      this.project.cohorts[coh.uuid] = coh.name;
-    }
-
-    // Populate dataSets before save
-    this.project.dataSets = {};
-    for (let idx in this.dataSets) {
-      const ds: DataSet = this.dataSets[idx];
-      this.project.dataSets[ds.uuid] = ds.name;
-    }
-
-    // Populate extract technical details before save
-    this.project.extractTechnicalDetails = null;
-    this.project.extractTechnicalDetails = this.extractTechnicalDetails;
-
-    // Populate schedule before save
-    if (this.schedules[0]) {
-      this.project.schedule = this.schedules[0];
-      this.project.schedules = {};
-      if (this.project.schedule.uuid) {
-        this.project.schedules[this.project.schedule.uuid] = this.project.schedule.cronDescription;
-      }
-    }
     this.projectService.saveProject(this.project)
       .subscribe(saved => {
           this.project.uuid = saved;
@@ -244,6 +194,30 @@ export class ProjectEditorComponent implements OnInit {
           if (close) {
             window.history.back();
           }
+        },
+        error => this.log.error('The project could not be saved. Please try again.')
+      );
+  }
+
+  editProject() {
+    const dialogRef = this.dialog.open(ProjectDialogComponent, {
+      width: '1000px',
+      data: {mode: 'edit', uuid: this.project.uuid},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.project = result;
+        this.getProjectApplicationPolicy();
+        this.log.success('Project saved');
+      }
+    });
+  }
+
+  updateMappings(type: string) {
+    this.projectService.updateMappings(this.project)
+      .subscribe(saved => {
+          this.project.uuid = saved;
+          this.log.success(type + ' updated successfully.');
         },
         error => this.log.error('The project could not be saved. Please try again.')
       );
@@ -276,7 +250,6 @@ export class ProjectEditorComponent implements OnInit {
           this.getCohorts();
           this.getDataSets();
           this.getAuthToShare();
-          this.getAvailableApplicationPolicies();
           this.getProjectApplicationPolicy();
           this.getAssociatedExtractTechnicalDetails();
           this.getSchedule();
@@ -286,10 +259,9 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   getUserList() {
-    const vm = this;
-    vm.projectService.getUsers()
+    this.projectService.getUsers()
       .subscribe(
-        (result) => vm.userList = result,
+        (result) => this.userList = result,
         (error) => this.log.error('User list could not be loaded. Please try again.')
       );
   }
@@ -339,7 +311,13 @@ export class ProjectEditorComponent implements OnInit {
               });
             }
             this.dsasTable.updateRows();
-            this.log.success('Remove successful.');
+            this.clearMappings();
+            this.project.dsas = {};
+            for (const idx in this.dsas) {
+              const dsa: Dsa = this.dsas[idx];
+              this.project.dsas[dsa.uuid] = dsa.name;
+            }
+            this.updateMappings('DSA');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -352,12 +330,22 @@ export class ProjectEditorComponent implements OnInit {
       width: '800px',
     })
     dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
       for (let dsa of result) {
         if (!this.dsas.some(x => x.uuid === dsa.uuid)) {
           this.dsas.push(dsa);
-          this.dsasTable.updateRows();
         }
       }
+      this.dsasTable.updateRows();
+      this.clearMappings();
+      this.project.dsas = {};
+      for (const idx in this.dsas) {
+        const dsa: Dsa = this.dsas[idx];
+        this.project.dsas[dsa.uuid] = dsa.name;
+      }
+      this.updateMappings('DSA');
     })
     // const dialogRef = this.dialog.open(ValueSetsComponent, {
     //   width: '1000px',
@@ -394,7 +382,13 @@ export class ProjectEditorComponent implements OnInit {
               });
             }
             this.publishersTable.updateRows();
-            this.log.success('Remove successful');
+            this.clearMappings();
+            this.project.publishers = {};
+            for (const idx in this.publishers) {
+              const org: Organisation = this.publishers[idx];
+              this.project.publishers[org.uuid] = org.name;
+            }
+            this.updateMappings('Publishers');
           } else {
             this.log.success('Remove cancelled')
           }
@@ -407,15 +401,25 @@ export class ProjectEditorComponent implements OnInit {
     } else {
       const dialogRef = this.dialog.open(OrganisationPickerComponent, {
         width: '800px',
-        data: { searchType: 'publisher', uuid: '', regionUUID: '', dsaUUID: this.dsas[0].uuid }
+        data: { searchType: 'publisher', uuid: '', regionUUID: '', dsaUUID: this.dsas[0].uuid, existingOrgs: this.publishers }
       })
       dialogRef.afterClosed().subscribe(result => {
+        if (!result) {
+          return;
+        }
         for (let org of result) {
           if (!this.publishers.some(x => x.uuid === org.uuid)) {
             this.publishers.push(org);
-            this.publishersTable.updateRows();
           }
         }
+        this.publishersTable.updateRows();
+        this.clearMappings();
+        this.project.publishers = {};
+        for (const idx in this.publishers) {
+          const org: Organisation = this.publishers[idx];
+          this.project.publishers[org.uuid] = org.name;
+        }
+        this.updateMappings('Publishers');
       })
     }
   }
@@ -441,7 +445,13 @@ export class ProjectEditorComponent implements OnInit {
               });
             }
             this.subscribersTable.updateRows();
-            this.log.success('Remove successful.');
+            this.clearMappings();
+            this.project.subscribers = {};
+            for (const idx in this.subscribers) {
+              const org: Organisation = this.subscribers[idx];
+              this.project.subscribers[org.uuid] = org.name;
+            }
+            this.updateMappings('Subscribers');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -454,15 +464,25 @@ export class ProjectEditorComponent implements OnInit {
     } else {
       const dialogRef = this.dialog.open(OrganisationPickerComponent, {
         width: '800px',
-        data: { searchType: 'subscriber', uuid: '', regionUUID: '', dsaUUID: this.dsas[0].uuid }
+        data: { searchType: 'subscriber', uuid: '', regionUUID: '', dsaUUID: this.dsas[0].uuid, existingOrgs: this.subscribers }
       })
       dialogRef.afterClosed().subscribe(result => {
+        if (!result) {
+          return;
+        }
         for (let org of result) {
           if (!this.subscribers.some(x => x.uuid === org.uuid)) {
             this.subscribers.push(org);
-            this.subscribersTable.updateRows();
           }
         }
+        this.subscribersTable.updateRows();
+        this.clearMappings();
+        this.project.subscribers = {};
+        for (const idx in this.subscribers) {
+          const org: Organisation = this.subscribers[idx];
+          this.project.subscribers[org.uuid] = org.name;
+        }
+        this.updateMappings('Subscribers');
       })
     }
   }
@@ -488,7 +508,10 @@ export class ProjectEditorComponent implements OnInit {
               });
             }
             this.documentationsTable.updateRows();
-            this.log.success('Delete successful.');
+            this.clearMappings();
+            this.project.documentations = [];
+            this.project.documentations = this.documentations;
+            this.updateMappings('Documentations');
           } else {
             this.log.success('Delete cancelled.')
           }
@@ -503,6 +526,10 @@ export class ProjectEditorComponent implements OnInit {
       if (result) {
         this.documentations.push(result);
         this.documentationsTable.updateRows();
+        this.clearMappings();
+        this.project.documentations = [];
+        this.project.documentations = this.documentations;
+        this.updateMappings('Documentations');
       }
     });
   }
@@ -532,7 +559,13 @@ export class ProjectEditorComponent implements OnInit {
               });
             }
             this.cohortsTable.updateRows();
-            this.log.success('Remove successful.');
+            this.clearMappings();
+            this.project.cohorts = {};
+            for (const idx in this.cohorts) {
+              const cohort: Cohort = this.cohorts[idx];
+              this.project.cohorts[cohort.uuid] = cohort.name;
+            }
+            this.updateMappings('Cohorts');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -548,9 +581,16 @@ export class ProjectEditorComponent implements OnInit {
         for (let cohort of result) {
           if (!this.cohorts.some(x => x.uuid === cohort.uuid)) {
             this.cohorts.push(cohort);
-            this.cohortsTable.updateRows();
           }
         }
+        this.cohortsTable.updateRows();
+        this.clearMappings();
+        this.project.cohorts = {};
+        for (const idx in this.cohorts) {
+          const cohort: Cohort = this.cohorts[idx];
+          this.project.cohorts[cohort.uuid] = cohort.name;
+        }
+        this.updateMappings('Cohorts');
       }
     });
   }
@@ -580,7 +620,13 @@ export class ProjectEditorComponent implements OnInit {
               });
             }
             this.dataSetsTable.updateRows();
-            this.log.success('Remove successful.');
+            this.clearMappings();
+            this.project.dataSets = {};
+            for (const idx in this.dataSets) {
+              const dataSet: DataSet = this.dataSets[idx];
+              this.project.dataSets[dataSet.uuid] = dataSet.name;
+            }
+            this.updateMappings('DataSets');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -596,9 +642,16 @@ export class ProjectEditorComponent implements OnInit {
         for (let dataSet of result) {
           if (!this.dataSets.some(x => x.uuid === dataSet.uuid)) {
             this.dataSets.push(dataSet);
-            this.dataSetsTable.updateRows();
           }
         }
+        this.dataSetsTable.updateRows();
+        this.clearMappings();
+        this.project.dataSets = {};
+        for (const idx in this.dataSets) {
+          const dataSet: DataSet = this.dataSets[idx];
+          this.project.dataSets[dataSet.uuid] = dataSet.name;
+        }
+        this.updateMappings('DataSets');
       }
     });
   }
@@ -611,26 +664,26 @@ export class ProjectEditorComponent implements OnInit {
       );
   }
 
-  getAvailableApplicationPolicies() {
+  getProjectApplicationPolicy() {
     this.projectService.getAvailableProjectApplicationPolicy()
       .subscribe(
-        (result) => this.availablePolicies = result,
-        (error) => this.log.error('Available application policies could not be loaded. Please try again.')
-      );
-  }
-
-  getProjectApplicationPolicy() {
-    this.projectService.getProjectApplicationPolicy(this.project.uuid)
-      .subscribe(
         (result) => {
-          this.projectApplicationPolicy = result;
-          this.selectedApplicationPolicy = this.availablePolicies.find(r => {
-            return r.id === this.projectApplicationPolicy.applicationPolicyId;
-          });
+          this.availablePolicies = result;
+          this.projectService.getProjectApplicationPolicy(this.project.uuid)
+            .subscribe(
+              (result) => {
+                this.projectApplicationPolicy = result;
+                this.selectedApplicationPolicy = this.availablePolicies.find(r => {
+                  return r.id === this.projectApplicationPolicy.applicationPolicyId;
+                });
+                this.changeUserApplicationPolicy(this.selectedApplicationPolicy.id);
+              },
+              (error) => {
+                this.log.error('Project application policy could not be loaded. Please try again.');
+              }
+            );
         },
-        (error) => {
-          this.log.error('Project application policy could not be loaded. Please try again.');
-        }
+        (error) => this.log.error('Available application policies could not be loaded. Please try again.')
       );
   }
 
@@ -644,50 +697,78 @@ export class ProjectEditorComponent implements OnInit {
   getAssociatedExtractTechnicalDetails() {
     this.projectService.getAssociatedExtractTechDetails(this.project.uuid)
       .subscribe(
-      result => this.extractTechnicalDetails = result
+      result => {
+        if (result) {
+          this.extractTechnicalDetails = new Array<ExtractTechnicalDetails>();
+          this.extractTechnicalDetails.push(result);
+          this.extractTechnicalDetailsTable.updateRows();
+        } else {
+          this.extractTechnicalDetails = new Array<ExtractTechnicalDetails>();
+        }
+      }
     );
   }
 
-  uploadExtraTechDetails(whichFile: number) {
-    const dialogRef = this.dialog.open(DocumentationComponent, {
-      width: '550px',
+  extractTechnicalDetailClicked(item: ExtractTechnicalDetails) {
+    let index = this.extractTechnicalDetails.indexOf(item);
+    const dialogRef = this.dialog.open(ExtractDetailsDialogComponent, {
+      width: '800px',
+      data: {extractTechnicalDetail: item},
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (whichFile == 1) {
-          this.log.success('Uploading SFTP host public key file complete.');
-          this.extractTechnicalDetails.sftpHostPublicKeyFilename = result.filename;
-          this.extractTechnicalDetails.sftpHostPublicKeyFileData = result.fileData;
-        } else if (whichFile == 2) {
-          this.log.success('Uploading SFTP client private key file complete.');
-          this.extractTechnicalDetails.sftpClientPrivateKeyFilename = result.filename;
-          this.extractTechnicalDetails.sftpClientPrivateKeyFileData = result.fileData;
-        } else if (whichFile == 3) {
-          this.log.success('Uploading customer public key file complete.');
-          this.extractTechnicalDetails.pgpCustomerPublicKeyFilename = result.filename;
-          this.extractTechnicalDetails.pgpCustomerPublicKeyFileData = result.fileData;
-        } else if (whichFile == 4) {
-          this.log.success('Uploading internal public key file complete.');
-          this.extractTechnicalDetails.pgpInternalPublicKeyFilename = result.filename;
-          this.extractTechnicalDetails.pgpInternalPublicKeyFileData = result.fileData;
+        this.extractTechnicalDetails[index] = result;
+        this.extractTechnicalDetailsTable.updateRows();
+        if (this.extractTechnicalDetails[0]) {
+          this.clearMappings();
+          this.project.extractTechnicalDetails = this.extractTechnicalDetails[0];
+          this.updateMappings("Extract technical details");
         }
       }
     });
   }
 
-  clearExtraTechDetails(whichFile: number) {
-    if (whichFile == 1) {
-      this.extractTechnicalDetails.sftpHostPublicKeyFilename = null;
-      this.extractTechnicalDetails.sftpHostPublicKeyFileData = null;
-    } else if (whichFile == 2) {
-      this.extractTechnicalDetails.sftpClientPrivateKeyFilename = null;
-      this.extractTechnicalDetails.sftpClientPrivateKeyFileData = null;
-    } else if (whichFile == 3) {
-      this.extractTechnicalDetails.pgpCustomerPublicKeyFilename = null;
-      this.extractTechnicalDetails.pgpCustomerPublicKeyFileData = null;
-    } else if (whichFile == 4) {
-      this.extractTechnicalDetails.pgpInternalPublicKeyFilename = null;
-      this.extractTechnicalDetails.pgpInternalPublicKeyFileData = null;
+  deleteExtractTechnicalDetail() {
+    MessageBoxDialogComponent.open(this.dialog, 'Delete Extract technical details', 'Are you sure you want to delete extract technical details?',
+      'Delete Extract technical details', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.extractTechnicalDetailsTable.selection.selected.length; i++) {
+              let details = this.extractTechnicalDetailsTable.selection.selected[i];
+              this.extractTechnicalDetails.forEach( (item, index) => {
+                if(item === details) this.extractTechnicalDetails.splice(index,1);
+              });
+            }
+            this.extractTechnicalDetailsTable.updateRows();
+            this.clearMappings();
+            this.project.extractTechnicalDetails = null;
+            this.updateMappings("Extract technical details");
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        });
+  }
+
+  addExtractTechnicalDetail() {
+    if (!this.extractTechnicalDetails[0]) {
+      const dialogRef = this.dialog.open(ExtractDetailsDialogComponent, {
+        width: '800px',
+        data: {extractTechnicalDetail: null},
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.extractTechnicalDetails.push(result);
+          this.extractTechnicalDetailsTable.updateRows();
+          if (this.extractTechnicalDetails[0]) {
+            this.project.extractTechnicalDetails = this.extractTechnicalDetails[0];
+            this.clearMappings();
+            this.updateMappings("Extract technical details");
+          }
+        }
+      });
+    } else {
+      this.log.error('Cannot add multiple extract technical details.');
     }
   }
 
@@ -716,6 +797,15 @@ export class ProjectEditorComponent implements OnInit {
       if (result) {
         this.schedules[index] = result;
         this.schedulesTable.updateRows();
+        if (this.schedules[0]) {
+          this.project.schedule = this.schedules[0];
+          this.clearMappings();
+          this.project.schedules = {};
+          if (this.project.schedule.uuid) {
+            this.project.schedules[this.project.schedule.uuid] = this.project.schedule.cronDescription;
+            this.updateMappings("Schedule");
+          }
+        }
       }
     });
   }
@@ -733,7 +823,10 @@ export class ProjectEditorComponent implements OnInit {
               });
             }
             this.schedulesTable.updateRows();
-            this.log.success('Delete successful.');
+            this.clearMappings();
+            this.project.schedules = {};
+            this.project.schedule = null;
+            this.updateMappings("Schedule");
           } else {
             this.log.success('Delete cancelled.')
           }
@@ -750,10 +843,31 @@ export class ProjectEditorComponent implements OnInit {
         if (result) {
           this.schedules.push(result);
           this.schedulesTable.updateRows();
+          if (this.schedules[0]) {
+            this.project.schedule = this.schedules[0];
+            this.clearMappings();
+            this.project.schedules = {};
+            if (this.project.schedule.uuid) {
+              this.project.schedules[this.project.schedule.uuid] = this.project.schedule.cronDescription;
+              this.updateMappings("Schedule");
+            }
+          }
         }
       });
     } else {
       this.log.error('Cannot add multiple schedules.');
     }
+  }
+
+  clearMappings() {
+    this.project.dsas = null;
+    this.project.publishers = null;
+    this.project.subscribers = null;
+    this.project.documentations = null;
+    this.project.cohorts = null;
+    this.project.dataSets = null;
+    this.project.documentations = null
+    this.project.schedule = this.schedules[0];
+    this.project.extractTechnicalDetails = this.extractTechnicalDetails[0];
   }
 }
