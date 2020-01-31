@@ -23,6 +23,7 @@ import {OrganisationService} from './organisation.service';
 import {OrganisationEditorComponent} from "./organisation-editor/organisation-editor.component";
 import {OrganisationPickerComponent} from './organisation-picker/organisation-picker.component';
 import { OrganisationDialogComponent } from './organisation-dialog/organisation-dialog.component';
+import { AddressDialogComponent } from './address-dialog/address-dialog.component';
 
 @NgModule({
   imports: [
@@ -59,11 +60,13 @@ import { OrganisationDialogComponent } from './organisation-dialog/organisation-
     OrganisationComponent,
     OrganisationEditorComponent,
     OrganisationPickerComponent,
-    OrganisationDialogComponent
+    OrganisationDialogComponent,
+    AddressDialogComponent
   ],
   entryComponents : [
     OrganisationPickerComponent,
     OrganisationDialogComponent,
+    AddressDialogComponent
   ],
   providers: [
     OrganisationService,

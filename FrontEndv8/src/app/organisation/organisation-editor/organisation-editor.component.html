@@ -79,11 +79,12 @@
         <ng-template mat-tab-label>
           <span matBadge="{{addresses?.length}}" matBadgeOverlap="false" [matBadgeHidden]="addresses?.length < 1">Addresses</span>
         </ng-template>
-        <app-generic-table
+        <app-generic-table #addressesTable
           [items]="addresses"
           [detailsToShow]="addressDetailsToShow"
-          [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
+          [allowSelect]="allowEdit"
+          (clicked)="addressClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress()"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
         <!--<mat-card *ngFor="let orgAddress of addresses; let index = index">

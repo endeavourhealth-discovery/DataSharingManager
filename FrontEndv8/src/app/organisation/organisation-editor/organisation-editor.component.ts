@@ -1,19 +1,20 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {OrganisationService} from '../organisation.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import { DatePipe } from '@angular/common';
+import {DatePipe} from '@angular/common';
 import {Region} from "../../region/models/Region";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {OrganisationType} from "../models/OrganisationType";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {Organisation} from "../models/Organisation";
 import {Address} from "../models/Address";
 import {MatDialog} from '@angular/material/dialog';
 import {OrganisationPickerComponent} from "../organisation-picker/organisation-picker.component";
 import {RegionPickerComponent} from "../../region/region-picker/region-picker.component";
 import {OrganisationDialogComponent} from "../organisation-dialog/organisation-dialog.component";
+import {AddressDialogComponent} from "../address-dialog/address-dialog.component";
 
 @Component({
   selector: 'app-organisation-editor',
@@ -64,6 +65,7 @@ export class OrganisationEditorComponent implements OnInit {
     {num: 1, name: 'Yes'},
   ];
 
+  @ViewChild('addressesTable', { static: false }) addressesTable: GenericTableComponent;
   @ViewChild('childOrg', { static: false }) childOrgTable: GenericTableComponent;
   @ViewChild('parentOrg', { static: false }) parentOrgTable: GenericTableComponent;
   @ViewChild('regionTable', { static: false }) regionTable: GenericTableComponent;
@@ -244,8 +246,38 @@ export class OrganisationEditorComponent implements OnInit {
     window.history.back();
   }
 
+  addressClicked(address : Address) {
+    let index = this.addresses.indexOf(address);
+    const dialogRef = this.dialog.open(AddressDialogComponent, {
+      width: '800px',
+      data: {address: address},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (index > -1) {
+          this.addresses[index] = address;
+        } else {
+          this.addresses.push(address);
+        }
+        this.addressesTable.updateRows();
+        this.clearMappings();
+        this.organisation.addresses = this.addresses;
+        this.updateMappings('Address');
+      }
+    });
+  }
+
+  updateMappings(type : string) {
+    this.organisationService.updateMappings(this.organisation)
+      .subscribe(saved => {
+          this.organisation.uuid = saved;
+          this.log.success(type + ' saved successfully.');
+        },
+        error => this.log.error(type  + ' could not be saved. Please try again.')
+      );
+  }
+
   addAddress() {
-    const vm = this;
     const address: Address = <Address>{};
     address.uuid = null;
     address.organisationUuid = this.organisation.uuid;
@@ -258,8 +290,41 @@ export class OrganisationEditorComponent implements OnInit {
     address.lat = null;
     address.lng = null;
     address.geolocationReprocess = null;
-    this.addresses.push(address);
+    this.addressClicked(address);
+  }
 
+  deleteAddress() {
+    MessageBoxDialogComponent.open(this.dialog, 'Delete address', 'Are you sure you want to delete address(es)?',
+      'Delete address', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.addressesTable.selection.selected.length; i++) {
+              let address = this.addressesTable.selection.selected[i];
+              this.addresses.forEach( (item, index) => {
+                if(item === address) this.addresses.splice(index,1);
+              });
+            }
+            this.addressesTable.updateRows();
+            this.clearMappings();
+            this.organisation.addresses = this.addresses;
+            this.updateMappings('Address');
+          } else {
+            this.log.success('Delete cancelled.')
+          }
+        },
+      );
+  }
+
+  clearMappings() {
+    this.organisation.regions = null;
+    this.organisation.childOrganisations = null;
+    this.organisation.parentOrganisations = null;
+    this.organisation.services = null;
+    this.organisation.dpaPublishing = null;
+    this.organisation.dsaPublishing = null;
+    this.organisation.dsaSubscribing = null;
+    this.organisation.addresses = null;
   }
 
   addRegion() {
@@ -431,13 +496,6 @@ export class OrganisationEditorComponent implements OnInit {
         result => this.dsaSubscribing = result,
         error => this.log.error('The associated subscribing data sharing agreements could not be loaded. Please try again.')
       );
-  }
-
-  deleteAddress(address: Address) {
-    const index = this.addresses.findIndex(a => a.uuid === address.uuid);
-    if (index > -1) {
-      this.addresses.splice(index, 1);
-    }
   }
 
   editOrganisation() {
