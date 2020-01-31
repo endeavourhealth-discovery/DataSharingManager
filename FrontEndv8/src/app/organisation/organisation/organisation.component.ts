@@ -5,6 +5,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableSspComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {MatDialog} from "@angular/material/dialog";
+import {DataSetDialogComponent} from "../../data-set/data-set-dialog/data-set-dialog.component";
+import {OrganisationDialogComponent} from "../organisation-dialog/organisation-dialog.component";
 
 @Component({
   selector: 'app-organisation',
@@ -91,9 +93,27 @@ export class OrganisationComponent implements OnInit {
 
   add() {
     if (this.modeType === 'Organisation') {
-      this.router.navigate(['/organisation', 1, 'add']);
+      const dialogRef = this.dialog.open(OrganisationDialogComponent, {
+        width: '1200px',
+        data: {mode: 'add', uuid: '', orgType: this.modeType},
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.router.navigate(['/organisation', result.uuid, 'edit']);
+          this.log.success('Organisation saved.');
+        }
+      });
     } else {
-      this.router.navigate(['/organisation', 1, 'addService']);
+      const dialogRef = this.dialog.open(OrganisationDialogComponent, {
+        width: '1200px',
+        data: {mode: 'addService', uuid: '', orgType: this.modeType},
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.router.navigate(['/organisation', result.uuid, 'edit']);
+          this.log.success('Service saved.');
+        }
+      });
     }
   }
 

@@ -8,10 +8,11 @@
     <mat-card-subtitle *ngIf="organisation.name">{{organisation.name}}</mat-card-subtitle>
     <mat-card-subtitle *ngIf="!organisation.name">New {{orgType}}</mat-card-subtitle>
     <div fxFlex></div>
+    <div fxLayoutAlign="center" class="mat-action" matRipple (click)="editOrganisation()">
+      <i class="fas fa-fw fa-pencil"></i>
+    </div>
     <mat-menu #visualiseMenu="matMenu">
       <button *ngIf="(organisation.isService === 0) && (organisation.uuid) && (allowEdit)" mat-menu-item (click)="createServiceFromOrg()">Create service</button>
-      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(false)">Save</button>
-      <button *ngIf="allowEdit" [disabled]="!f.valid"  mat-menu-item (click)="save(true)">Save & close</button>
       <button mat-menu-item (click)="close()">Cancel</button>
     </mat-menu>
     <div fxLayoutAlign="center" class="mat-action" matRipple>
@@ -22,49 +23,49 @@
     <form class="form" #f="ngForm" novalidate>
       <div class="form-group" #fgName="ngModelGroup" ngModelGroup="organisation" [class.has-error]="!fgName.valid">
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-          <mat-form-field appearance="outline" fxFlex="40" fxFill>
+          <mat-form-field appearance="outline" fxFlex="40" fxFill mat-readonly>
             <mat-label>{{orgType}} name</mat-label>
-            <input required matInput [(ngModel)]="organisation.name" placeholder="Organisation name" name="name">
+            <input required matInput [(ngModel)]="organisation.name" placeholder="{{orgType}} name" name="name" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="40" fxFill>
+          <mat-form-field appearance="outline" fxFlex="40" fxFill mat-readonly>
             <mat-label>Alternative name</mat-label>
-            <input matInput [(ngModel)]="organisation.alternativeName" placeholder="Alternative name" name="alternativeName">
+            <input matInput [(ngModel)]="organisation.alternativeName" placeholder="Alternative name" name="alternativeName" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="20" fxFill>
+          <mat-form-field appearance="outline" fxFlex="20" fxFill mat-readonly>
             <mat-label>Date of registration</mat-label>
-            <input matInput type="date" [(ngModel)]="organisation.dateOfRegistration" placeholder="Date Of registration" name="dateOfRegistration">
+            <input matInput type="date" [(ngModel)]="organisation.dateOfRegistration" placeholder="Date Of registration" name="dateOfRegistration" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="20" fxFill>
+          <mat-form-field appearance="outline" fxFlex="20" fxFill mat-readonly>
             <mat-label>ODS code</mat-label>
-            <input required matInput [(ngModel)]="organisation.odsCode" placeholder="ODS Code" name="odsCode">
+            <input required matInput [(ngModel)]="organisation.odsCode" placeholder="ODS Code" name="odsCode" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="20" fxFill>
+          <mat-form-field appearance="outline" fxFlex="20" fxFill mat-readonly>
             <mat-label>ICO code</mat-label>
-            <input matInput [(ngModel)]="organisation.icoCode" placeholder="ICO code" name="icoCode">
+            <input matInput [(ngModel)]="organisation.icoCode" placeholder="ICO code" name="icoCode" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="40">
+          <mat-form-field appearance="outline" fxFlex="40" mat-readonly>
             <mat-label>Organisation type</mat-label>
-            <mat-select matInput name="status" [(ngModel)]="organisation.type" name="type">
+            <mat-select matInput name="status" [(ngModel)]="organisation.type" name="type" readonly>
               <mat-option *ngFor="let ot of organisationTypes" [value]="ot.id">{{ot.organisationType}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="20" fxFill>
+          <mat-form-field appearance="outline" fxFlex="20" fxFill mat-readonly>
             <mat-label>IG toolkit status</mat-label>
-            <input matInput [(ngModel)]="organisation.igToolkitStatus" placeholder="IG toolkit status" name="igToolkitStatus">
+            <input matInput [(ngModel)]="organisation.igToolkitStatus" placeholder="IG toolkit status" name="igToolkitStatus" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="20" fxFill>
+          <mat-form-field appearance="outline" fxFlex="20" fxFill mat-readonly>
             <mat-label>System supplier</mat-label>
-            <mat-select matInput name="systemSupplier" [(ngModel)]="organisation.systemSupplierSystemId" name="systemSupplierSystemId">
+            <mat-select matInput name="systemSupplier" [(ngModel)]="organisation.systemSupplierSystemId" name="systemSupplierSystemId" readonly>
                 <mat-option *ngFor="let sssids of systemSupplierSystems" [value]="sssids.num">{{sssids.name}}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="20" fxFill>
+          <mat-form-field appearance="outline" fxFlex="20" fxFill mat-readonly>
             <mat-label>System supplier reference</mat-label>
-            <input matInput [(ngModel)]="organisation.systemSupplierReference" placeholder="System supplier reference" name="systemSupplierReference">
+            <input matInput [(ngModel)]="organisation.systemSupplierReference" placeholder="System supplier reference" name="systemSupplierReference" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="20" fxFill>
+          <mat-form-field appearance="outline" fxFlex="20" fxFill mat-readonly>
             <mat-label>System supplier sharing activated</mat-label>
-            <mat-select matInput name="systemSupplierSharingActivated" [(ngModel)]="organisation.systemSupplierSharingActivated" name="systemSupplierSharingActivated">
+            <mat-select matInput name="systemSupplierSharingActivated" [(ngModel)]="organisation.systemSupplierSharingActivated" name="systemSupplierSharingActivated" readonly>
               <mat-option *ngFor="let sssa of systemSupplierSharingActivated" [value]="sssa.num">{{sssa.name}}</mat-option>
             </mat-select>
           </mat-form-field>

@@ -82,6 +82,27 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         return new OrganisationLogic().postOrganisation(organisation, userProjectId);
     }
 
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.OrganisationEndpoint.Post")
+    @Path("/updateMappings")
+    @ApiOperation(value = "Save a new organisation or update an existing one.  Accepts a JSON representation " +
+            "of a organisation.")
+    @RequiresAdmin
+    public Response updateMappings(@Context SecurityContext sc,
+                                     @HeaderParam("userProjectId") String userProjectId,
+                                     @ApiParam(value = "Json representation of organisation to save or update") JsonOrganisation organisation
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
+                "Organisation",
+                "Organisation", organisation);
+
+        clearLogbackMarkers();
+        return new OrganisationLogic().updateMappings(organisation, userProjectId);
+    }
+
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)

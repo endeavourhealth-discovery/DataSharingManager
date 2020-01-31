@@ -76,7 +76,7 @@ public class OrganisationLogic {
 
 
         if (organisation.getUuid() != null) {
-            new OrganisationDAL().updateOrganisation(organisation, userProjectId);
+            new OrganisationDAL().updateOrganisation(organisation, userProjectId, false);
         } else {
             String hashString = organisation.getName() + organisation.getOdsCode();
             if (organisation.getIsService().equals("1")) {
@@ -91,6 +91,14 @@ public class OrganisationLogic {
                 .entity(organisation.getUuid())
                 .build();
 
+    }
+
+    public Response updateMappings(JsonOrganisation organisation, String userProjectId) throws Exception {
+        new OrganisationDAL().updateOrganisation(organisation, userProjectId, true);
+        return Response
+                .ok()
+                .entity(organisation.getUuid())
+                .build();
     }
 
     public Response getOrganisationsByType(byte type) throws Exception {

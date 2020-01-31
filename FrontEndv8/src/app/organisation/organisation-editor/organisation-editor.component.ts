@@ -13,6 +13,7 @@ import {Address} from "../models/Address";
 import {MatDialog} from '@angular/material/dialog';
 import {OrganisationPickerComponent} from "../organisation-picker/organisation-picker.component";
 import {RegionPickerComponent} from "../../region/region-picker/region-picker.component";
+import {OrganisationDialogComponent} from "../organisation-dialog/organisation-dialog.component";
 
 @Component({
   selector: 'app-organisation-editor',
@@ -176,7 +177,7 @@ export class OrganisationEditorComponent implements OnInit {
           }
           this.getParentOrganisations();
         },
-        error => this.log.error('The organisation could not be loaded. Please try again.')
+        error => this.log.error('The ' + this.orgType + ' could not be loaded. Please try again.')
       );
   }
 
@@ -439,8 +440,17 @@ export class OrganisationEditorComponent implements OnInit {
     }
   }
 
-  editOrganisation(item: Organisation) {
-    this.router.navigate(['/organisation', item.uuid, 'edit']);
+  editOrganisation() {
+    const dialogRef = this.dialog.open(OrganisationDialogComponent, {
+      width: '1200px',
+      data: {mode: 'edit', uuid: this.organisation.uuid, orgType: this.orgType},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.organisation = result;
+        this.log.success(this.orgType + ' saved.');
+      }
+    });
   }
 
   editRegion(item: Organisation) {

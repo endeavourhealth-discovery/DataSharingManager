@@ -22,6 +22,7 @@ import {OrganisationComponent} from './organisation/organisation.component';
 import {OrganisationService} from './organisation.service';
 import {OrganisationEditorComponent} from "./organisation-editor/organisation-editor.component";
 import {OrganisationPickerComponent} from './organisation-picker/organisation-picker.component';
+import { OrganisationDialogComponent } from './organisation-dialog/organisation-dialog.component';
 
 @NgModule({
   imports: [
@@ -57,10 +58,12 @@ import {OrganisationPickerComponent} from './organisation-picker/organisation-pi
   declarations: [
     OrganisationComponent,
     OrganisationEditorComponent,
-    OrganisationPickerComponent
+    OrganisationPickerComponent,
+    OrganisationDialogComponent
   ],
   entryComponents : [
     OrganisationPickerComponent,
+    OrganisationDialogComponent,
   ],
   providers: [
     OrganisationService,

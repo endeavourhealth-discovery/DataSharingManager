@@ -117,7 +117,12 @@ export class OrganisationService  {
     return this.http.get<Address[]>('api/organisation/addresses', {params});
   }
 
+  updateMappings(organisation: Organisation): Observable<any> {
+    return this.http.post('api/organisation/updateMappings', organisation, { responseType: 'text' });
+  }
+
   saveOrganisation(organisation: Organisation): Observable<any> {
+    console.log(organisation);
     return this.http.post('api/organisation', organisation, { responseType: 'text' });
   }
 

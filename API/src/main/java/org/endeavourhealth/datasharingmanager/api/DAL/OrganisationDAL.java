@@ -98,7 +98,7 @@ public class OrganisationDAL {
         }
     }
 
-    public void updateOrganisation(JsonOrganisation organisation, String userProjectId) throws Exception {
+    public void updateOrganisation(JsonOrganisation organisation, String userProjectId, boolean withMappings) throws Exception {
         OrganisationEntity oldOrganisationEntity = _entityManager.find(OrganisationEntity.class, organisation.getUuid());
         oldOrganisationEntity.setMappingsFromDAL();
         oldOrganisationEntity.setAddresses(_addressDAL.getAddressesForOrganisation(organisation.getUuid()));
@@ -109,8 +109,10 @@ public class OrganisationDAL {
             OrganisationEntity newOrganisation = new OrganisationEntity(organisation);
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode(newOrganisation.organisationOrService() + " edited", oldOrganisationEntity, newOrganisation);
 
-            _addressDAL.updateAddressesAndAddToAudit(organisation.getAddresses(), oldOrganisationEntity.getAddresses(), organisation.getUuid(), auditJson, _entityManager);
-            _masterMappingDAL.updateOrganisationMappings(organisation, oldOrganisationEntity, auditJson);
+            if (withMappings) {
+                _addressDAL.updateAddressesAndAddToAudit(organisation.getAddresses(), oldOrganisationEntity.getAddresses(), organisation.getUuid(), auditJson, _entityManager);
+                _masterMappingDAL.updateOrganisationMappings(organisation, oldOrganisationEntity, auditJson);
+            }
 
             oldOrganisationEntity.updateFromJson(organisation);
 
