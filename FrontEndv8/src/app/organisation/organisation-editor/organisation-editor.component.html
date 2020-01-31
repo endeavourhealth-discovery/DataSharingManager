@@ -127,7 +127,7 @@
           [items]="regions"
           [detailsToShow]="regionDetailsToShow"
           [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress()"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addChildOrganisations()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
