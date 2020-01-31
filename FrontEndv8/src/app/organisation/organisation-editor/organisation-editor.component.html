@@ -140,7 +140,7 @@
           [detailsToShow]="dpaDetailsToShow"
           [allowSelect]="allowEdit"
           (clicked)="editDpa($event)">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress()"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addChildOrganisations()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
@@ -152,7 +152,7 @@
           [items]="dsaPublishing"
           [detailsToShow]="dsaDetailsToShow"
           [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress()"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addChildOrganisations()"><mat-icon>add</mat-icon></button></app-generic-table>
       </mat-tab>
       <mat-tab *ngIf="organisation.isService === 0">
@@ -163,7 +163,7 @@
           [items]="dsaSubscribing"
           [detailsToShow]="dsaDetailsToShow"
           [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress()"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addChildOrganisations()"><mat-icon>add</mat-icon></button></app-generic-table>
       </mat-tab>
       <mat-tab *ngIf="organisation.isService === 0">
@@ -174,7 +174,7 @@
           [items]="childOrganisations"
           [detailsToShow]="orgDetailsToShow"
           [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress()"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addChildOrganisations()"><mat-icon>add</mat-icon></button></app-generic-table>
       </mat-tab>
       <mat-tab>
@@ -185,7 +185,7 @@
           [items]="parentOrganisations"
           [detailsToShow]="orgDetailsToShow"
           [allowSelect]="allowEdit">
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress()"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addParentOrganisations()"><mat-icon>add</mat-icon></button></app-generic-table>
       </mat-tab>
       <mat-tab *ngIf="organisation.isService === 0">
@@ -196,7 +196,7 @@
           [items]="services"
           [detailsToShow]="orgDetailsToShow"
           [allowSelect]="allowEdit">`1
-          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress($event)"><mat-icon>delete</mat-icon></button>
+          <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteAddress()"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addAddress()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
