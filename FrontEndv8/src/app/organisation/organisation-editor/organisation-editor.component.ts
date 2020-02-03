@@ -15,6 +15,8 @@ import {OrganisationPickerComponent} from "../organisation-picker/organisation-p
 import {RegionPickerComponent} from "../../region/region-picker/region-picker.component";
 import {OrganisationDialogComponent} from "../organisation-dialog/organisation-dialog.component";
 import {AddressDialogComponent} from "../address-dialog/address-dialog.component";
+import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
+import {DataSharingAgreementPickerComponent} from "../../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component";
 
 @Component({
   selector: 'app-organisation-editor',
@@ -66,9 +68,13 @@ export class OrganisationEditorComponent implements OnInit {
   ];
 
   @ViewChild('addressesTable', { static: false }) addressesTable: GenericTableComponent;
-  @ViewChild('childOrg', { static: false }) childOrgTable: GenericTableComponent;
-  @ViewChild('parentOrg', { static: false }) parentOrgTable: GenericTableComponent;
   @ViewChild('regionTable', { static: false }) regionTable: GenericTableComponent;
+  @ViewChild('dpaTable', { static: false }) dpaTable: GenericTableComponent;
+  @ViewChild('dsaPublishingTable', { static: false }) dsaPublishingTable: GenericTableComponent;
+  @ViewChild('dsaSubscribingTable', { static: false }) dsaSubscribingTable: GenericTableComponent;
+  @ViewChild('childOrgTable', { static: false }) childOrgTable: GenericTableComponent;
+  @ViewChild('parentOrgTable', { static: false }) parentOrgTable: GenericTableComponent;
+  @ViewChild('servicesTable', { static: false }) servicesTable: GenericTableComponent;
 
   constructor(private log: LoggerService,
               private organisationService: OrganisationService,
@@ -332,90 +338,216 @@ export class OrganisationEditorComponent implements OnInit {
       width: '800px',
       data: { uuid: '', limit: 0, userId : this.activeProject.userId }
     })
-
     dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
       for (let region of result) {
         if (!this.regions.some(x => x.uuid === region.uuid)) {
           this.regions.push(region);
-
           this.regionTable.updateRows();
-
-
         }
       }
+      this.clearMappings();
+      this.organisation.regions = {};
+      for (const idx in this.regions) {
+        const region: Region = this.regions[idx];
+        this.organisation.regions[region.uuid] = region.name;
+      }
+      this.updateMappings('Regions');
     })
+  }
+
+  regionClicked(item: Region) {
+    this.router.navigate(['/region', item.uuid, 'edit']);
+  }
+
+  deleteRegion() {
+    MessageBoxDialogComponent.open(this.dialog, 'Remove region', 'Are you sure you want to remove region(s)?',
+      'Remove region', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.regionTable.selection.selected.length; i++) {
+              let region = this.regionTable.selection.selected[i];
+              this.regions.forEach( (item, index) => {
+                if(item === region) this.regions.splice(index,1);
+              });
+            }
+            this.regionTable.updateRows();
+            this.clearMappings();
+            this.organisation.regions = {};
+            for (const idx in this.regions) {
+              const region: Region = this.regions[idx];
+              this.organisation.regions[region.uuid] = region.name;
+            }
+            this.updateMappings('Regions');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
+  }
+
+  editOrg(item: Organisation) {
+    this.router.navigate(['/organisation', item.uuid, 'edit']);
+  }
+
+  deleteChildOrganisations() {
+    MessageBoxDialogComponent.open(this.dialog, 'Remove Organisation', 'Are you sure you want to remove child organisation(s)?',
+      'Remove Organisation', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.childOrgTable.selection.selected.length; i++) {
+              let org = this.childOrgTable.selection.selected[i];
+              this.childOrganisations.forEach( (item, index) => {
+                if(item === org) this.childOrganisations.splice(index,1);
+              });
+            }
+            this.childOrgTable.updateRows();
+            this.clearMappings();
+            this.organisation.childOrganisations = {};
+            for (const idx in this.childOrganisations) {
+              const org: Organisation = this.childOrganisations[idx];
+              this.organisation.childOrganisations[org.uuid] = org.name;
+            }
+            this.updateMappings('Child Organisations');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
   }
 
   addChildOrganisations() {
-
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
-      width: '800px',
-      data: { searchType: 'organisation', uuid: this.organisation.uuid, regionUUID: '', dsaUUID: '' }
-    })
-
+        width: '800px',
+        data: { searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '', existingOrgs: this.childOrganisations }
+      })
     dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
       for (let org of result) {
         if (!this.childOrganisations.some(x => x.uuid === org.uuid)) {
           this.childOrganisations.push(org);
-
-          this.childOrgTable.updateRows();
-
-
         }
       }
+      this.childOrgTable.updateRows();
+      this.clearMappings();
+      this.organisation.childOrganisations = {};
+      for (const idx in this.childOrganisations) {
+        const org: Organisation = this.childOrganisations[idx];
+        this.organisation.childOrganisations[org.uuid] = org.name;
+      }
+      this.updateMappings('Child Organisations');
     })
   }
 
+  deleteParentOrganisations() {
+    MessageBoxDialogComponent.open(this.dialog, 'Remove Organisation', 'Are you sure you want to remove parent organisation(s)?',
+      'Remove Organisation', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.parentOrgTable.selection.selected.length; i++) {
+              let org = this.parentOrgTable.selection.selected[i];
+              this.parentOrganisations.forEach( (item, index) => {
+                if(item === org) this.parentOrganisations.splice(index,1);
+              });
+            }
+            this.parentOrgTable.updateRows();
+            this.clearMappings();
+            this.organisation.parentOrganisations = {};
+            for (const idx in this.parentOrganisations) {
+              const org: Organisation = this.parentOrganisations[idx];
+              this.organisation.parentOrganisations[org.uuid] = org.name;
+            }
+            this.updateMappings('Parent Organisations');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
+  }
 
   addParentOrganisations() {
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
       width: '800px',
-      data: { searchType: 'organisation', uuid: this.organisation.uuid, regionUUID: '', dsaUUID: '' }
+      data: { searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '', existingOrgs: this.parentOrganisations }
     })
-
     dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
       for (let org of result) {
         if (!this.parentOrganisations.some(x => x.uuid === org.uuid)) {
           this.parentOrganisations.push(org);
-
-          this.parentOrgTable.updateRows();
         }
       }
+      this.parentOrgTable.updateRows();
+      this.clearMappings();
+      this.organisation.parentOrganisations = {};
+      for (const idx in this.parentOrganisations) {
+        const org: Organisation = this.parentOrganisations[idx];
+        this.organisation.parentOrganisations[org.uuid] = org.name;
+      }
+      this.updateMappings('Parent Organisations');
     })
   }
 
-  /*
-  private editServices() {
-    const vm = this;
-    OrganisationPickerComponent.open(this.$modal, this.services, 'services', this.organisation.uuid )
-      .result.then(function (result: Organisation[]) {
-      this.services = result;
-    });
+  deleteServices() {
+    MessageBoxDialogComponent.open(this.dialog, 'Remove Service', 'Are you sure you want to remove service(s)?',
+      'Remove Service', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.servicesTable.selection.selected.length; i++) {
+              let org = this.servicesTable.selection.selected[i];
+              this.services.forEach( (item, index) => {
+                if(item === org) this.services.splice(index,1);
+              });
+            }
+            this.servicesTable.updateRows();
+            this.clearMappings();
+            this.organisation.services = {};
+            for (const idx in this.services) {
+              const org: Organisation = this.services[idx];
+              this.organisation.services[org.uuid] = org.name;
+            }
+            this.updateMappings('Services');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
   }
 
-  private editDPAPublishing() {
-    const vm = this;
-    DataProcessingAgreementPickerComponent.open(this.$modal, this.dpaPublishing)
-      .result.then(function (result: Dpa[]) {
-      this.dpaPublishing = result;
-    });
+  addServices() {
+    const dialogRef = this.dialog.open(OrganisationPickerComponent, {
+      width: '800px',
+      data: { searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '', existingOrgs: this.services }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+      for (let org of result) {
+        if (!this.services.some(x => x.uuid === org.uuid)) {
+          this.services.push(org);
+        }
+      }
+      this.servicesTable.updateRows();
+      this.clearMappings();
+      this.organisation.services = {};
+      for (const idx in this.services) {
+        const org: Organisation = this.services[idx];
+        this.organisation.services[org.uuid] = org.name;
+      }
+      this.updateMappings('Services');
+    })
   }
-
-  private editDSAPublishing() {
-    const vm = this;
-    DataSharingAgreementPickerComponent.open(this.$modal, this.dsaPublishing)
-      .result.then(function (result: Dsa[]) {
-      this.dsaPublishing = result;
-    });
-  }
-
-  private editDSASubscribing() {
-    const vm = this;
-    DataSharingAgreementPickerComponent.open(this.$modal, this.dsaSubscribing)
-      .result.then(function (result: Dsa[]) {
-      this.dsaSubscribing = result;
-    });
-  }*/
 
   private getOrganisationRegions() {
     const vm = this;
@@ -511,12 +643,164 @@ export class OrganisationEditorComponent implements OnInit {
     });
   }
 
-  editRegion(item: Organisation) {
-    this.router.navigate(['/region', item.uuid, 'edit']);
-  }
-
   editDpa(dpa: Dpa) {
     this.router.navigate(['/dpa', dpa.uuid, 'edit']);
   }
 
+  deleteDPAs() {
+    MessageBoxDialogComponent.open(this.dialog, 'Remove DPA', 'Are you sure you want to remove DPA(s)?',
+      'Remove DPA', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.dpaTable.selection.selected.length; i++) {
+              let org = this.dpaTable.selection.selected[i];
+              this.dpaPublishing.forEach( (item, index) => {
+                if(item === org) this.dpaPublishing.splice(index,1);
+              });
+            }
+            this.dpaTable.updateRows();
+            this.clearMappings();
+            this.organisation.dpaPublishing = {};
+            for (const idx in this.dpaPublishing) {
+              const dpa: Dpa = this.dpaPublishing[idx];
+              this.organisation.dpaPublishing[dpa.uuid] = dpa.name;
+            }
+            this.updateMappings('DPA');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
+  }
+
+  addDPAs() {
+    const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
+      width: '800px',
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+      for (let dpa of result) {
+        if (!this.dpaPublishing.some(x => x.uuid === dpa.uuid)) {
+          this.dpaPublishing.push(dpa);
+        }
+      }
+      this.dpaTable.updateRows();
+      this.clearMappings();
+      this.organisation.dpaPublishing = {};
+      for (const idx in this.dpaPublishing) {
+        const dpa: Dpa = this.dpaPublishing[idx];
+        this.organisation.dpaPublishing[dpa.uuid] = dpa.name;
+      }
+      this.updateMappings('DPA');
+    })
+  }
+
+  editDsa(dsa: Dsa) {
+    this.router.navigate(['/dsa', dsa.uuid, 'edit']);
+  }
+
+  addDSAPublishing() {
+    const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
+      width: '800px',
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+      for (let dsa of result) {
+        if (!this.dsaPublishing.some(x => x.uuid === dsa.uuid)) {
+          this.dsaPublishing.push(dsa);
+        }
+      }
+      this.dsaPublishingTable.updateRows();
+      this.clearMappings();
+      this.organisation.dsaPublishing = {};
+      for (const idx in this.dsaPublishing) {
+        const dsa: Dsa = this.dsaPublishing[idx];
+        this.organisation.dsaPublishing[dsa.uuid] = dsa.name;
+      }
+      this.updateMappings('DSA Publishing');
+    })
+  }
+
+  deleteDSAPublishing() {
+    MessageBoxDialogComponent.open(this.dialog, 'Remove DSA', 'Are you sure you want to remove DSA(s)?',
+      'Remove DSA', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.dsaPublishingTable.selection.selected.length; i++) {
+              let org = this.dsaPublishingTable.selection.selected[i];
+              this.dsaPublishing.forEach( (item, index) => {
+                if(item === org) this.dsaPublishing.splice(index,1);
+              });
+            }
+            this.dsaPublishingTable.updateRows();
+            this.clearMappings();
+            this.organisation.dsaPublishing = {};
+            for (const idx in this.dsaPublishing) {
+              const dsa: Dsa = this.dsaPublishing[idx];
+              this.organisation.dsaPublishing[dsa.uuid] = dsa.name;
+            }
+            this.updateMappings('DSA Publishing');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
+  }
+
+  addDSASubscribing() {
+    const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
+      width: '800px',
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+      for (let dsa of result) {
+        if (!this.dsaSubscribing.some(x => x.uuid === dsa.uuid)) {
+          this.dsaSubscribing.push(dsa);
+        }
+      }
+      this.dsaSubscribingTable.updateRows();
+      this.clearMappings();
+      this.organisation.dsaSubscribing = {};
+      for (const idx in this.dsaSubscribing) {
+        const dsa: Dsa = this.dsaSubscribing[idx];
+        this.organisation.dsaSubscribing[dsa.uuid] = dsa.name;
+      }
+      this.updateMappings('DSA Subscribing');
+    })
+  }
+
+  deleteDSASubscribing() {
+    MessageBoxDialogComponent.open(this.dialog, 'Remove DSA', 'Are you sure you want to remove DSA(s)?',
+      'Remove DSA', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.dsaSubscribingTable.selection.selected.length; i++) {
+              let org = this.dsaSubscribingTable.selection.selected[i];
+              this.dsaSubscribing.forEach( (item, index) => {
+                if(item === org) this.dsaSubscribing.splice(index,1);
+              });
+            }
+            this.dsaSubscribingTable.updateRows();
+            this.clearMappings();
+            this.organisation.dsaSubscribing = {};
+            for (const idx in this.dsaSubscribing) {
+              const dsa: Dsa = this.dsaSubscribing[idx];
+              this.organisation.dsaSubscribing[dsa.uuid] = dsa.name;
+            }
+            this.updateMappings('DSA Subscribing');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
+  }
 }

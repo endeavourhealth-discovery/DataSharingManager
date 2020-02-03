@@ -21,13 +21,13 @@
     <form class="form" #f="ngForm" novalidate>
       <div class="form-group" #fgName="ngModelGroup" ngModelGroup="organisation" [class.has-error]="!fgName.valid">
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
             <mat-label>Region name</mat-label>
-            <input required matInput [(ngModel)]="region.name" placeholder="Region name" name="name">
+            <input required matInput [(ngModel)]="region.name" placeholder="Region name" name="name" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="50" fxFill>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
             <mat-label>Description</mat-label>
-            <input matInput [(ngModel)]="region.description" placeholder="Description" name="description">
+            <input matInput [(ngModel)]="region.description" placeholder="Description" name="description" readonly>
           </mat-form-field>
         </div>
         <br>
