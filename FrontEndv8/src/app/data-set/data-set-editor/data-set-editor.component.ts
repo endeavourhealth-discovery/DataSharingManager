@@ -7,7 +7,6 @@ import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
 import {MatDialog} from "@angular/material/dialog";
-import {CohortDialogComponent} from "../../cohort/cohort-dialog/cohort-dialog.component";
 import {DataSetDialogComponent} from "../data-set-dialog/data-set-dialog.component";
 
 @Component({
@@ -66,7 +65,7 @@ export class DataSetEditorComponent implements OnInit {
   protected performAction(action: string, itemUuid: string) {
     switch (action) {
       case 'add':
-        this.create(itemUuid);
+        this.create();
         break;
       case 'edit':
         this.load(itemUuid);
@@ -74,7 +73,7 @@ export class DataSetEditorComponent implements OnInit {
     }
   }
 
-  create(uuid: string) {
+  create() {
     this.dataset = {
       name : ''
     } as DataSet;
@@ -95,6 +94,7 @@ export class DataSetEditorComponent implements OnInit {
       .subscribe(
         result => {
           this.processingAgreements = result;
+          this.dpaTable.updateRows();
         },
         error => this.log.error('The associated data processing agreements could not be loaded. Please try again.')
       );
@@ -116,7 +116,6 @@ export class DataSetEditorComponent implements OnInit {
                 if(item === org) this.processingAgreements.splice(index,1);
               });
             }
-            this.dpaTable.updateRows();
             this.updateDPAMapping();
           } else {
             this.log.success('Remove cancelled.')
@@ -136,7 +135,6 @@ export class DataSetEditorComponent implements OnInit {
       for (let dpa of result) {
         if (!this.processingAgreements.some(x => x.uuid === dpa.uuid)) {
           this.processingAgreements.push(dpa);
-          this.dpaTable.updateRows();
         }
         this.updateDPAMapping();
       }
@@ -150,10 +148,10 @@ export class DataSetEditorComponent implements OnInit {
       let dpa: Dpa = this.processingAgreements[idx];
       this.dataset.dpas[dpa.uuid] = dpa.name;
     }
-
     this.dataSetService.updateMappings(this.dataset)
       .subscribe(saved => {
           this.dataset.uuid = saved;
+          this.getProcessingAgreements();
           this.log.success('Data Set saved successfully');
         },
         error => this.log.error('The Data Set could not be saved. Please try again.')
@@ -161,12 +159,6 @@ export class DataSetEditorComponent implements OnInit {
   }
 
   save(close: boolean) {
-    this.dataset.dpas = {};
-    for (const idx in this.processingAgreements) {
-      const dpa: Dpa = this.processingAgreements[idx];
-      this.dataset.dpas[dpa.uuid] = dpa.name;
-    }
-
     this.dataSetService.saveDataSet(this.dataset)
       .subscribe(saved => {
           this.dataset.uuid = saved;

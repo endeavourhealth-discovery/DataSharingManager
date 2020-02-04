@@ -110,6 +110,7 @@ export class CohortEditorComponent implements OnInit {
     this.cohortService.updateMappings(this.cohort)
       .subscribe(saved => {
           this.cohort.uuid = saved;
+          this.getLinkedDpas();
           this.log.success('Cohort saved successfully');
         },
         error => this.log.error('The Cohort could not be saved. Please try again.')
@@ -138,6 +139,7 @@ export class CohortEditorComponent implements OnInit {
       .subscribe(
         result => {
           this.dpas = result;
+          this.dpaTable.updateRows();
         },
         error => this.log.error('The associated data processing agreements could not be loaded. Please try again.'/*, error, 'Load associated data processing agreements'*/)
       );
@@ -159,7 +161,6 @@ export class CohortEditorComponent implements OnInit {
                 if(item === org) this.dpas.splice(index,1);
               });
             }
-            this.dpaTable.updateRows();
             this.updateDPAMapping();
           } else {
             this.log.success('Remove cancelled.')
@@ -179,7 +180,6 @@ export class CohortEditorComponent implements OnInit {
       for (let dpa of result) {
         if (!this.dpas.some(x => x.uuid === dpa.uuid)) {
           this.dpas.push(dpa);
-          this.dpaTable.updateRows();
         }
         this.updateDPAMapping();
       }

@@ -6,8 +6,6 @@ import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserMan
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Dsa} from '../models/Dsa';
 import {DataSharingAgreementService} from '../data-sharing-agreement.service';
-//import {DataFlow} from '../../data-flow/models/DataFlow';
-//import {DataflowPickerComponent} from '../../data-flow/dataflow-picker/dataflow-picker.component';
 import {Purpose} from '../../models/Purpose';
 import {PurposeComponent} from "../../purpose/purpose/purpose.component";
 import {Region} from '../../region/models/Region';
@@ -32,7 +30,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   private paramSubscriber: any;
 
   dsa: Dsa = <Dsa>{};
-  //dataFlows: DataFlow[] = [];
   purposes: Purpose[] = [];
   benefits: Purpose[] = [];
   regions: Region[] = [];
@@ -64,7 +61,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     {num: 1, name : 'Implied Consent'}
   ];
 
-  //dataflowDetailsToShow = new DataFlow().getDisplayItems();
   purposeDetailsToShow = new Purpose().getDisplayItems();
   benefitDetailsToShow = new Purpose().getDisplayItems();
   regionDetailsToShow = new Region().getDisplayItems();
@@ -143,7 +139,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           this.dsa.startDate = this.datePipe.transform(this.dsa.startDate,"yyyy-MM-dd");
           this.dsa.endDate = this.datePipe.transform(this.dsa.endDate,"yyyy-MM-dd");
           this.checkEndDate();
-          //this.getLinkedDataFlows();
           this.getPurposes();
           this.getBenefits();
           this.getLinkedRegions();
@@ -154,7 +149,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           this.getSubscriberMarkers();
           this.getAssociatedDocumentation();
         },
-        error => this.log.error('The data sharing agreement could not be loaded. Please try again.'/*, error, 'Load data sharing agreement'*/)
+        error => this.log.error('The data sharing agreement could not be loaded. Please try again.')
       );
   }
 
@@ -222,68 +217,80 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     // Nothing needs to be done with this for the time being
   }
 
-  /*private getLinkedDataFlows() {
-    const vm = this;
-    vm.dsaService.getLinkedDataFlows(vm.dsa.uuid)
-      .subscribe(
-        result => vm.dataFlows = result,
-        error => vm.log.error('The associated data flows could not be loaded. Please try again.', error, 'Load associated data flows')
-      );
-  }*/
-
   private getLinkedRegions() {
     this.dsaService.getLinkedRegions(this.dsa.uuid, this.userId)
       .subscribe(
-        result => this.regions = result,
-        error => this.log.error('The associated regions could not be loaded. Please try again.'/*, error, 'Load associated regions'*/)
+        result => {
+          this.regions = result;
+          this.regionsTable.updateRows();
+        },
+        error => this.log.error('The associated regions could not be loaded. Please try again.')
       );
   }
 
   private getPublishers() {
     this.dsaService.getPublishers(this.dsa.uuid)
       .subscribe(
-        result => this.publishers = result,
-        error => this.log.error('The associated publishers could not be loaded. Please try again.'/*, error, 'Load associated publishers'*/)
+        result => {
+          this.publishers = result;
+          this.publishersTable.updateRows();
+        },
+        error => this.log.error('The associated publishers could not be loaded. Please try again.')
       );
   }
 
   private getProjects() {
     this.dsaService.getProjects(this.dsa.uuid)
       .subscribe(
-        result => this.projects = result,
-        error => this.log.error('The associated projects could not be loaded. Please try again.'/*, error, 'Load associated projects'*/)
+        result => {
+          this.projects = result;
+          this.projectsTable.updateRows();
+        },
+        error => this.log.error('The associated projects could not be loaded. Please try again.')
       );
   }
 
   private getSubscribers() {
     this.dsaService.getSubscribers(this.dsa.uuid)
       .subscribe(
-        result => this.subscribers = result,
-        error => this.log.error('The associated subscribers could not be loaded. Please try again.'/*, error, 'Load associated subscribers'*/)
+        result => {
+          this.subscribers = result;
+          this.subscribersTable.updateRows();
+        },
+        error => this.log.error('The associated subscribers could not be loaded. Please try again.')
       );
   }
 
   private getPurposes() {
     this.dsaService.getPurposes(this.dsa.uuid)
       .subscribe(
-        result => this.purposes = result,
-        error => this.log.error('The associated purposes could not be loaded. Please try again.'/*, error, 'Load associated purposes'*/)
+        result => {
+          this.purposes = result;
+          this.purposesTable.updateRows();
+        },
+        error => this.log.error('The associated purposes could not be loaded. Please try again.')
       );
   }
 
   private getBenefits() {
     this.dsaService.getBenefits(this.dsa.uuid)
       .subscribe(
-        result => this.benefits = result,
-        error => this.log.error('The associated benefits could not be loaded. Please try again.'/*, error, 'Load associated benefits'*/)
+        result => {
+          this.benefits = result;
+          this.benefitsTable.updateRows();
+        },
+        error => this.log.error('The associated benefits could not be loaded. Please try again.')
       );
   }
 
   private getAssociatedDocumentation() {
     this.documentationService.getAllAssociatedDocuments(this.dsa.uuid, '3')
       .subscribe(
-        result => this.documentations = result,
-        error => this.log.error('The associated documentation could not be loaded. Please try again.'/*, error, 'Load associated documentation'*/)
+        result => {
+          this.documentations = result;
+          this.documentationsTable.updateRows();
+        },
+        error => this.log.error('The associated documentation could not be loaded. Please try again.')
       );
   }
 
@@ -293,7 +300,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
         result => {
           this.subscriberMarkers = result;
         },
-        error => this.log.error('The associated subscriber map data could not be loaded. Please try again.'/*, error, 'Load subscriber map data'*/)
+        error => this.log.error('The associated subscriber map data could not be loaded. Please try again.')
       )
   }
 
@@ -304,7 +311,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           this.mapMarkers = result;
           this.publisherMarkers = result;
         },
-        error => this.log.error('The associated publisher map data could not be loaded. Please try again.'/*, error, 'Load publisher map data'*/)
+        error => this.log.error('The associated publisher map data could not be loaded. Please try again.')
       )
   }
 
@@ -320,7 +327,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
                 if(item === purpose) this.purposes.splice(index,1);
               });
             }
-            this.purposesTable.updateRows();
             this.clearMappings();
             this.dsa.purposes = [];
             this.dsa.purposes = this.purposes;
@@ -341,7 +347,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.purposes = result;
-        this.purposesTable.updateRows();
         this.clearMappings();
         this.dsa.purposes = [];
         this.dsa.purposes = this.purposes;
@@ -362,7 +367,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
                 if(item === purpose) this.benefits.splice(index,1);
               });
             }
-            this.benefitsTable.updateRows();
             this.clearMappings();
             this.dsa.benefits = [];
             this.dsa.benefits = this.benefits;
@@ -382,7 +386,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.benefits = result;
-        this.benefitsTable.updateRows();
         this.clearMappings();
         this.dsa.benefits = [];
         this.dsa.benefits = this.benefits;
@@ -403,7 +406,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
                 if(item === region) this.regions.splice(index,1);
               });
             }
-            this.regionsTable.updateRows();
             this.clearMappings();
             this.dsa.regions = {};
             for (const idx in this.regions) {
@@ -431,7 +433,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           this.regions.push(region);
         }
       }
-      this.regionsTable.updateRows();
       this.clearMappings();
       this.dsa.regions = {};
       for (const idx in this.regions) {
@@ -454,7 +455,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
                 if(item === project) this.projects.splice(index,1);
               });
             }
-            this.projectsTable.updateRows();
             this.clearMappings();
             this.dsa.projects = {};
             for (const idx in this.projects) {
@@ -482,7 +482,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           this.projects.push(project);
         }
       }
-      this.projectsTable.updateRows();
       this.clearMappings();
       this.dsa.projects = {};
       for (const idx in this.projects) {
@@ -505,7 +504,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
                 if(item === publisher) this.publishers.splice(index,1);
               });
             }
-            this.publishersTable.updateRows();
             this.clearMappings();
             this.dsa.publishers = {};
             for (const idx in this.publishers) {
@@ -536,7 +534,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
             this.publishers.push(publisher);
           }
         }
-        this.publishersTable.updateRows();
         this.clearMappings();
         this.dsa.publishers = {};
         for (const idx in this.publishers) {
@@ -560,7 +557,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
                 if(item === subscriber) this.subscribers.splice(index,1);
               });
             }
-            this.subscribersTable.updateRows();
             this.clearMappings();
             this.dsa.subscribers = {};
             for (const idx in this.subscribers) {
@@ -591,7 +587,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
             this.subscribers.push(subscriber);
           }
         }
-        this.subscribersTable.updateRows();
         this.clearMappings();
         this.dsa.subscribers = {};
         for (const idx in this.subscribers) {
@@ -615,7 +610,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
                 if(item === document) this.documentations.splice(index,1);
               });
             }
-            this.documentationsTable.updateRows();
             this.clearMappings();
             this.dsa.documentations = [];
             this.dsa.documentations = this.documentations;
@@ -633,7 +627,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.documentations.push(result);
-        this.documentationsTable.updateRows();
         this.clearMappings();
         this.dsa.documentations = [];
         this.dsa.documentations = this.documentations;
@@ -649,19 +642,6 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       this.mapMarkers = this.subscriberMarkers;
     }
   }
-
-  /*private editDataFlow(item: DataFlow) {
-  this.router.navigate(['/dataFlow', item.uuid, 'edit']);
-  }
-
-  private editDataFlows() {
-  const vm = this;
-  DataflowPickerComponent.open(vm.$modal, vm.dataFlows)
-    .result.then(function
-    (result: DataFlow[]) { vm.dataFlows = result; },
-    () => vm.log.info('Edit data flows cancelled')
-  );
-  }*/
 
   editDSA() {
     const dialogRef = this.dialog.open(DataSharingAgreementDialogComponent, {
@@ -680,6 +660,21 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     this.dsaService.updateMappings(this.dsa)
       .subscribe(saved => {
           this.dsa.uuid = saved;
+          if (type == 'Purposes') {
+            this.getPurposes();
+          } else if (type == 'Benefits') {
+            this.getBenefits();
+          } else if (type == 'Regions') {
+            this.getLinkedRegions()
+          } else if (type == 'Projects') {
+            this.getProjects()
+          } else if (type == 'Publishers') {
+            this.getPublishers()
+          } else if (type == 'Subscribers') {
+            this.getSubscribers()
+          } else if (type == 'Documentations') {
+            this.getAssociatedDocumentation()
+          }
           this.log.success(type + ' updated successfully.');
         },
         error => this.log.error('The DSA could not be saved. Please try again.')

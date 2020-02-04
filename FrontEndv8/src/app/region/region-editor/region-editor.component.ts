@@ -149,50 +149,55 @@ export class RegionEditorComponent implements OnInit {
   }
 
   private getRegionOrganisations() {
-
     this.regionService.getRegionOrganisations(this.region.uuid)
       .subscribe(
-        result => this.organisations = result,
+        result => {
+          this.organisations = result;
+          this.orgTable.updateRows();
+        },
         error => this.log.error('The associated organisations could not be loaded. Please try again.')
       );
   }
 
   private getParentRegions() {
-
     this.regionService.getParentRegions(this.region.uuid, this.userId)
       .subscribe(
-        result => this.parentRegions = result,
+        result => {
+          this.parentRegions = result;
+          this.parentRegionTable.updateRows();
+        },
         error => this.log.error('The parent regions could not be loaded. Please try again.')
       );
   }
 
   private getChildRegions() {
-
     this.regionService.getChildRegions(this.region.uuid)
       .subscribe(
-        result => this.childRegions = result,
+        result => {
+          this.childRegions = result;
+          this.childRegionTable.updateRows();
+        },
         error => this.log.error('The child regions could not be loaded. Please try again.')
       );
   }
 
   private getSharingAgreements() {
-
     this.regionService.getSharingAgreements(this.region.uuid)
       .subscribe(
         result => {
           this.sharingAgreements = result;
+          this.dsaTable.updateRows();
         },
         error => this.log.error('The associated data sharing agreements could not be loaded. Please try again.')
-
       );
   }
 
   private getProcessingAgreements() {
-
     this.regionService.getProcessingAgreements(this.region.uuid)
       .subscribe(
         result => {
           this.processingAgreements = result;
+          this.dpaTable.updateRows();
         },
         error => this.log.error('The associated data processing agreements could not be loaded. Please try again.')
 
@@ -223,7 +228,6 @@ export class RegionEditorComponent implements OnInit {
           this.sharingAgreements.push(dsa);
         }
       }
-      this.dsaTable.updateRows();
       this.clearMappings();
       this.region.sharingAgreements = {};
       for (const idx in this.sharingAgreements) {
@@ -247,7 +251,6 @@ export class RegionEditorComponent implements OnInit {
           this.processingAgreements.push(dpa);
         }
       }
-      this.dpaTable.updateRows();
       this.clearMappings();
       this.region.processingAgreements = {};
       for (const idx in this.processingAgreements) {
@@ -280,7 +283,6 @@ export class RegionEditorComponent implements OnInit {
       }
       this.clearMappings();
       if (isParent) {
-        this.parentRegionTable.updateRows();
         this.region.parentRegions = {};
         for (const idx in this.parentRegions) {
           const reg: Region = this.parentRegions[idx];
@@ -288,7 +290,6 @@ export class RegionEditorComponent implements OnInit {
         }
         this.updateMappings('Parent regions');
       } else {
-        this.childRegionTable.updateRows();
         this.region.childRegions = {};
         for (const idx in this.childRegions) {
           const reg: Region = this.childRegions[idx];
@@ -313,7 +314,6 @@ export class RegionEditorComponent implements OnInit {
           this.organisations.push(org);
         }
       }
-      this.orgTable.updateRows();
       this.clearMappings();
       this.region.organisations = {};
       for (const idx in this.organisations) {
@@ -352,7 +352,6 @@ export class RegionEditorComponent implements OnInit {
                 if(item === org) this.organisations.splice(index,1);
               });
             }
-            this.orgTable.updateRows();
             this.clearMappings();
             this.region.organisations = {};
             for (const idx in this.organisations) {
@@ -379,7 +378,6 @@ export class RegionEditorComponent implements OnInit {
                 if(item === org) this.parentRegions.splice(index,1);
               });
             }
-            this.parentRegionTable.updateRows();
             this.clearMappings();
             this.region.parentRegions = {};
             for (const idx in this.parentRegions) {
@@ -406,7 +404,6 @@ export class RegionEditorComponent implements OnInit {
                 if(item === org) this.childRegions.splice(index,1);
               });
             }
-            this.childRegionTable.updateRows();
             this.clearMappings();
             this.region.childRegions = {};
             for (const idx in this.childRegions) {
@@ -433,7 +430,6 @@ export class RegionEditorComponent implements OnInit {
                 if(item === org) this.sharingAgreements.splice(index,1);
               });
             }
-            this.dsaTable.updateRows();
             this.clearMappings();
             this.region.sharingAgreements = {};
             for (const idx in this.sharingAgreements) {
@@ -460,7 +456,6 @@ export class RegionEditorComponent implements OnInit {
                 if(item === org) this.processingAgreements.splice(index,1);
               });
             }
-            this.dpaTable.updateRows();
             this.clearMappings();
             this.region.processingAgreements = {};
             for (const idx in this.processingAgreements) {
@@ -479,6 +474,17 @@ export class RegionEditorComponent implements OnInit {
     this.regionService.updateMappings(this.region)
       .subscribe(saved => {
           this.region.uuid = saved;
+          if (type == 'DSA') {
+            this.getSharingAgreements();
+          } else if (type == 'DPA') {
+            this.getProcessingAgreements();
+          } else if (type == 'Parent regions') {
+            this.getParentRegions();
+          } else if (type == 'Child regions') {
+            this.getChildRegions();
+          } else if (type == 'Organisations') {
+            this.getRegionOrganisations();
+          }
           this.log.success(type + ' updated successfully.');
         },
         error => this.log.error('The region could not be saved. Please try again.')

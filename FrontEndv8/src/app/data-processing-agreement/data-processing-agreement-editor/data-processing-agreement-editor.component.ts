@@ -146,11 +146,13 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   private getPurposes() {
-    const vm = this;
-    vm.dpaService.getPurposes(vm.dpa.uuid)
+    this.dpaService.getPurposes(this.dpa.uuid)
       .subscribe(
-        result => vm.purposes = result,
-        error => vm.log.error('The associated purposes could not be loaded. Please try again.')
+        result => {
+          this.purposes = result,
+          this.purposesTable.updateRows();
+        },
+        error => this.log.error('The associated purposes could not be loaded. Please try again.')
       );
   }
 
@@ -171,7 +173,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
                 if(item === purpose) this.purposes.splice(index,1);
               });
             }
-            this.purposesTable.updateRows();
             this.clearMappings();
             this.dpa.purposes = [];
             this.dpa.purposes = this.purposes;
@@ -191,7 +192,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.purposes = result;
-        this.purposesTable.updateRows();
         this.clearMappings();
         this.dpa.purposes = [];
         this.dpa.purposes = this.purposes;
@@ -203,7 +203,10 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   getBenefits() {
     this.dpaService.getBenefits(this.dpa.uuid)
       .subscribe(
-        result => this.benefits = result,
+        result => {
+          this.benefits = result;
+          this.benefitsTable.updateRows();
+        },
         error => this.log.error('The associated benefits could not be loaded. Please try again.')
       );
   }
@@ -225,7 +228,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
                 if(item === purpose) this.benefits.splice(index,1);
               });
             }
-            this.benefitsTable.updateRows();
             this.clearMappings();
             this.dpa.benefits = [];
             this.dpa.benefits = this.benefits;
@@ -245,7 +247,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.benefits = result;
-        this.benefitsTable.updateRows();
         this.clearMappings();
         this.dpa.benefits = [];
         this.dpa.benefits = this.benefits;
@@ -257,7 +258,10 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   getRegions() {
     this.dpaService.getLinkedRegions(this.dpa.uuid, this.userId)
       .subscribe(
-        result => this.regions = result,
+        result => {
+          this.regions = result;
+          this.regionsTable.updateRows();
+        },
         error => this.log.error('The associated regions could not be loaded. Please try again.')
       );
   }
@@ -278,7 +282,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
                 if(item === region) this.regions.splice(index,1);
               });
             }
-            this.regionsTable.updateRows();
             this.clearMappings();
             this.dpa.regions = {};
             for (const idx in this.regions) {
@@ -305,7 +308,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
       for (let region of result) {
         if (!this.regions.some(x => x.uuid === region.uuid)) {
           this.regions.push(region);
-          this.regionsTable.updateRows();
         }
       }
       this.clearMappings();
@@ -321,7 +323,10 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   getPublishers() {
     this.dpaService.getPublishers(this.dpa.uuid)
       .subscribe(
-        result => this.publishers = result,
+        result => {
+          this.publishers = result;
+          this.publishersTable.updateRows();
+        },
         error => this.log.error('The associated publishers could not be loaded. Please try again.')
       );
   }
@@ -342,7 +347,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
                 if(item === purpose) this.publishers.splice(index,1);
               });
             }
-            this.publishersTable.updateRows();
             this.clearMappings();
             this.dpa.publishers = {};
             for (const idx in this.publishers) {
@@ -372,7 +376,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
         for (let org of result) {
           if (!this.publishers.some(x => x.uuid === org.uuid)) {
             this.publishers.push(org);
-            this.publishersTable.updateRows();
           }
         }
         this.clearMappings();
@@ -388,7 +391,10 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   getDocumentations() {
     this.documentationService.getAllAssociatedDocuments(this.dpa.uuid, '5')
       .subscribe(
-        result => this.documentations = result,
+        result => {
+          this.documentations = result;
+          this.documentationsTable.updateRows();
+        },
         error => this.log.error('The associated documentation could not be loaded. Please try again.')
       );
   }
@@ -405,7 +411,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
                 if(item === purpose) this.documentations.splice(index,1);
               });
             }
-            this.documentationsTable.updateRows();
             this.clearMappings();
             this.dpa.documentations = [];
             this.dpa.documentations = this.documentations;
@@ -424,7 +429,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.documentations.push(result);
-        this.documentationsTable.updateRows();
         this.clearMappings();
         this.dpa.documentations = [];
         this.dpa.documentations = this.documentations;
@@ -450,6 +454,17 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     this.dpaService.updateMappings(this.dpa)
       .subscribe(saved => {
           this.dpa.uuid = saved;
+          if (type == 'Purposes') {
+            this.getPurposes();
+          } else if (type == 'Benefits') {
+            this.getBenefits();
+          } else if (type == 'Regions') {
+            this.getRegions()
+          } else if (type == 'Publishers') {
+            this.getPublishers()
+          } else if (type == 'Documentations') {
+            this.getDocumentations()
+          }
           this.log.success(type + ' updated successfully.');
         },
         error => this.log.error('The DPA could not be saved. Please try again.')

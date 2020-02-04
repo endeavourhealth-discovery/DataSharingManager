@@ -131,7 +131,6 @@ export class OrganisationEditorComponent implements OnInit {
   }
 
   createService(uuid: string) {
-    const vm = this;
     this.orgType = 'Service';
     this.organisation = {
       name: '',
@@ -142,7 +141,6 @@ export class OrganisationEditorComponent implements OnInit {
   }
 
   createServiceFromOrg() {
-    const vm = this;
     const parent: Organisation = (JSON.parse(JSON.stringify(this.organisation)));
     this.services = null;
     this.childOrganisations = null;
@@ -167,7 +165,6 @@ export class OrganisationEditorComponent implements OnInit {
   }
 
   load(uuid: string) {
-    const vm = this;
     this.organisationService.getOrganisation(uuid)
       .subscribe(result =>  {
           this.organisation = result;
@@ -190,54 +187,6 @@ export class OrganisationEditorComponent implements OnInit {
   }
 
   save(close: boolean) {
-    const vm = this;
-    // Populate organisations regions before save
-    this.organisation.regions = {};
-    for (const idx in this.regions) {
-      const region: Region = this.regions[idx];
-      this.organisation.regions[region.uuid] = region.name;
-    }
-
-    this.organisation.childOrganisations = {};
-    for (const idx in this.childOrganisations) {
-      const org: Organisation = this.childOrganisations[idx];
-      this.organisation.childOrganisations[org.uuid] = org.name;
-    }
-
-    this.organisation.parentOrganisations = {};
-    for (const idx in this.parentOrganisations) {
-      const org: Organisation = this.parentOrganisations[idx];
-      this.organisation.parentOrganisations[org.uuid] = org.name;
-    }
-
-    this.organisation.services = {};
-    for (const idx in this.services) {
-      const org: Organisation = this.services[idx];
-      this.organisation.services[org.uuid] = org.name;
-    }
-
-    this.organisation.dpaPublishing = {};
-    for (const idx in this.dpaPublishing) {
-      const dpa: Dpa = this.dpaPublishing[idx];
-      this.organisation.dpaPublishing[dpa.uuid] = dpa.name;
-    }
-
-    this.organisation.dsaPublishing = {};
-    for (const idx in this.dsaPublishing) {
-      const dsa: Dsa = this.dsaPublishing[idx];
-      this.organisation.dsaPublishing[dsa.uuid] = dsa.name;
-    }
-
-    this.organisation.dsaSubscribing = {};
-    for (const idx in this.dsaSubscribing) {
-      const dsa: Dsa = this.dsaSubscribing[idx];
-      this.organisation.dsaSubscribing[dsa.uuid] = dsa.name;
-    }
-
-    // Populate Addresses before save
-    this.organisation.addresses = this.addresses;
-
-
     this.organisationService.saveOrganisation(this.organisation)
       .subscribe(saved => {
           this.organisation.uuid = saved;
@@ -265,10 +214,9 @@ export class OrganisationEditorComponent implements OnInit {
         } else {
           this.addresses.push(address);
         }
-        this.addressesTable.updateRows();
         this.clearMappings();
         this.organisation.addresses = this.addresses;
-        this.updateMappings('Address');
+        this.updateMappings('Addresses');
       }
     });
   }
@@ -277,6 +225,23 @@ export class OrganisationEditorComponent implements OnInit {
     this.organisationService.updateMappings(this.organisation)
       .subscribe(saved => {
           this.organisation.uuid = saved;
+          if (type == 'Addresses') {
+            this.getOrganisationAddresses();
+          } else if (type == 'Regions') {
+            this.getOrganisationRegions();
+          } else if (type == 'Child Organisations') {
+            this.getChildOrganisations();
+          } else if (type == 'Parent Organisations') {
+            this.getParentOrganisations();
+          } else if (type == 'Services') {
+            this.getServices();
+          } else if (type == 'DPA') {
+            this.getDPAsPublishingTo();
+          } else if (type == 'DSA Publishing') {
+            this.getDSAsPublishingTo();
+          } else if (type == 'DSA Subscribing') {
+            this.getDSAsSubscribingTo()
+          }
           this.log.success(type + ' saved successfully.');
         },
         error => this.log.error(type  + ' could not be saved. Please try again.')
@@ -311,10 +276,9 @@ export class OrganisationEditorComponent implements OnInit {
                 if(item === address) this.addresses.splice(index,1);
               });
             }
-            this.addressesTable.updateRows();
             this.clearMappings();
             this.organisation.addresses = this.addresses;
-            this.updateMappings('Address');
+            this.updateMappings('Addresses');
           } else {
             this.log.success('Delete cancelled.')
           }
@@ -345,7 +309,6 @@ export class OrganisationEditorComponent implements OnInit {
       for (let region of result) {
         if (!this.regions.some(x => x.uuid === region.uuid)) {
           this.regions.push(region);
-          this.regionTable.updateRows();
         }
       }
       this.clearMappings();
@@ -374,7 +337,6 @@ export class OrganisationEditorComponent implements OnInit {
                 if(item === region) this.regions.splice(index,1);
               });
             }
-            this.regionTable.updateRows();
             this.clearMappings();
             this.organisation.regions = {};
             for (const idx in this.regions) {
@@ -405,7 +367,6 @@ export class OrganisationEditorComponent implements OnInit {
                 if(item === org) this.childOrganisations.splice(index,1);
               });
             }
-            this.childOrgTable.updateRows();
             this.clearMappings();
             this.organisation.childOrganisations = {};
             for (const idx in this.childOrganisations) {
@@ -434,7 +395,6 @@ export class OrganisationEditorComponent implements OnInit {
           this.childOrganisations.push(org);
         }
       }
-      this.childOrgTable.updateRows();
       this.clearMappings();
       this.organisation.childOrganisations = {};
       for (const idx in this.childOrganisations) {
@@ -457,7 +417,6 @@ export class OrganisationEditorComponent implements OnInit {
                 if(item === org) this.parentOrganisations.splice(index,1);
               });
             }
-            this.parentOrgTable.updateRows();
             this.clearMappings();
             this.organisation.parentOrganisations = {};
             for (const idx in this.parentOrganisations) {
@@ -486,7 +445,6 @@ export class OrganisationEditorComponent implements OnInit {
           this.parentOrganisations.push(org);
         }
       }
-      this.parentOrgTable.updateRows();
       this.clearMappings();
       this.organisation.parentOrganisations = {};
       for (const idx in this.parentOrganisations) {
@@ -509,7 +467,6 @@ export class OrganisationEditorComponent implements OnInit {
                 if(item === org) this.services.splice(index,1);
               });
             }
-            this.servicesTable.updateRows();
             this.clearMappings();
             this.organisation.services = {};
             for (const idx in this.services) {
@@ -538,7 +495,6 @@ export class OrganisationEditorComponent implements OnInit {
           this.services.push(org);
         }
       }
-      this.servicesTable.updateRows();
       this.clearMappings();
       this.organisation.services = {};
       for (const idx in this.services) {
@@ -550,28 +506,34 @@ export class OrganisationEditorComponent implements OnInit {
   }
 
   private getOrganisationRegions() {
-    const vm = this;
     this.organisationService.getOrganisationRegions(this.organisation.uuid, this.userId)
       .subscribe(
-        result => this.regions = result,
+        result => {
+          this.regions = result;
+          this.regionTable.updateRows();
+        },
         error => this.log.error('The associated regions could not be loaded. Please try again.')
       );
   }
 
   private getOrganisationAddresses() {
-    const vm = this;
     this.organisationService.getOrganisationAddresses(this.organisation.uuid)
       .subscribe(
-        result => this.addresses = result,
+        result => {
+          this.addresses = result;
+          this.addressesTable.updateRows();
+        },
         error => this.log.error('The address details could not be loaded. Please try again.')
       );
   }
 
   private getChildOrganisations() {
-    const vm = this;
     this.organisationService.getChildOrganisations(this.organisation.uuid)
       .subscribe(
-        result => this.childOrganisations = result,
+        result => {
+          this.childOrganisations = result;
+          this.childOrgTable.updateRows();
+        },
         error => this.log.error('The child organisations could not be loaded. Please try again.')
       );
   }
@@ -579,22 +541,26 @@ export class OrganisationEditorComponent implements OnInit {
   private getParentOrganisations() {
     this.organisationService.getParentOrganisations(this.organisation.uuid, this.organisation.isService)
       .subscribe(
-        result => this.parentOrganisations = result,
+        result => {
+          this.parentOrganisations = result;
+          this.parentOrgTable.updateRows();
+        },
         error => this.log.error('The parent organisations could not be loaded. Please try again.')
       );
   }
 
   private getServices() {
-    const vm = this;
     this.organisationService.getServices(this.organisation.uuid)
       .subscribe(
-        result => this.services = result,
+        result => {
+          this.services = result;
+          this.servicesTable.updateRows();
+        },
         error => this.log.error('The associated services could not be loaded. Please try again.')
       );
   }
 
   private getOrganisationTypes() {
-    const vm = this;
     this.organisationService.getOrganisationTypes()
       .subscribe(
         result => {this.organisationTypes = result;
@@ -604,28 +570,34 @@ export class OrganisationEditorComponent implements OnInit {
   }
 
   private getDPAsPublishingTo() {
-    const vm = this;
     this.organisationService.getDPAPublishing(this.organisation.uuid)
       .subscribe(
-        result => this.dpaPublishing = result,
+        result => {
+          this.dpaPublishing = result;
+          this.dpaTable.updateRows();
+        },
         error => this.log.error('The associated publishing data processing agreements could not be loaded. Please try again.')
       );
   }
 
   private getDSAsPublishingTo() {
-    const vm = this;
     this.organisationService.getDSAPublishing(this.organisation.uuid)
       .subscribe(
-        result => this.dsaPublishing = result,
+        result => {
+          this.dsaPublishing = result;
+          this.dsaPublishingTable.updateRows();
+        },
         error => this.log.error('The associated publishing data sharing agreements could not be loaded. Please try again.')
       );
   }
 
   private getDSAsSubscribingTo() {
-    const vm = this;
     this.organisationService.getDSASubscribing(this.organisation.uuid)
       .subscribe(
-        result => this.dsaSubscribing = result,
+        result => {
+          this.dsaSubscribing = result;
+          this.dsaSubscribingTable.updateRows();
+        },
         error => this.log.error('The associated subscribing data sharing agreements could not be loaded. Please try again.')
       );
   }
@@ -659,7 +631,6 @@ export class OrganisationEditorComponent implements OnInit {
                 if(item === org) this.dpaPublishing.splice(index,1);
               });
             }
-            this.dpaTable.updateRows();
             this.clearMappings();
             this.organisation.dpaPublishing = {};
             for (const idx in this.dpaPublishing) {
@@ -687,7 +658,6 @@ export class OrganisationEditorComponent implements OnInit {
           this.dpaPublishing.push(dpa);
         }
       }
-      this.dpaTable.updateRows();
       this.clearMappings();
       this.organisation.dpaPublishing = {};
       for (const idx in this.dpaPublishing) {
@@ -715,7 +685,6 @@ export class OrganisationEditorComponent implements OnInit {
           this.dsaPublishing.push(dsa);
         }
       }
-      this.dsaPublishingTable.updateRows();
       this.clearMappings();
       this.organisation.dsaPublishing = {};
       for (const idx in this.dsaPublishing) {
@@ -738,7 +707,6 @@ export class OrganisationEditorComponent implements OnInit {
                 if(item === org) this.dsaPublishing.splice(index,1);
               });
             }
-            this.dsaPublishingTable.updateRows();
             this.clearMappings();
             this.organisation.dsaPublishing = {};
             for (const idx in this.dsaPublishing) {
@@ -766,7 +734,6 @@ export class OrganisationEditorComponent implements OnInit {
           this.dsaSubscribing.push(dsa);
         }
       }
-      this.dsaSubscribingTable.updateRows();
       this.clearMappings();
       this.organisation.dsaSubscribing = {};
       for (const idx in this.dsaSubscribing) {
@@ -789,7 +756,6 @@ export class OrganisationEditorComponent implements OnInit {
                 if(item === org) this.dsaSubscribing.splice(index,1);
               });
             }
-            this.dsaSubscribingTable.updateRows();
             this.clearMappings();
             this.organisation.dsaSubscribing = {};
             for (const idx in this.dsaSubscribing) {

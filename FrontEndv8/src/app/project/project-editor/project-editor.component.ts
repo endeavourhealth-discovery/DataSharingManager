@@ -217,7 +217,24 @@ export class ProjectEditorComponent implements OnInit {
     this.projectService.updateMappings(this.project)
       .subscribe(saved => {
           this.project.uuid = saved;
-          this.log.success(type + ' updated successfully.');
+            if (type == 'DSA') {
+              this.getDsas();
+            } else if (type == 'Publishers') {
+              this.getPublishers();
+            } else if (type == 'Subscribers') {
+              this.getSubscribers();
+            } else if (type == 'Documentations') {
+              this.getDocumentations();
+            } else if (type == 'Cohorts') {
+              this.getCohorts();
+            } else if (type == 'DataSets') {
+              this.getDataSets();
+            } else if (type == 'Extract technical details') {
+              this.getAssociatedExtractTechnicalDetails();
+            } else if (type == 'Schedule') {
+              this.getSchedule();
+            }
+            this.log.success(type + ' updated successfully.');
         },
         error => this.log.error('The project could not be saved. Please try again.')
       );
@@ -289,6 +306,7 @@ export class ProjectEditorComponent implements OnInit {
       .subscribe(
         result => {
           this.dsas = result;
+          this.dsasTable.updateRows();
         },
         error => this.log.error('The associated data sharing agreements could not be loaded. Please try again.')
       );
@@ -310,7 +328,6 @@ export class ProjectEditorComponent implements OnInit {
                 if(item === dsa) this.dsas.splice(index,1);
               });
             }
-            this.dsasTable.updateRows();
             this.clearMappings();
             this.project.dsas = {};
             for (const idx in this.dsas) {
@@ -338,7 +355,6 @@ export class ProjectEditorComponent implements OnInit {
           this.dsas.push(dsa);
         }
       }
-      this.dsasTable.updateRows();
       this.clearMappings();
       this.project.dsas = {};
       for (const idx in this.dsas) {
@@ -360,7 +376,10 @@ export class ProjectEditorComponent implements OnInit {
   getPublishers() {
     this.projectService.getLinkedPublishers(this.project.uuid)
       .subscribe(
-        result => this.publishers = result,
+        result => {
+          this.publishers = result;
+          this.publishersTable.updateRows();
+        },
         error => this.log.error('The associated publishers could not be loaded. Please try again.')
       );
   }
@@ -381,7 +400,6 @@ export class ProjectEditorComponent implements OnInit {
                 if(item === publisher) this.publishers.splice(index,1);
               });
             }
-            this.publishersTable.updateRows();
             this.clearMappings();
             this.project.publishers = {};
             for (const idx in this.publishers) {
@@ -412,7 +430,6 @@ export class ProjectEditorComponent implements OnInit {
             this.publishers.push(org);
           }
         }
-        this.publishersTable.updateRows();
         this.clearMappings();
         this.project.publishers = {};
         for (const idx in this.publishers) {
@@ -427,7 +444,10 @@ export class ProjectEditorComponent implements OnInit {
   getSubscribers() {
     this.projectService.getLinkedSubscribers(this.project.uuid)
       .subscribe(
-        result => this.subscribers = result,
+        result => {
+          this.subscribers = result;
+          this.subscribersTable.updateRows();
+        },
         error => this.log.error('The associated publishers could not be loaded. Please try again.')
       );
   }
@@ -444,7 +464,6 @@ export class ProjectEditorComponent implements OnInit {
                 if(item === subscriber) this.subscribers.splice(index,1);
               });
             }
-            this.subscribersTable.updateRows();
             this.clearMappings();
             this.project.subscribers = {};
             for (const idx in this.subscribers) {
@@ -475,7 +494,6 @@ export class ProjectEditorComponent implements OnInit {
             this.subscribers.push(org);
           }
         }
-        this.subscribersTable.updateRows();
         this.clearMappings();
         this.project.subscribers = {};
         for (const idx in this.subscribers) {
@@ -490,7 +508,10 @@ export class ProjectEditorComponent implements OnInit {
   getDocumentations() {
     this.documentationService.getAllAssociatedDocuments(this.project.uuid, '14')
       .subscribe(
-        result => this.documentations = result,
+        result => {
+          this.documentations = result;
+          this.documentationsTable.updateRows();
+        },
         error => this.log.error('The associated documentations could not be loaded. Please try again.')
       );
   }
@@ -507,7 +528,6 @@ export class ProjectEditorComponent implements OnInit {
                 if(item === document) this.documentations.splice(index,1);
               });
             }
-            this.documentationsTable.updateRows();
             this.clearMappings();
             this.project.documentations = [];
             this.project.documentations = this.documentations;
@@ -525,7 +545,6 @@ export class ProjectEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.documentations.push(result);
-        this.documentationsTable.updateRows();
         this.clearMappings();
         this.project.documentations = [];
         this.project.documentations = this.documentations;
@@ -537,7 +556,10 @@ export class ProjectEditorComponent implements OnInit {
   getCohorts() {
     this.projectService.getLinkedBasePopulation(this.project.uuid)
       .subscribe(
-        result => this.cohorts = result,
+        result => {
+          this.cohorts = result;
+          this.cohortsTable.updateRows();
+        },
         error => this.log.error('The associated cohort could not be loaded. Please try again.')
       );
   }
@@ -558,7 +580,6 @@ export class ProjectEditorComponent implements OnInit {
                 if(item === cohort) this.cohorts.splice(index,1);
               });
             }
-            this.cohortsTable.updateRows();
             this.clearMappings();
             this.project.cohorts = {};
             for (const idx in this.cohorts) {
@@ -583,7 +604,6 @@ export class ProjectEditorComponent implements OnInit {
             this.cohorts.push(cohort);
           }
         }
-        this.cohortsTable.updateRows();
         this.clearMappings();
         this.project.cohorts = {};
         for (const idx in this.cohorts) {
@@ -598,7 +618,10 @@ export class ProjectEditorComponent implements OnInit {
   getDataSets() {
     this.projectService.getLinkedDataSets(this.project.uuid)
       .subscribe(
-        result => this.dataSets = result,
+        result => {
+          this.dataSets = result;
+          this.dataSetsTable.updateRows();
+        },
         error => this.log.error('The associated data sets could not be loaded. Please try again.')
       );
   }
@@ -619,7 +642,6 @@ export class ProjectEditorComponent implements OnInit {
                 if(item === dataset) this.dataSets.splice(index,1);
               });
             }
-            this.dataSetsTable.updateRows();
             this.clearMappings();
             this.project.dataSets = {};
             for (const idx in this.dataSets) {
@@ -644,7 +666,6 @@ export class ProjectEditorComponent implements OnInit {
             this.dataSets.push(dataSet);
           }
         }
-        this.dataSetsTable.updateRows();
         this.clearMappings();
         this.project.dataSets = {};
         for (const idx in this.dataSets) {
@@ -701,10 +722,10 @@ export class ProjectEditorComponent implements OnInit {
         if (result) {
           this.extractTechnicalDetails = new Array<ExtractTechnicalDetails>();
           this.extractTechnicalDetails.push(result);
-          this.extractTechnicalDetailsTable.updateRows();
         } else {
           this.extractTechnicalDetails = new Array<ExtractTechnicalDetails>();
         }
+        this.extractTechnicalDetailsTable.updateRows();
       }
     );
   }
@@ -718,7 +739,6 @@ export class ProjectEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.extractTechnicalDetails[index] = result;
-        this.extractTechnicalDetailsTable.updateRows();
         if (this.extractTechnicalDetails[0]) {
           this.clearMappings();
           this.project.extractTechnicalDetails = this.extractTechnicalDetails[0];
@@ -740,7 +760,6 @@ export class ProjectEditorComponent implements OnInit {
                 if(item === details) this.extractTechnicalDetails.splice(index,1);
               });
             }
-            this.extractTechnicalDetailsTable.updateRows();
             this.clearMappings();
             this.project.extractTechnicalDetails = null;
             this.updateMappings("Extract technical details");
@@ -759,7 +778,6 @@ export class ProjectEditorComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.extractTechnicalDetails.push(result);
-          this.extractTechnicalDetailsTable.updateRows();
           if (this.extractTechnicalDetails[0]) {
             this.project.extractTechnicalDetails = this.extractTechnicalDetails[0];
             this.clearMappings();
@@ -779,10 +797,10 @@ export class ProjectEditorComponent implements OnInit {
           if (result) {
             this.schedules = new Array<Schedule>();
             this.schedules[0] = result;
-            this.schedulesTable.updateRows();
           } else {
             this.schedules = new Array<Schedule>();
           }
+          this.schedulesTable.updateRows();
         }
       );
   }
@@ -796,7 +814,6 @@ export class ProjectEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.schedules[index] = result;
-        this.schedulesTable.updateRows();
         if (this.schedules[0]) {
           this.project.schedule = this.schedules[0];
           this.clearMappings();
@@ -822,7 +839,6 @@ export class ProjectEditorComponent implements OnInit {
                 if(item === schedule) this.schedules.splice(index,1);
               });
             }
-            this.schedulesTable.updateRows();
             this.clearMappings();
             this.project.schedules = {};
             this.project.schedule = null;
@@ -842,7 +858,6 @@ export class ProjectEditorComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.schedules.push(result);
-          this.schedulesTable.updateRows();
           if (this.schedules[0]) {
             this.project.schedule = this.schedules[0];
             this.clearMappings();
