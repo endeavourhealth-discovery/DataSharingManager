@@ -475,6 +475,14 @@ export class ProjectEditorComponent implements OnInit {
     }
   }
 
+  documentationClicked(item: Documentation) {
+    const element = document.createElement('a');
+    element.href = item.fileData;
+    element.download = item.filename;
+    document.body.appendChild(element);
+    element.click();
+  }
+
   getDocumentations() {
     this.documentationService.getAllAssociatedDocuments(this.project.uuid, '14')
       .subscribe(

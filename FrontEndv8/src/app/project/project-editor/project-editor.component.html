@@ -170,7 +170,8 @@
         <app-generic-table #documentationsTable
                            [items]="documentations"
                            [detailsToShow]="documentationsDetailsToShow"
-                           [allowSelect]="allowEdit">
+                           [allowSelect]="allowEdit"
+                           (clicked)="documentationClicked($event)">
           <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDocumentations()"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addDocumentation()"><mat-icon>add</mat-icon></button>
         </app-generic-table>

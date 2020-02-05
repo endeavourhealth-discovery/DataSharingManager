@@ -427,6 +427,14 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
       );
   }
 
+  documentationClicked(item: Documentation) {
+    const element = document.createElement('a');
+    element.href = item.fileData;
+    element.download = item.filename;
+    document.body.appendChild(element);
+    element.click();
+  }
+
   addDocumentation() {
     const dialogRef = this.dialog.open(DocumentationComponent, {
       width: '550px',

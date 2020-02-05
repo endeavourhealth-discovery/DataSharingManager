@@ -215,7 +215,11 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   documentationClicked(item: Documentation) {
-    // Nothing needs to be done with this for the time being
+    const element = document.createElement('a');
+    element.href = item.fileData;
+    element.download = item.filename;
+    document.body.appendChild(element);
+    element.click();
   }
 
   private getLinkedRegions() {
