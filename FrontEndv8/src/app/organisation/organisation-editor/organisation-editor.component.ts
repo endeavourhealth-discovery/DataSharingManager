@@ -7,7 +7,13 @@ import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {OrganisationType} from "../models/OrganisationType";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
+import {
+  GenericTableComponent,
+  ItemLinkageService,
+  LoggerService,
+  MessageBoxDialogComponent,
+  UserManagerService
+} from "dds-angular8";
 import {Organisation} from "../models/Organisation";
 import {Address} from "../models/Address";
 import {MatDialog} from '@angular/material/dialog';
@@ -24,7 +30,6 @@ import {DataSharingAgreementPickerComponent} from "../../data-sharing-agreement/
   styleUrls: ['./organisation-editor.component.css']
 })
 export class OrganisationEditorComponent implements OnInit {
-  public accordionClass = 'accordionClass';
   private paramSubscriber: any;
 
   region: Region = <Region>{};
@@ -52,20 +57,9 @@ export class OrganisationEditorComponent implements OnInit {
   dsaDetailsToShow = new Dsa().getDisplayItems();
   addressDetailsToShow = new Address().getDisplayItems();
 
-  systemSupplierSystems = [
-    {num: 0, name: 'Not entered'},
-    {num: 1, name: 'EMIS Web'},
-    {num: 2, name: 'SystmOne'},
-    {num: 3, name: 'Vision'},
-    {num: 4, name: 'Adastra'},
-    {num: 5, name: 'Cerner Millennium'},
-    {num: 6, name: 'Rio'}
-  ];
+  systemSupplierSystems = this.linkageService.systemSupplierSystems;
 
-  systemSupplierSharingActivated = [
-    {num: 0, name: 'No'},
-    {num: 1, name: 'Yes'},
-  ];
+  systemSupplierSharingActivated = this.linkageService.systemSupplierSharingActivated;
 
   @ViewChild('addressesTable', { static: false }) addressesTable: GenericTableComponent;
   @ViewChild('regionTable', { static: false }) regionTable: GenericTableComponent;
@@ -82,10 +76,10 @@ export class OrganisationEditorComponent implements OnInit {
               private route: ActivatedRoute,
               private userManagerNotificationService: UserManagerService,
               private datePipe: DatePipe,
-              public dialog: MatDialog) { }
+              public dialog: MatDialog,
+              private linkageService: ItemLinkageService) { }
 
   ngOnInit() {
-
     this.userManagerNotificationService.onProjectChange.subscribe(active => {
       this.activeProject = active;
       this.roleChanged();

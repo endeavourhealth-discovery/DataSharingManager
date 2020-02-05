@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BrowserModule} from '@angular/platform-browser';
 import {CommonModule} from '@angular/common';
-import {CoreModule, GenericTableModule, MessageBoxDialogComponent} from 'dds-angular8';
+import {CoreModule, GenericTableModule, ItemLinkageModule, MessageBoxDialogComponent} from 'dds-angular8';
 import {FlexModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {
@@ -35,7 +35,7 @@ import { DataProcessingAgreementDialogComponent } from './data-processing-agreem
     CoreModule,
     FlexModule,
     FormsModule,
-    GenericTableModule,
+    GenericTableModule, ItemLinkageModule,
     MatBadgeModule, MatButtonModule,
     MatCardModule, MatCheckboxModule,
     MatDialogModule, MatDividerModule,

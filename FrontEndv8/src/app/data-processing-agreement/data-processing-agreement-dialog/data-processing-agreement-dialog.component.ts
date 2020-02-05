@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {Dpa} from "../models/Dpa";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {ItemLinkageService, LoggerService, UserManagerService} from "dds-angular8";
 import {DataProcessingAgreementService} from "../data-processing-agreement.service";
 import {DatePipe} from "@angular/common";
 
@@ -22,10 +22,7 @@ export class DataProcessingAgreementDialogComponent implements OnInit {
   public activeProject: UserProject;
   mode: string;
   uuid: string;
-  status = [
-    {num: 0, name: 'Active'},
-    {num: 1, name: 'Inactive'}
-  ];
+  status = this.linkageService.status;
   disableStatus = false;
   processor = 'Discovery';
 
@@ -35,7 +32,8 @@ export class DataProcessingAgreementDialogComponent implements OnInit {
               private dpaService: DataProcessingAgreementService,
               private datePipe: DatePipe,
               private userManagerNotificationService: UserManagerService,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private linkageService: ItemLinkageService) {
 
     this.uuid = data.uuid;
     this.mode = data.mode;

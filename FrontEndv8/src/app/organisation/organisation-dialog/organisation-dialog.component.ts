@@ -3,7 +3,7 @@ import {Organisation} from "../models/Organisation";
 import {OrganisationType} from "../models/OrganisationType";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {ItemLinkageService, LoggerService, UserManagerService} from "dds-angular8";
 import {OrganisationService} from "../organisation.service";
 import {DatePipe} from "@angular/common";
 import {Region} from "../../region/models/Region";
@@ -27,19 +27,9 @@ export class OrganisationDialogComponent implements OnInit {
   organisation: Organisation = <Organisation>{};
   orgType = 'Organisation';
   organisationTypes: OrganisationType[];
-  systemSupplierSystems = [
-    {num: 0, name: 'Not entered'},
-    {num: 1, name: 'EMIS Web'},
-    {num: 2, name: 'SystmOne'},
-    {num: 3, name: 'Vision'},
-    {num: 4, name: 'Adastra'},
-    {num: 5, name: 'Cerner Millennium'},
-    {num: 6, name: 'Rio'}
-  ];
-  systemSupplierSharingActivated = [
-    {num: 0, name: 'No'},
-    {num: 1, name: 'Yes'},
-  ];
+
+  systemSupplierSystems = this.linkageService.systemSupplierSystems;
+  systemSupplierSharingActivated = this.linkageService.systemSupplierSharingActivated;
   public activeProject: UserProject;
   mode: string;
   uuid: string;
@@ -58,7 +48,8 @@ export class OrganisationDialogComponent implements OnInit {
               private orgService: OrganisationService,
               private userManagerNotificationService: UserManagerService,
               private datePipe: DatePipe,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private linkageService: ItemLinkageService) {
 
     this.uuid = data.uuid;
     this.mode = data.mode;

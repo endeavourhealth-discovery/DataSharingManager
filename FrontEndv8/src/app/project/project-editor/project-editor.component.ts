@@ -1,7 +1,13 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Project} from "src/app/project/models/Project";
-import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
+import {
+  GenericTableComponent,
+  ItemLinkageService,
+  LoggerService,
+  MessageBoxDialogComponent,
+  UserManagerService
+} from "dds-angular8";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DatePipe} from "@angular/common";
 import {MatDialog} from "@angular/material/dialog";
@@ -72,63 +78,25 @@ export class ProjectEditorComponent implements OnInit {
   schedules: Schedule[] = [];
   schedulesDetailsToShow = new Schedule().getDisplayItems();
 
-  businessCaseStatuses = [
-    {num: 0, name: 'Submitted'},
-    {num: 1, name: 'Approved'}
-  ];
+  businessCaseStatuses = this.linkageService.businessCaseStatuses;
 
-  storageProtocols = [
-    {num: 0, name: 'Audit only'},
-    {num: 1, name: 'Temporary Store And Forward'},
-    {num: 2, name: 'Permanent Record Store'}
-  ];
+  storageProtocols = this.linkageService.storageProtocols;
 
-  consents = [
-    {num: 0, name : 'Explicit Consent'},
-    {num: 1, name : 'Implied Consent'}
-  ];
+  consents = this.linkageService.consents;
 
-  deidentificationLevel = [
-    {num: 0, name: 'Patient identifiable data'},
-    {num: 1, name: 'Pseudonymised data'}
-  ];
+  deidentificationLevel = this.linkageService.deidentificationLevel;
 
-  projectTypes = [
-    {num: 0, name: 'Extract'},
-    {num: 1, name: 'Query'}
-  ];
+  projectTypes = this.linkageService.projectTypes;
 
-  flowScheduleIds = [
-    {num: 0, name: 'Daily'},
-    {num: 1, name: 'On Demand'},
-    {num: 2, name: 'Weekly'},
-    {num: 3, name: 'Monthly'},
-    {num: 4, name: 'Annually'},
-    {num: 5, name: 'One off'},
-    {num: 6, name: 'Quarterly'}
-  ];
+  flowScheduleIds = this.linkageService.flowScheduleIds;
 
-  outputFormat = [
-    {num: 0, name: 'FHIR'},
-    {num: 1, name: 'CSV'}
-  ];
+  outputFormat = this.linkageService.outputFormat;
 
-  securityInfrastructures = [
-    {num: 0, name: 'N3'},
-    {num: 1, name: 'PSN'},
-    {num: 1, name: 'Internet'}
-  ];
+  securityInfrastructures = this.linkageService.securityInfrastructures;
 
-  securityArchitectures = [
-    {num: 0, name: 'TLS/MA'},
-    {num: 1, name: 'Secure FTP'}
-  ];
+  securityArchitectures = this.linkageService.securityArchitectures;
 
-  status = [
-    {num: 0, name : 'Active'},
-    {num: 1, name : 'Inactive'}
-  ];
-
+  status = this.linkageService.status;
 
   constructor(private log: LoggerService,
               private projectService: ProjectService,
@@ -137,7 +105,8 @@ export class ProjectEditorComponent implements OnInit {
               private route: ActivatedRoute,
               private datePipe: DatePipe,
               private userManagerService: UserManagerService,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private linkageService: ItemLinkageService) {
   }
 
   ngOnInit() {
@@ -186,6 +155,7 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   save(close: boolean) {
+    console.log(this.project);
     this.projectService.saveProject(this.project)
       .subscribe(saved => {
           this.project.uuid = saved;

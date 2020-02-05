@@ -3,7 +3,13 @@ import {Dpa} from "../models/Dpa";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Organisation} from "../../organisation/models/Organisation";
 import {Documentation} from "../../documentation/models/Documentation";
-import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
+import {
+  GenericTableComponent,
+  ItemLinkageService,
+  LoggerService,
+  MessageBoxDialogComponent,
+  UserManagerService
+} from "dds-angular8";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DataProcessingAgreementService} from "../data-processing-agreement.service";
 import {DatePipe} from "@angular/common";
@@ -50,10 +56,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   documentations: Documentation[] = [];
   documentationsDetailsToShow = new Documentation().getDisplayItems();
 
-  status = [
-    {num: 0, name: 'Active'},
-    {num: 1, name: 'Inactive'}
-  ];
+  status = this.linkageService.status;
+
   processor = 'Discovery';
 
   constructor(private log: LoggerService,
@@ -63,7 +67,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
               private route: ActivatedRoute,
               private datePipe: DatePipe,
               private userManagerService: UserManagerService,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private linkageService: ItemLinkageService) {
   }
 
   ngOnInit() {

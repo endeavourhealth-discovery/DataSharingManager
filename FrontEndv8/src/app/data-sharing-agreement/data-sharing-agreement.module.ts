@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BrowserModule} from '@angular/platform-browser';
 import {CommonModule, DatePipe} from '@angular/common';
-import {CoreModule, GenericTableModule} from 'dds-angular8';
+import {CoreModule, GenericTableModule, ItemLinkageModule} from 'dds-angular8';
 import {FlexModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {
@@ -37,7 +37,7 @@ import {DataSharingAgreementDialogComponent} from './data-sharing-agreement-dial
     CoreModule,
     FlexModule,
     FormsModule,
-    GenericTableModule,
+    GenericTableModule, ItemLinkageModule,
     MatBadgeModule, MatButtonModule,
     MatCardModule, MatCheckboxModule,
     MatDialogModule, MatDividerModule,

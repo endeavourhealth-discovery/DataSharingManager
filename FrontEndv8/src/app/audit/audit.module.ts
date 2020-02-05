@@ -8,13 +8,13 @@ import {
   MatProgressBarModule, MatProgressSpinnerModule, MatSelectModule, MatSnackBarModule, MatSortModule, MatTableModule,
   MatTreeModule
 } from "@angular/material";
-import {AuditCommonModule} from "dds-auditTrail";
 import {CoreModule} from "dds-angular8";
 import {FlexModule} from "@angular/flex-layout";
 import {RouterModule} from "@angular/router";
 import {FormsModule} from "@angular/forms";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BrowserModule} from "@angular/platform-browser";
+import {AuditCommonModule} from "dds-auditTrail";
 
 
 

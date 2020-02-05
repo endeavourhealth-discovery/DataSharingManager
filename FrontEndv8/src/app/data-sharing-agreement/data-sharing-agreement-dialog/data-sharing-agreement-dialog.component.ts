@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {Dsa} from "../models/Dsa";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {ItemLinkageService, LoggerService, UserManagerService} from "dds-angular8";
 import {DatePipe} from "@angular/common";
 import {DialogData} from "../../data-processing-agreement/data-processing-agreement-dialog/data-processing-agreement-dialog.component";
 import {DataSharingAgreementService} from "../data-sharing-agreement.service";
@@ -25,14 +25,9 @@ export class DataSharingAgreementDialogComponent implements OnInit {
   userId: string;
   mode: string;
   uuid: string;
-  status = [
-    {num: 0, name: 'Active'},
-    {num: 1, name: 'Inactive'}
-  ];
-  consents = [
-    {num: 0, name : 'Explicit Consent'},
-    {num: 1, name : 'Implied Consent'}
-  ];
+  status = this.linkageService.status;
+  consents = this.linkageService.consents;
+
   public activeProject: UserProject;
 
   constructor(public dialogRef: MatDialogRef<DataSharingAgreementDialogComponent>,
@@ -41,7 +36,8 @@ export class DataSharingAgreementDialogComponent implements OnInit {
               private dsaService: DataSharingAgreementService,
               private datePipe: DatePipe,
               private userManagerNotificationService: UserManagerService,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private linkageService: ItemLinkageService) {
 
     this.uuid = data.uuid;
     this.mode = data.mode;

@@ -2,7 +2,13 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {DatePipe} from '@angular/common';
 import {MatDialog} from "@angular/material/dialog";
 import {ActivatedRoute, Router} from '@angular/router';
-import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
+import {
+  GenericTableComponent,
+  ItemLinkageService,
+  LoggerService,
+  MessageBoxDialogComponent,
+  UserManagerService
+} from "dds-angular8";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Dsa} from '../models/Dsa';
 import {DataSharingAgreementService} from '../data-sharing-agreement.service';
@@ -51,15 +57,9 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   public activeProject: UserProject;
 
-  status = [
-    {num: 0, name : 'Active'},
-    {num: 1, name : 'Inactive'}
-  ];
+  status = this.linkageService.status;
 
-  consents = [
-    {num: 0, name : 'Explicit Consent'},
-    {num: 1, name : 'Implied Consent'}
-  ];
+  consents = this.linkageService.consents;
 
   purposeDetailsToShow = new Purpose().getDisplayItems();
   benefitDetailsToShow = new Purpose().getDisplayItems();
@@ -84,7 +84,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
               private route: ActivatedRoute,
               private userManagerNotificationService: UserManagerService,
               private datePipe: DatePipe,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private linkageService: ItemLinkageService) {
   }
 
   ngOnInit() {

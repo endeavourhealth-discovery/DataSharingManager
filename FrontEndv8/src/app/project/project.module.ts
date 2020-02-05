@@ -6,7 +6,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatMenuModule} from "@angular/material/menu";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BrowserModule} from "@angular/platform-browser";
-import {CoreModule, GenericTableModule, MessageBoxDialogComponent} from "dds-angular8";
+import {CoreModule, GenericTableModule, ItemLinkageModule, MessageBoxDialogComponent} from "dds-angular8";
 import {FlexModule} from "@angular/flex-layout";
 import {FormsModule} from "@angular/forms";
 import {RouterModule} from "@angular/router";
@@ -45,7 +45,7 @@ import { ExtractDetailsDialogComponent } from './extract-details-dialog/extract-
         CoreModule,
         FlexModule,
         FormsModule,
-        GenericTableModule,
+        GenericTableModule, ItemLinkageModule,
         MatBadgeModule, MatButtonModule,
         MatCardModule, MatCheckboxModule,
         MatDialogModule, MatDividerModule,

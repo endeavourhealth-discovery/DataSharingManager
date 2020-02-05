@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {ItemLinkageService, LoggerService, UserManagerService} from "dds-angular8";
 import {ProjectService} from "../project.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Project} from "../models/Project";
@@ -31,61 +31,25 @@ export class ProjectDialogComponent implements OnInit {
   selectedApplicationPolicy: ApplicationPolicy;
   projectApplicationPolicy: ProjectApplicationPolicy;
 
-  businessCaseStatuses = [
-    {num: 0, name: 'Submitted'},
-    {num: 1, name: 'Approved'}
-  ];
-  storageProtocols = [
-    {num: 0, name: 'Audit only'},
-    {num: 1, name: 'Temporary Store And Forward'},
-    {num: 2, name: 'Permanent Record Store'}
-  ];
+  businessCaseStatuses = this.linkageService.businessCaseStatuses;
 
-  consents = [
-    {num: 0, name : 'Explicit Consent'},
-    {num: 1, name : 'Implied Consent'}
-  ];
+  storageProtocols = this.linkageService.storageProtocols;
 
-  deidentificationLevel = [
-    {num: 0, name: 'Patient identifiable data'},
-    {num: 1, name: 'Pseudonymised data'}
-  ];
+  consents = this.linkageService.consents;
 
-  projectTypes = [
-    {num: 0, name: 'Extract'},
-    {num: 1, name: 'Query'}
-  ];
+  deidentificationLevel = this.linkageService.deidentificationLevel;
 
-  flowScheduleIds = [
-    {num: 0, name: 'Daily'},
-    {num: 1, name: 'On Demand'},
-    {num: 2, name: 'Weekly'},
-    {num: 3, name: 'Monthly'},
-    {num: 4, name: 'Annually'},
-    {num: 5, name: 'One off'},
-    {num: 6, name: 'Quarterly'}
-  ];
+  projectTypes = this.linkageService.projectTypes;
 
-  outputFormat = [
-    {num: 0, name: 'FHIR'},
-    {num: 1, name: 'CSV'}
-  ];
+  flowScheduleIds = this.linkageService.flowScheduleIds;
 
-  securityInfrastructures = [
-    {num: 0, name: 'N3'},
-    {num: 1, name: 'PSN'},
-    {num: 1, name: 'Internet'}
-  ];
+  outputFormat = this.linkageService.outputFormat;
 
-  securityArchitectures = [
-    {num: 0, name: 'TLS/MA'},
-    {num: 1, name: 'Secure FTP'}
-  ];
+  securityInfrastructures = this.linkageService.securityInfrastructures;
 
-  status = [
-    {num: 0, name : 'Active'},
-    {num: 1, name : 'Inactive'}
-  ];
+  securityArchitectures = this.linkageService.securityArchitectures;
+
+  status = this.linkageService.status;
 
 
   constructor(public dialogRef: MatDialogRef<ProjectDialogComponent>,
@@ -94,7 +58,8 @@ export class ProjectDialogComponent implements OnInit {
               private projectService: ProjectService,
               private datePipe: DatePipe,
               private userManagerService: UserManagerService,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private linkageService: ItemLinkageService) {
     this.uuid = data.uuid;
     this.mode = data.mode;
   }
@@ -206,6 +171,7 @@ export class ProjectDialogComponent implements OnInit {
   }
 
   ok() {
+    console.log(this.project);
     this.projectService.saveProject(this.project)
       .subscribe(saved => {
           this.project.uuid = saved;
