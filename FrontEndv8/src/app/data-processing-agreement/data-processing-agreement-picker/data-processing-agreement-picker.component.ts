@@ -1,9 +1,13 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {Dpa} from "../models/Dpa";
-import {MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
 import {DataProcessingAgreementService} from "../data-processing-agreement.service";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
+
+export interface DialogData {
+  fromRegion: boolean;
+}
 
 @Component({
   selector: 'app-data-processing-agreement-picker',
@@ -18,13 +22,16 @@ export class DataProcessingAgreementPickerComponent implements OnInit {
   allowEdit = true;
   userId: string;
   public activeProject: UserProject;
+  fromRegion = false;
 
   @ViewChild('picker', { static: false }) picker: GenericTableComponent;
 
   constructor(public dialogRef: MatDialogRef<DataProcessingAgreementPickerComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: DialogData,
               private log: LoggerService,
               private userManagerNotificationService: UserManagerService,
               private service: DataProcessingAgreementService) {
+    this.fromRegion = data.fromRegion;
   }
 
   ngOnInit() {
@@ -66,12 +73,21 @@ export class DataProcessingAgreementPickerComponent implements OnInit {
   }
 
   searchAll() {
-    this.service.getAllDpas(this.userId)
-      .subscribe(
-        result => {
-          this.searchResults = result;
-        }
-      );
+    if (this.fromRegion) {
+      this.service.getRegionlessDpas(this.userId)
+        .subscribe(
+          result => {
+            this.searchResults = result;
+          }
+        );
+    } else {
+      this.service.getAllDpas(this.userId)
+        .subscribe(
+          result => {
+            this.searchResults = result;
+          }
+        );
+    }
   }
 
   ok() {

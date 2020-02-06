@@ -24,6 +24,16 @@ export class DataProcessingAgreementService {
     return this.http.get<Dpa[]>(url,{params});
   }
 
+  getRegionlessDpas(userId: string): Observable<Dpa[]> {
+    const url = 'api/dpa';
+    let params = new HttpParams();
+    if (userId != null) {
+      if (userId) params = params.append('userId', userId);
+    }
+    params = params.append('fromRegion', 'true');
+    return this.http.get<Dpa[]>(url,{params});
+  }
+
   getDpa(uuid: string): Observable<Dpa> {
     const url = 'api/dpa';
     let params = new HttpParams();

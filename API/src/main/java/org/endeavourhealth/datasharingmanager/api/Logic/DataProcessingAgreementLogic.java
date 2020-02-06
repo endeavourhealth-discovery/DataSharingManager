@@ -69,6 +69,24 @@ public class DataProcessingAgreementLogic {
                 .build();
     }
 
+    public Response getRegionlessDPAList() throws Exception {
+
+        List<DataProcessingAgreementEntity> dpas = new DataProcessingAgreementDAL().getAllDPAs();
+        List<DataProcessingAgreementEntity> regionlessDpas = new ArrayList<>();
+        for (DataProcessingAgreementEntity dpa : dpas) {
+            List<String> regionUuids = new SecurityMasterMappingDAL().getParentMappings(dpa.getUuid(),
+                    MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.REGION.getMapType());
+            if (regionUuids.isEmpty()) {
+                regionlessDpas.add(dpa);
+            }
+        }
+
+        return Response
+                .ok()
+                .entity(regionlessDpas)
+                .build();
+    }
+
     private Response getDPAListFilterOnRegion(String userId) throws Exception {
 
         UserRegionEntity userRegion = UserCache.getUserRegion(userId);

@@ -241,6 +241,7 @@ export class RegionEditorComponent implements OnInit {
   addDPAs() {
     const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
       width: '800px',
+      data: {fromRegion: true},
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
