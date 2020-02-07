@@ -87,7 +87,7 @@ export class OrganisationPickerComponent implements OnInit {
 
   searchMultiple() {
     this.showMultipleMessage = false;
-    var odsList = this.odsCodes.replace(/\n/g, ',').split(',');
+    var odsList = this.odsCodes.replace(/\n/g, ',').replace(/\r/g, '').replace(' ', '').split(',');
     odsList = odsList.filter(function(el) { return el; });
 
     this.organisationService.getMultipleOrganisationsFromODSList(odsList)
@@ -95,14 +95,16 @@ export class OrganisationPickerComponent implements OnInit {
         (result) => {
           this.multipleSearchResults = result,
             this.multipleSearchMissing = odsList.filter((x) => !result.filter(y => y.odsCode === x).length);
-          MessageBoxDialogComponent.open(this.dialog, 'The following organisations were not found',
-            this.multipleSearchMissing.join(),
-            'Ok')
-            .subscribe(
-              (result) => {
+          if (this.multipleSearchMissing.length > 0) {
+            MessageBoxDialogComponent.open(this.dialog, 'The following organisations were not found',
+              this.multipleSearchMissing.join(),
+              'Ok')
+              .subscribe(
+                (result) => {
 
-              }
-            )
+                }
+              )
+          }
         },
         (error) => this.log.error(error)
       );
@@ -113,7 +115,7 @@ export class OrganisationPickerComponent implements OnInit {
 
     let clipboardData = event.clipboardData;
     let pastedText = clipboardData.getData('text');
-    this.odsCodes = this.odsCodes + pastedText.split(/\n/).join(', ');
+    this.odsCodes = this.odsCodes + pastedText.split(/\n/).join(',');
     event.preventDefault();
 
   }
