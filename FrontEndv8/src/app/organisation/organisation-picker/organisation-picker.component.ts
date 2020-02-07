@@ -111,7 +111,7 @@ export class OrganisationPickerComponent implements OnInit {
 
   replaceLineBreaks(event: ClipboardEvent) {
 
-    let clipboardData = event.clipboardData || window.clipboardData;
+    let clipboardData = event.clipboardData;
     let pastedText = clipboardData.getData('text');
     this.odsCodes = this.odsCodes + pastedText.split(/\n/).join(', ');
     event.preventDefault();
