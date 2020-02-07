@@ -16,6 +16,7 @@ export class RegionPickerComponent implements OnInit {
   searchData: string;
   searchResults: Region[];
   regionDetailsToShow = new Region().getDisplayItems();
+  type: string;
 
   @ViewChild('picker', { static: false }) picker: GenericTableComponent;
 
@@ -24,6 +25,12 @@ export class RegionPickerComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: StandardPickerData,
     private regionService: RegionService,
     private log: LoggerService) {
+
+    this.type = data.type;
+    if (!this.type) {
+      this.type = '';
+    }
+
   }
 
   ngOnInit() {
@@ -35,7 +42,6 @@ export class RegionPickerComponent implements OnInit {
   }
 
   search() {
-    console.log('data', this.data);
     const regionUUID = this.data.uuid;
     this.regionService.getAllRegions(this.data.userId)
       .subscribe(

@@ -217,7 +217,7 @@ export class RegionEditorComponent implements OnInit {
 
   addDSAs() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
-      width: '800px',
+      width: '80vw',
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -240,7 +240,7 @@ export class RegionEditorComponent implements OnInit {
 
   addDPAs() {
     const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
-      width: '800px',
+      width: '80vw',
       data: {fromRegion: true},
     })
     dialogRef.afterClosed().subscribe(result => {
@@ -263,9 +263,15 @@ export class RegionEditorComponent implements OnInit {
   }
 
   addRegions(isParent: boolean) {
+    let type = '';
+    if (isParent) {
+      type = 'parent';
+    } else {
+      type = 'child';
+    }
     const dialogRef = this.dialog.open(RegionPickerComponent, {
-      width: '800px',
-      data: { uuid: '', limit: 0, userId : '' }
+      width: '80vw',
+      data: { uuid: '', limit: 0, userId: '', type: type }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -303,7 +309,7 @@ export class RegionEditorComponent implements OnInit {
 
   addOrganisation() {
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
-      width: '800px',
+      width: '80vw',
       data: { searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '', existingOrgs: this.organisations }
     })
     dialogRef.afterClosed().subscribe(result => {
@@ -342,8 +348,8 @@ export class RegionEditorComponent implements OnInit {
   }
 
   deleteOrganisations() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove organisation', 'Are you sure you want to remove organisation(s)?',
-      'Remove organisation', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove organisations', 'Are you sure you want to remove organisations?',
+      'Remove organisations', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -368,8 +374,8 @@ export class RegionEditorComponent implements OnInit {
   }
 
   deleteParentRegions() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete region', 'Are you sure you want to remove parent region(s)?',
-      'Remove region', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove parent regions', 'Are you sure you want to remove parent regions?',
+      'Remove regions', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -394,8 +400,8 @@ export class RegionEditorComponent implements OnInit {
   }
 
   deleteChildRegions() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove region', 'Are you sure you want to remove child region(s)?',
-      'Remove region', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove child regions', 'Are you sure you want to remove child regions?',
+      'Remove regions', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -420,8 +426,8 @@ export class RegionEditorComponent implements OnInit {
   }
 
   deleteDSAs() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove DSA', 'Are you sure you want to remove DSA(s)?',
-      'Delete DSA', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove data sharing agreements', 'Are you sure you want to remove data sharing agreements',
+      'Delete agreements', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -446,8 +452,8 @@ export class RegionEditorComponent implements OnInit {
   }
 
   deleteDPAs() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove DPA', 'Are you sure you want to remove DPA(s)?',
-      'Remove DPA', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove data processing agreements', 'Are you sure you want to remove data processing agreements?',
+      'Remove agreements', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {

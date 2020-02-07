@@ -97,8 +97,8 @@ export class RegionComponent implements OnInit {
   }
 
   delete() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete region', 'Are you sure you want to delete region(s)?',
-      'Delete region', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete regions', 'Are you sure you want to delete regions?',
+      'Delete regions', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {

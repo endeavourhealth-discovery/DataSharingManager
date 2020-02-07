@@ -3,7 +3,6 @@
     <mat-tab-group *ngIf="!listSearch" dynamicHeight (selectedTabChange)="onTabChange($event)">
       <mat-tab label="Add individual" id="individual">
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-
           <mat-form-field appearance="outline" fxFlex="100">
             <mat-label>Search</mat-label>
             <input matInput [(ngModel)]="searchData" (keyup.enter)="search()" placeholder="Search">
@@ -12,15 +11,15 @@
             </button>
           </mat-form-field>
         </div>
-
         <br>
-
         <div class="scroll-box-400">
           <app-generic-table #orgPicker
                              [items]="searchResults"
                              [detailsToShow]="orgDetailsToShow"
+                             [allowSearch]="false"
                              [allowSelect]="true"
-                              [pageSize]="10"></app-generic-table>
+                             [pageSize]="5">
+          </app-generic-table>
         </div>
         <br>
       </mat-tab>
@@ -28,36 +27,37 @@
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
           <mat-form-field appearance="outline" fxFlex="100" fxFill>
             <mat-label>Search</mat-label>
-            <textarea rows="6" matInput placeholder="Add ODS codes here on separate lines or separated by a comma" [(ngModel)]="odsCodes" name="odsCodes" (keyup.enter)="searchMultiple()"></textarea>
+            <textarea rows="3" matInput placeholder="Add ODS codes here on separate lines or separated by a comma" [(ngModel)]="odsCodes" name="odsCodes" (keyup.enter)="searchMultiple()"></textarea>
           </mat-form-field>
-
         </div>
-
         <div class="scroll-box-400">
           <app-generic-table #multiple
                              [items]="multipleSearchResults"
                              [detailsToShow]="orgDetailsToShow"
+                             [allowSearch]="false"
                              [allowSelect]="true"
-                             [pageSize]="10"></app-generic-table>
-
-
+                             [pageSize]="5">
+          </app-generic-table>
+        </div>
           <!--<app-generic-table #multipleMissing
                              [items]="multipleSearchMissing"
                              [detailsToShow]="orgDetailsToShow"
                              [allowSelect]="true"
                              [pageSize]="10"></app-generic-table>-->
-        </div>
       </mat-tab>
     </mat-tab-group>
     <div *ngIf="listSearch">
       <app-generic-table #listPicker
                          [items]="availableOrgs"
                          [detailsToShow]="orgDetailsToShow"
+                         [allowSearch]="false"
                          [allowSelect]="true"
-                         [pageSize]="10"></app-generic-table>
+                         [pageSize]="5">
+
+      </app-generic-table>
     </div>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-button color="accent" (click)="cancel()">Cancel</button>
-  <button mat-flat-button color="accent" (click)="ok()">OK</button>
+  <button mat-flat-button color="accent" (click)="ok()">Add selected</button>
 </div>

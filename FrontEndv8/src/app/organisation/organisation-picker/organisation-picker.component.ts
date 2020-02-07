@@ -61,7 +61,10 @@ export class OrganisationPickerComponent implements OnInit {
     const orgUUID = this.data.uuid;
     this.organisationService.search(this.searchData, this.data.searchType, 1, 100)
       .subscribe(
-        (result) => {this.searchResults = this.filterResults(result)},
+        (result) => {
+          this.searchResults = this.filterResults(result)
+          console.log(this.searchResults);
+        },
         (error) => this.log.error(error)
       );
   }
