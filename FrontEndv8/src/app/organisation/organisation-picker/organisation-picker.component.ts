@@ -95,20 +95,21 @@ export class OrganisationPickerComponent implements OnInit {
         (result) => {
           this.multipleSearchResults = result,
             this.multipleSearchMissing = odsList.filter((x) => !result.filter(y => y.odsCode === x).length);
-          if (this.multipleSearchMissing.length > 0) {
-            MessageBoxDialogComponent.open(this.dialog, 'The following organisations were not found',
-              this.multipleSearchMissing.join(),
-              'Ok')
-              .subscribe(
-                (result) => {
-
-                }
-              )
-          }
         },
         (error) => this.log.error(error)
       );
 
+  }
+
+  copyToClipboard() {
+    let listener = (e: ClipboardEvent) => {
+      e.clipboardData.setData('text/plain', (this.multipleSearchMissing.join()));
+      e.preventDefault();
+    };
+
+    document.addEventListener('copy', listener);
+    document.execCommand('copy');
+    document.removeEventListener('copy', listener);
   }
 
   replaceLineBreaks(event: ClipboardEvent) {
