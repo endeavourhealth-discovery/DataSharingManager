@@ -1,8 +1,8 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MatDialogRef, MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {Organisation} from "../models/Organisation";
 import {OrganisationService} from "../organisation.service";
-import {GenericTableComponent, LoggerService} from "dds-angular8";
+import {GenericTableComponent, LoggerService, MessageBoxDialogComponent} from "dds-angular8";
 import {OrganisationPickerData} from "../models/OrganisationPickerData";
 import {RegionService} from "../../region/region.service";
 import {DataSharingAgreementService} from "../../data-sharing-agreement/data-sharing-agreement.service";
@@ -21,7 +21,7 @@ export class OrganisationPickerComponent implements OnInit {
   multipleSearchMissing: string[];
   multipleAddedCount = 0;
   showMultipleMessage = false;
-  odsCodes: string;
+  odsCodes: string = '';
   listSearch = true;
   orgDetailsToShow = new Organisation().getDisplayItems();
 
@@ -34,7 +34,8 @@ export class OrganisationPickerComponent implements OnInit {
               private organisationService: OrganisationService,
               private regionService: RegionService,
               private dsaService: DataSharingAgreementService,
-              private log: LoggerService) {
+              private log: LoggerService,
+              public dialog: MatDialog) {
 
 
   }
@@ -87,15 +88,33 @@ export class OrganisationPickerComponent implements OnInit {
   searchMultiple() {
     this.showMultipleMessage = false;
     var odsList = this.odsCodes.replace(/\n/g, ',').split(',');
+    odsList = odsList.filter(function(el) { return el; });
 
     this.organisationService.getMultipleOrganisationsFromODSList(odsList)
       .subscribe(
         (result) => {
           this.multipleSearchResults = result,
             this.multipleSearchMissing = odsList.filter((x) => !result.filter(y => y.odsCode === x).length);
+          MessageBoxDialogComponent.open(this.dialog, 'The following organisations were not found',
+            this.multipleSearchMissing.join(),
+            'Ok')
+            .subscribe(
+              (result) => {
+
+              }
+            )
         },
         (error) => this.log.error(error)
       );
+
+  }
+
+  replaceLineBreaks(event: ClipboardEvent) {
+
+    let clipboardData = event.clipboardData || window.clipboardData;
+    let pastedText = clipboardData.getData('text');
+    this.odsCodes = this.odsCodes + pastedText.split(/\n/).join(', ');
+    event.preventDefault();
 
   }
 

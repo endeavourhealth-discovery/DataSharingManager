@@ -18,7 +18,7 @@
                              [detailsToShow]="orgDetailsToShow"
                              [allowSearch]="false"
                              [allowSelect]="true"
-                             [pageSize]="5">
+                             [pageSize]="20">
           </app-generic-table>
         </div>
         <br>
@@ -27,7 +27,10 @@
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
           <mat-form-field appearance="outline" fxFlex="100" fxFill>
             <mat-label>Search</mat-label>
-            <textarea rows="3" matInput placeholder="Add ODS codes here on separate lines or separated by a comma" [(ngModel)]="odsCodes" name="odsCodes" (keyup.enter)="searchMultiple()"></textarea>
+            <input matInput placeholder="Add ODS codes here on separate lines or separated by a comma" [(ngModel)]="odsCodes" name="odsCodes" (paste)="replaceLineBreaks($event)">
+            <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="searchMultiple()">
+              <mat-icon>search</mat-icon>
+            </button>
           </mat-form-field>
         </div>
         <div class="scroll-box-400">
@@ -36,14 +39,14 @@
                              [detailsToShow]="orgDetailsToShow"
                              [allowSearch]="false"
                              [allowSelect]="true"
-                             [pageSize]="5">
+                             [pageSize]="20">
           </app-generic-table>
         </div>
           <!--<app-generic-table #multipleMissing
                              [items]="multipleSearchMissing"
-                             [detailsToShow]="orgDetailsToShow"
+                             [detailsToShow]="missingOrgsDetails"
                              [allowSelect]="true"
-                             [pageSize]="10"></app-generic-table>-->
+                             [pageSize]="20"></app-generic-table>-->
       </mat-tab>
     </mat-tab-group>
     <div *ngIf="listSearch">
@@ -52,7 +55,7 @@
                          [detailsToShow]="orgDetailsToShow"
                          [allowSearch]="false"
                          [allowSelect]="true"
-                         [pageSize]="5">
+                         [pageSize]="20">
 
       </app-generic-table>
     </div>
