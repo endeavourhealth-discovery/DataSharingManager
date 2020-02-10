@@ -48,7 +48,7 @@
           <br/>
           <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
             <mat-form-field *ngIf="multipleSearchMissing" appearance="outline" fxFlex="100" fxFill mat-readonly>
-              <mat-label>ODS codes with no match found</mat-label>
+              <mat-label>ODS codes not found ( {{multipleSearchMissing.length}} / {{odsCodes.split(',').length}} )</mat-label>
               <input matInput [(ngModel)]="multipleSearchMissing" name="multipleSearchMissing" readonly>
               <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="copyToClipboard()">
                 <i class="fal fa-fw fa-copy"></i>
