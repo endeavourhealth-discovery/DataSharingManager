@@ -1,23 +1,28 @@
 <h1 mat-dialog-title>Data set details</h1>
 <div mat-dialog-content>
   <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
-    <mat-form-field appearance="outline" fxFlex="50" fxFill>
-      <mat-label>Data set name</mat-label>
-      <input required matInput [(ngModel)]="dataset.name" placeholder="Name" name="name">
-    </mat-form-field>
-    <div></div>
-    <mat-form-field appearance="outline" fxFlex="50" fxFill>
-      <mat-label>Description</mat-label>
-      <textarea matInput [(ngModel)]="dataset.description" placeholder="Description"
-                name="description" rows="15">
-            </textarea>
-    </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="50" fxFill>
-      <mat-label>Technical definition</mat-label>
-      <textarea matInput [(ngModel)]="dataset.technicalDefinition" placeholder="Technical definition"
-                name="definition" rows="15">
-            </textarea>
-    </mat-form-field>
+    <div fxFlex="50" fxFill>
+      <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+        <mat-form-field appearance="outline" fxFlex="100" fxFill>
+          <mat-label>Data set name</mat-label>
+          <input required matInput [(ngModel)]="dataset.name" placeholder="Data set name" name="name">
+        </mat-form-field>
+        <mat-form-field appearance="outline" fxFlex="100" fxFill>
+          <mat-label>Description</mat-label>
+          <textarea matInput rows="15" [(ngModel)]="dataset.description" placeholder="Data set description"
+                    name="description"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxFlex="50" fxFill>
+      <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+        <mat-form-field appearance="outline" fxFlex="100" fxFill>
+          <mat-label>Technical definition</mat-label>
+          <textarea matInput rows="20" [(ngModel)]="dataset.technicalDefinition"
+                    placeholder="Data set technical definition" name="technicalDefinition"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
   </div>
 </div>
 <div mat-dialog-actions align="end">

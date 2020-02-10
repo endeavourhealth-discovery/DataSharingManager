@@ -133,7 +133,7 @@ export class RegionEditorComponent implements OnInit {
 
   editRegion() {
     const dialogRef = this.dialog.open(RegionDialogComponent, {
-      width: '800px',
+      width: '80vw',
       data: {mode: 'edit', uuid: this.region.uuid},
     });
     dialogRef.afterClosed().subscribe(result => {

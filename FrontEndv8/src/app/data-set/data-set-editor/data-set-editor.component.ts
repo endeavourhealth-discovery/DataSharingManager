@@ -176,7 +176,7 @@ export class DataSetEditorComponent implements OnInit {
 
   editDataset() {
     const dialogRef = this.dialog.open(DataSetDialogComponent, {
-      width: '800px',
+      width: '80vw',
       data: {mode: 'edit', uuid: this.dataset.uuid },
     });
     dialogRef.afterClosed().subscribe(result => {

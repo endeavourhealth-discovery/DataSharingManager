@@ -70,7 +70,7 @@ export class CohortComponent implements OnInit {
 
   add() {
     const dialogRef = this.dialog.open(CohortDialogComponent, {
-      width: '800px',
+      width: '80vw',
       data: {mode: 'add', uuid: ''},
     });
     dialogRef.afterClosed().subscribe(result => {

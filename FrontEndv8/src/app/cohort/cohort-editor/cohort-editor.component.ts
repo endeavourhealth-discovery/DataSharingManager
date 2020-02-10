@@ -119,7 +119,7 @@ export class CohortEditorComponent implements OnInit {
 
   editCohort() {
     const dialogRef = this.dialog.open(CohortDialogComponent, {
-      width: '800px',
+      width: '80vw',
       data: {mode: 'edit', uuid: this.cohort.uuid },
     });
     dialogRef.afterClosed().subscribe(result => {
