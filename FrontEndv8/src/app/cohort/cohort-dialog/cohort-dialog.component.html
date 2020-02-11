@@ -27,5 +27,5 @@
 </div>
 <div mat-dialog-actions align="end">
   <button mat-button color="accent" (click)="cancel()">Cancel</button>
-  <button mat-flat-button color="accent" (click)="ok()">Save Cohort</button>
+  <button mat-flat-button color="accent" [disabled]="((!cohort.name) || (cohort.name.length < 1))" (click)="ok()">Save cohort</button>
 </div>

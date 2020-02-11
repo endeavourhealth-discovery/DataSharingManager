@@ -51,5 +51,5 @@
 </div>
 <div mat-dialog-actions align="end">
   <button mat-button color="accent" (click)="cancel()">Cancel</button>
-  <button mat-flat-button color="accent" (click)="ok()">Save {{orgType}}</button>
+  <button mat-flat-button color="accent" [disabled]="((!organisation.name) || (organisation.name.length < 1))" (click)="ok()">Save {{orgType.toLowerCase()}}</button>
 </div>

@@ -94,7 +94,7 @@ export class OrganisationComponent implements OnInit {
   add() {
     if (this.modeType === 'Organisation') {
       const dialogRef = this.dialog.open(OrganisationDialogComponent, {
-        width: '1200px',
+        width: '80vw',
         data: {mode: 'add', uuid: '', orgType: this.modeType},
       });
       dialogRef.afterClosed().subscribe(result => {
@@ -105,7 +105,7 @@ export class OrganisationComponent implements OnInit {
       });
     } else {
       const dialogRef = this.dialog.open(OrganisationDialogComponent, {
-        width: '1200px',
+        width: '80vw',
         data: {mode: 'addService', uuid: '', orgType: this.modeType},
       });
       dialogRef.afterClosed().subscribe(result => {

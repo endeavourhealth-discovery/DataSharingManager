@@ -5,7 +5,6 @@ import {Router} from "@angular/router";
 import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {ProjectService} from "../project.service";
 import {MatDialog} from "@angular/material/dialog";
-import {DataSharingAgreementDialogComponent} from "../../data-sharing-agreement/data-sharing-agreement-dialog/data-sharing-agreement-dialog.component";
 import {ProjectDialogComponent} from "../project-dialog/project-dialog.component";
 
 @Component({
@@ -78,7 +77,7 @@ export class ProjectComponent implements OnInit {
 
   add() {
     const dialogRef = this.dialog.open(ProjectDialogComponent, {
-      width: '1000px',
+      width: '80vw',
       data: {mode: 'add', uuid: ''},
     });
     dialogRef.afterClosed().subscribe(result => {

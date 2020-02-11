@@ -77,7 +77,7 @@ export class DataSharingAgreementComponent implements OnInit {
 
   add() {
     const dialogRef = this.dialog.open(DataSharingAgreementDialogComponent, {
-      width: '800px',
+      width: '80vw',
       data: {mode: 'add', uuid: ''},
     });
     dialogRef.afterClosed().subscribe(result => {

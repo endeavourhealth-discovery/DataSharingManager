@@ -33,5 +33,5 @@
 </div>
 <div mat-dialog-actions align="end">
   <button mat-button color="accent" (click)="cancel()">Cancel</button>
-  <button mat-flat-button color="accent" (click)="ok()">Save DSA</button>
+  <button mat-flat-button color="accent" [disabled]="((!dsa.name) || (dsa.name.length < 1))" (click)="ok()">Save agreement</button>
 </div>
