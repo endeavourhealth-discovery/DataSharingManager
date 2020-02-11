@@ -10,12 +10,6 @@
     <div fxLayoutAlign="center" class="mat-action" matRipple (click)="editDataset()">
       <i class="fas fa-fw fa-pencil"></i>
     </div>
-    <mat-menu #visualiseMenu="matMenu">
-      <button mat-menu-item (click)="close()">Cancel</button>
-    </mat-menu>
-    <div fxLayoutAlign="center" class="mat-action" matRipple>
-      <mat-icon [matMenuTriggerFor]="visualiseMenu">more_vert</mat-icon>
-    </div>
   </mat-card-header>
   <mat-card-content>
     <form class="form" #f="ngForm" novalidate>
@@ -38,7 +32,7 @@
             <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
               <mat-form-field appearance="outline" fxFlex="100" fxFill mat-readonly>
                 <mat-label>Technical definition</mat-label>
-                <textarea matInput rows="20" [(ngModel)]="dataset.technicalDefinition"
+                <textarea matInput style="height:329px" [(ngModel)]="dataset.technicalDefinition"
                           placeholder="Data set technical definition" name="technicalDefinition" readonly></textarea>
               </mat-form-field>
             </div>

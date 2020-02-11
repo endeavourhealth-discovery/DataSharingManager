@@ -7,7 +7,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Description</mat-label>
-      <input required matInput [(ngModel)]="dpa.description" placeholder="Description" name="description">
+      <input matInput [(ngModel)]="dpa.description" placeholder="Description" name="description">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Status</mat-label>
@@ -15,9 +15,9 @@
         <mat-option *ngFor="let stat of status" [value]="stat.num">{{stat.name}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
       <mat-label>Data processor</mat-label>
-      <input required matInput [(ngModel)]="processor" placeholder="Data processor" name="processor">
+      <input required matInput [(ngModel)]="processor" placeholder="Data processor" name="processor" readonly>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Start date</mat-label>

@@ -58,8 +58,11 @@ export class OrganisationEditorComponent implements OnInit {
   addressDetailsToShow = new Address().getDisplayItems();
 
   systemSupplierSystems = this.linkageService.systemSupplierSystems;
-
   systemSupplierSharingActivated = this.linkageService.systemSupplierSharingActivated;
+
+  organisationType: string;
+  systemSupplierSystem: string;
+  systemSupplierSharing: string;
 
   @ViewChild('addressesTable', { static: false }) addressesTable: GenericTableComponent;
   @ViewChild('regionTable', { static: false }) regionTable: GenericTableComponent;
@@ -87,8 +90,6 @@ export class OrganisationEditorComponent implements OnInit {
   }
 
   roleChanged() {
-
-
     if (this.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Super User') != null) {
       this.allowEdit = true;
       this.superUser = true;
@@ -102,12 +103,11 @@ export class OrganisationEditorComponent implements OnInit {
       this.superUser = false;
       this.userId = this.activeProject.userId;
     }
-
-    this.getOrganisationTypes();
     this.paramSubscriber = this.route.params.subscribe(
       params => {
         this.performAction(params['mode'], params['id']);
       });
+    this.getOrganisationTypes();
   }
 
   protected performAction(action: string, itemUuid: string) {
@@ -175,9 +175,22 @@ export class OrganisationEditorComponent implements OnInit {
             this.getDSAsSubscribingTo();
           }
           this.getParentOrganisations();
+          this.updateSelects();
         },
         error => this.log.error('The ' + this.orgType + ' could not be loaded. Please try again.')
       );
+  }
+
+  updateSelects() {
+    this.getOrganisationTypes();
+    this.systemSupplierSystem = '';
+    this.systemSupplierSharing = '';
+    if (this.organisation.systemSupplierSystemId) {
+      this.systemSupplierSystem = this.systemSupplierSystems[this.organisation.systemSupplierSystemId].name;
+    }
+    if (this.organisation.systemSupplierSharingActivated != null) {
+      this.systemSupplierSharing = this.systemSupplierSharingActivated[this.organisation.systemSupplierSharingActivated].name;
+    }
   }
 
   save(close: boolean) {
@@ -198,7 +211,7 @@ export class OrganisationEditorComponent implements OnInit {
   addressClicked(address : Address) {
     let index = this.addresses.indexOf(address);
     const dialogRef = this.dialog.open(AddressDialogComponent, {
-      width: '800px',
+      width: '80vw',
       data: {address: address},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -293,8 +306,8 @@ export class OrganisationEditorComponent implements OnInit {
 
   addRegion() {
     const dialogRef = this.dialog.open(RegionPickerComponent, {
-      width: '800px',
-      data: { uuid: '', limit: 0, userId : this.activeProject.userId }
+      width: '80vw',
+      data: { uuid: '', limit: 0, userId : '' }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -377,7 +390,7 @@ export class OrganisationEditorComponent implements OnInit {
 
   addChildOrganisations() {
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
-        width: '800px',
+        width: '80vw',
         data: { searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '', existingOrgs: this.childOrganisations }
       })
     dialogRef.afterClosed().subscribe(result => {
@@ -427,7 +440,7 @@ export class OrganisationEditorComponent implements OnInit {
 
   addParentOrganisations() {
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
-      width: '800px',
+      width: '80vw',
       data: { searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '', existingOrgs: this.parentOrganisations }
     })
     dialogRef.afterClosed().subscribe(result => {
@@ -477,7 +490,7 @@ export class OrganisationEditorComponent implements OnInit {
 
   addServices() {
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
-      width: '800px',
+      width: '80vw',
       data: { searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '', existingOrgs: this.services }
     })
     dialogRef.afterClosed().subscribe(result => {
@@ -557,7 +570,12 @@ export class OrganisationEditorComponent implements OnInit {
   private getOrganisationTypes() {
     this.organisationService.getOrganisationTypes()
       .subscribe(
-        result => {this.organisationTypes = result;
+        result => {
+          this.organisationTypes = result;
+          this.organisationType = '';
+          if (this.organisation && this.organisation.type) {
+            this.organisationType = this.organisationTypes[this.organisation.type].organisationType;
+          }
         },
         error => this.log.error('The organisation types could not be loaded. Please try again.')
       );
@@ -598,13 +616,14 @@ export class OrganisationEditorComponent implements OnInit {
 
   editOrganisation() {
     const dialogRef = this.dialog.open(OrganisationDialogComponent, {
-      width: '1200px',
+      width: '80vw',
       data: {mode: 'edit', uuid: this.organisation.uuid, orgType: this.orgType},
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.organisation = result;
         this.log.success(this.orgType + ' saved.');
+        this.updateSelects();
       }
     });
   }
@@ -641,7 +660,8 @@ export class OrganisationEditorComponent implements OnInit {
 
   addDPAs() {
     const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
-      width: '800px',
+      width: '80vw',
+      data: {fromRegion: true},
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -668,7 +688,7 @@ export class OrganisationEditorComponent implements OnInit {
 
   addDSAPublishing() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
-      width: '800px',
+      width: '80vw',
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -717,7 +737,7 @@ export class OrganisationEditorComponent implements OnInit {
 
   addDSASubscribing() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
-      width: '800px',
+      width: '80vw',
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {

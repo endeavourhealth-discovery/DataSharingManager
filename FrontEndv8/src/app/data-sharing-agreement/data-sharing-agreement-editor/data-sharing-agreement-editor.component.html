@@ -10,12 +10,6 @@
     <div fxLayoutAlign="center" class="mat-action" matRipple (click)="editDSA()">
       <i class="fas fa-fw fa-pencil"></i>
     </div>
-    <mat-menu #visualiseMenu="matMenu">
-      <button mat-menu-item (click)="close()">Cancel</button>
-    </mat-menu>
-    <div fxLayoutAlign="center" class="mat-action" matRipple>
-      <mat-icon [matMenuTriggerFor]="visualiseMenu">more_vert</mat-icon>
-    </div>
   </mat-card-header>
   <mat-card-content>
     <form class="form" #f="ngForm" novalidate>
@@ -23,23 +17,19 @@
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
           <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
             <mat-label>Name</mat-label>
-            <input required matInput [(ngModel)]="dsa.name" placeholder="Name" name="name" readonly>
+            <input matInput [(ngModel)]="dsa.name" placeholder="Name" name="name" readonly>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
             <mat-label>Description</mat-label>
-            <input required matInput [(ngModel)]="dsa.description" placeholder="Description" name="description" readonly>
+            <input matInput [(ngModel)]="dsa.description" placeholder="Description" name="description" readonly>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Status</mat-label>
-            <mat-select required matInput name="status" [(ngModel)]="dsa.dsaStatusId" name="status" readonly>
-              <mat-option *ngFor="let stat of status" [value]="stat.num">{{stat.name}}</mat-option>
-            </mat-select>
+            <input matInput [(ngModel)]="status[dsa.dsaStatusId].name" placeholder="Status" name="status" readonly>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Consent Model</mat-label>
-            <mat-select matInput name="consentModel" [(ngModel)]="dsa.consentModelId" name="consentModel" readonly>
-              <mat-option *ngFor="let cons of consents" [value]="cons.num">{{cons.name}}</mat-option>
-            </mat-select>
+            <input matInput [(ngModel)]="consents[dsa.consentModelId].name" placeholder="Consent Model" name="consentModel" readonly>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Start Date</mat-label>

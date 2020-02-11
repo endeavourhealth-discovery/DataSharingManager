@@ -346,7 +346,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   addPurpose(index: number) {
     const dialogRef = this.dialog.open(PurposeComponent, {
-      width: '550px',
+      width: '30vw',
       data: {resultData: this.purposes, type: 'Purpose', index: index},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -426,8 +426,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   addRegion() {
     const dialogRef = this.dialog.open(RegionPickerComponent, {
-      width: '800px',
-      data: { uuid: '', limit: 0, userId : this.activeProject.userId }
+      width: '80vw',
+      data: { uuid: '', limit: 0, userId : '' }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -475,7 +475,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   addProject() {
     const dialogRef = this.dialog.open(ProjectPickerComponent, {
-      width: '800px',
+      width: '80vw',
       data: { uuid: '', limit: 0, userId : this.activeProject.userId }
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -527,7 +527,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       this.log.error('The data sharing agreement must be associated with a region before editing publishers.');
     } else {
       const dialogRef = this.dialog.open(OrganisationPickerComponent, {
-        width: '800px',
+        width: '80vw',
         data: { searchType: 'organisation', uuid: '', regionUUID: this.regions[0].uuid, dsaUUID: '', existingOrgs: this.publishers }
       });
       dialogRef.afterClosed().subscribe(result => {
@@ -580,7 +580,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       this.log.error('The data sharing agreement must be associated with a region before editing subscribers.');
     } else {
       const dialogRef = this.dialog.open(OrganisationPickerComponent, {
-        width: '800px',
+        width: '80vw',
         data: { searchType: 'organisation', uuid: '', regionUUID: this.regions[0].uuid, dsaUUID: '', existingOrgs: this.subscribers }
       });
       dialogRef.afterClosed().subscribe(result => {
@@ -627,7 +627,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   addDocumentation() {
     const dialogRef = this.dialog.open(DocumentationComponent, {
-      width: '550px',
+      width: '30vw',
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -650,7 +650,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   editDSA() {
     const dialogRef = this.dialog.open(DataSharingAgreementDialogComponent, {
-      width: '800px',
+      width: '80vw',
       data: {mode: 'edit', uuid: this.dsa.uuid },
     });
     dialogRef.afterClosed().subscribe(result => {

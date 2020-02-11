@@ -126,7 +126,7 @@ export class DataSetEditorComponent implements OnInit {
 
   addDPAs() {
     const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
-      width: '800px',
+      width: '80vw',
       data: {fromRegion: false},
     })
     dialogRef.afterClosed().subscribe(result => {

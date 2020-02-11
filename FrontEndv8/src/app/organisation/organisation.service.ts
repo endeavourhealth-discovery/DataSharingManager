@@ -122,7 +122,6 @@ export class OrganisationService  {
   }
 
   saveOrganisation(organisation: Organisation): Observable<any> {
-    console.log(organisation);
     return this.http.post('api/organisation', organisation, { responseType: 'text' });
   }
 

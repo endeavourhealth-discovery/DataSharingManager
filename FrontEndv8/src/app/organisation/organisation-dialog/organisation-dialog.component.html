@@ -5,31 +5,31 @@
       <mat-label>{{orgType}} name</mat-label>
       <input required matInput [(ngModel)]="organisation.name" placeholder="{{orgType}} name" name="name">
     </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="10" fxFill>
+      <mat-label>ODS code</mat-label>
+      <input matInput [(ngModel)]="organisation.odsCode" placeholder="ODS Code" name="odsCode">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="10" fxFill>
+      <mat-label>ICO code</mat-label>
+      <input matInput [(ngModel)]="organisation.icoCode" placeholder="ICO code" name="icoCode">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="10" fxFill>
+      <mat-label>IG toolkit status</mat-label>
+      <input matInput [(ngModel)]="organisation.igToolkitStatus" placeholder="IG toolkit status" name="igToolkitStatus">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="30" fxFill>
+      <mat-label>System supplier reference</mat-label>
+      <input matInput [(ngModel)]="organisation.systemSupplierReference" placeholder="System supplier reference" name="systemSupplierReference">
+    </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="40" fxFill>
       <mat-label>Alternative name</mat-label>
       <input matInput [(ngModel)]="organisation.alternativeName" placeholder="Alternative name" name="alternativeName">
     </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="20" fxFill>
-      <mat-label>Date of registration</mat-label>
-      <input matInput type="date" [(ngModel)]="organisation.dateOfRegistration" placeholder="Date Of registration" name="dateOfRegistration">
-    </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="20" fxFill>
-      <mat-label>ODS code</mat-label>
-      <input required matInput [(ngModel)]="organisation.odsCode" placeholder="ODS Code" name="odsCode">
-    </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="20" fxFill>
-      <mat-label>ICO code</mat-label>
-      <input matInput [(ngModel)]="organisation.icoCode" placeholder="ICO code" name="icoCode">
-    </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="40">
+    <mat-form-field appearance="outline" fxFlex="20">
       <mat-label>Organisation type</mat-label>
-      <mat-select matInput name="status" [(ngModel)]="organisation.type" name="type">
+      <mat-select required matInput name="status" [(ngModel)]="organisation.type" name="type">
         <mat-option *ngFor="let ot of organisationTypes" [value]="ot.id">{{ot.organisationType}}</mat-option>
       </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="20" fxFill>
-      <mat-label>IG toolkit status</mat-label>
-      <input matInput [(ngModel)]="organisation.igToolkitStatus" placeholder="IG toolkit status" name="igToolkitStatus">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="20" fxFill>
       <mat-label>System supplier</mat-label>
@@ -37,15 +37,15 @@
         <mat-option *ngFor="let sssids of systemSupplierSystems" [value]="sssids.num">{{sssids.name}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="20" fxFill>
-      <mat-label>System supplier reference</mat-label>
-      <input matInput [(ngModel)]="organisation.systemSupplierReference" placeholder="System supplier reference" name="systemSupplierReference">
-    </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="20" fxFill>
+    <mat-form-field appearance="outline" fxFlex="10" fxFill>
       <mat-label>System supplier sharing activated</mat-label>
       <mat-select matInput name="systemSupplierSharingActivated" [(ngModel)]="organisation.systemSupplierSharingActivated" name="systemSupplierSharingActivated">
         <mat-option *ngFor="let sssa of systemSupplierSharingActivated" [value]="sssa.num">{{sssa.name}}</mat-option>
       </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="10" fxFill>
+      <mat-label>Date of registration</mat-label>
+      <input matInput type="date" [(ngModel)]="organisation.dateOfRegistration" placeholder="Date Of registration" name="dateOfRegistration">
     </mat-form-field>
   </div>
 </div>
