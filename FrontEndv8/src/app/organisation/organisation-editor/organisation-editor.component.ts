@@ -175,13 +175,13 @@ export class OrganisationEditorComponent implements OnInit {
             this.getDSAsSubscribingTo();
           }
           this.getParentOrganisations();
-          this.updateSelects();
+          this.updateLinkValues();
         },
         error => this.log.error('The ' + this.orgType + ' could not be loaded. Please try again.')
       );
   }
 
-  updateSelects() {
+  updateLinkValues() {
     this.getOrganisationTypes();
     this.systemSupplierSystem = '';
     this.systemSupplierSharing = '';
@@ -623,7 +623,7 @@ export class OrganisationEditorComponent implements OnInit {
       if (result) {
         this.organisation = result;
         this.log.success(this.orgType + ' saved.');
-        this.updateSelects();
+        this.updateLinkValues();
       }
     });
   }

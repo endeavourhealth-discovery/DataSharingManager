@@ -7,7 +7,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Business case</mat-label>
-      <mat-select matInput name="status" [(ngModel)]="project.businessCaseStatus" name="businessCaseStatus">
+      <mat-select matInput [(ngModel)]="project.businessCaseStatus" name="businessCaseStatus">
         <mat-option *ngFor="let bc of businessCaseStatuses" [value]="bc.num">{{bc.name}}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -21,73 +21,73 @@
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Project lead</mat-label>
-      <mat-select matInput name="status" [(ngModel)]="project.leadUser" name="leadUser">
+      <mat-select matInput [(ngModel)]="project.leadUser" name="leadUser">
         <mat-option *ngFor="let leadUser of userList" [value]="leadUser.uuid">{{leadUser.forename}} {{leadUser.surname}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Project technical lead</mat-label>
-      <mat-select matInput name="status" [(ngModel)]="project.technicalLeadUser" name="technicalLeadUser">
+      <mat-select matInput [(ngModel)]="project.technicalLeadUser" name="technicalLeadUser">
         <mat-option *ngFor="let techUser of userList" [value]="techUser.uuid">{{techUser.forename}} {{techUser.surname}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="33" fxFill>
       <mat-label>Storage protocol</mat-label>
-      <mat-select matInput name="status" [(ngModel)]="project.storageProtocolId" name="storageProtocolId">
+      <mat-select matInput [(ngModel)]="project.storageProtocolId" name="storageProtocolId">
         <mat-option *ngFor="let sps of storageProtocols" [value]="sps.num">{{sps.name}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="33" fxFill>
       <mat-label>Patient consent model</mat-label>
-      <mat-select matInput name="status" [(ngModel)]="project.consentModelId" name="consentModel">
+      <mat-select matInput [(ngModel)]="project.consentModelId" name="consentModel">
         <mat-option *ngFor="let con of consents" [value]="con.num">{{con.name}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="34" fxFill>
       <mat-label>De-identification level</mat-label>
-      <mat-select matInput name="status" [(ngModel)]="project.deidentificationLevel" name="deIdentificationLevel">
+      <mat-select matInput [(ngModel)]="project.deidentificationLevel" name="deIdentificationLevel">
         <mat-option *ngFor="let did of deidentificationLevel" [value]="did.num">{{did.name}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="33" fxFill>
       <mat-label>Project type</mat-label>
-      <mat-select matInput name="status" [(ngModel)]="project.projectTypeId" name="projectTypeId">
+      <mat-select matInput [(ngModel)]="project.projectTypeId" name="projectTypeId">
         <mat-option *ngFor="let proj of projectTypes" [value]="proj.num">{{proj.name}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="33" fxFill>
       <mat-label>Frequency</mat-label>
-      <mat-select matInput name="status" [(ngModel)]="project.flowScheduleId" name="flowScheduleId">
+      <mat-select matInput [(ngModel)]="project.flowScheduleId" name="flowScheduleId">
         <mat-option *ngFor="let fs of flowScheduleIds" [value]="fs.num">{{fs.name}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="34" fxFill>
       <mat-label>Output format</mat-label>
-      <mat-select matInput name="status" [(ngModel)]="project.outputFormat" name="outputFormat">
+      <mat-select matInput [(ngModel)]="project.outputFormat" name="outputFormat">
         <mat-option *ngFor="let of of outputFormat" [value]="of.num">{{of.name}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="33" fxFill>
       <mat-label>Application Policy</mat-label>
-      <mat-select matInput name="status" [(ngModel)]="selectedApplicationPolicy" name="selectedApplicationPolicy" (selectionChange)="changeUserApplicationPolicy(selectedApplicationPolicy.id)">
+      <mat-select matInput [(ngModel)]="selectedApplicationPolicy" name="selectedApplicationPolicy" (selectionChange)="changeUserApplicationPolicy(selectedApplicationPolicy.id)">
         <mat-option *ngFor="let pol of availablePolicies" [value]="pol">{{pol.name}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="33" fxFill>
       <mat-label>Security infrastructure Id</mat-label>
-      <mat-select matInput name="status" [(ngModel)]="project.securityInfrastructureId" name="securityInfrastructureId">
+      <mat-select matInput [(ngModel)]="project.securityInfrastructureId" name="securityInfrastructureId">
         <mat-option *ngFor="let sec of securityInfrastructures" [value]="sec.num">{{sec.name}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="34" fxFill>
       <mat-label>Security architectures Id</mat-label>
-      <mat-select matInput name="status" [(ngModel)]="project.securityArchitectureId" name="securityArchitectureId">
+      <mat-select matInput [(ngModel)]="project.securityArchitectureId" name="securityArchitectureId">
         <mat-option *ngFor="let arc of securityArchitectures" [value]="arc.num">{{arc.name}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="33" fxFill>
       <mat-label>Status</mat-label>
-      <mat-select matInput name="status" [disabled]="disableStatus" [(ngModel)]="project.projectStatusId" name="projectStatusId">
+      <mat-select matInput [disabled]="disableStatus" [(ngModel)]="project.projectStatusId" name="projectStatusId">
         <mat-option *ngFor="let stat of status" [value]="stat.num">{{stat.name}}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -103,5 +103,5 @@
 </div>
 <div mat-dialog-actions align="end">
   <button mat-button color="accent" (click)="cancel()">Cancel</button>
-  <button mat-flat-button color="accent" [disabled]="((!project.name) || (project.name.length < 1))" (click)="ok()">Save project</button>
+  <button mat-flat-button color="accent" [disabled]="((!project) || (!project.name) || (project.name.length < 1))" (click)="ok()">Save project</button>
 </div>

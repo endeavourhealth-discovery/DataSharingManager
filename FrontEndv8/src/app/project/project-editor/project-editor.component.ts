@@ -98,6 +98,20 @@ export class ProjectEditorComponent implements OnInit {
 
   status = this.linkageService.status;
 
+  businessCaseStatus: string;
+  leadUser: string;
+  technicalLeadUser: string;
+  storageProtocolId: string;
+  consentModelId: string;
+  deidentificationLevelValue: string;
+  projectTypeId: string;
+  flowScheduleId: string;
+  outputFormatValue: string;
+  selectedApplicationPolicyValue: string;
+  securityInfrastructureId: string;
+  securityArchitectureId: string;
+  projectStatusId: string;
+
   constructor(private log: LoggerService,
               private projectService: ProjectService,
               private documentationService: DocumentationService,
@@ -134,7 +148,6 @@ export class ProjectEditorComponent implements OnInit {
       params => {
         this.performAction(params['mode'], params['id']);
       });
-    this.getUserList();
   }
 
   protected performAction(action: string, itemUuid: string) {
@@ -177,10 +190,58 @@ export class ProjectEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.project = result;
-        this.getProjectApplicationPolicy();
         this.log.success('Project saved');
+        this.updateLinkValues();
       }
     });
+  }
+
+  updateLinkValues() {
+    this.leadUser = '';
+    this.technicalLeadUser = '';
+    this.getUserList();
+    this.businessCaseStatus = '';
+    if (this.project.businessCaseStatus != null) {
+      this.businessCaseStatus = this.businessCaseStatuses[this.project.businessCaseStatus].name;
+    }
+    this.storageProtocolId = '';
+    if (this.project.storageProtocolId != null) {
+      this.storageProtocolId = this.storageProtocols[this.project.storageProtocolId].name;
+    }
+    this.consentModelId = '';
+    if (this.project.consentModelId != null) {
+      this.consentModelId = this.consents[this.project.consentModelId].name;
+    }
+    this.deidentificationLevelValue = '';
+    if (this.project.deidentificationLevel != null) {
+      this.deidentificationLevelValue = this.deidentificationLevel[this.project.deidentificationLevel].name;
+    }
+    this.projectTypeId = '';
+    if (this.project.projectTypeId != null) {
+      this.projectTypeId = this.projectTypes[this.project.projectTypeId].name;
+    }
+    this.flowScheduleId = '';
+    if (this.project.flowScheduleId != null) {
+      this.flowScheduleId = this.flowScheduleIds[this.project.flowScheduleId].name;
+    }
+    this.outputFormatValue = '';
+    if (this.project.outputFormat != null) {
+      this.outputFormatValue = this.outputFormat[this.project.outputFormat].name;
+    }
+    this.selectedApplicationPolicyValue = '';
+    this.getProjectApplicationPolicy();
+    this.securityInfrastructureId = '';
+    if (this.project.securityInfrastructureId != null) {
+      this.securityInfrastructureId = this.securityInfrastructures[this.project.securityInfrastructureId].name;
+    }
+    this.securityArchitectureId = '';
+    if (this.project.securityArchitectureId != null) {
+      this.securityArchitectureId = this.securityArchitectures[this.project.securityArchitectureId].name;
+    }
+    this.projectStatusId = '';
+    if (this.project.projectStatusId != null) {
+      this.projectStatusId = this.status[this.project.projectStatusId].name;
+    }
   }
 
   updateMappings(type: string) {
@@ -237,9 +298,9 @@ export class ProjectEditorComponent implements OnInit {
           this.getCohorts();
           this.getDataSets();
           this.getAuthToShare();
-          this.getProjectApplicationPolicy();
           this.getAssociatedExtractTechnicalDetails();
           this.getSchedule();
+          this.updateLinkValues();
         },
         error => this.log.error('The data processing agreement could not be loaded. Please try again.')
       );
@@ -248,7 +309,16 @@ export class ProjectEditorComponent implements OnInit {
   getUserList() {
     this.projectService.getUsers()
       .subscribe(
-        (result) => this.userList = result,
+        (result) => {
+          this.userList = result;
+          for (let user of this.userList) {
+            if (user.uuid == this.project.leadUser) {
+              this.leadUser = user.forename + ' ' + user.surname;
+            } else if (user.uuid == this.project.technicalLeadUser) {
+              this.technicalLeadUser = user.forename + ' ' + user.surname;
+            }
+          }
+        },
         (error) => this.log.error('User list could not be loaded. Please try again.')
       );
   }
@@ -676,6 +746,7 @@ export class ProjectEditorComponent implements OnInit {
                   return r.id === this.projectApplicationPolicy.applicationPolicyId;
                 });
                 this.changeUserApplicationPolicy(this.selectedApplicationPolicy.id);
+                this.selectedApplicationPolicyValue = this.selectedApplicationPolicy.name;
               },
               (error) => {
                 this.log.error('Project application policy could not be loaded. Please try again.');
