@@ -8,8 +8,8 @@ export class Cohort {
 
     getDisplayItems() :any[] {
         return [
-            {label: 'Name', property: 'name'},
-            {label: 'Description', property: 'description'},
+            {label: 'Name', property: 'name', secondary: false},
+            {label: 'Description', property: 'description', secondary: true},
         ];
     }
 }

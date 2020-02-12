@@ -5,7 +5,6 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableSspComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {MatDialog} from "@angular/material/dialog";
-import {DataSetDialogComponent} from "../../data-set/data-set-dialog/data-set-dialog.component";
 import {OrganisationDialogComponent} from "../organisation-dialog/organisation-dialog.component";
 
 @Component({

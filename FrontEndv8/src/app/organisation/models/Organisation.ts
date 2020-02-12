@@ -30,8 +30,8 @@ export class Organisation {
 
     getDisplayItems(): any[] {
         return [
-            {label: 'Name', property: 'name'},
-            {label: 'ODS code', property: 'odsCode'}
+            {label: 'Name', property: 'name', secondary: false},
+            {label: 'ODS code', property: 'odsCode', secondary: false}
         ];
     }
 }
