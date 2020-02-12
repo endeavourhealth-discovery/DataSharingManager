@@ -77,7 +77,6 @@ export class RegionComponent implements OnInit {
 
   add() {
     const dialogRef = this.dialog.open(RegionDialogComponent, {
-      width: '80vw',
       data: {mode: 'add', uuid: ''},
     });
     dialogRef.afterClosed().subscribe(result => {

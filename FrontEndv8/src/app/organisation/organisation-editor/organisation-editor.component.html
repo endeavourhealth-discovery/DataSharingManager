@@ -23,41 +23,41 @@
             <mat-label>{{orgType}} name</mat-label>
             <input matInput [(ngModel)]="organisation.name" placeholder="{{orgType}} name" name="name" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="10" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="20" fxFill mat-readonly>
             <mat-label>ODS code</mat-label>
             <input matInput [(ngModel)]="organisation.odsCode" placeholder="ODS Code" name="odsCode" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="10" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="20" fxFill mat-readonly>
             <mat-label>ICO code</mat-label>
             <input matInput [(ngModel)]="organisation.icoCode" placeholder="ICO code" name="icoCode" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="10" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="20" fxFill mat-readonly>
             <mat-label>IG toolkit status</mat-label>
             <input matInput [(ngModel)]="organisation.igToolkitStatus" placeholder="IG toolkit status" name="igToolkitStatus" readonly>
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="30" fxFill mat-readonly>
-            <mat-label>System supplier reference</mat-label>
-            <input matInput [(ngModel)]="organisation.systemSupplierReference" placeholder="System supplier reference" name="systemSupplierReference" readonly>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="40" fxFill mat-readonly>
             <mat-label>Alternative name</mat-label>
             <input matInput [(ngModel)]="organisation.alternativeName" placeholder="Alternative name" name="alternativeName" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="20" mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="30" mat-readonly>
             <mat-label>Organisation type</mat-label>
             <input matInput [(ngModel)]="organisationType" placeholder="Organisation type" name="organisationType" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="20" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="30" fxFill mat-readonly>
+            <mat-label>Date of registration</mat-label>
+            <input matInput type="date" [(ngModel)]="organisation.dateOfRegistration" placeholder="Date Of registration" name="dateOfRegistration" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="40" fxFill mat-readonly>
             <mat-label>System supplier</mat-label>
             <input matInput [(ngModel)]="systemSupplierSystem" placeholder="System supplier" name="systemSupplierSystemId" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="10" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="40" fxFill mat-readonly>
+            <mat-label>System supplier reference</mat-label>
+            <input matInput [(ngModel)]="organisation.systemSupplierReference" placeholder="System supplier reference" name="systemSupplierReference" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="20" fxFill mat-readonly>
             <mat-label>System supplier sharing activated</mat-label>
             <input matInput [(ngModel)]="systemSupplierSharing" placeholder="System supplier sharing activated" name="systemSupplierSharing" readonly>
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="10" fxFill mat-readonly>
-            <mat-label>Date of registration</mat-label>
-            <input matInput type="date" [(ngModel)]="organisation.dateOfRegistration" placeholder="Date Of registration" name="dateOfRegistration" readonly>
           </mat-form-field>
         </div>
         <br>

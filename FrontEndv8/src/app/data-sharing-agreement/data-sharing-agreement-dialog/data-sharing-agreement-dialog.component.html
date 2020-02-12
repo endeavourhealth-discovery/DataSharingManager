@@ -16,20 +16,21 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
-      <mat-label>Consent Model</mat-label>
+      <mat-label>Consent model</mat-label>
       <mat-select matInput name="consentModel" [(ngModel)]="dsa.consentModelId" name="consentModel">
         <mat-option *ngFor="let cons of consents" [value]="cons.num">{{cons.name}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
-      <mat-label>Start Date</mat-label>
+      <mat-label>Start date</mat-label>
       <input matInput type="date" [(ngModel)]="dsa.startDate" placeholder="Start Date" name="startDate">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
-      <mat-label>End Date</mat-label>
+      <mat-label>End date</mat-label>
       <input matInput type="date" [(ngModel)]="dsa.endDate" placeholder="End Date" name="endDate">
     </mat-form-field>
   </div>
+  <span class="required-field-note"></span>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-button color="accent" (click)="cancel()">Cancel</button>

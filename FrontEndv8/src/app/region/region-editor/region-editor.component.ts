@@ -135,7 +135,6 @@ export class RegionEditorComponent implements OnInit {
 
   editRegion() {
     const dialogRef = this.dialog.open(RegionDialogComponent, {
-      width: '80vw',
       data: {mode: 'edit', uuid: this.region.uuid},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -218,7 +217,7 @@ export class RegionEditorComponent implements OnInit {
 
   addDSAs() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -241,7 +240,7 @@ export class RegionEditorComponent implements OnInit {
 
   addDPAs() {
     const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
       data: {fromRegion: true},
     })
     dialogRef.afterClosed().subscribe(result => {
@@ -271,7 +270,7 @@ export class RegionEditorComponent implements OnInit {
       type = 'child';
     }
     const dialogRef = this.dialog.open(RegionPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
       data: {uuid: '', limit: 0, userId: '', type: type}
     })
     dialogRef.afterClosed().subscribe(result => {
@@ -310,7 +309,7 @@ export class RegionEditorComponent implements OnInit {
 
   addOrganisation() {
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
       data: {searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '', existingOrgs: this.organisations}
     })
     dialogRef.afterClosed().subscribe(result => {

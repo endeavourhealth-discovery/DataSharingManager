@@ -211,7 +211,6 @@ export class OrganisationEditorComponent implements OnInit {
   addressClicked(address : Address) {
     let index = this.addresses.indexOf(address);
     const dialogRef = this.dialog.open(AddressDialogComponent, {
-      width: '80vw',
       data: {address: address},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -306,7 +305,7 @@ export class OrganisationEditorComponent implements OnInit {
 
   addRegion() {
     const dialogRef = this.dialog.open(RegionPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
       data: { uuid: '', limit: 0, userId : '' }
     })
     dialogRef.afterClosed().subscribe(result => {
@@ -390,7 +389,7 @@ export class OrganisationEditorComponent implements OnInit {
 
   addChildOrganisations() {
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
-        width: '80vw',
+        minWidth: '50vw',
         data: { searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '', existingOrgs: this.childOrganisations }
       })
     dialogRef.afterClosed().subscribe(result => {
@@ -440,7 +439,7 @@ export class OrganisationEditorComponent implements OnInit {
 
   addParentOrganisations() {
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
       data: { searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '', existingOrgs: this.parentOrganisations }
     })
     dialogRef.afterClosed().subscribe(result => {
@@ -490,7 +489,7 @@ export class OrganisationEditorComponent implements OnInit {
 
   addServices() {
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
       data: { searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '', existingOrgs: this.services }
     })
     dialogRef.afterClosed().subscribe(result => {
@@ -616,7 +615,6 @@ export class OrganisationEditorComponent implements OnInit {
 
   editOrganisation() {
     const dialogRef = this.dialog.open(OrganisationDialogComponent, {
-      width: '80vw',
       data: {mode: 'edit', uuid: this.organisation.uuid, orgType: this.orgType},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -660,7 +658,7 @@ export class OrganisationEditorComponent implements OnInit {
 
   addDPAs() {
     const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
       data: {fromRegion: true},
     })
     dialogRef.afterClosed().subscribe(result => {
@@ -688,7 +686,7 @@ export class OrganisationEditorComponent implements OnInit {
 
   addDSAPublishing() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -737,7 +735,7 @@ export class OrganisationEditorComponent implements OnInit {
 
   addDSASubscribing() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {

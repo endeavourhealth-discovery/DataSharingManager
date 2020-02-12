@@ -67,7 +67,6 @@ export class DataSetComponent implements OnInit {
 
   add() {
     const dialogRef = this.dialog.open(DataSetDialogComponent, {
-      width: '80vw',
       data: {mode: 'add', uuid: ''},
     });
     dialogRef.afterClosed().subscribe(result => {

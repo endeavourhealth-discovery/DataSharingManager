@@ -119,7 +119,6 @@ export class CohortEditorComponent implements OnInit {
 
   editCohort() {
     const dialogRef = this.dialog.open(CohortDialogComponent, {
-      width: '80vw',
       data: {mode: 'edit', uuid: this.cohort.uuid },
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -171,7 +170,7 @@ export class CohortEditorComponent implements OnInit {
 
   addDPAs() {
     const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
       data: {fromRegion: false},
     })
     dialogRef.afterClosed().subscribe(result => {

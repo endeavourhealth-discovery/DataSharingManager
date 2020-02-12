@@ -3,7 +3,7 @@
     <div mat-card-avatar>
       <i class="fad fa-folders"></i>
     </div>
-    <mat-card-title>Project Details</mat-card-title>
+    <mat-card-title>Project details</mat-card-title>
     <mat-card-subtitle *ngIf="project.name">{{project.name}}</mat-card-subtitle>
     <mat-card-subtitle *ngIf="!project.name">New Project</mat-card-subtitle>
     <div fxFlex></div>
@@ -39,51 +39,51 @@
             <mat-label>Project technical lead</mat-label>
             <input matInput [(ngModel)]="technicalLeadUser" placeholder="Project technical lead" name="technicalLeadUser" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Storage protocol</mat-label>
             <input matInput [(ngModel)]="storageProtocolId" placeholder="Storage protocol" name="storageProtocolId" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Patient consent model</mat-label>
             <input matInput [(ngModel)]="consentModelId" placeholder="Patient consent model" name="consentModel" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="34" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>De-identification level</mat-label>
             <input matInput [(ngModel)]="deidentificationLevelValue" placeholder="De-identification level" name="deIdentificationLevel" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Project type</mat-label>
             <input matInput [(ngModel)]="projectTypeId" placeholder="Project type" name="projectTypeId" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Frequency</mat-label>
             <input matInput [(ngModel)]="flowScheduleId" placeholder="Frequency" name="flowScheduleId" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="34" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Output format</mat-label>
             <input matInput [(ngModel)]="outputFormatValue" placeholder="Output format" name="outputFormat" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Application policy</mat-label>
             <input matInput [(ngModel)]="selectedApplicationPolicyValue" placeholder="Application policy" name="selectedApplicationPolicy" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Security infrastructure Id</mat-label>
             <input matInput [(ngModel)]="securityInfrastructureId" placeholder="Security infrastructure Id" name="securityInfrastructureId" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="34" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Security architectures Id</mat-label>
             <input matInput [(ngModel)]="securityArchitectureId" placeholder="Security architectures Id" name="securityArchitectureId" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Status</mat-label>
             <input matInput [(ngModel)]="projectStatusId" placeholder="Status" name="projectStatusId" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="33" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Start date</mat-label>
             <input matInput type="date" [(ngModel)]="project.startDate" placeholder="Start date" name="startDate" readonly>
           </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="34" fxFill mat-readonly>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>End date</mat-label>
             <input matInput type="date" [(ngModel)]="project.endDate" placeholder="End date" name="endDate" readonly>
           </mat-form-field>
@@ -133,7 +133,7 @@
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label>
-          <span matBadge="{{documentations?.length}}" matBadgeOverlap="false" [matBadgeHidden]="documentations?.length < 1">Documentations</span>
+          <span matBadge="{{documentations?.length}}" matBadgeOverlap="false" [matBadgeHidden]="documentations?.length < 1">Documents</span>
         </ng-template>
         <app-generic-table #documentationsTable
                            [items]="documentations"

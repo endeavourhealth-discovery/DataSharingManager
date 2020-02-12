@@ -11,11 +11,12 @@
           </textarea>
     </mat-form-field>
   </div>
+  <span class="required-field-note"></span>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-button color="accent" (click)="cancel()">Cancel</button>
   <button *ngIf="!editMode" mat-flat-button color="accent" [disabled]="title.length < 1" (click)="add()" cdkFocusInitial>Add {{type | lowercase}}</button>
   <!--button *ngIf="!editMode" mat-flat-button color="accent" (click)="addAnother()" cdkFocusInitial>Add another {{type | lowercase}}</button-->
-  <button *ngIf="editMode" mat-flat-button color="accent" [disabled]="title.length < 1" (click)="save();">Save</button>
+  <button *ngIf="editMode" mat-flat-button color="accent" [disabled]="title.length < 1" (click)="save();">Save {{type | lowercase}}</button>
   <!--button *ngIf="editMode" mat-flat-button color="accent" (click)="saveAndAddAnother();">Save and add another {{type | lowercase}}</button-->
 </div>

@@ -303,7 +303,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
   addRegion() {
     const dialogRef = this.dialog.open(RegionPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
       data: { uuid: '', limit: 0, userId : '' }
     })
     dialogRef.afterClosed().subscribe(result => {
@@ -371,7 +371,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
       this.log.error('The data processing agreement must be associated with a region before editing publishers.');
     } else {
       const dialogRef = this.dialog.open(OrganisationPickerComponent, {
-        width: '80vw',
+        minWidth: '50vw',
         data: { searchType: 'organisation', uuid: '', regionUUID: this.regions[0].uuid, dsaUUID: '', existingOrgs: this.publishers }
       })
       dialogRef.afterClosed().subscribe(result => {
@@ -452,7 +452,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
   editDPA() {
     const dialogRef = this.dialog.open(DataProcessingAgreementDialogComponent, {
-      width: '80vw',
       data: {mode: 'edit', uuid: this.dpa.uuid },
     });
     dialogRef.afterClosed().subscribe(result => {

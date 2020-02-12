@@ -77,7 +77,6 @@ export class ProjectComponent implements OnInit {
 
   add() {
     const dialogRef = this.dialog.open(ProjectDialogComponent, {
-      width: '80vw',
       data: {mode: 'add', uuid: ''},
     });
     dialogRef.afterClosed().subscribe(result => {

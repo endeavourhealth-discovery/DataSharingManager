@@ -184,7 +184,6 @@ export class ProjectEditorComponent implements OnInit {
 
   editProject() {
     const dialogRef = this.dialog.open(ProjectDialogComponent, {
-      width: '80vw',
       data: {mode: 'edit', uuid: this.project.uuid},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -384,7 +383,7 @@ export class ProjectEditorComponent implements OnInit {
 
   addDsas() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -458,7 +457,7 @@ export class ProjectEditorComponent implements OnInit {
       this.log.error('The project must be associated with a data sharing agreement before editing publishers.');
     } else {
       const dialogRef = this.dialog.open(OrganisationPickerComponent, {
-        width: '80vw',
+        minWidth: '50vw',
         data: { searchType: 'publisher', uuid: '', regionUUID: '', dsaUUID: this.dsas[0].uuid, existingOrgs: this.publishers }
       })
       dialogRef.afterClosed().subscribe(result => {
@@ -522,7 +521,7 @@ export class ProjectEditorComponent implements OnInit {
       this.log.error('The project must be associated with a data sharing agreement before editing subscribers.');
     } else {
       const dialogRef = this.dialog.open(OrganisationPickerComponent, {
-        width: '80vw',
+        minWidth: '50vw',
         data: { searchType: 'subscriber', uuid: '', regionUUID: '', dsaUUID: this.dsas[0].uuid, existingOrgs: this.subscribers }
       })
       dialogRef.afterClosed().subscribe(result => {
@@ -643,7 +642,7 @@ export class ProjectEditorComponent implements OnInit {
 
   addCohorts() {
     const dialogRef = this.dialog.open(CohortPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -705,7 +704,7 @@ export class ProjectEditorComponent implements OnInit {
 
   addDataSets() {
     const dialogRef = this.dialog.open(DataSetPickerComponent, {
-      width: '80vw',
+      minWidth: '50vw',
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -782,7 +781,6 @@ export class ProjectEditorComponent implements OnInit {
   extractTechnicalDetailClicked(item: ExtractTechnicalDetails) {
     let index = this.extractTechnicalDetails.indexOf(item);
     const dialogRef = this.dialog.open(ExtractDetailsDialogComponent, {
-      width: '80vw',
       data: {extractTechnicalDetail: item},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -821,7 +819,6 @@ export class ProjectEditorComponent implements OnInit {
   addExtractTechnicalDetail() {
     if (!this.extractTechnicalDetails[0]) {
       const dialogRef = this.dialog.open(ExtractDetailsDialogComponent, {
-        width: '80vw',
         data: {extractTechnicalDetail: null},
       });
       dialogRef.afterClosed().subscribe(result => {
@@ -857,7 +854,6 @@ export class ProjectEditorComponent implements OnInit {
   scheduleClicked(item: Schedule) {
     let index = this.schedules.indexOf(item);
     const dialogRef = this.dialog.open(SchedulerComponent, {
-      width: '80vw',
       data: {schedule: item, allowTime: true},
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -901,7 +897,6 @@ export class ProjectEditorComponent implements OnInit {
   addSchedule() {
     if (this.schedules.length == 0) {
       const dialogRef = this.dialog.open(SchedulerComponent, {
-        width: '80vw',
         data: {schedule: null, allowTime: true},
       });
       dialogRef.afterClosed().subscribe(result => {
