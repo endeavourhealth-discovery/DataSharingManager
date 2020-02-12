@@ -4,18 +4,22 @@
       <i class="fad fa-globe-europe"></i>
     </div>
     <mat-card-title>Regions</mat-card-title>
-    <mat-card-subtitle>All the Regions currently defined in the Data Sharing Manager</mat-card-subtitle>
+    <mat-card-subtitle>A grouping construct for a set of organisations or other regions</mat-card-subtitle>
     <div fxFlex></div>
   </mat-card-header>
   <mat-card-content>
-    <app-generic-table #regionsTable
-      [items]="regions"
-      [detailsToShow]="regionDetailsToShow"
-      [pageSize]="20"
-      [allowSelect]="allowEdit"
-      (clicked)="itemClicked($event)">
-      <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button (click)="delete()"><mat-icon>delete</mat-icon></button>
-      <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="add()"><mat-icon>add</mat-icon></button>
-    </app-generic-table>
+    <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
+      <div fxFlex="100">
+        <app-generic-table #regionsTable
+          [items]="regions"
+          [detailsToShow]="regionDetailsToShow"
+          [pageSize]="20"
+          [allowSelect]="allowEdit"
+          (clicked)="itemClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button (click)="delete()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="add()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </div>
+    </div>
   </mat-card-content>
 </mat-card>

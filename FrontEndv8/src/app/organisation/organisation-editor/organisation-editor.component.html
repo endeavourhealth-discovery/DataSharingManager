@@ -150,7 +150,7 @@
           [allowSelect]="allowEdit"
           (clicked)="editOrg($event)">
           <button role="selectionOnly" *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="warn" (click)="deleteParentOrganisations()"><mat-icon>delete</mat-icon></button>
-          <button *ngIf="allowEdit && organisation.isService === 0" mat-icon-button color="primary" (click)="addParentOrganisations()"><mat-icon>add</mat-icon></button></app-generic-table>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addParentOrganisations()"><mat-icon>add</mat-icon></button></app-generic-table>
       </mat-tab>
       <mat-tab *ngIf="organisation.isService === 0">
         <ng-template mat-tab-label>

@@ -21,6 +21,7 @@ export class OrganisationComponent implements OnInit {
   modeType: string;
   searchData = '';
   searchType: string;
+  subtitle: string;
   totalItems = 5;
   pageNumber = 1;
   pageSize = 20;
@@ -67,12 +68,14 @@ export class OrganisationComponent implements OnInit {
       case 'organisations':
         this.modeType = 'Organisation';
         this.searchType = 'organisation';
+        this.subtitle = 'An organisation with an NHS ODS code';
         this.search();
         this.getTotalOrganisationCount();
         break;
       case 'services':
         this.modeType = 'Service';
         this.searchType = 'services';
+        this.subtitle = 'A named service providing care, linked to an organisation';
         this.search();
         this.getTotalOrganisationCount();
         break;

@@ -22,7 +22,7 @@
     "@angular/platform-browser": "~8.2.8",
     "@angular/platform-browser-dynamic": "~8.2.8",
     "@angular/router": "~8.2.8",
-    "dds-angular8": "https://github.com/endeavourhealth-discovery/Angular8/blob/master/dds-angular8-1.0.20.tgz?raw=true",
+    "dds-angular8": "https://github.com/endeavourhealth-discovery/Angular8/blob/master/dds-angular8-1.0.21.tgz?raw=true",
     "dds-auditTrail": "https://github.com/endeavourhealth-discovery/UI-AuditTrail/blob/angular8/Frontendv8/dds-auditTrail-1.0.3.tgz?raw=true",
     "hammerjs": "^2.0.8",
     "keycloak-angular": "^7.0.1",
