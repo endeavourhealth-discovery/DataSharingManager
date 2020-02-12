@@ -100,14 +100,14 @@ export class RegionEditorComponent implements OnInit {
 
   create(uuid: string) {
     this.region = {
-      name : ''
+      name: ''
     } as Region;
   }
 
   load(uuid: string) {
 
     this.regionService.getRegion(uuid)
-      .subscribe(result =>  {
+      .subscribe(result => {
           this.region = result;
           this.getRegionOrganisations();
           this.getParentRegions();
@@ -125,7 +125,9 @@ export class RegionEditorComponent implements OnInit {
       .subscribe(saved => {
           this.region.uuid = saved;
           this.log.success('Region saved');
-          if (close) { window.history.back(); }
+          if (close) {
+            window.history.back();
+          }
         },
         error => this.log.error('The region could not be saved. Please try again.')
       );
@@ -200,7 +202,6 @@ export class RegionEditorComponent implements OnInit {
           this.dpaTable.updateRows();
         },
         error => this.log.error('The associated data processing agreements could not be loaded. Please try again.')
-
       );
   }
 
@@ -211,7 +212,7 @@ export class RegionEditorComponent implements OnInit {
         result => {
           this.markers = result;
         },
-            error => this.log.error('The map data could not be loaded. Please try again.')
+        error => this.log.error('The map data could not be loaded. Please try again.')
       )
   }
 
@@ -271,7 +272,7 @@ export class RegionEditorComponent implements OnInit {
     }
     const dialogRef = this.dialog.open(RegionPickerComponent, {
       width: '80vw',
-      data: { uuid: '', limit: 0, userId: '', type: type }
+      data: {uuid: '', limit: 0, userId: '', type: type}
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -310,7 +311,7 @@ export class RegionEditorComponent implements OnInit {
   addOrganisation() {
     const dialogRef = this.dialog.open(OrganisationPickerComponent, {
       width: '80vw',
-      data: { searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '', existingOrgs: this.organisations }
+      data: {searchType: 'organisation', uuid: '', regionUUID: '', dsaUUID: '', existingOrgs: this.organisations}
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -352,11 +353,11 @@ export class RegionEditorComponent implements OnInit {
       'Remove organisations', 'Cancel')
       .subscribe(
         (result) => {
-          if(result) {
+          if (result) {
             for (var i = 0; i < this.orgTable.selection.selected.length; i++) {
               let org = this.orgTable.selection.selected[i];
-              this.organisations.forEach( (item, index) => {
-                if(item === org) this.organisations.splice(index,1);
+              this.organisations.forEach((item, index) => {
+                if (item === org) this.organisations.splice(index, 1);
               });
             }
             this.clearMappings();
@@ -378,11 +379,11 @@ export class RegionEditorComponent implements OnInit {
       'Remove regions', 'Cancel')
       .subscribe(
         (result) => {
-          if(result) {
+          if (result) {
             for (var i = 0; i < this.parentRegionTable.selection.selected.length; i++) {
               let org = this.parentRegionTable.selection.selected[i];
-              this.parentRegions.forEach( (item, index) => {
-                if(item === org) this.parentRegions.splice(index,1);
+              this.parentRegions.forEach((item, index) => {
+                if (item === org) this.parentRegions.splice(index, 1);
               });
             }
             this.clearMappings();
@@ -404,11 +405,11 @@ export class RegionEditorComponent implements OnInit {
       'Remove regions', 'Cancel')
       .subscribe(
         (result) => {
-          if(result) {
+          if (result) {
             for (var i = 0; i < this.childRegionTable.selection.selected.length; i++) {
               let org = this.childRegionTable.selection.selected[i];
-              this.childRegions.forEach( (item, index) => {
-                if(item === org) this.childRegions.splice(index,1);
+              this.childRegions.forEach((item, index) => {
+                if (item === org) this.childRegions.splice(index, 1);
               });
             }
             this.clearMappings();
@@ -430,11 +431,11 @@ export class RegionEditorComponent implements OnInit {
       'Delete agreements', 'Cancel')
       .subscribe(
         (result) => {
-          if(result) {
+          if (result) {
             for (var i = 0; i < this.dsaTable.selection.selected.length; i++) {
               let org = this.dsaTable.selection.selected[i];
-              this.sharingAgreements.forEach( (item, index) => {
-                if(item === org) this.sharingAgreements.splice(index,1);
+              this.sharingAgreements.forEach((item, index) => {
+                if (item === org) this.sharingAgreements.splice(index, 1);
               });
             }
             this.clearMappings();
@@ -456,11 +457,11 @@ export class RegionEditorComponent implements OnInit {
       'Remove agreements', 'Cancel')
       .subscribe(
         (result) => {
-          if(result) {
+          if (result) {
             for (var i = 0; i < this.dpaTable.selection.selected.length; i++) {
               let org = this.dpaTable.selection.selected[i];
-              this.processingAgreements.forEach( (item, index) => {
-                if(item === org) this.processingAgreements.splice(index,1);
+              this.processingAgreements.forEach((item, index) => {
+                if (item === org) this.processingAgreements.splice(index, 1);
               });
             }
             this.clearMappings();

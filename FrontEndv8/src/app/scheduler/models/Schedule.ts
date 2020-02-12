@@ -14,8 +14,8 @@ export class Schedule {
 
   getDisplayItems(): any[] {
     return [
-      {label: 'Expression', property: 'cronExpression'},
-      {label: 'Description', property: 'cronDescription'}
+      {label: 'Expression', property: 'cronExpression', secondary: false},
+      {label: 'Description', property: 'cronDescription', secondary: false}
     ];
   }
 }

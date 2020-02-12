@@ -37,7 +37,8 @@ export class Project {
 
   getDisplayItems(): any[] {
     return [
-      {label: 'Name', property: 'name'}
+      {label: 'Name', property: 'name', secondary: false},
+      {label: 'Summary', property: 'summary', secondary: true}
     ];
   }
 }
