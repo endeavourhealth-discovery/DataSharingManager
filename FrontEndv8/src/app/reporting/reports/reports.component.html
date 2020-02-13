@@ -40,12 +40,24 @@
     <br>
     <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
       <div [hidden]="!reportData" fxFlex="100">
-        <h3>{{reportName}}</h3>
-        <app-generic-table #dsaPubTable
-                           [items]="reportData"
-                           [detailsToShow]="reportDetailsToShow"
-                           [allowSelect]="false">
-        </app-generic-table>
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+          <div fxFlex="50">
+            <h3>{{reportName}}</h3>
+          </div>
+          <div fxFlex="50">
+            <div style="font-size:350%;text-align:right">
+              <i class="fas fa-file-csv" (click)="exportToCSV()"></i>
+            </div>
+          </div>
+          <br>
+          <div fxFlex="100">
+            <app-generic-table #dsaPubTable
+                               [items]="reportData"
+                               [detailsToShow]="reportDetailsToShow"
+                               [allowSelect]="false">
+            </app-generic-table>
+          </div>
+        </div>
       </div>
     </div>
 

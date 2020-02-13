@@ -10,6 +10,7 @@ import {DataSharingAgreementService} from "../../data-sharing-agreement/data-sha
 import {ProjectService} from "../../project/project.service";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
+import {ngxCsv} from "ngx-csv";
 
 @Component({
   selector: 'app-reports',
@@ -134,14 +135,17 @@ export class ReportsComponent implements OnInit {
   }
 
   clearDPASelection() {
+    this.reportData = null;
     this.dpaTable.clearHighlights();
   }
 
   clearDSASelection() {
+    this.reportData = null;
     this.dsaTable.clearHighlights();
   }
 
   clearProjectSelection() {
+    this.reportData = null;
     this.projectTable.clearHighlights();
   }
 
@@ -236,13 +240,8 @@ export class ReportsComponent implements OnInit {
     })
   }
 
-  /*exportToCSV() {
-
-    // new Angular2Csv(this.reportData, this.reportName, this.options);
-
-    const csvExporter = new ExportToCsv(this.options);
-
-    csvExporter.generateCsv(this.reportData);
-  }*/
+  exportToCSV() {
+    new ngxCsv(this.reportData, 'generated', this.options);
+  }
 }
 
