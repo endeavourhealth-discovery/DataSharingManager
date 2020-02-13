@@ -30,6 +30,7 @@ import {ProjectModule} from "./project/project.module";
 import {AuditModule} from "./audit/audit.module";
 import {MySharingModule} from "./my-sharing/my-sharing.module";
 import {ReportingModule} from "./reporting/reporting.module";
+import {GoogleMapsViewerModule} from "./google-maps-viewer/google-maps-viewer.module";
 
 
 const keycloakService = new KeycloakService();
@@ -63,6 +64,7 @@ const keycloakService = new KeycloakService();
     MySharingModule,
     ReportingModule,
     DialogsModule,
+    GoogleMapsViewerModule,
 
     RouterModule.forRoot(AppMenuService.getRoutes(), {useHash: true}),
   ],

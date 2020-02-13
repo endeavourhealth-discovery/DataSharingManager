@@ -25,6 +25,7 @@ import {Documentation} from "../../documentation/models/Documentation";
 import {DocumentationService} from "../../documentation/documentation.service";
 import {DocumentationComponent} from "../../documentation/documentation/documentation.component";
 import {DataSharingAgreementDialogComponent} from "src/app/data-sharing-agreement/data-sharing-agreement-dialog/data-sharing-agreement-dialog.component";
+import {GoogleMapsDialogComponent} from "../../google-maps-viewer/google-maps-dialog/google-maps-dialog.component";
 
 @Component({
   selector: 'app-data-sharing-agreement-editor',
@@ -673,9 +674,11 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           } else if (type == 'Projects') {
             this.getProjects()
           } else if (type == 'Publishers') {
-            this.getPublishers()
+            this.getPublishers();
+            this.getPublisherMarkers();
           } else if (type == 'Subscribers') {
-            this.getSubscribers()
+            this.getSubscribers();
+            this.getSubscriberMarkers();
           } else if (type == 'Documentations') {
             this.getAssociatedDocumentation()
           }
@@ -683,6 +686,24 @@ export class DataSharingAgreementEditorComponent implements OnInit {
         },
         error => this.log.error('The DSA could not be saved. Please try again.')
       );
+  }
+
+  showPublishers() {
+    this.showMap(this.publisherMarkers, 'Location of publishers');
+  }
+
+  showSubscribers() {
+    this.showMap(this.subscriberMarkers, 'Location of subscribers');
+  }
+
+  showMap(selectedMarkers: Marker[], title) {
+    const dialogRef = this.dialog.open(GoogleMapsDialogComponent, {
+      minWidth: '60vw',
+      data: {markers: selectedMarkers, title: title}
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      return;
+    })
   }
 
   clearMappings() {

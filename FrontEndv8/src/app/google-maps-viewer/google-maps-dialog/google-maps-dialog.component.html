@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div mat-dialog-content>
+  <agm-map [latitude]='latitude'
+           [longitude]='longitude'
+           [zoom]="zoom">
+    <agm-marker-cluster imagePath="https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m">
+      <agm-marker
+        *ngFor="let marker of markers"
+        [latitude]="marker.lat"
+        [longitude]="marker.lng"
+        [label]="marker.name"></agm-marker>
+    </agm-marker-cluster>
+  </agm-map>
+  <br>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-flat-button color="accent"(click)="ok()">Close</button>
+</div>

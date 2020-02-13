@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {OrganisationService} from "../organisation/organisation.service";
 import {MySharingOverviewComponent} from "./my-sharing-overview/my-sharing-overview.component";
 import {
   MatBadgeModule,

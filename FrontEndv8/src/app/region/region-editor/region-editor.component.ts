@@ -14,6 +14,7 @@ import {DataProcessingAgreementPickerComponent} from "../../data-processing-agre
 import {RegionPickerComponent} from "../region-picker/region-picker.component";
 import {OrganisationPickerComponent} from "../../organisation/organisation-picker/organisation-picker.component";
 import {RegionDialogComponent} from "../region-dialog/region-dialog.component";
+import {GoogleMapsDialogComponent} from "../../google-maps-viewer/google-maps-dialog/google-maps-dialog.component";
 
 @Component({
   selector: 'app-region-editor',
@@ -31,9 +32,6 @@ export class RegionEditorComponent implements OnInit {
   processingAgreements: Dpa[] = [];
   markers: Marker[] = [];
   editDisabled = false;
-  latitude: number = 33.8121;
-  longitude: number = -117.918;
-  zoom: number = 12;
   allowEdit = false;
   superUser = false;
   userId: string;
@@ -328,6 +326,16 @@ export class RegionEditorComponent implements OnInit {
         this.region.organisations[org.uuid] = org.name;
       }
       this.updateMappings('Organisations');
+    })
+  }
+
+  showMap() {
+    const dialogRef = this.dialog.open(GoogleMapsDialogComponent, {
+      minWidth: '60vw',
+      data: {markers: this.markers, title: 'Location of organisations'}
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      return;
     })
   }
 

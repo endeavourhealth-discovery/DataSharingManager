@@ -22,6 +22,8 @@ import {DocumentationComponent} from "../../documentation/documentation/document
 import {RegionPickerComponent} from "../../region/region-picker/region-picker.component";
 import {OrganisationPickerComponent} from "../../organisation/organisation-picker/organisation-picker.component";
 import {DataProcessingAgreementDialogComponent} from "../data-processing-agreement-dialog/data-processing-agreement-dialog.component";
+import {Marker} from "../../region/models/Marker";
+import {GoogleMapsDialogComponent} from "../../google-maps-viewer/google-maps-dialog/google-maps-dialog.component";
 
 @Component({
   selector: 'app-data-processing-agreement-editor',
@@ -44,6 +46,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   superUser = false;
   userId: string;
   disableStatus = false;
+  publisherMarkers: Marker[] = [];
 
   purposes: Purpose[] = [];
   benefits: Purpose[] = [];
@@ -127,6 +130,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
           this.getRegions();
           this.getPublishers();
           this.getDocumentations();
+          this.getPublisherMarkers();
         },
         error => this.log.error('The data processing agreement could not be loaded. Please try again.')
       );
@@ -159,6 +163,17 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
         },
         error => this.log.error('The associated purposes could not be loaded. Please try again.')
       );
+  }
+
+  private getPublisherMarkers() {
+    const vm = this;
+    vm.dpaService.getPublisherMarkers(vm.dpa.uuid)
+      .subscribe(
+        result => {
+          vm.publisherMarkers = result;
+        },
+        error => vm.log.error('The publisher map date could not be loaded. Please try again.')
+      )
   }
 
   purposeClicked(item: Purpose) {
@@ -473,7 +488,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
           } else if (type == 'Regions') {
             this.getRegions()
           } else if (type == 'Publishers') {
-            this.getPublishers()
+            this.getPublishers();
+            this.getPublisherMarkers();
           } else if (type == 'Documentations') {
             this.getDocumentations()
           }
@@ -481,6 +497,16 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
         },
         error => this.log.error('The DPA could not be saved. Please try again.')
       );
+  }
+
+  showMap() {
+    const dialogRef = this.dialog.open(GoogleMapsDialogComponent, {
+      minWidth: '60vw',
+      data: {markers: this.publisherMarkers, title: 'Location of publishers'}
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      return;
+    })
   }
 
   clearMappings() {
