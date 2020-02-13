@@ -1,7 +1,7 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {ExtractTechnicalDetails} from "../models/ExtractTechnicalDetails";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {LoggerService} from "dds-angular8";
+import {ItemLinkageService, LoggerService} from "dds-angular8";
 
 export interface DialogData {
   extractTechnicalDetail: ExtractTechnicalDetails;
@@ -22,9 +22,15 @@ export class ExtractDetailsDialogComponent implements OnInit {
   src: any;
   @ViewChild("fileUploader", { static: false }) fileUploader: ElementRef;
 
+  outputFormat = this.linkageService.outputFormat;
+  securityInfrastructures = this.linkageService.securityInfrastructures;
+  securityArchitectures = this.linkageService.securityArchitectures;
+
+
   constructor(public dialogRef: MatDialogRef<ExtractDetailsDialogComponent>,
               @Inject(MAT_DIALOG_DATA) public data: DialogData,
-              private log: LoggerService) {
+              private log: LoggerService,
+              private linkageService: ItemLinkageService) {
 
     if (data.extractTechnicalDetail) {
       this.extractTechnicalDetail = data.extractTechnicalDetail;

@@ -56,33 +56,9 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
-      <mat-label>Frequency</mat-label>
-      <mat-select matInput [(ngModel)]="project.flowScheduleId" name="flowScheduleId">
-        <mat-option *ngFor="let fs of flowScheduleIds" [value]="fs.num">{{fs.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="25" fxFill>
-      <mat-label>Output format</mat-label>
-      <mat-select matInput [(ngModel)]="project.outputFormat" name="outputFormat">
-        <mat-option *ngFor="let of of outputFormat" [value]="of.num">{{of.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Application policy</mat-label>
       <mat-select matInput [(ngModel)]="selectedApplicationPolicy" name="selectedApplicationPolicy" (selectionChange)="changeUserApplicationPolicy(selectedApplicationPolicy.id)">
         <mat-option *ngFor="let pol of availablePolicies" [value]="pol">{{pol.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="25" fxFill>
-      <mat-label>Security infrastructure Id</mat-label>
-      <mat-select matInput [(ngModel)]="project.securityInfrastructureId" name="securityInfrastructureId">
-        <mat-option *ngFor="let sec of securityInfrastructures" [value]="sec.num">{{sec.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="25" fxFill>
-      <mat-label>Security architectures Id</mat-label>
-      <mat-select matInput [(ngModel)]="project.securityArchitectureId" name="securityArchitectureId">
-        <mat-option *ngFor="let arc of securityArchitectures" [value]="arc.num">{{arc.name}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>

@@ -15,6 +15,10 @@ export class ExtractTechnicalDetails {
   pgpInternalPublicKeyFilename: string;
   pgpInternalPublicKeyFileData: string;
 
+  outputFormat: string;
+  securityInfrastructure: string;
+  securityArchitecture: string;
+
   getDisplayItems(): any[] {
     return [
       {label: 'Name', property: 'name'},

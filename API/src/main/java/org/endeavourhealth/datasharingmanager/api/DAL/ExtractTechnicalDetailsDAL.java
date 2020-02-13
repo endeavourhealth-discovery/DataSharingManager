@@ -41,6 +41,9 @@ public class ExtractTechnicalDetailsDAL {
             extractTechnicalDetailsEntity.setPgpCustomerPublicKeyFileData(extractTechnicalDetails.getPgpCustomerPublicKeyFileData());
             extractTechnicalDetailsEntity.setPgpInternalPublicKeyFilename(extractTechnicalDetails.getPgpInternalPublicKeyFilename());
             extractTechnicalDetailsEntity.setPgpInternalPublicKeyFileData(extractTechnicalDetails.getPgpInternalPublicKeyFileData());
+            extractTechnicalDetailsEntity.setOutputFormat(extractTechnicalDetails.getOutputFormat());
+            extractTechnicalDetailsEntity.setSecurityInfrastructure(extractTechnicalDetails.getSecurityInfrastructure());
+            extractTechnicalDetailsEntity.setSecurityArchitecture(extractTechnicalDetails.getSecurityArchitecture());
             entityManager.getTransaction().begin();
             entityManager.persist(extractTechnicalDetailsEntity);
             entityManager.getTransaction().commit();
@@ -72,6 +75,9 @@ public class ExtractTechnicalDetailsDAL {
             extractTechnicalDetailsEntity.setPgpCustomerPublicKeyFileData(extractTechnicalDetails.getPgpCustomerPublicKeyFileData());
             extractTechnicalDetailsEntity.setPgpInternalPublicKeyFilename(extractTechnicalDetails.getPgpInternalPublicKeyFilename());
             extractTechnicalDetailsEntity.setPgpInternalPublicKeyFileData(extractTechnicalDetails.getPgpInternalPublicKeyFileData());
+            extractTechnicalDetailsEntity.setOutputFormat(extractTechnicalDetails.getOutputFormat());
+            extractTechnicalDetailsEntity.setSecurityInfrastructure(extractTechnicalDetails.getSecurityInfrastructure());
+            extractTechnicalDetailsEntity.setSecurityArchitecture(extractTechnicalDetails.getSecurityArchitecture());
             entityManager.getTransaction().commit();
 
         } catch (Exception e) {
