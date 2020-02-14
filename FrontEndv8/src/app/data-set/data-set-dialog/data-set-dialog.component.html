@@ -5,11 +5,11 @@
       <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
         <mat-form-field appearance="outline" fxFlex="100" fxFill>
           <mat-label>Data set name</mat-label>
-          <input required matInput [(ngModel)]="dataset.name" placeholder="Data set name" name="name">
+          <input required matInput maxlength="100" [(ngModel)]="dataset.name" placeholder="Data set name" name="name">
         </mat-form-field>
         <mat-form-field appearance="outline" fxFlex="100" fxFill>
           <mat-label>Description</mat-label>
-          <textarea matInput rows="15" [(ngModel)]="dataset.description" placeholder="Data set description"
+          <textarea matInput rows="15" maxlength="10000" [(ngModel)]="dataset.description" placeholder="Data set description"
                     name="description"></textarea>
         </mat-form-field>
       </div>

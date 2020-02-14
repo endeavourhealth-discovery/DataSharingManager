@@ -166,6 +166,7 @@ export class OrganisationEditorComponent implements OnInit {
           if (this.organisation.isService) {
             this.orgType = 'Service';
           } else { // only get these for organisations, not services
+            this.orgType = 'Organisation';
             this.getOrganisationRegions();
             this.getOrganisationAddresses();
             this.getChildOrganisations();

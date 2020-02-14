@@ -3,21 +3,21 @@
   <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Project name</mat-label>
-      <input required matInput [(ngModel)]="project.name" placeholder="Project name" name="name">
+      <input required matInput maxlength="100" [(ngModel)]="project.name" placeholder="Project name" name="name">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Business case</mat-label>
-      <mat-select matInput [(ngModel)]="project.businessCaseStatus" name="businessCaseStatus">
+      <mat-select matInput maxlength="5000" [(ngModel)]="project.businessCaseStatus" name="businessCaseStatus">
         <mat-option *ngFor="let bc of businessCaseStatuses" [value]="bc.num">{{bc.name}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Summary</mat-label>
-      <textarea matInput [(ngModel)]="project.summary" placeholder="Summary" name="summary" rows="6"></textarea>
+      <textarea matInput maxlength="5000" [(ngModel)]="project.summary" placeholder="Summary" name="summary" rows="6"></textarea>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Objectives</mat-label>
-      <textarea matInput [(ngModel)]="project.objectives" placeholder="Objectives" name="objectives" rows="6"></textarea>
+      <textarea matInput maxlength="5000" [(ngModel)]="project.objectives" placeholder="Objectives" name="objectives" rows="6"></textarea>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Project lead</mat-label>

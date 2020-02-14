@@ -3,7 +3,7 @@
   <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
     <mat-form-field appearance="outline" fxFlex="100" fxFill>
       <mat-label>Name</mat-label>
-      <input required matInput [(ngModel)]="extractTechnicalDetail.name" placeholder="Name" name="extractTechnicalDetailsName">
+      <input required matInput maxlength="200" [(ngModel)]="extractTechnicalDetail.name" placeholder="Name" name="extractTechnicalDetailsName">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="33" fxFill>
       <mat-label>Output format</mat-label>
@@ -25,28 +25,28 @@
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="33" fxFill>
       <mat-label>SFTP host name</mat-label>
-      <input required matInput [(ngModel)]="extractTechnicalDetail.sftpHostName" placeholder="SFTP host name" name="sftpHostName">
+      <input required matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.sftpHostName" placeholder="SFTP host name" name="sftpHostName">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="67" fxFill>
       <mat-label>SFTP host directory</mat-label>
-      <input required matInput [(ngModel)]="extractTechnicalDetail.sftpHostDirectory" placeholder="SFTP host directory, typically /ftp/" name="sftpHostDirectory">
+      <input required matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.sftpHostDirectory" placeholder="SFTP host directory, typically /ftp/" name="sftpHostDirectory">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="33" fxFill>
       <mat-label>SFTP host port</mat-label>
-      <input required matInput [(ngModel)]="extractTechnicalDetail.sftpHostPort" placeholder="SFTP host port" name="sftpHostPort">
+      <input required matInput maxlength="10" [(ngModel)]="extractTechnicalDetail.sftpHostPort" placeholder="SFTP host port" name="sftpHostPort">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="33" fxFill>
       <mat-label>SFTP client username</mat-label>
-      <input required matInput [(ngModel)]="extractTechnicalDetail.sftpClientUsername" placeholder="SFTP client username" name="sftpClientUsername">
+      <input required matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.sftpClientUsername" placeholder="SFTP client username" name="sftpClientUsername">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="34" fxFill>
       <mat-label>SFTP client private key password</mat-label>
-      <input matInput [(ngModel)]="extractTechnicalDetail.sftpClientPrivateKeyPassword" placeholder="SFTP client private key password, rarely used" name="sftpClientPrivateKeyPassword">
+      <input matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.sftpClientPrivateKeyPassword" placeholder="SFTP client private key password, rarely used" name="sftpClientPrivateKeyPassword">
     </mat-form-field>
 
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>SFTP client private key (.ppk)</mat-label>
-      <input readonly matInput [(ngModel)]="extractTechnicalDetail.sftpClientPrivateKeyFilename" placeholder="SFTP client private key" name="sftpClientPrivateKeyFilename">
+      <input readonly matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.sftpClientPrivateKeyFilename" placeholder="SFTP client private key" name="sftpClientPrivateKeyFilename">
       <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="file2.click();">
         <mat-icon>cloud_upload</mat-icon>
       </button>
@@ -56,7 +56,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>SFTP host public key (.pub)</mat-label>
-      <input readonly matInput [(ngModel)]="extractTechnicalDetail.sftpHostPublicKeyFilename" placeholder="SFTP host public key, rarely used" name="sftpHostPublicKeyFilename">
+      <input readonly matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.sftpHostPublicKeyFilename" placeholder="SFTP host public key, rarely used" name="sftpHostPublicKeyFilename">
       <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="file1.click()">
         <mat-icon>cloud_upload</mat-icon>
       </button>
@@ -66,7 +66,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Customer public key (.cer)</mat-label>
-      <input readonly matInput [(ngModel)]="extractTechnicalDetail.pgpCustomerPublicKeyFilename" placeholder="Customer public key" name="pgpCustomerPublicKeyFilename">
+      <input readonly matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.pgpCustomerPublicKeyFilename" placeholder="Customer public key" name="pgpCustomerPublicKeyFilename">
       <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="file3.click()">
         <mat-icon>cloud_upload</mat-icon>
       </button>
@@ -76,7 +76,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Internal public key (.cer)</mat-label>
-      <input readonly matInput [(ngModel)]="extractTechnicalDetail.pgpInternalPublicKeyFilename" placeholder="Internal public key" name="pgpInternalPublicKeyFilename">
+      <input readonly matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.pgpInternalPublicKeyFilename" placeholder="Internal public key" name="pgpInternalPublicKeyFilename">
       <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="file4.click()">
         <mat-icon>cloud_upload</mat-icon>
       </button>

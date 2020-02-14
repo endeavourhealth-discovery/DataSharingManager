@@ -3,11 +3,11 @@
   <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Data processing agreement name</mat-label>
-      <input required matInput [(ngModel)]="dpa.name" placeholder="Name" name="name">
+      <input required matInput maxlength="100" [(ngModel)]="dpa.name" placeholder="Name" name="name">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Description</mat-label>
-      <input matInput [(ngModel)]="dpa.description" placeholder="Description" name="description">
+      <input matInput maxlength="10000" [(ngModel)]="dpa.description" placeholder="Description" name="description">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Status</mat-label>
@@ -17,7 +17,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
       <mat-label>Data processor</mat-label>
-      <input required matInput [(ngModel)]="processor" placeholder="Data processor" name="processor" readonly>
+      <input required matInput maxlength="100" [(ngModel)]="processor" placeholder="Data processor" name="processor" readonly>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Start date</mat-label>

@@ -3,11 +3,11 @@
   <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Name</mat-label>
-      <input required matInput [(ngModel)]="dsa.name" placeholder="Name" name="name">
+      <input required matInput maxlength="100" [(ngModel)]="dsa.name" placeholder="Name" name="name">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Description</mat-label>
-      <input required matInput [(ngModel)]="dsa.description" placeholder="Description" name="description">
+      <input required matInput maxlength="10000" [(ngModel)]="dsa.description" placeholder="Description" name="description">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Status</mat-label>
