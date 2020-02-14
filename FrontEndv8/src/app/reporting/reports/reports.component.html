@@ -8,7 +8,7 @@
   </mat-card-header>
   <mat-card-content>
     <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-      <div fxFlex="33">
+      <div fxFlex="32" style="height:50vh;overflow-y:auto;">
         <h3>Data processing agreements</h3>
         <app-generic-table #dpaTable
                            [items]="dpas"
@@ -17,7 +17,8 @@
                            (clicked)="runDPAPublisherReport($event)">
         </app-generic-table>
       </div>
-      <div fxFlex="33">
+      <div fxFlex="2"></div>
+      <div fxFlex="32" style="height:50vh;overflow-y:auto;">
         <h3>Data sharing agreements</h3>
         <app-generic-table #dsaTable
                            [items]="dsas"
@@ -26,7 +27,8 @@
                            (clicked)="runDSAPublisherReport($event)">
         </app-generic-table>
       </div>
-      <div fxFlex="34">
+      <div fxFlex="2"></div>
+      <div fxFlex="32" style="height:50vh;overflow-y:auto;">
         <h3>Projects</h3>
         <app-generic-table #projectTable
                            [items]="projects"
@@ -36,7 +38,7 @@
         </app-generic-table>
       </div>
     </div>
-
+    <br>
     <br>
     <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
       <div [hidden]="!reportData" fxFlex="100">
