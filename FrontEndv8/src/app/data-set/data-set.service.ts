@@ -3,6 +3,8 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from 'rxjs/Observable';
 import {DataSet} from './models/Dataset';
 import {Dpa} from '../data-processing-agreement/models/Dpa';
+import {Dsa} from "../data-sharing-agreement/models/Dsa";
+import {Project} from "../project/models/Project";
 
 @Injectable()
 export class DataSetService {
@@ -47,6 +49,20 @@ export class DataSetService {
     let params = new HttpParams();
     if (uuid) params = params.append('uuid', uuid);
     return this.http.get<Dpa[]>(url, {params});
+  }
+
+  getLinkedDsas(uuid: string):  Observable<Dsa[]> {
+    const url = 'api/dataSet/dsas';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.get<Dsa[]>(url, {params});
+  }
+
+  getLinkedProjects(uuid: string):  Observable<Project[]> {
+    const url = 'api/dataSet/projects';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.get<Project[]>(url, {params});
   }
 
   updateMappings(dataset: DataSet): Observable<any> {

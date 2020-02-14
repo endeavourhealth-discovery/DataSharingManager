@@ -8,11 +8,15 @@ import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataProcessingAgreementEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataSharingAgreementEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DatasetEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.ProjectEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDataSet;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSetCache;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.ProjectCache;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
@@ -27,7 +31,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,6 +38,7 @@ import java.util.UUID;
 @Api(description = "API endpoint related to the DataSets")
 public final class DataSetEndpoint extends AbstractEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(DataSetEndpoint.class);
+    private static final String DATASET_ID = "Cohort Id";
 
     private static final UserAuditRepository userAudit = new UserAuditRepository(AuditModule.EdsUiModule.Organisation);
 
@@ -173,6 +177,42 @@ public final class DataSetEndpoint extends AbstractEndpoint {
         return getLinkedDpas(uuid);
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.CohortEndpoint.GetDataSharingAgreements")
+    @Path("/dsas")
+    @ApiOperation(value = "Returns a list of Json representations of Data Sharing Agreements that are linked " +
+            "to the cohort.  Accepts a UUID of a cohort.")
+    public Response getDsaForCohort(@Context SecurityContext sc,
+                                    @ApiParam(value = "UUID of cohort") @QueryParam("uuid") String uuid
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "DSA(s)",
+                DATASET_ID, uuid);
+
+        return getLinkedDsas(uuid);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.CohortEndpoint.GetDataSharingAgreements")
+    @Path("/projects")
+    @ApiOperation(value = "Returns a list of Json representations of Data Sharing Agreements that are linked " +
+            "to the cohort.  Accepts a UUID of a cohort.")
+    public Response getProjectsForCohort(@Context SecurityContext sc,
+                                         @ApiParam(value = "UUID of cohort") @QueryParam("uuid") String uuid
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "Projects(s)",
+                DATASET_ID, uuid);
+
+        return getLinkedProjects(uuid);
+    }
+
     private Response getDataSetList() throws Exception {
 
         List<DatasetEntity> dataSets = new DatasetDAL().getAllDataSets();
@@ -212,6 +252,38 @@ public final class DataSetEndpoint extends AbstractEndpoint {
 
         if (!dpaUuids.isEmpty())
             ret = new DataProcessingAgreementCache().getDPADetails(dpaUuids);
+
+        clearLogbackMarkers();
+        return Response
+                .ok()
+                .entity(ret)
+                .build();
+    }
+
+    private Response getLinkedDsas(String datasetUuid) throws Exception {
+
+        List<String> dsaUuids = new SecurityMasterMappingDAL().getParentMappings(datasetUuid, MapType.DATASET.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+
+        List<DataSharingAgreementEntity> ret = new ArrayList<>();
+
+        if (!dsaUuids.isEmpty())
+            ret = DataSharingAgreementCache.getDSADetails(dsaUuids);
+
+        clearLogbackMarkers();
+        return Response
+                .ok()
+                .entity(ret)
+                .build();
+    }
+
+    private Response getLinkedProjects(String datasetUuid) throws Exception {
+
+        List<String> dsaUuids = new SecurityMasterMappingDAL().getParentMappings(datasetUuid, MapType.DATASET.getMapType(), MapType.PROJECT.getMapType());
+
+        List<ProjectEntity> ret = new ArrayList<>();
+
+        if (!dsaUuids.isEmpty())
+            ret = ProjectCache.getProjectDetails(dsaUuids);
 
         clearLogbackMarkers();
         return Response

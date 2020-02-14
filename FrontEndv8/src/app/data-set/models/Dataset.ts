@@ -4,6 +4,8 @@ export class DataSet {
 	description: string;
 	technicalDefinition: string;
 	dpas: { [key: string]: string; };
+  dsas: { [key: string]: string; };
+  projects: { [key: string]: string; };
 
 	getDisplayItems(): any[] {
 		return [

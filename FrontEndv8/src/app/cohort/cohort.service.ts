@@ -3,6 +3,8 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from 'rxjs/Observable';
 import {Cohort} from './models/Cohort';
 import {Dpa} from '../data-processing-agreement/models/Dpa';
+import {Project} from "../project/models/Project";
+import {Dsa} from "../data-sharing-agreement/models/Dsa";
 
 @Injectable()
 export class CohortService {
@@ -52,6 +54,20 @@ export class CohortService {
     let params = new HttpParams();
     if (uuid) params = params.append('uuid', uuid);
     return this.http.get<Dpa[]>(url, {params});
+  }
+
+  getLinkedDsas(uuid: string):  Observable<Dsa[]> {
+    const url = 'api/cohort/dsas';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.get<Dsa[]>(url, {params});
+  }
+
+  getLinkedProjects(uuid: string):  Observable<Project[]> {
+    const url = 'api/cohort/projects';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.get<Project[]>(url, {params});
   }
 
 }

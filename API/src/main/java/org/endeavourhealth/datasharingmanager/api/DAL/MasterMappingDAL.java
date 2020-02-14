@@ -28,6 +28,16 @@ public class MasterMappingDAL {
         updateMappingsAndAddToAudit(true, uuid, (oldDataset == null ? null : oldDataset.getDpas()),
                 (updatedDataSet == null ? null : updatedDataSet.getDpas()),
                 thisMapTypeID, MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
+
+        // DSAs
+        updateMappingsAndAddToAudit(true, uuid, (oldDataset == null ? null : oldDataset.getDsas()),
+                (updatedDataSet == null ? null : updatedDataSet.getDsas()),
+                thisMapTypeID, MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
+
+        // DPAs
+        updateMappingsAndAddToAudit(true, uuid, (oldDataset == null ? null : oldDataset.getProjects()),
+                (updatedDataSet == null ? null : updatedDataSet.getProjects()),
+                thisMapTypeID, MapType.PROJECT.getMapType(), auditJson);
     }
 
     void updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson) throws Exception {
@@ -37,6 +47,14 @@ public class MasterMappingDAL {
         // DPAs
         updateMappingsAndAddToAudit(true, uuid, (oldCohort == null ? null : oldCohort.getDpas()),
                 (updatedCohort == null ? null : updatedCohort.getDpas()), thisMapTypeID, MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
+
+        // DSAs
+        updateMappingsAndAddToAudit(true, uuid, (oldCohort == null ? null : oldCohort.getDsas()),
+                (updatedCohort == null ? null : updatedCohort.getDsas()), thisMapTypeID, MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
+
+        // PROJECTS
+        updateMappingsAndAddToAudit(true, uuid, (oldCohort == null ? null : oldCohort.getProjects()),
+                (updatedCohort == null ? null : updatedCohort.getProjects()), thisMapTypeID, MapType.PROJECT.getMapType(), auditJson);
     }
 
     void updateDataProcessingAgreementMappings(JsonDPA updatedDPA, DataProcessingAgreementEntity oldDPA, JsonNode auditJson) throws Exception {
