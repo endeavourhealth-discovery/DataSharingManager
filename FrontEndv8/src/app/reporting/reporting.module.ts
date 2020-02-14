@@ -24,7 +24,7 @@ import {
   MatTabsModule,
   MatTreeModule
 } from "@angular/material";
-import {CoreModule, GenericTableModule} from "dds-angular8";
+import {CoreModule, GenericTableModule, ItemLinkageModule} from "dds-angular8";
 import {RouterModule} from "@angular/router";
 import {FlexModule} from "@angular/flex-layout";
 import {BrowserModule} from "@angular/platform-browser";
@@ -38,7 +38,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     CoreModule,
     FlexModule,
     FormsModule,
-    GenericTableModule,
+    GenericTableModule, ItemLinkageModule,
     MatBadgeModule, MatButtonModule,
     MatCardModule, MatCheckboxModule,
     MatDialogModule, MatDividerModule,

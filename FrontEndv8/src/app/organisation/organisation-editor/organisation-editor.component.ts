@@ -660,7 +660,7 @@ export class OrganisationEditorComponent implements OnInit {
   addDPAs() {
     const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
       minWidth: '50vw',
-      data: {fromRegion: true},
+      data: {fromRegion: false},
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {

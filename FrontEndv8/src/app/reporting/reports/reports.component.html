@@ -41,7 +41,7 @@
     <br>
     <br>
     <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-      <div [hidden]="!reportData" fxFlex="100">
+      <div *ngIf="reportData" fxFlex="100">
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
           <div fxFlex="50">
             <h3>{{reportName}}</h3>

@@ -9,7 +9,7 @@ import {Project} from "../../project/models/Project";
 import {DataSharingAgreementService} from "../../data-sharing-agreement/data-sharing-agreement.service";
 import {ProjectService} from "../../project/project.service";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
+import {GenericTableComponent, ItemLinkageService, LoggerService, UserManagerService} from "dds-angular8";
 import {ngxCsv} from "ngx-csv";
 
 @Component({
@@ -57,7 +57,8 @@ export class ReportsComponent implements OnInit {
               private dpaService: DataProcessingAgreementService,
               private dsaService: DataSharingAgreementService,
               private projectService: ProjectService,
-              private log: LoggerService) { }
+              private log: LoggerService,
+              private itemLinkageService: ItemLinkageService) { }
 
   ngOnInit() {
     this.userManagerService.onProjectChange.subscribe(active => {
@@ -215,7 +216,8 @@ export class ReportsComponent implements OnInit {
       .subscribe(
         result => {
           this.reportData = result;
-          this.sort('practiceName');
+          console.log(result);
+          this.getLinkedItemsForDPAReport();
           this.reportComplete = true;
         },
         error => {
@@ -225,19 +227,16 @@ export class ReportsComponent implements OnInit {
       )
   }
 
-  sort(property: string) {
-
-    this.sortField = property;
-    this.sortReverse = !this.sortReverse;
-
-    this.reportData.sort(function(a, b) {
-      var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
-      if (this.sortReverse) {
-        return result * -1;
-      } else {
-        return result;
+  getLinkedItemsForDPAReport() {
+    for (let rep of this.reportData) {
+      for (let det of this.reportDetailsToShow) {
+        if (det.link) {
+          if (rep && rep[det.property]) {
+            rep[det.property] = this.itemLinkageService.getLinkedItem(+rep[det.property], det.link);
+          }
+        }
       }
-    })
+    }
   }
 
   exportToCSV() {
