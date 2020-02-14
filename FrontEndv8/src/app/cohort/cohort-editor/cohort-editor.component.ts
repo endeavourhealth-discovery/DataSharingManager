@@ -307,6 +307,7 @@ export class CohortEditorComponent implements OnInit {
   addDSAs() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
       minWidth: '50vw',
+      data: { allowMultiple: true }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
