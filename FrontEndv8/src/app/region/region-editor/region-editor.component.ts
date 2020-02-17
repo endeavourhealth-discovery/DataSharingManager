@@ -216,7 +216,7 @@ export class RegionEditorComponent implements OnInit {
   addDSAs() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
       minWidth: '50vw',
-      data: {existing: this.sharingAgreements}
+      data: { allowMultiple: true, existing: this.sharingAgreements }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {

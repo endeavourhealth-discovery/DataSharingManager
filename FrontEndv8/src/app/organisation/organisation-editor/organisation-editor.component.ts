@@ -688,7 +688,7 @@ export class OrganisationEditorComponent implements OnInit {
   addDSAPublishing() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
       minWidth: '50vw',
-      data: {existing: this.dsaPublishing}
+      data: { allowMultiple: true, existing: this.dsaPublishing }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -738,7 +738,7 @@ export class OrganisationEditorComponent implements OnInit {
   addDSASubscribing() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
       minWidth: '50vw',
-      data: {existing: this.dsaSubscribing}
+      data: { allowMultiple: true, existing: this.dsaPublishing }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {

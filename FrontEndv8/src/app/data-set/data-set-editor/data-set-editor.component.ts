@@ -226,7 +226,7 @@ export class DataSetEditorComponent implements OnInit {
   addDSAs() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
       minWidth: '50vw',
-      data: {existing: this.dsas}
+      data: { allowMultiple: true, existing: this.dsas }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {

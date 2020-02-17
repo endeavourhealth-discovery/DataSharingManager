@@ -4,7 +4,11 @@ import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angu
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Dsa} from "../models/Dsa";
 import {DataSharingAgreementService} from "../data-sharing-agreement.service";
-import {StandardPickerData} from "../../models/StandardPickerData";
+
+export interface DialogData {
+  allowMultiple: boolean;
+  existing: any[];
+}
 
 @Component({
   selector: 'app-data-sharing-agreement-picker',
@@ -18,15 +22,17 @@ export class DataSharingAgreementPickerComponent implements OnInit {
   dsaDetailsToShow = new Dsa().getDisplayItems();
   allowEdit = true;
   userId: string;
+  allowMultiple: boolean;
   public activeProject: UserProject;
 
   @ViewChild('picker', { static: false }) picker: GenericTableComponent;
 
   constructor(public dialogRef: MatDialogRef<DataSharingAgreementPickerComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: StandardPickerData,
+              @Inject(MAT_DIALOG_DATA) public data: DialogData,
               private log: LoggerService,
               private userManagerNotificationService: UserManagerService,
               private service: DataSharingAgreementService) {
+    this.allowMultiple = data.allowMultiple;
   }
 
   ngOnInit() {

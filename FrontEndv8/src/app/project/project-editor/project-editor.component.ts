@@ -383,7 +383,7 @@ export class ProjectEditorComponent implements OnInit {
   addDsas() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
       minWidth: '50vw',
-      data: {existing: this.dsas}
+      data: { allowMultiple: false, existing: this.dsas }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
