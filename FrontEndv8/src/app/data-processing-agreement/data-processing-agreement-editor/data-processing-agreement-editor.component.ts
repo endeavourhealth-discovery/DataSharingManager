@@ -194,8 +194,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   deletePurposes() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete purpose', 'Are you sure you want to delete purpose(s)?',
-      'Delete purpose', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete purposes', 'Are you sure you want to delete purposes?',
+      'Delete purposes', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -249,8 +249,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   deleteBenefits() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete benefit', 'Are you sure you want to delete benefit(s)?',
-      'Delete benefit', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete benefits', 'Are you sure you want to delete benefits?',
+      'Delete benefits', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -334,8 +334,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   deleteRegions() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove region', 'Are you sure you want to remove region(s)?',
-      'Remove region', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove regions', 'Are you sure you want to remove regions?',
+      'Remove regions', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -385,7 +385,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
 
   deleteDataSets() {
     MessageBoxDialogComponent.open(this.dialog, 'Remove data sets', 'Are you sure you want to remove data sets?',
-      'Remove data set', 'Cancel')
+      'Remove data sets', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -401,7 +401,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
               const ds: DataSet = this.dataSets[idx];
               this.dpa.dataSets[ds.uuid] = ds.name;
             }
-            this.updateMappings('DataSets');
+            this.updateMappings('Data sets');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -478,7 +478,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
           const dataSet: DataSet = this.dataSets[idx];
           this.dpa.dataSets[dataSet.uuid] = dataSet.name;
         }
-        this.updateMappings('DataSets');
+        this.updateMappings('Data sets');
       }
     })
   }
@@ -499,8 +499,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   deletePublishers() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove publisher', 'Are you sure you want to remove publisher(s)?',
-      'Remove publisher', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove publishers', 'Are you sure you want to remove publishers?',
+      'Remove publishers', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -563,8 +563,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   }
 
   deleteDocumentations() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete document', 'Are you sure you want to delete document(s)?',
-      'Delete document', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete documents', 'Are you sure you want to delete documents?',
+      'Delete documents', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -637,12 +637,12 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
             this.getDocumentations()
           } else if (type == 'Cohorts') {
             this.getLinkedCohorts()
-          } else if (type == 'DataSets') {
+          } else if (type == 'Data sets') {
             this.getLinkedDataSets()
           }
           this.log.success(type + ' updated successfully.');
         },
-        error => this.log.error('The DPA could not be saved. Please try again.')
+        error => this.log.error('The data processing agreement could not be saved. Please try again.')
       );
   }
 

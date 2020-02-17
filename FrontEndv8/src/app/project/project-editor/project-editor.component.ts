@@ -246,17 +246,17 @@ export class ProjectEditorComponent implements OnInit {
     this.projectService.updateMappings(this.project)
       .subscribe(saved => {
           this.project.uuid = saved;
-            if (type == 'DSA') {
+            if (type == 'Sharing agreements') {
               this.getDsas();
             } else if (type == 'Publishers') {
               this.getPublishers();
             } else if (type == 'Subscribers') {
               this.getSubscribers();
-            } else if (type == 'Documentations') {
+            } else if (type == 'Documents') {
               this.getDocumentations();
             } else if (type == 'Cohorts') {
               this.getCohorts();
-            } else if (type == 'DataSets') {
+            } else if (type == 'Data sets') {
               this.getDataSets();
             } else if (type == 'Extract technical details') {
               this.getAssociatedExtractTechnicalDetails();
@@ -300,7 +300,7 @@ export class ProjectEditorComponent implements OnInit {
           this.getSchedule();
           this.updateLinkValues();
         },
-        error => this.log.error('The data processing agreement could not be loaded. Please try again.')
+        error => this.log.error('The project could not be loaded. Please try again.')
       );
   }
 
@@ -355,8 +355,8 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   deleteDsas() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove DSA', 'Are you sure you want to remove DSA(s)?',
-      'Remove DSA', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove sharing agreements', 'Are you sure you want to remove sharing agreements?',
+      'Remove sharing agreements', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -372,7 +372,7 @@ export class ProjectEditorComponent implements OnInit {
               const dsa: Dsa = this.dsas[idx];
               this.project.dsas[dsa.uuid] = dsa.name;
             }
-            this.updateMappings('DSA');
+            this.updateMappings('Sharing agreements');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -400,7 +400,7 @@ export class ProjectEditorComponent implements OnInit {
         const dsa: Dsa = this.dsas[idx];
         this.project.dsas[dsa.uuid] = dsa.name;
       }
-      this.updateMappings('DSA');
+      this.updateMappings('Sharing agreements');
     })
     // const dialogRef = this.dialog.open(ValueSetsComponent, {
     //   width: '1000px',
@@ -428,8 +428,8 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   deletePublishers() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove publisher', 'Are you sure you want to remove publisher(s)?',
-      'Remove publisher', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove publishers', 'Are you sure you want to remove publishers?',
+      'Remove publishers', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -492,8 +492,8 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   deleteSubscribers() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove subscriber', 'Are you sure you want to remove subscriber(s)?',
-      'Remove subscriber', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove subscribers', 'Are you sure you want to remove subscribers?',
+      'Remove subscribers', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -564,8 +564,8 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   deleteDocumentations() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete document', 'Are you sure you want to delete document(s)?',
-      'Delete document', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete documents', 'Are you sure you want to delete documents?',
+      'Delete documents', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -578,7 +578,7 @@ export class ProjectEditorComponent implements OnInit {
             this.clearMappings();
             this.project.documentations = [];
             this.project.documentations = this.documentations;
-            this.updateMappings('Documentations');
+            this.updateMappings('Documents');
           } else {
             this.log.success('Delete cancelled.')
           }
@@ -595,7 +595,7 @@ export class ProjectEditorComponent implements OnInit {
         this.clearMappings();
         this.project.documentations = [];
         this.project.documentations = this.documentations;
-        this.updateMappings('Documentations');
+        this.updateMappings('Documents');
       }
     });
   }
@@ -616,8 +616,8 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   deleteCohorts() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove cohort', 'Are you sure you want to remove cohort(s)?',
-      'Remove cohort', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove cohorts', 'Are you sure you want to remove cohorts?',
+      'Remove cohorts', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -679,8 +679,8 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   deleteDataSets() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove data set', 'Are you sure you want to remove data set(s)?',
-      'Remove data set', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove data sets', 'Are you sure you want to remove data sets?',
+      'Remove data sets', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -875,7 +875,7 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   deleteSchedules() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete schedule', 'Are you sure you want to delete schedule(s)?',
+    MessageBoxDialogComponent.open(this.dialog, 'Delete schedule', 'Are you sure you want to delete schedule?',
       'Delete schedule', 'Cancel')
       .subscribe(
         (result) => {

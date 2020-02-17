@@ -68,7 +68,7 @@ export class DataSharingAgreementComponent implements OnInit {
           this.loadingComplete = true;
         },
         error => {
-          this.log.error('The data sharing agreements could not be loaded. Please try again.'/*, error, 'Load data sharing agreements'*/);
+          this.log.error('The data sharing agreements could not be loaded. Please try again.');
           this.loadingComplete = true;
         }
       );
@@ -95,8 +95,8 @@ export class DataSharingAgreementComponent implements OnInit {
   }
 
   delete() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete DSA', 'Are you sure you want to delete DSA(s)?',
-      'Delete DSA', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete sharing agreements', 'Are you sure you want to delete sharing agreements?',
+      'Delete sharing agreements', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {

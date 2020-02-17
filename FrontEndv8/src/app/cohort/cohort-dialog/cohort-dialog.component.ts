@@ -66,7 +66,7 @@ export class CohortDialogComponent implements OnInit {
       .subscribe(result => {
           this.cohort = result;
         },
-        error => this.log.error('The Cohort could not be loaded. Please try again.')
+        error => this.log.error('The cohort could not be loaded. Please try again.')
       );
   }
 
@@ -76,7 +76,7 @@ export class CohortDialogComponent implements OnInit {
           this.cohort.uuid = saved;
           this.dialogRef.close(this.cohort);
         },
-        error => this.log.error('The Cohort could not be saved. Please try again.')
+        error => this.log.error('The cohort could not be saved. Please try again.')
       );
   }
 

@@ -236,17 +236,17 @@ export class OrganisationEditorComponent implements OnInit {
             this.getOrganisationAddresses();
           } else if (type == 'Regions') {
             this.getOrganisationRegions();
-          } else if (type == 'Child Organisations') {
+          } else if (type == 'Child organisations') {
             this.getChildOrganisations();
-          } else if (type == 'Parent Organisations') {
+          } else if (type == 'Parent organisations') {
             this.getParentOrganisations();
           } else if (type == 'Services') {
             this.getServices();
-          } else if (type == 'DPA') {
+          } else if (type == 'Processing agreement') {
             this.getDPAsPublishingTo();
-          } else if (type == 'DSA Publishing') {
+          } else if (type == 'Publishing sharing agreement') {
             this.getDSAsPublishingTo();
-          } else if (type == 'DSA Subscribing') {
+          } else if (type == 'Subscribing sharing agreement') {
             this.getDSAsSubscribingTo()
           }
           this.log.success(type + ' saved successfully.');
@@ -272,8 +272,8 @@ export class OrganisationEditorComponent implements OnInit {
   }
 
   deleteAddress() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete address', 'Are you sure you want to delete address(es)?',
-      'Delete address', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete addresses', 'Are you sure you want to delete addresses?',
+      'Delete addresses', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -333,8 +333,8 @@ export class OrganisationEditorComponent implements OnInit {
   }
 
   deleteRegion() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove region', 'Are you sure you want to remove region(s)?',
-      'Remove region', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove regions', 'Are you sure you want to remove regions?',
+      'Remove regions', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -363,8 +363,8 @@ export class OrganisationEditorComponent implements OnInit {
   }
 
   deleteChildOrganisations() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove Organisation', 'Are you sure you want to remove child organisation(s)?',
-      'Remove Organisation', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove organisations', 'Are you sure you want to remove child organisations?',
+      'Remove organisations', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -380,7 +380,7 @@ export class OrganisationEditorComponent implements OnInit {
               const org: Organisation = this.childOrganisations[idx];
               this.organisation.childOrganisations[org.uuid] = org.name;
             }
-            this.updateMappings('Child Organisations');
+            this.updateMappings('Child organisations');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -408,13 +408,13 @@ export class OrganisationEditorComponent implements OnInit {
         const org: Organisation = this.childOrganisations[idx];
         this.organisation.childOrganisations[org.uuid] = org.name;
       }
-      this.updateMappings('Child Organisations');
+      this.updateMappings('Child organisations');
     })
   }
 
   deleteParentOrganisations() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove Organisation', 'Are you sure you want to remove parent organisation(s)?',
-      'Remove Organisation', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove organisations', 'Are you sure you want to remove parent organisations?',
+      'Remove organisations', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -430,7 +430,7 @@ export class OrganisationEditorComponent implements OnInit {
               const org: Organisation = this.parentOrganisations[idx];
               this.organisation.parentOrganisations[org.uuid] = org.name;
             }
-            this.updateMappings('Parent Organisations');
+            this.updateMappings('Parent organisations');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -458,13 +458,13 @@ export class OrganisationEditorComponent implements OnInit {
         const org: Organisation = this.parentOrganisations[idx];
         this.organisation.parentOrganisations[org.uuid] = org.name;
       }
-      this.updateMappings('Parent Organisations');
+      this.updateMappings('Parent organisations');
     })
   }
 
   deleteServices() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove Service', 'Are you sure you want to remove service(s)?',
-      'Remove Service', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove services', 'Are you sure you want to remove services?',
+      'Remove services', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -632,8 +632,8 @@ export class OrganisationEditorComponent implements OnInit {
   }
 
   deleteDPAs() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove DPA', 'Are you sure you want to remove DPA(s)?',
-      'Remove DPA', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove processing agreements', 'Are you sure you want to remove processing agreements?',
+      'Remove processing agreements', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -649,7 +649,7 @@ export class OrganisationEditorComponent implements OnInit {
               const dpa: Dpa = this.dpaPublishing[idx];
               this.organisation.dpaPublishing[dpa.uuid] = dpa.name;
             }
-            this.updateMappings('DPA');
+            this.updateMappings('Processing agreement');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -677,7 +677,7 @@ export class OrganisationEditorComponent implements OnInit {
         const dpa: Dpa = this.dpaPublishing[idx];
         this.organisation.dpaPublishing[dpa.uuid] = dpa.name;
       }
-      this.updateMappings('DPA');
+      this.updateMappings('Processing agreement');
     })
   }
 
@@ -705,13 +705,13 @@ export class OrganisationEditorComponent implements OnInit {
         const dsa: Dsa = this.dsaPublishing[idx];
         this.organisation.dsaPublishing[dsa.uuid] = dsa.name;
       }
-      this.updateMappings('DSA Publishing');
+      this.updateMappings('Publishing sharing agreement');
     })
   }
 
   deleteDSAPublishing() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove DSA', 'Are you sure you want to remove DSA(s)?',
-      'Remove DSA', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove sharing agreements', 'Are you sure you want to remove sharing agreements?',
+      'Remove sharing agreements', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -727,7 +727,7 @@ export class OrganisationEditorComponent implements OnInit {
               const dsa: Dsa = this.dsaPublishing[idx];
               this.organisation.dsaPublishing[dsa.uuid] = dsa.name;
             }
-            this.updateMappings('DSA Publishing');
+            this.updateMappings('Publishing sharing agreement');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -755,13 +755,13 @@ export class OrganisationEditorComponent implements OnInit {
         const dsa: Dsa = this.dsaSubscribing[idx];
         this.organisation.dsaSubscribing[dsa.uuid] = dsa.name;
       }
-      this.updateMappings('DSA Subscribing');
+      this.updateMappings('Subscribing sharing agreement');
     })
   }
 
   deleteDSASubscribing() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove DSA', 'Are you sure you want to remove DSA(s)?',
-      'Remove DSA', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove sharing agreements', 'Are you sure you want to remove sharing agreements?',
+      'Remove sharing agreements', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -777,7 +777,7 @@ export class OrganisationEditorComponent implements OnInit {
               const dsa: Dsa = this.dsaSubscribing[idx];
               this.organisation.dsaSubscribing[dsa.uuid] = dsa.name;
             }
-            this.updateMappings('DSA Subscribing');
+            this.updateMappings('Subscribing sharing agreement');
           } else {
             this.log.success('Remove cancelled.')
           }

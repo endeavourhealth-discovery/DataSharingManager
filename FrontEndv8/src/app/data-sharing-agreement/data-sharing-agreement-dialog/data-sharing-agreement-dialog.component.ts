@@ -107,7 +107,7 @@ export class DataSharingAgreementDialogComponent implements OnInit {
           this.dsa.uuid = saved;
           this.dialogRef.close(this.dsa);
         },
-        error => this.log.error('The DSA could not be saved. Please try again.')
+        error => this.log.error('The data sharing agreement could not be saved. Please try again.')
       );
   }
 

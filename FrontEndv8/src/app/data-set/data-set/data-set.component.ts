@@ -59,7 +59,7 @@ export class DataSetComponent implements OnInit {
           this.loadingComplete = true;
         },
           error => {
-          this.log.error('The data sets could not be loaded. Please try again.'/*, error, 'Load data sets'*/);
+          this.log.error('The data sets could not be loaded. Please try again.');
           this.loadingComplete = true;
         }
       );
@@ -85,8 +85,8 @@ export class DataSetComponent implements OnInit {
   }
 
   delete() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete data set', 'Are you sure you want to delete data set(s)?',
-      'Delete data set', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete data sets', 'Are you sure you want to delete data sets?',
+      'Delete data sets', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {

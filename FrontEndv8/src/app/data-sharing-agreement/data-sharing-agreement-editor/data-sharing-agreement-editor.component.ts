@@ -316,7 +316,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           this.documentations = result;
           this.documentationsTable.updateRows();
         },
-        error => this.log.error('The associated documentation could not be loaded. Please try again.')
+        error => this.log.error('The associated documents could not be loaded. Please try again.')
       );
   }
 
@@ -364,8 +364,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   deletePurposes() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete purpose', 'Are you sure you want to delete purpose(s)?',
-      'Delete purpose', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete purposes', 'Are you sure you want to delete purposes?',
+      'Delete purposes', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -404,8 +404,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   deleteBenefits() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete benefit', 'Are you sure you want to delete benefit(s)?',
-      'Delete benefit', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete benefits', 'Are you sure you want to delete benefits?',
+      'Delete benefits', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -443,8 +443,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   deleteRegions() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove region', 'Are you sure you want to remove region(s)?',
-      'Remove region', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove regions', 'Are you sure you want to remove regions?',
+      'Remove regions', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -492,8 +492,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   deleteProjects() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove project', 'Are you sure you want to remove project(s)?',
-      'Remove project', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove projects', 'Are you sure you want to remove projects?',
+      'Remove projects', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -541,8 +541,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   deletePublishers() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove publisher', 'Are you sure you want to remove publisher(s)?',
-      'Remove publisher', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove publishers', 'Are you sure you want to remove publishers?',
+      'Remove publishers', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -594,8 +594,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   deleteSubscribers() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove subscriber', 'Are you sure you want to remove subscriber(s)?',
-      'Remove subscriber', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove subscribers', 'Are you sure you want to remove subscribers?',
+      'Remove subscribers', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -647,8 +647,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   deleteDocumentations() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete document', 'Are you sure you want to delete document(s)?',
-      'Delete document', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete documents', 'Are you sure you want to delete documents?',
+      'Delete documents', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -661,7 +661,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
             this.clearMappings();
             this.dsa.documentations = [];
             this.dsa.documentations = this.documentations;
-            this.updateMappings('Documentations');
+            this.updateMappings('Documents');
           } else {
             this.log.success('Delete cancelled.')
           }
@@ -678,7 +678,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
         this.clearMappings();
         this.dsa.documentations = [];
         this.dsa.documentations = this.documentations;
-        this.updateMappings('Documentations');
+        this.updateMappings('Documents');
       }
     });
   }
@@ -737,7 +737,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   deleteDataSets() {
     MessageBoxDialogComponent.open(this.dialog, 'Remove data sets', 'Are you sure you want to remove data sets?',
-      'Remove data set', 'Cancel')
+      'Remove data sets', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -825,7 +825,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           } else if (type == 'Subscribers') {
             this.getSubscribers();
             this.getSubscriberMarkers();
-          } else if (type == 'Documentations') {
+          } else if (type == 'Documents') {
             this.getAssociatedDocumentation()
           } else if (type == 'Cohorts') {
             this.getLinkedCohorts()
@@ -834,7 +834,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           }
           this.log.success(type + ' updated successfully.');
         },
-        error => this.log.error('The DSA could not be saved. Please try again.')
+        error => this.log.error('The sharing agreement could not be saved. Please try again.')
       );
   }
 

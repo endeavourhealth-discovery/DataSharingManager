@@ -103,7 +103,7 @@ export class DataProcessingAgreementDialogComponent implements OnInit {
           this.dpa.uuid = saved;
           this.dialogRef.close(this.dpa);
         },
-        error => this.log.error('The DPA could not be saved. Please try again.')
+        error => this.log.error('The data processing agreement could not be saved. Please try again.')
       );
   }
 

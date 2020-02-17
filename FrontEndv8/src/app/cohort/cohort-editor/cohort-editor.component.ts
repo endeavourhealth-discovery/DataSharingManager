@@ -87,7 +87,7 @@ export class CohortEditorComponent implements OnInit {
           this.getLinkedDsas();
           this.getLinkedProjects();
         },
-        error => this.log.error('The Cohort could not be loaded. Please try again.'/*, error, 'Load cohort'*/)
+        error => this.log.error('The cohort could not be loaded. Please try again.')
       );
   }
 
@@ -107,61 +107,7 @@ export class CohortEditorComponent implements OnInit {
             this.close();
           }
         },
-        error => this.log.error('The Cohort could not be saved. Please try again.')
-      );
-  }
-
-  updateDPAMapping() {
-    // Populate Data Processing Agreements before save
-    this.cohort.dpas = {};
-    for (const idx in this.dpas) {
-      let dpa: Dpa = this.dpas[idx];
-      this.cohort.dpas[dpa.uuid] = dpa.name;
-    }
-
-    this.cohortService.updateMappings(this.cohort)
-      .subscribe(saved => {
-          this.cohort.uuid = saved;
-          this.getLinkedDpas();
-          this.log.success('Cohort saved successfully');
-        },
-        error => this.log.error('The Cohort could not be saved. Please try again.')
-      );
-  }
-
-  updateDSAMapping() {
-    // Populate Data Sharing Agreements before save
-    this.cohort.dsas = {};
-    for (const idx in this.dsas) {
-      let dsa: Dsa = this.dsas[idx];
-      this.cohort.dsas[dsa.uuid] = dsa.name;
-    }
-
-    this.cohortService.updateMappings(this.cohort)
-      .subscribe(saved => {
-          this.cohort.uuid = saved;
-          this.getLinkedDsas();
-          this.log.success('Cohort saved successfully');
-        },
-        error => this.log.error('The Cohort could not be saved. Please try again.')
-      );
-  }
-
-  updateProjectMapping() {
-    // Populate projects before save
-    this.cohort.projects = {};
-    for (const idx in this.projects) {
-      let proj: Project = this.projects[idx];
-      this.cohort.projects[proj.uuid] = proj.name;
-    }
-
-    this.cohortService.updateMappings(this.cohort)
-      .subscribe(saved => {
-          this.cohort.uuid = saved;
-          this.getLinkedProjects();
-          this.log.success('Cohort saved successfully');
-        },
-        error => this.log.error('The Cohort could not be saved. Please try again.')
+        error => this.log.error('The cohort could not be saved. Please try again.')
       );
   }
 
@@ -181,6 +127,29 @@ export class CohortEditorComponent implements OnInit {
     window.history.back();
   }
 
+  clearMappings() {
+    this.cohort.dpas = null;
+    this.cohort.dsas = null;
+    this.cohort.projects = null;
+  }
+
+  updateMappings(type: string) {
+    this.cohortService.updateMappings(this.cohort)
+      .subscribe(saved => {
+            this.cohort.uuid = saved;
+            if (type == 'Processing agreements') {
+              this.getLinkedDpas();
+            } else if (type == 'Sharing agreements') {
+              this.getLinkedDsas()
+            } else if (type == 'Projects') {
+              this.getLinkedProjects()
+            }
+            this.log.success(type + ' updated successfully.');
+          },
+          error => this.log.error('The cohort could not be saved. Please try again.')
+      );
+  }
+
   private getLinkedDpas() {
     this.cohortService.getLinkedDpas(this.cohort.uuid)
       .subscribe(
@@ -188,7 +157,7 @@ export class CohortEditorComponent implements OnInit {
           this.dpas = result;
           this.dpaTable.updateRows();
         },
-        error => this.log.error('The associated data processing agreements could not be loaded. Please try again.'/*, error, 'Load associated data processing agreements'*/)
+        error => this.log.error('The associated data processing agreements could not be loaded. Please try again.')
       );
   }
 
@@ -228,7 +197,7 @@ export class CohortEditorComponent implements OnInit {
 
   deleteDPAs() {
     MessageBoxDialogComponent.open(this.dialog, 'Remove processing agreements', 'Are you sure you want to remove processing agreements?',
-      'Remove DPA', 'Cancel')
+      'Remove processing agreements', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -238,7 +207,13 @@ export class CohortEditorComponent implements OnInit {
                 if(item === org) this.dpas.splice(index,1);
               });
             }
-            this.updateDPAMapping();
+            this.clearMappings();
+            this.cohort.dpas = {};
+            for (const idx in this.dpas) {
+              const dpa: Dpa = this.dpas[idx];
+              this.cohort.dpas[dpa.uuid] = dpa.name;
+            }
+            this.updateMappings('Processing agreements');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -248,7 +223,7 @@ export class CohortEditorComponent implements OnInit {
 
   deleteDSAs() {
     MessageBoxDialogComponent.open(this.dialog, 'Remove sharing agreements', 'Are you sure you want to remove sharing agreements?',
-      'Remove DSA', 'Cancel')
+      'Remove sharing agreements', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -258,7 +233,13 @@ export class CohortEditorComponent implements OnInit {
                 if(item === org) this.dsas.splice(index,1);
               });
             }
-            this.updateDSAMapping();
+            this.clearMappings();
+            this.cohort.dsas = {};
+            for (const idx in this.dsas) {
+              const dsa: Dsa = this.dsas[idx];
+              this.cohort.dsas[dsa.uuid] = dsa.name;
+            }
+            this.updateMappings('Sharing agreements');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -278,7 +259,13 @@ export class CohortEditorComponent implements OnInit {
                 if(item === org) this.projects.splice(index,1);
               });
             }
-            this.updateProjectMapping();
+            this.clearMappings();
+            this.cohort.projects = {};
+            for (const idx in this.projects) {
+              const project: Project = this.projects[idx];
+              this.cohort.projects[project.uuid] = project.name;
+            }
+            this.updateMappings('Projects');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -299,8 +286,14 @@ export class CohortEditorComponent implements OnInit {
         if (!this.dpas.some(x => x.uuid === dpa.uuid)) {
           this.dpas.push(dpa);
         }
-        this.updateDPAMapping();
       }
+      this.clearMappings();
+      this.cohort.dpas = {};
+      for (const idx in this.dpas) {
+        const dpa: Dpa = this.dpas[idx];
+        this.cohort.dpas[dpa.uuid] = dpa.name;
+      }
+      this.updateMappings('Processing agreements');
     })
   }
 
@@ -317,8 +310,14 @@ export class CohortEditorComponent implements OnInit {
         if (!this.dsas.some(x => x.uuid === dsa.uuid)) {
           this.dsas.push(dsa);
         }
-        this.updateDSAMapping();
       }
+      this.clearMappings();
+      this.cohort.dsas = {};
+      for (const idx in this.dsas) {
+        const dsa: Dsa = this.dsas[idx];
+        this.cohort.dsas[dsa.uuid] = dsa.name;
+      }
+      this.updateMappings('Sharing agreements');
     })
   }
 
@@ -335,8 +334,14 @@ export class CohortEditorComponent implements OnInit {
         if (!this.projects.some(x => x.uuid === proj.uuid)) {
           this.projects.push(proj);
         }
-        this.updateProjectMapping();
       }
+      this.clearMappings();
+      this.cohort.projects = {};
+      for (const idx in this.projects) {
+        const project: Project = this.projects[idx];
+        this.cohort.projects[project.uuid] = project.name;
+      }
+      this.updateMappings('Projects');
     })
   }
 }

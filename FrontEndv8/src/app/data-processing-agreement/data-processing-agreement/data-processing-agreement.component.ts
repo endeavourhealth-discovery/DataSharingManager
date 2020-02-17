@@ -95,8 +95,8 @@ export class DataProcessingAgreementComponent implements OnInit {
   }
 
   delete() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete DPA', 'Are you sure you want to delete DPA(s)?',
-      'Delete DPA', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete processing agreements', 'Are you sure you want to delete processing agreements?',
+      'Delete processing agreements', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {

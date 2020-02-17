@@ -233,7 +233,7 @@ export class RegionEditorComponent implements OnInit {
         const dsa: Dsa = this.sharingAgreements[idx];
         this.region.sharingAgreements[dsa.uuid] = dsa.name;
       }
-      this.updateMappings('DSA');
+      this.updateMappings('Sharing agreements');
     })
   }
 
@@ -257,7 +257,7 @@ export class RegionEditorComponent implements OnInit {
         const dpa: Dpa = this.processingAgreements[idx];
         this.region.processingAgreements[dpa.uuid] = dpa.name;
       }
-      this.updateMappings('DPA');
+      this.updateMappings('Processing agreements');
     })
   }
 
@@ -455,7 +455,7 @@ export class RegionEditorComponent implements OnInit {
               const dsa: Dsa = this.sharingAgreements[idx];
               this.region.sharingAgreements[dsa.uuid] = dsa.name;
             }
-            this.updateMappings('DSA');
+            this.updateMappings('Sharing agreements');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -481,7 +481,7 @@ export class RegionEditorComponent implements OnInit {
               const dpa: Dpa = this.processingAgreements[idx];
               this.region.processingAgreements[dpa.uuid] = dpa.name;
             }
-            this.updateMappings('DPA');
+            this.updateMappings('Processing agreements');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -493,9 +493,9 @@ export class RegionEditorComponent implements OnInit {
     this.regionService.updateMappings(this.region)
       .subscribe(saved => {
           this.region.uuid = saved;
-          if (type == 'DSA') {
+          if (type == 'Sharing agreements') {
             this.getSharingAgreements();
-          } else if (type == 'DPA') {
+          } else if (type == 'Processing agreements') {
             this.getProcessingAgreements();
           } else if (type == 'Parent regions') {
             this.getParentRegions();

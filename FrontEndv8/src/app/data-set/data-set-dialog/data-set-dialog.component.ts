@@ -66,7 +66,7 @@ export class DataSetDialogComponent implements OnInit {
       .subscribe(result => {
           this.dataset = result;
         },
-        error => this.log.error('The Data set could not be loaded. Please try again.')
+        error => this.log.error('The data set could not be loaded. Please try again.')
       );
   }
 
@@ -76,7 +76,7 @@ export class DataSetDialogComponent implements OnInit {
           this.dataset.uuid = saved;
           this.dialogRef.close(this.dataset);
         },
-        error => this.log.error('The Data set could not be saved. Please try again.')
+        error => this.log.error('The data set could not be saved. Please try again.')
       );
   }
 

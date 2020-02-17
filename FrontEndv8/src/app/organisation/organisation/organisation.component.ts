@@ -122,8 +122,8 @@ export class OrganisationComponent implements OnInit {
   }
 
   delete() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete ' + this.modeType.toLowerCase(), 'Are you sure you want to delete ' + this.modeType.toLowerCase() + '(s)?',
-      'Delete ' + this.modeType.toLowerCase(), 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete ' + this.modeType.toLowerCase() + 's', 'Are you sure you want to delete ' + this.modeType.toLowerCase() + 's?',
+      'Delete ' + this.modeType.toLowerCase() + 's', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -170,7 +170,7 @@ export class OrganisationComponent implements OnInit {
           this.loadingComplete = true;
         },
         error => {
-          this.log.error('The organisation could not be loaded. Please try again.'/*, error, 'Load organisations'*/);
+          this.log.error('The organisation could not be loaded. Please try again.');
           this.loadingComplete = true;
         }
       );

@@ -146,8 +146,8 @@ export class DataSetEditorComponent implements OnInit {
   }
 
   deleteDPAs() {
-    MessageBoxDialogComponent.open(this.dialog, 'Remove DPA', 'Are you sure you want to remove DPA(s)?',
-      'Remove DPA', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Remove processing agreements', 'Are you sure you want to remove processing agreements?',
+      'Remove processing agreements', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -157,7 +157,13 @@ export class DataSetEditorComponent implements OnInit {
                 if(item === org) this.processingAgreements.splice(index,1);
               });
             }
-            this.updateDPAMapping();
+            this.clearMappings();
+            this.dataset.dpas = {};
+            for (const idx in this.processingAgreements) {
+              const dpa: Dpa = this.processingAgreements[idx];
+              this.dataset.dpas[dpa.uuid] = dpa.name;
+            }
+            this.updateMappings('Processing agreements');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -167,7 +173,7 @@ export class DataSetEditorComponent implements OnInit {
 
   deleteDSAs() {
     MessageBoxDialogComponent.open(this.dialog, 'Remove sharing agreements', 'Are you sure you want to remove sharing agreements?',
-      'Remove DSA', 'Cancel')
+      'Remove sharing agreements', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {
@@ -177,7 +183,13 @@ export class DataSetEditorComponent implements OnInit {
                 if(item === org) this.dsas.splice(index,1);
               });
             }
-            this.updateDSAMapping();
+            this.clearMappings();
+            this.dataset.dsas = {};
+            for (const idx in this.dsas) {
+              const dsa: Dsa = this.dsas[idx];
+              this.dataset.dsas[dsa.uuid] = dsa.name;
+            }
+            this.updateMappings('Sharing agreements');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -197,7 +209,13 @@ export class DataSetEditorComponent implements OnInit {
                 if(item === org) this.projects.splice(index,1);
               });
             }
-            this.updateProjectMapping();
+            this.clearMappings();
+            this.dataset.projects = {};
+            for (const idx in this.projects) {
+              const project: Project = this.projects[idx];
+              this.dataset.projects[project.uuid] = project.name;
+            }
+            this.updateMappings('Projects');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -218,8 +236,14 @@ export class DataSetEditorComponent implements OnInit {
         if (!this.processingAgreements.some(x => x.uuid === dpa.uuid)) {
           this.processingAgreements.push(dpa);
         }
-        this.updateDPAMapping();
       }
+      this.clearMappings();
+      this.dataset.dpas = {};
+      for (const idx in this.processingAgreements) {
+        const dpa: Dpa = this.processingAgreements[idx];
+        this.dataset.dpas[dpa.uuid] = dpa.name;
+      }
+      this.updateMappings('Processing agreements');
     })
   }
 
@@ -236,8 +260,14 @@ export class DataSetEditorComponent implements OnInit {
         if (!this.dsas.some(x => x.uuid === dsa.uuid)) {
           this.dsas.push(dsa);
         }
-        this.updateDSAMapping();
       }
+      this.clearMappings();
+      this.dataset.dsas = {};
+      for (const idx in this.dsas) {
+        const dsa: Dsa = this.dsas[idx];
+        this.dataset.dsas[dsa.uuid] = dsa.name;
+      }
+      this.updateMappings('Sharing agreements');
     })
   }
 
@@ -254,58 +284,35 @@ export class DataSetEditorComponent implements OnInit {
         if (!this.projects.some(x => x.uuid === proj.uuid)) {
           this.projects.push(proj);
         }
-        this.updateProjectMapping();
       }
+      this.clearMappings();
+      this.dataset.projects = {};
+      for (const idx in this.projects) {
+        const project: Project = this.projects[idx];
+        this.dataset.projects[project.uuid] = project.name;
+      }
+      this.updateMappings('Projects');
     })
   }
 
-  updateDPAMapping() {
-    // Populate Data Processing Agreements before save
-    this.dataset.dpas = {};
-    for (const idx in this.processingAgreements) {
-      let dpa: Dpa = this.processingAgreements[idx];
-      this.dataset.dpas[dpa.uuid] = dpa.name;
-    }
-    this.dataSetService.updateMappings(this.dataset)
-      .subscribe(saved => {
-          this.dataset.uuid = saved;
-          this.getProcessingAgreements();
-          this.log.success('Data set saved successfully');
-        },
-        error => this.log.error('The data set could not be saved. Please try again.')
-      );
-  }
-  updateDSAMapping() {
-    // Populate Data Sharing Agreements before save
-    this.dataset.dsas = {};
-    for (const idx in this.dsas) {
-      let dsa: Dsa = this.dsas[idx];
-      this.dataset.dsas[dsa.uuid] = dsa.name;
-    }
-
-    this.dataSetService.updateMappings(this.dataset)
-      .subscribe(saved => {
-          this.dataset.uuid = saved;
-          this.getLinkedDsas();
-          this.log.success('Data set saved successfully');
-        },
-        error => this.log.error('The data set could not be saved. Please try again.')
-      );
+  clearMappings() {
+    this.dataset.dpas = null;
+    this.dataset.dsas = null;
+    this.dataset.projects = null;
   }
 
-  updateProjectMapping() {
-    // Populate projects before save
-    this.dataset.projects = {};
-    for (const idx in this.projects) {
-      let proj: Project = this.projects[idx];
-      this.dataset.projects[proj.uuid] = proj.name;
-    }
-
+  updateMappings(type: string) {
     this.dataSetService.updateMappings(this.dataset)
       .subscribe(saved => {
           this.dataset.uuid = saved;
-          this.getLinkedProjects();
-          this.log.success('Data set saved successfully');
+          if (type == 'Processing agreements') {
+            this.getProcessingAgreements();
+          } else if (type == 'Sharing agreements') {
+            this.getLinkedDsas()
+          } else if (type == 'Projects') {
+            this.getLinkedProjects()
+          }
+          this.log.success(type + ' updated successfully.');
         },
         error => this.log.error('The data set could not be saved. Please try again.')
       );
@@ -315,10 +322,10 @@ export class DataSetEditorComponent implements OnInit {
     this.dataSetService.saveDataSet(this.dataset)
       .subscribe(saved => {
           this.dataset.uuid = saved;
-          this.log.success('Data Set saved successfully.');
+          this.log.success('Data set saved successfully.');
           if (close) { window.history.back(); }
         },
-        error => this.log.error('The Data Set could not be saved. Please try again.')
+        error => this.log.error('The data set could not be saved. Please try again.')
       );
   }
 
@@ -333,7 +340,7 @@ export class DataSetEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.dataset = result;
-        this.log.success('Data Set saved successfully.');
+        this.log.success('Data set saved successfully.');
       }
     });
   }

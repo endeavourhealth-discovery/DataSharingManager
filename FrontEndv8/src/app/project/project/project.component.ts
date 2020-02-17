@@ -96,8 +96,8 @@ export class ProjectComponent implements OnInit {
   }
 
   delete() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete project', 'Are you sure you want to delete project(s)?',
-      'Delete project', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete projects', 'Are you sure you want to delete projects?',
+      'Delete projects', 'Cancel')
       .subscribe(
         (result) => {
           if(result) {

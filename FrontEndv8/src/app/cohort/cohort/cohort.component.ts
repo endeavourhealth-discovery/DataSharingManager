@@ -62,7 +62,7 @@ export class CohortComponent implements OnInit {
           this.loadingComplete = true;
         },
             error => {
-          this.log.error('The cohorts could not be loaded. Please try again.'/*, error, 'Load cohorts'*/);
+          this.log.error('The cohorts could not be loaded. Please try again.');
           this.loadingComplete = true;
         }
       );
@@ -84,8 +84,8 @@ export class CohortComponent implements OnInit {
   }
 
   delete() {
-    MessageBoxDialogComponent.open(this.dialog, 'Delete cohort', 'Are you sure you want to delete cohort(s)?',
-        'Delete cohort', 'Cancel')
+    MessageBoxDialogComponent.open(this.dialog, 'Delete cohorts', 'Are you sure you want to delete cohorts?',
+        'Delete cohorts', 'Cancel')
         .subscribe(
             (result) => {
               if(result) {
