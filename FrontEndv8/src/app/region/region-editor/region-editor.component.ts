@@ -216,6 +216,7 @@ export class RegionEditorComponent implements OnInit {
   addDSAs() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
       minWidth: '50vw',
+      data: {existing: this.sharingAgreements}
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -239,7 +240,7 @@ export class RegionEditorComponent implements OnInit {
   addDPAs() {
     const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
       minWidth: '50vw',
-      data: {fromRegion: true},
+      data: {fromRegion: true, existing: this.processingAgreements},
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -262,14 +263,17 @@ export class RegionEditorComponent implements OnInit {
 
   addRegions(isParent: boolean) {
     let type = '';
+    let existingRegions = [];
     if (isParent) {
+      existingRegions = this.parentRegions;
       type = 'parent';
     } else {
+      existingRegions = this.childRegions;
       type = 'child';
     }
     const dialogRef = this.dialog.open(RegionPickerComponent, {
       minWidth: '50vw',
-      data: {uuid: '', limit: 0, userId: '', type: type}
+      data: {uuid: '', limit: 0, userId: '', type: type, existing: existingRegions}
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {

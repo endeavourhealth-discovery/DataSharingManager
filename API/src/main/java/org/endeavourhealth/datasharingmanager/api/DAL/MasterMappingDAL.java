@@ -90,6 +90,18 @@ public class MasterMappingDAL {
             updateDocumentsAndAddToAudit(uuid, (oldDPA == null ? null : oldDPA.getDocumentations()),
                     (updatedDPA == null ? null : updatedDPA.getDocumentations()), thisMapTypeID, auditJson);
         }
+
+        // Cohorts
+        if (updatedDPA != null && updatedDPA.getCohorts() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldDPA == null ? null : oldDPA.getCohorts()),
+                    (updatedDPA == null ? null : updatedDPA.getCohorts()), thisMapTypeID, MapType.COHORT.getMapType(), auditJson);
+        }
+
+        // data sets
+        if (updatedDPA != null && updatedDPA.getDataSets() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldDPA == null ? null : oldDPA.getDataSets()),
+                    (updatedDPA == null ? null : updatedDPA.getDataSets()), thisMapTypeID, MapType.DATASET.getMapType(), auditJson);
+        }
     }
 
 
@@ -137,6 +149,18 @@ public class MasterMappingDAL {
         if (updatedDSA != null && updatedDSA.getDocumentations() != null) {
             updateDocumentsAndAddToAudit(uuid, (oldDSA == null ? null : oldDSA.getDocumentations()),
                     (updatedDSA == null ? null : updatedDSA.getDocumentations()), thisMapTypeID, auditJson);
+        }
+
+        // Cohorts
+        if (updatedDSA != null && updatedDSA.getCohorts() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldDSA == null ? null : oldDSA.getCohorts()),
+                    (updatedDSA == null ? null : updatedDSA.getCohorts()), thisMapTypeID, MapType.COHORT.getMapType(), auditJson);
+        }
+
+        // data sets
+        if (updatedDSA != null && updatedDSA.getDataSets() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldDSA == null ? null : oldDSA.getDataSets()),
+                    (updatedDSA == null ? null : updatedDSA.getDataSets()), thisMapTypeID, MapType.DATASET.getMapType(), auditJson);
         }
     }
 

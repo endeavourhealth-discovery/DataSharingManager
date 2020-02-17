@@ -26,6 +26,10 @@ import {DocumentationService} from "../../documentation/documentation.service";
 import {DocumentationComponent} from "../../documentation/documentation/documentation.component";
 import {DataSharingAgreementDialogComponent} from "src/app/data-sharing-agreement/data-sharing-agreement-dialog/data-sharing-agreement-dialog.component";
 import {GoogleMapsDialogComponent} from "../../google-maps-viewer/google-maps-dialog/google-maps-dialog.component";
+import {Cohort} from "../../cohort/models/Cohort";
+import {DataSet} from "../../data-set/models/Dataset";
+import {CohortPickerComponent} from "../../cohort/cohort-picker/cohort-picker.component";
+import {DataSetPickerComponent} from "../../data-set/data-set-picker/data-set-picker.component";
 
 @Component({
   selector: 'app-data-sharing-agreement-editor',
@@ -44,6 +48,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   publishers: Organisation[] = [];
   subscribers: Organisation[] = [];
   documentations: Documentation[] = [];
+  cohorts: Cohort[] = [];
+  dataSets: DataSet[] = [];
 
   publisherMarkers: Marker[];
   subscriberMarkers: Marker[];
@@ -58,7 +64,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   public activeProject: UserProject;
 
-  status = this.linkageService.status;
+  statuses = this.linkageService.status;
 
   consents = this.linkageService.consents;
 
@@ -69,6 +75,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   publisherDetailsToShow = new Organisation().getDisplayItems();
   subscriberDetailsToShow = new Organisation().getDisplayItems();
   documentDetailsToShow = new Documentation().getDisplayItems();
+  cohortDetailsToShow = new Cohort().getDisplayItems();
+  dataSetDetailsToShow = new DataSet().getDisplayItems();
 
   @ViewChild('purposesTable', {static: false}) purposesTable: GenericTableComponent;
   @ViewChild('benefitsTable', {static: false}) benefitsTable: GenericTableComponent;
@@ -77,6 +85,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   @ViewChild('publishersTable', {static: false}) publishersTable: GenericTableComponent;
   @ViewChild('subscribersTable', {static: false}) subscribersTable: GenericTableComponent;
   @ViewChild('documentationsTable', {static: false}) documentationsTable: GenericTableComponent;
+  @ViewChild('cohortTable', {static: false}) cohortTable: GenericTableComponent;
+  @ViewChild('dataSetTable', {static: false}) dataSetTable: GenericTableComponent;
 
   constructor(private log: LoggerService,
               private dsaService: DataSharingAgreementService,
@@ -150,6 +160,8 @@ export class DataSharingAgreementEditorComponent implements OnInit {
           this.getPublisherMarkers();
           this.getSubscriberMarkers();
           this.getAssociatedDocumentation();
+          this.getLinkedCohorts();
+          this.getLinkedDataSets();
         },
         error => this.log.error('The data sharing agreement could not be loaded. Please try again.')
       );
@@ -213,6 +225,14 @@ export class DataSharingAgreementEditorComponent implements OnInit {
 
   subscriberClicked(item: Organisation) {
     this.router.navigate(['/organisation', item.uuid, 'edit']);
+  }
+
+  cohortClicked(item: Cohort) {
+    this.router.navigate(['/cohort', item.uuid, 'edit']);
+  }
+
+  dataSetClicked(item: DataSet) {
+    this.router.navigate(['/dataSet', item.uuid, 'edit']);
   }
 
   documentationClicked(item: Documentation) {
@@ -319,6 +339,28 @@ export class DataSharingAgreementEditorComponent implements OnInit {
         },
         error => this.log.error('The associated publisher map data could not be loaded. Please try again.')
       )
+  }
+
+  private getLinkedCohorts() {
+    this.dsaService.getLinkedCohorts(this.dsa.uuid)
+      .subscribe(
+        result => {
+          this.cohorts = result;
+          this.cohortTable.updateRows();
+        },
+        error => this.log.error('The associated cohorts could not be loaded. Please try again.')
+      );
+  }
+
+  private getLinkedDataSets() {
+    this.dsaService.getLinkedDataSets(this.dsa.uuid)
+      .subscribe(
+        result => {
+          this.dataSets = result;
+          this.dataSetTable.updateRows();
+        },
+        error => this.log.error('The associated data sets could not be loaded. Please try again.')
+      );
   }
 
   deletePurposes() {
@@ -428,7 +470,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   addRegion() {
     const dialogRef = this.dialog.open(RegionPickerComponent, {
       minWidth: '50vw',
-      data: { uuid: '', limit: 0, userId : '' }
+      data: { uuid: '', limit: 0, userId : '', existing: this.regions }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -477,7 +519,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   addProject() {
     const dialogRef = this.dialog.open(ProjectPickerComponent, {
       minWidth: '50vw',
-      data: { uuid: '', limit: 0, userId : this.activeProject.userId }
+      data: { uuid: '', limit: 0, userId : this.activeProject.userId, existing: this.projects }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -641,6 +683,110 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     });
   }
 
+  addCohorts() {
+    const dialogRef = this.dialog.open(CohortPickerComponent, {
+      minWidth: '50vw',
+      data: {existing: this.cohorts}
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+      for (let coh of result) {
+        if (!this.cohorts.some(x => x.uuid === coh.uuid)) {
+          this.cohorts.push(coh);
+        }
+      }
+      this.clearMappings();
+      this.dsa.cohorts = {};
+
+      for (const idx in this.cohorts) {
+        const cohort: Cohort = this.cohorts[idx];
+        this.dsa.cohorts[cohort.uuid] = cohort.name;
+      }
+      console.log(this.dsa);
+      this.updateMappings('Cohorts');
+
+    })
+  }
+
+  addDataSets() {
+    const dialogRef = this.dialog.open(DataSetPickerComponent, {
+      minWidth: '50vw',
+      data: {existing: this.dataSets},
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+      for (let ds of result) {
+        if (!this.dataSets.some(x => x.uuid === ds.uuid)) {
+          this.dataSets.push(ds);
+        }
+      }
+      this.clearMappings();
+      this.dsa.dataSets = {};
+      for (const idx in this.dataSets) {
+        const dataSet: DataSet = this.dataSets[idx];
+        this.dsa.dataSets[dataSet.uuid] = dataSet.name;
+      }
+      this.updateMappings('DataSets');
+
+    })
+  }
+
+  deleteDataSets() {
+    MessageBoxDialogComponent.open(this.dialog, 'Remove data sets', 'Are you sure you want to remove data sets?',
+      'Remove data set', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.dataSetTable.selection.selected.length; i++) {
+              let org = this.dataSetTable.selection.selected[i];
+              this.dataSets.forEach( (item, index) => {
+                if(item === org) this.dataSets.splice(index,1);
+              });
+            }
+            this.clearMappings();
+            this.dsa.dataSets = {};
+            for (const idx in this.dataSets) {
+              const dataSet: DataSet = this.dataSets[idx];
+              this.dsa.dataSets[dataSet.uuid] = dataSet.name;
+            }
+            this.updateMappings('DataSets');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
+  }
+
+  deleteCohorts() {
+    MessageBoxDialogComponent.open(this.dialog, 'Remove cohorts', 'Are you sure you want to remove cohorts?',
+      'Remove cohorts', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.cohortTable.selection.selected.length; i++) {
+              let org = this.cohortTable.selection.selected[i];
+              this.cohorts.forEach( (item, index) => {
+                if(item === org) this.cohorts.splice(index,1);
+              });
+            }
+            this.clearMappings();
+            this.dsa.cohorts = {};
+            for (const idx in this.cohorts) {
+              const cohort: Cohort = this.cohorts[idx];
+              this.dsa.cohorts[cohort.uuid] = cohort.name;
+            }
+            this.updateMappings('Cohorts');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
+  }
+
   swapMarkers() {
     if (this.showPub) {
       this.mapMarkers = this.publisherMarkers;
@@ -681,6 +827,10 @@ export class DataSharingAgreementEditorComponent implements OnInit {
             this.getSubscriberMarkers();
           } else if (type == 'Documentations') {
             this.getAssociatedDocumentation()
+          } else if (type == 'Cohorts') {
+            this.getLinkedCohorts()
+          } else if (type == 'DataSets') {
+            this.getLinkedDataSets()
           }
           this.log.success(type + ' updated successfully.');
         },
@@ -714,5 +864,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     this.dsa.publishers = null;
     this.dsa.subscribers = null;
     this.dsa.documentations = null;
+    this.dsa.cohorts = null;
+    this.dsa.dataSets = null;
   }
 }

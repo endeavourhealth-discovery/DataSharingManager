@@ -1,8 +1,9 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {Cohort} from '../models/Cohort';
 import {CohortService} from '../cohort.service';
 import {GenericTableComponent, LoggerService} from "dds-angular8";
-import {MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {StandardPickerData} from "../../models/StandardPickerData";
 
 @Component({
   selector: 'app-cohort-picker',
@@ -19,6 +20,7 @@ export class CohortPickerComponent implements OnInit {
   @ViewChild('picker', { static: false }) picker: GenericTableComponent;
 
   constructor(public dialogRef: MatDialogRef<CohortPickerComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: StandardPickerData,
               private log: LoggerService,
               private cohortService: CohortService) {
   }
@@ -47,23 +49,19 @@ export class CohortPickerComponent implements OnInit {
     this.cohortService.getAllCohorts()
       .subscribe(
         result => {
-          this.searchResults = result;
+          this.searchResults = this.filterResults(result);
         }
       );
   }
 
-  /*private addToSelection(match: Cohort) {
-    if (!this.resultData.some(x => x.uuid === match.uuid)) {
-      this.resultData.push(match);
-    }
-  }
+  filterResults(results: Cohort[]) {
+    let filterResults: Cohort[];
+    const existing = this.data.existing;
 
-  private removeFromSelection(match: Cohort) {
-    const index = this.resultData.indexOf(match, 0);
-    if (index > -1) {
-      this.resultData.splice(index, 1);
-    }
-  }*/
+    filterResults = results.filter((x) => !existing.filter(y => y.uuid === x.uuid).length);
+
+    return filterResults;
+  }
 
   ok() {
     this.dialogRef.close(this.picker.selection.selected);

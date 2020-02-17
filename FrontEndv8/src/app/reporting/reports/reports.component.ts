@@ -216,7 +216,6 @@ export class ReportsComponent implements OnInit {
       .subscribe(
         result => {
           this.reportData = result;
-          console.log(result);
           this.getLinkedItemsForDPAReport();
           this.reportComplete = true;
         },

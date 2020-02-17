@@ -25,11 +25,11 @@
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Status</mat-label>
-            <input matInput [(ngModel)]="status[dsa.dsaStatusId].name" placeholder="Status" name="status" readonly>
+            <input matInput (ngModel)="statuses[dsa?.dsaStatusId].name" placeholder="Status" name="status" readonly>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Consent model</mat-label>
-            <input matInput [(ngModel)]="consents[dsa.consentModelId].name" placeholder="Consent model" name="consentModel" readonly>
+            <input matInput (ngModel)="consents[dsa?.consentModelId].name" placeholder="Consent model" name="consentModel" readonly>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Start date</mat-label>
@@ -135,6 +135,32 @@
                            (clicked)="documentationClicked($event)">
           <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDocumentations()"><mat-icon>delete</mat-icon></button>
           <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addDocumentation()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{cohorts?.length}}" matBadgeOverlap="false" [matBadgeHidden]="cohorts?.length < 1">Cohorts</span>
+        </ng-template>
+        <app-generic-table #cohortTable
+                           [items]="cohorts"
+                           [detailsToShow]="cohortDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="cohortClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteCohorts()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addCohorts()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{dataSets?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dataSets?.length < 1">Data sets</span>
+        </ng-template>
+        <app-generic-table #dataSetTable
+                           [items]="dataSets"
+                           [detailsToShow]="dataSetDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="dataSetClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDataSets()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addDataSets()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
     </mat-tab-group>

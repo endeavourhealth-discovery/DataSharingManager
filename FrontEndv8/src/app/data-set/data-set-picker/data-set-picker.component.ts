@@ -1,8 +1,9 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {DataSet} from "../models/Dataset";
 import {GenericTableComponent, LoggerService} from "dds-angular8";
-import {MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {DataSetService} from "../data-set.service";
+import {StandardPickerData} from "../../models/StandardPickerData";
 
 @Component({
   selector: 'app-data-set-picker',
@@ -20,6 +21,7 @@ export class DataSetPickerComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<DataSetPickerComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: StandardPickerData,
     private dataSetService: DataSetService,
     private log: LoggerService) {
   }
@@ -41,16 +43,25 @@ export class DataSetPickerComponent implements OnInit {
     this.dataSetService.search(this.searchData)
       .subscribe(
         result => {
-          this.searchResults = result;
+          this.searchResults = this.filterResults(result);
         }
       );
+  }
+
+  filterResults(results: DataSet[]) {
+    let filterResults: DataSet[];
+    const existing = this.data.existing;
+
+    filterResults = results.filter((x) => !existing.filter(y => y.uuid === x.uuid).length);
+
+    return filterResults;
   }
 
   searchAll() {
     this.dataSetService.getAllDataSets()
       .subscribe(
         result => {
-          this.searchResults = result;
+          this.searchResults = this.filterResults(result);
         }
       );
   }

@@ -171,7 +171,6 @@ export class ProjectDialogComponent implements OnInit {
   }
 
   ok() {
-    console.log(this.project);
     this.projectService.saveProject(this.project)
       .subscribe(saved => {
           this.project.uuid = saved;

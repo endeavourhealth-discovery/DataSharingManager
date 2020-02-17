@@ -98,7 +98,6 @@ export class DataProcessingAgreementDialogComponent implements OnInit {
   }
 
   ok() {
-    console.log(this.dpa);
     this.dpaService.saveDpa(this.dpa)
       .subscribe(saved => {
           this.dpa.uuid = saved;

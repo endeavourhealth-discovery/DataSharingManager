@@ -24,6 +24,10 @@ import {OrganisationPickerComponent} from "../../organisation/organisation-picke
 import {DataProcessingAgreementDialogComponent} from "../data-processing-agreement-dialog/data-processing-agreement-dialog.component";
 import {Marker} from "../../region/models/Marker";
 import {GoogleMapsDialogComponent} from "../../google-maps-viewer/google-maps-dialog/google-maps-dialog.component";
+import {Cohort} from "../../cohort/models/Cohort";
+import {DataSet} from "../../data-set/models/Dataset";
+import {DataSetPickerComponent} from "../../data-set/data-set-picker/data-set-picker.component";
+import {CohortPickerComponent} from "../../cohort/cohort-picker/cohort-picker.component";
 
 @Component({
   selector: 'app-data-processing-agreement-editor',
@@ -37,6 +41,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   @ViewChild('regionsTable', { static: false }) regionsTable: GenericTableComponent;
   @ViewChild('publishersTable', { static: false }) publishersTable: GenericTableComponent;
   @ViewChild('documentationsTable', { static: false }) documentationsTable: GenericTableComponent;
+  @ViewChild('cohortTable', {static: false}) cohortTable: GenericTableComponent;
+  @ViewChild('dataSetTable', {static: false}) dataSetTable: GenericTableComponent;
 
 
   dpa: Dpa;
@@ -58,6 +64,10 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   publishersDetailsToShow = new Organisation().getDisplayItems();
   documentations: Documentation[] = [];
   documentationsDetailsToShow = new Documentation().getDisplayItems();
+  cohorts: Cohort[] = [];
+  dataSets: DataSet[] = [];
+  cohortDetailsToShow = new Cohort().getDisplayItems();
+  dataSetDetailsToShow = new DataSet().getDisplayItems();
 
   status = this.linkageService.status;
 
@@ -131,6 +141,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
           this.getPublishers();
           this.getDocumentations();
           this.getPublisherMarkers();
+          this.getLinkedCohorts();
+          this.getLinkedDataSets();
         },
         error => this.log.error('The data processing agreement could not be loaded. Please try again.')
       );
@@ -286,8 +298,39 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
       );
   }
 
+
+  private getLinkedCohorts() {
+    this.dpaService.getLinkedCohorts(this.dpa.uuid)
+      .subscribe(
+        result => {
+          this.cohorts = result;
+          this.cohortTable.updateRows();
+        },
+        error => this.log.error('The associated cohorts could not be loaded. Please try again.')
+      );
+  }
+
+  private getLinkedDataSets() {
+    this.dpaService.getLinkedDataSets(this.dpa.uuid)
+      .subscribe(
+        result => {
+          this.dataSets = result;
+          this.dataSetTable.updateRows();
+        },
+        error => this.log.error('The associated data sets could not be loaded. Please try again.')
+      );
+  }
+
   regionClicked(item: Region) {
     this.router.navigate(['/region', item.uuid, 'edit']);
+  }
+
+  cohortClicked(item: Cohort) {
+    this.router.navigate(['/cohort', item.uuid, 'edit']);
+  }
+
+  dataSetClicked(item: DataSet) {
+    this.router.navigate(['/dataSet', item.uuid, 'edit']);
   }
 
   deleteRegions() {
@@ -319,7 +362,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   addRegion() {
     const dialogRef = this.dialog.open(RegionPickerComponent, {
       minWidth: '50vw',
-      data: { uuid: '', limit: 0, userId : '' }
+      data: { uuid: '', limit: 0, userId : '', existing: this.regions }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -337,6 +380,106 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
         this.dpa.regions[region.uuid] = region.name;
       }
       this.updateMappings('Regions');
+    })
+  }
+
+  deleteDataSets() {
+    MessageBoxDialogComponent.open(this.dialog, 'Remove data sets', 'Are you sure you want to remove data sets?',
+      'Remove data set', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.dataSetTable.selection.selected.length; i++) {
+              let org = this.dataSetTable.selection.selected[i];
+              this.dataSets.forEach( (item, index) => {
+                if(item === org) this.dataSets.splice(index,1);
+              });
+            }
+            this.clearMappings();
+            this.dpa.dataSets = {};
+            for (const idx in this.dataSets) {
+              const ds: DataSet = this.dataSets[idx];
+              this.dpa.dataSets[ds.uuid] = ds.name;
+            }
+            this.updateMappings('DataSets');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
+  }
+
+  deleteCohorts() {
+    MessageBoxDialogComponent.open(this.dialog, 'Remove cohorts', 'Are you sure you want to remove cohorts?',
+      'Remove cohorts', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.cohortTable.selection.selected.length; i++) {
+              let org = this.cohortTable.selection.selected[i];
+              this.cohorts.forEach( (item, index) => {
+                if(item === org) this.cohorts.splice(index,1);
+              });
+            }
+            this.clearMappings();
+            this.dpa.cohorts = {};
+            for (const idx in this.cohorts) {
+              const coh: Cohort = this.cohorts[idx];
+              this.dpa.cohorts[coh.uuid] = coh.name;
+            }
+            this.updateMappings('Cohorts');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
+  }
+
+  addCohorts() {
+    const dialogRef = this.dialog.open(CohortPickerComponent, {
+      minWidth: '50vw',
+      data: {existing: this.cohorts}
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+      for (let coh of result) {
+        if (!this.cohorts.some(x => x.uuid === coh.uuid)) {
+          this.cohorts.push(coh);
+        }
+        this.clearMappings();
+        this.dpa.cohorts = {};
+        for (const idx in this.cohorts) {
+          const cohort: Cohort = this.cohorts[idx];
+          this.dpa.cohorts[cohort.uuid] = cohort.name;
+        }
+        this.updateMappings('Cohorts');
+      }
+    })
+  }
+
+  addDataSets() {
+    const dialogRef = this.dialog.open(DataSetPickerComponent, {
+      minWidth: '50vw',
+      data: {existing: this.dataSets},
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+      for (let ds of result) {
+        if (!this.dataSets.some(x => x.uuid === ds.uuid)) {
+          this.dataSets.push(ds);
+        }
+        this.clearMappings();
+        this.dpa.dataSets = {};
+        for (const idx in this.dataSets) {
+          const dataSet: DataSet = this.dataSets[idx];
+          this.dpa.dataSets[dataSet.uuid] = dataSet.name;
+        }
+        this.updateMappings('DataSets');
+      }
     })
   }
 
@@ -492,6 +635,10 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
             this.getPublisherMarkers();
           } else if (type == 'Documentations') {
             this.getDocumentations()
+          } else if (type == 'Cohorts') {
+            this.getLinkedCohorts()
+          } else if (type == 'DataSets') {
+            this.getLinkedDataSets()
           }
           this.log.success(type + ' updated successfully.');
         },
@@ -515,6 +662,8 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     this.dpa.regions = null;
     this.dpa.publishers = null;
     this.dpa.documentations = null;
+    this.dpa.cohorts = null;
+    this.dpa.dataSets = null;
   }
 
   close() {

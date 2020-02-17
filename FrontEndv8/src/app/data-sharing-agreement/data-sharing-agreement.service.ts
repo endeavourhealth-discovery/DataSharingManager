@@ -8,6 +8,8 @@ import {Dsa} from './models/Dsa';
 import {Marker} from '../region/models/Marker';
 import {Project} from "../project/models/Project";
 import {Purpose} from "src/app/models/Purpose";
+import {Cohort} from "../cohort/models/Cohort";
+import {DataSet} from "../data-set/models/Dataset";
 
 @Injectable()
 export class DataSharingAgreementService {
@@ -120,6 +122,20 @@ export class DataSharingAgreementService {
     let params = new HttpParams();
     if (uuid) params = params.append('uuid', uuid);
     return this.http.get<Project[]>(url,{params});
+  }
+
+  getLinkedCohorts(uuid: string):  Observable<Cohort[]> {
+    const url = 'api/dsa/cohorts';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.get<Cohort[]>(url, {params});
+  }
+
+  getLinkedDataSets(uuid: string):  Observable<DataSet[]> {
+    const url = 'api/dsa/dataSets';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.get<DataSet[]>(url, {params});
   }
 
 }

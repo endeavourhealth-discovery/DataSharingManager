@@ -64,7 +64,6 @@ export class OrganisationPickerComponent implements OnInit {
       .subscribe(
         (result) => {
           this.searchResults = this.filterResults(result)
-          console.log(this.searchResults);
         },
         (error) => this.log.error(error)
       );

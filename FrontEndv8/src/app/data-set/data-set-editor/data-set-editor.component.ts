@@ -208,7 +208,7 @@ export class DataSetEditorComponent implements OnInit {
   addDPAs() {
     const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
       minWidth: '50vw',
-      data: {fromRegion: false},
+      data: {fromRegion: false, existing: this.processingAgreements},
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -226,6 +226,7 @@ export class DataSetEditorComponent implements OnInit {
   addDSAs() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
       minWidth: '50vw',
+      data: {existing: this.dsas}
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -243,7 +244,7 @@ export class DataSetEditorComponent implements OnInit {
   addProjects() {
     const dialogRef = this.dialog.open(ProjectPickerComponent, {
       minWidth: '50vw',
-      data: {uuid: '', limit: 0, userId : this.activeProject.userId},
+      data: {uuid: '', limit: 0, userId : this.activeProject.userId, existing: this.projects},
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {

@@ -168,7 +168,6 @@ export class ProjectEditorComponent implements OnInit {
   }
 
   save(close: boolean) {
-    console.log(this.project);
     this.projectService.saveProject(this.project)
       .subscribe(saved => {
           this.project.uuid = saved;
@@ -384,6 +383,7 @@ export class ProjectEditorComponent implements OnInit {
   addDsas() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
       minWidth: '50vw',
+      data: {existing: this.dsas}
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -643,6 +643,7 @@ export class ProjectEditorComponent implements OnInit {
   addCohorts() {
     const dialogRef = this.dialog.open(CohortPickerComponent, {
       minWidth: '50vw',
+      data: {existing: this.cohorts}
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -705,6 +706,7 @@ export class ProjectEditorComponent implements OnInit {
   addDataSets() {
     const dialogRef = this.dialog.open(DataSetPickerComponent, {
       minWidth: '50vw',
+      data: {existing: this.dataSets}
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

@@ -15,6 +15,8 @@ export class Dsa {
     publishers: { [key: string]: string; };
     subscribers: { [key: string]: string; };
     projects: { [key: string]: string; };
+    cohorts: { [key: string]: string; };
+    dataSets: { [key: string]: string; };
     documentations: Documentation[];
     purposes: Purpose[];
     benefits: Purpose[];

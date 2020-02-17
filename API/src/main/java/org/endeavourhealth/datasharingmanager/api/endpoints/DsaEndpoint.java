@@ -295,4 +295,40 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 .build();
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.CohortEndpoint.GetCohorts")
+    @Path("/cohorts")
+    @ApiOperation(value = "Returns a list of Json representations of cohorts that are linked " +
+            "to the dsa.  Accepts a UUID of a dsa.")
+    public Response getCohortsForDSA(@Context SecurityContext sc,
+                                    @ApiParam(value = "UUID of dsa") @QueryParam("uuid") String uuid
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "get cohorts",
+                "Data Sharing Agreement", uuid);
+
+        return new DataSharingAgreementLogic().getLinkedCohorts(uuid);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.CohortEndpoint.GetdataSets")
+    @Path("/dataSets")
+    @ApiOperation(value = "Returns a list of Json representations of dataSets that are linked " +
+            "to the dsa.  Accepts a UUID of a cohort.")
+    public Response getLinkedDataSets(@Context SecurityContext sc,
+                                         @ApiParam(value = "UUID of dsa") @QueryParam("uuid") String uuid
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "dataSet(s)",
+                "Data sharing agreement", uuid);
+
+        return new DataSharingAgreementLogic().getLinkedDataSets(uuid);
+    }
+
 }

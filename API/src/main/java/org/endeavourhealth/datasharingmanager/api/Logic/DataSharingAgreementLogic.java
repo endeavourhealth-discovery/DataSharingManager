@@ -4,10 +4,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.Se
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDSA;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.ProjectCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.UserCache;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.*;
 import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
 import org.endeavourhealth.datasharingmanager.api.DAL.DataSharingAgreementDAL;
 import org.endeavourhealth.datasharingmanager.api.DAL.PurposeDAL;
@@ -186,6 +183,36 @@ public class DataSharingAgreementLogic {
 
         if (!projectUuids.isEmpty())
             ret = ProjectCache.getProjectDetails(projectUuids);
+
+        return Response
+                .ok()
+                .entity(ret)
+                .build();
+    }
+
+    public Response getLinkedCohorts(String dsaUUID) throws Exception {
+
+        List<String> cohortUUIDs = new SecurityMasterMappingDAL().getChildMappings(dsaUUID, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.COHORT.getMapType());
+
+        List<CohortEntity> ret = new ArrayList<>();
+
+        if (!cohortUUIDs.isEmpty())
+            ret = CohortCache.getCohortDetails(cohortUUIDs);
+
+        return Response
+                .ok()
+                .entity(ret)
+                .build();
+    }
+
+    public Response getLinkedDataSets(String dsaUUID) throws Exception {
+
+        List<String> dataSetUuids = new SecurityMasterMappingDAL().getChildMappings(dsaUUID, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.DATASET.getMapType());
+
+        List<DatasetEntity> ret = new ArrayList<>();
+
+        if (!dataSetUuids.isEmpty())
+            ret = DataSetCache.getDataSetDetails(dataSetUuids);
 
         return Response
                 .ok()

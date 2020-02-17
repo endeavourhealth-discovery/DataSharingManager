@@ -307,7 +307,7 @@ export class OrganisationEditorComponent implements OnInit {
   addRegion() {
     const dialogRef = this.dialog.open(RegionPickerComponent, {
       minWidth: '50vw',
-      data: { uuid: '', limit: 0, userId : '' }
+      data: { uuid: '', limit: 0, userId : '', existing: this.regions }
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -660,7 +660,7 @@ export class OrganisationEditorComponent implements OnInit {
   addDPAs() {
     const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
       minWidth: '50vw',
-      data: {fromRegion: false},
+      data: {fromRegion: false, existing: this.dpaPublishing},
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -688,6 +688,7 @@ export class OrganisationEditorComponent implements OnInit {
   addDSAPublishing() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
       minWidth: '50vw',
+      data: {existing: this.dsaPublishing}
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -737,6 +738,7 @@ export class OrganisationEditorComponent implements OnInit {
   addDSASubscribing() {
     const dialogRef = this.dialog.open(DataSharingAgreementPickerComponent, {
       minWidth: '50vw',
+      data: {existing: this.dsaSubscribing}
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {

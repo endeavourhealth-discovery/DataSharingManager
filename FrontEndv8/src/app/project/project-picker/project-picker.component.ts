@@ -1,9 +1,10 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
-import {MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Project} from "../models/Project";
 import {ProjectService} from "../project.service";
+import {StandardPickerData} from "../../models/StandardPickerData";
 
 @Component({
   selector: 'app-project-picker',
@@ -22,6 +23,7 @@ export class ProjectPickerComponent implements OnInit {
   @ViewChild('picker', { static: false }) picker: GenericTableComponent;
 
   constructor(public dialogRef: MatDialogRef<ProjectPickerComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: StandardPickerData,
               private log: LoggerService,
               private userManagerNotificationService: UserManagerService,
               private service: ProjectService) {
@@ -49,6 +51,15 @@ export class ProjectPickerComponent implements OnInit {
     this.searchAll();
   }
 
+  filterResults(results: Project[]) {
+    let filterResults: Project[];
+    const existing = this.data.existing;
+
+    filterResults = results.filter((x) => !existing.filter(y => y.uuid === x.uuid).length);
+
+    return filterResults;
+  }
+
   clear() {
     this.searchData = '';
     this.searchAll();
@@ -60,7 +71,7 @@ export class ProjectPickerComponent implements OnInit {
     }
     this.service.search(this.searchData)
       .subscribe(
-        result => this.searchResults = result,
+        result => this.searchResults = this.filterResults(result),
         (error) => this.log.error(error)
       );
   }
@@ -69,7 +80,7 @@ export class ProjectPickerComponent implements OnInit {
     this.service.getAllProjects(this.userId)
       .subscribe(
         result => {
-          this.searchResults = result;
+          this.searchResults = this.filterResults(result);
         }
       );
   }

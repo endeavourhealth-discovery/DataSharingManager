@@ -7,6 +7,7 @@ import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 
 export interface DialogData {
   fromRegion: boolean;
+  existing: any[];
 }
 
 @Component({
@@ -67,9 +68,18 @@ export class DataProcessingAgreementPickerComponent implements OnInit {
     }
     this.service.search(this.searchData)
       .subscribe(
-        result => this.searchResults = result,
+        result => this.searchResults = this.filterResults(result),
         (error) => this.log.error(error)
       );
+  }
+
+  filterResults(results: Dpa[]) {
+    let filterResults: Dpa[];
+    const existing = this.data.existing;
+
+    filterResults = results.filter((x) => !existing.filter(y => y.uuid === x.uuid).length);
+
+    return filterResults;
   }
 
   searchAll() {
@@ -77,14 +87,14 @@ export class DataProcessingAgreementPickerComponent implements OnInit {
       this.service.getRegionlessDpas(this.userId)
         .subscribe(
           result => {
-            this.searchResults = result;
+            this.searchResults = this.filterResults(result);
           }
         );
     } else {
       this.service.getAllDpas(this.userId)
         .subscribe(
           result => {
-            this.searchResults = result;
+            this.searchResults = this.filterResults(result);
           }
         );
     }

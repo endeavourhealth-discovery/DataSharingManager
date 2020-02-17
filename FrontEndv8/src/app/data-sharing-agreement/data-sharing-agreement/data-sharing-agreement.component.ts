@@ -61,7 +61,6 @@ export class DataSharingAgreementComponent implements OnInit {
 
   getDsas(userId: string) {
     this.loadingComplete = false;
-    console.log(userId);
     this.dsaService.getAllDsas(userId)
       .subscribe(
         result => {
