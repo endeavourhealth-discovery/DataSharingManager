@@ -811,31 +811,38 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     this.dsaService.updateMappings(this.dsa)
       .subscribe(saved => {
           this.dsa.uuid = saved;
-          if (type == 'Purposes') {
-            this.getPurposes();
-          } else if (type == 'Benefits') {
-            this.getBenefits();
-          } else if (type == 'Regions') {
-            this.getLinkedRegions()
-          } else if (type == 'Projects') {
-            this.getProjects()
-          } else if (type == 'Publishers') {
-            this.getPublishers();
-            this.getPublisherMarkers();
-          } else if (type == 'Subscribers') {
-            this.getSubscribers();
-            this.getSubscriberMarkers();
-          } else if (type == 'Documents') {
-            this.getAssociatedDocumentation()
-          } else if (type == 'Cohorts') {
-            this.getLinkedCohorts()
-          } else if (type == 'DataSets') {
-            this.getLinkedDataSets()
-          }
           this.log.success(type + ' updated successfully.');
+          this.refreshMappings(type);
         },
-        error => this.log.error('The sharing agreement could not be saved. Please try again.')
+        error => {
+          this.log.error('The sharing agreement could not be saved. Please try again.');
+          this.refreshMappings(type);
+        }
       );
+  }
+
+  refreshMappings(type: string) {
+    if (type == 'Purposes') {
+      this.getPurposes();
+    } else if (type == 'Benefits') {
+      this.getBenefits();
+    } else if (type == 'Regions') {
+      this.getLinkedRegions()
+    } else if (type == 'Projects') {
+      this.getProjects()
+    } else if (type == 'Publishers') {
+      this.getPublishers();
+      this.getPublisherMarkers();
+    } else if (type == 'Subscribers') {
+      this.getSubscribers();
+      this.getSubscriberMarkers();
+    } else if (type == 'Documents') {
+      this.getAssociatedDocumentation()
+    } else if (type == 'Cohorts') {
+      this.getLinkedCohorts()
+    } else if (type == 'DataSets') {
+      this.getLinkedDataSets()
+    }
   }
 
   showPublishers() {

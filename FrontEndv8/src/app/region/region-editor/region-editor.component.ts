@@ -493,21 +493,28 @@ export class RegionEditorComponent implements OnInit {
     this.regionService.updateMappings(this.region)
       .subscribe(saved => {
           this.region.uuid = saved;
-          if (type == 'Sharing agreements') {
-            this.getSharingAgreements();
-          } else if (type == 'Processing agreements') {
-            this.getProcessingAgreements();
-          } else if (type == 'Parent regions') {
-            this.getParentRegions();
-          } else if (type == 'Child regions') {
-            this.getChildRegions();
-          } else if (type == 'Organisations') {
-            this.getRegionOrganisations();
-          }
           this.log.success(type + ' updated successfully.');
+          this.refreshMappings(type);
         },
-        error => this.log.error('The region could not be saved. Please try again.')
+        error => {
+          this.log.error('The region could not be saved. Please try again.');
+          this.refreshMappings(type);
+        }
       );
+  }
+
+  refreshMappings(type: string) {
+    if (type == 'Sharing agreements') {
+      this.getSharingAgreements();
+    } else if (type == 'Processing agreements') {
+      this.getProcessingAgreements();
+    } else if (type == 'Parent regions') {
+      this.getParentRegions();
+    } else if (type == 'Child regions') {
+      this.getChildRegions();
+    } else if (type == 'Organisations') {
+      this.getRegionOrganisations();
+    }
   }
 
   clearMappings() {

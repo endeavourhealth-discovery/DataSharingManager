@@ -624,26 +624,33 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     this.dpaService.updateMappings(this.dpa)
       .subscribe(saved => {
           this.dpa.uuid = saved;
-          if (type == 'Purposes') {
-            this.getPurposes();
-          } else if (type == 'Benefits') {
-            this.getBenefits();
-          } else if (type == 'Regions') {
-            this.getRegions()
-          } else if (type == 'Publishers') {
-            this.getPublishers();
-            this.getPublisherMarkers();
-          } else if (type == 'Documentations') {
-            this.getDocumentations()
-          } else if (type == 'Cohorts') {
-            this.getLinkedCohorts()
-          } else if (type == 'Data sets') {
-            this.getLinkedDataSets()
-          }
           this.log.success(type + ' updated successfully.');
+          this.refreshMappings(type);
         },
-        error => this.log.error('The data processing agreement could not be saved. Please try again.')
+        error => {
+          this.log.error('The data processing agreement could not be saved. Please try again.')
+          this.refreshMappings(type);
+        }
       );
+  }
+
+  refreshMappings(type: string) {
+    if (type == 'Purposes') {
+      this.getPurposes();
+    } else if (type == 'Benefits') {
+      this.getBenefits();
+    } else if (type == 'Regions') {
+      this.getRegions()
+    } else if (type == 'Publishers') {
+      this.getPublishers();
+      this.getPublisherMarkers();
+    } else if (type == 'Documentations') {
+      this.getDocumentations()
+    } else if (type == 'Cohorts') {
+      this.getLinkedCohorts()
+    } else if (type == 'Data sets') {
+      this.getLinkedDataSets()
+    }
   }
 
   showMap() {

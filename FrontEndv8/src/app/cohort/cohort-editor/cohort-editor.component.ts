@@ -137,17 +137,24 @@ export class CohortEditorComponent implements OnInit {
     this.cohortService.updateMappings(this.cohort)
       .subscribe(saved => {
             this.cohort.uuid = saved;
-            if (type == 'Processing agreements') {
-              this.getLinkedDpas();
-            } else if (type == 'Sharing agreements') {
-              this.getLinkedDsas()
-            } else if (type == 'Projects') {
-              this.getLinkedProjects()
-            }
             this.log.success(type + ' updated successfully.');
+            this.refreshMappings(type);
           },
-          error => this.log.error('The cohort could not be saved. Please try again.')
+          error => {
+            this.log.error('The cohort could not be saved. Please try again.');
+            this.refreshMappings(type);
+          }
       );
+  }
+
+  refreshMappings(type: string) {
+    if (type == 'Processing agreements') {
+      this.getLinkedDpas();
+    } else if (type == 'Sharing agreements') {
+      this.getLinkedDsas()
+    } else if (type == 'Projects') {
+      this.getLinkedProjects()
+    }
   }
 
   private getLinkedDpas() {

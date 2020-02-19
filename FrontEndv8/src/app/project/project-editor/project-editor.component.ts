@@ -246,27 +246,34 @@ export class ProjectEditorComponent implements OnInit {
     this.projectService.updateMappings(this.project)
       .subscribe(saved => {
           this.project.uuid = saved;
-            if (type == 'Sharing agreements') {
-              this.getDsas();
-            } else if (type == 'Publishers') {
-              this.getPublishers();
-            } else if (type == 'Subscribers') {
-              this.getSubscribers();
-            } else if (type == 'Documents') {
-              this.getDocumentations();
-            } else if (type == 'Cohorts') {
-              this.getCohorts();
-            } else if (type == 'Data sets') {
-              this.getDataSets();
-            } else if (type == 'Extract technical details') {
-              this.getAssociatedExtractTechnicalDetails();
-            } else if (type == 'Schedule') {
-              this.getSchedule();
-            }
             this.log.success(type + ' updated successfully.');
+            this.refreshMappings(type);
         },
-        error => this.log.error('The project could not be saved. Please try again.')
+        error => {
+          this.log.error('The project could not be saved. Please try again.');
+          this.refreshMappings(type);
+        }
       );
+  }
+
+  refreshMappings(type: string) {
+    if (type == 'Sharing agreements') {
+      this.getDsas();
+    } else if (type == 'Publishers') {
+      this.getPublishers();
+    } else if (type == 'Subscribers') {
+      this.getSubscribers();
+    } else if (type == 'Documents') {
+      this.getDocumentations();
+    } else if (type == 'Cohorts') {
+      this.getCohorts();
+    } else if (type == 'Data sets') {
+      this.getDataSets();
+    } else if (type == 'Extract technical details') {
+      this.getAssociatedExtractTechnicalDetails();
+    } else if (type == 'Schedule') {
+      this.getSchedule();
+    }
   }
 
   close() {

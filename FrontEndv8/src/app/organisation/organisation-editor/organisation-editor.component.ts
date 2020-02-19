@@ -232,27 +232,34 @@ export class OrganisationEditorComponent implements OnInit {
     this.organisationService.updateMappings(this.organisation)
       .subscribe(saved => {
           this.organisation.uuid = saved;
-          if (type == 'Addresses') {
-            this.getOrganisationAddresses();
-          } else if (type == 'Regions') {
-            this.getOrganisationRegions();
-          } else if (type == 'Child organisations') {
-            this.getChildOrganisations();
-          } else if (type == 'Parent organisations') {
-            this.getParentOrganisations();
-          } else if (type == 'Services') {
-            this.getServices();
-          } else if (type == 'Processing agreement') {
-            this.getDPAsPublishingTo();
-          } else if (type == 'Publishing sharing agreement') {
-            this.getDSAsPublishingTo();
-          } else if (type == 'Subscribing sharing agreement') {
-            this.getDSAsSubscribingTo()
-          }
           this.log.success(type + ' saved successfully.');
+          this.refreshMappings(type);
         },
-        error => this.log.error(type  + ' could not be saved. Please try again.')
+        error => {
+          this.log.error(type  + ' could not be saved. Please try again.');
+          this.refreshMappings(type);
+        }
       );
+  }
+
+  refreshMappings(type: string) {
+    if (type == 'Addresses') {
+      this.getOrganisationAddresses();
+    } else if (type == 'Regions') {
+      this.getOrganisationRegions();
+    } else if (type == 'Child organisations') {
+      this.getChildOrganisations();
+    } else if (type == 'Parent organisations') {
+      this.getParentOrganisations();
+    } else if (type == 'Services') {
+      this.getServices();
+    } else if (type == 'Processing agreement') {
+      this.getDPAsPublishingTo();
+    } else if (type == 'Publishing sharing agreement') {
+      this.getDSAsPublishingTo();
+    } else if (type == 'Subscribing sharing agreement') {
+      this.getDSAsSubscribingTo()
+    }
   }
 
   addAddress() {
