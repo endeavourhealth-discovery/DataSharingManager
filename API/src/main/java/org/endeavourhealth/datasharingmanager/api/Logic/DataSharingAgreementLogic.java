@@ -4,6 +4,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.Se
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDSA;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.*;
 import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
 import org.endeavourhealth.datasharingmanager.api.DAL.DataSharingAgreementDAL;
@@ -217,6 +218,16 @@ public class DataSharingAgreementLogic {
         return Response
                 .ok()
                 .entity(ret)
+                .build();
+    }
+
+    public Response addDocument(String uuid, JsonDocumentation document, String userProjectID) throws Exception {
+
+        new DataSharingAgreementDAL().addDocument(uuid, document, userProjectID);
+
+        return Response
+                .ok()
+                .entity(uuid)
                 .build();
     }
 }

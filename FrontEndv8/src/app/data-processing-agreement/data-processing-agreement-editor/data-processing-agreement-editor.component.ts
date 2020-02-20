@@ -599,11 +599,17 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.documentations.push(result);
-        this.clearMappings();
-        this.dpa.documentations = [];
-        this.dpa.documentations = this.documentations;
-        this.updateMappings('Documentations');
+        this.dpaService.addDocument(this.dpa.uuid, result)
+          .subscribe(saved => {
+              this.dpa.uuid = saved;
+              this.log.success('Documents updated successfully.');
+              this.getDocumentations();
+            },
+            error => {
+              this.log.error('The processing agreement could not be saved. Please try again.');
+              this.getDocumentations();
+            }
+          );
       }
     });
   }

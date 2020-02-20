@@ -12,6 +12,7 @@ import {ApplicationPolicy} from "./models/ApplicationPolicy";
 import {User} from './models/User';
 import {Schedule} from "../scheduler/models/Schedule";
 import {ExtractTechnicalDetails} from "./models/ExtractTechnicalDetails";
+import {Documentation} from "../documentation/models/Documentation";
 
 @Injectable({
   providedIn: 'root'
@@ -141,5 +142,12 @@ export class ProjectService {
       params = params.append('uuids', uuid[ix]);
     }
     return this.http.delete(url,{params});
+  }
+
+  addDocument(uuid: string, document: Documentation) {
+    const url = 'api/project/addDocument';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.post(url, document, { params, responseType: 'text' });
   }
 }

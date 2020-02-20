@@ -291,7 +291,7 @@ public class MasterMappingDAL {
                 (updatedProject == null ? null : updatedProject.getSchedule()), auditJson);
     }
 
-    private void updateDocumentsAndAddToAudit(String thisItem, List<String> oldDocuments, List<JsonDocumentation> updatedDocuments,
+    public void updateDocumentsAndAddToAudit(String thisItem, List<String> oldDocuments, List<JsonDocumentation> updatedDocuments,
                                               Short thisMapTypeId, JsonNode auditJson) throws Exception {
 
         List<String> updatedMappings = new ArrayList<>();

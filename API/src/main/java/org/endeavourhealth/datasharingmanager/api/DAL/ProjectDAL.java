@@ -5,8 +5,11 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.Se
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDPA;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.ProjectCache;
 import org.endeavourhealth.datasharingmanager.api.Logic.ExtractTechnicalDetailsLogic;
 import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
@@ -164,5 +167,50 @@ public class ProjectDAL {
         }
 
         return projectActive;
+    }
+
+    public void addDocument(String uuid, JsonDocumentation document, String userProjectId) throws Exception {
+        ProjectEntity oldProjectEntity = ProjectCache.getProjectDetails(uuid);
+        oldProjectEntity.setMappingsFromDAL();
+
+        try {
+            _entityManager.getTransaction().begin();
+
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Project edited", oldProjectEntity, oldProjectEntity);
+
+            List<JsonDocumentation> documents = new ArrayList();
+            JsonDocumentation docJSon = null;
+            DocumentationEntity docEntity = null;
+            for (String doc : oldProjectEntity.getDocumentations()) {
+                if (doc != null) {
+                    docEntity = new DocumentationDAL(_entityManager).getDocument(doc);
+                    docJSon = new JsonDocumentation();
+                    docJSon.setFilename(docEntity.getFilename());
+                    docJSon.setFileData(docEntity.getFileData());
+                    docJSon.setTitle(docEntity.getTitle());
+                    docJSon.setUuid(docEntity.getUuid());
+                    documents.add(docJSon);
+                }
+            }
+
+            JsonProject project = new JsonProject();
+            documents.add(document);
+            project.setUuid(uuid);
+            project.setDocumentations(documents);
+
+            _masterMappingDAL.updateDocumentsAndAddToAudit(uuid, (project == null ? null : oldProjectEntity.getDocumentations()),
+                    (oldProjectEntity == null ? null : project.getDocumentations()), MapType.PROJECT.getMapType(), auditJson);
+
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.PROJECT, auditJson);
+
+            _entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            _entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            _entityManager.close();
+        }
+
+        clearProjectCache(uuid);
     }
 }

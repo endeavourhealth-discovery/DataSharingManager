@@ -10,6 +10,7 @@ import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.Se
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.ProjectApplicationPolicyEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonAuthorityToShare;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProjectApplicationPolicy;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.ApplicationPolicyCache;
@@ -353,5 +354,20 @@ public class ProjectEndpoint extends AbstractEndpoint {
                 .ok()
                 .entity(authorities)
                 .build();
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.ProjectEndpoint.addDocument")
+    @Path("/addDocument")
+    @ApiOperation(value = "Post the uploaded document")
+    public Response getDescription(@Context SecurityContext sc,
+                                   @HeaderParam("userProjectId") String userProjectId,
+                                   @ApiParam(value = "uuid") @QueryParam("uuid") String uuid,
+                                   @ApiParam(value = "Document object") JsonDocumentation document) throws Exception {
+
+        super.setLogbackMarkers(sc);
+        return new ProjectLogic().addDocument(uuid, document, userProjectId);
     }
 }

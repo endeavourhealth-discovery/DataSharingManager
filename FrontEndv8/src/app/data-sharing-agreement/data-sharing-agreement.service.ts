@@ -10,6 +10,7 @@ import {Project} from "../project/models/Project";
 import {Purpose} from "src/app/models/Purpose";
 import {Cohort} from "../cohort/models/Cohort";
 import {DataSet} from "../data-set/models/Dataset";
+import {Documentation} from "../documentation/models/Documentation";
 
 @Injectable()
 export class DataSharingAgreementService {
@@ -138,4 +139,10 @@ export class DataSharingAgreementService {
     return this.http.get<DataSet[]>(url, {params});
   }
 
+  addDocument(uuid: string, document: Documentation) {
+    const url = 'api/dsa/addDocument';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.post(url, document, { params, responseType: 'text' });
+  }
 }

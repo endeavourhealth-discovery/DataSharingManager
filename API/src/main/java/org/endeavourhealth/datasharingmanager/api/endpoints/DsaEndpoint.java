@@ -8,6 +8,7 @@ import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDSA;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
@@ -274,7 +275,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Timed(absolute = true, name="DataSharingManager.DpaEndpoint.checkOrganisationIsPartOfAgreement")
+    @Timed(absolute = true, name="DataSharingManager.DsaEndpoint.checkOrganisationIsPartOfAgreement")
     @Path("/checkOrganisationIsPartOfAgreement")
     @ApiOperation(value = "Checks whether an organisation and system is part of a data processing agreement. " +
             "Returns a list of data processing agreements")
@@ -298,7 +299,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Timed(absolute = true, name="DataSharingManager.CohortEndpoint.GetCohorts")
+    @Timed(absolute = true, name="DataSharingManager.DsaEndpoint.GetCohorts")
     @Path("/cohorts")
     @ApiOperation(value = "Returns a list of Json representations of cohorts that are linked " +
             "to the dsa.  Accepts a UUID of a dsa.")
@@ -331,4 +332,18 @@ public final class DsaEndpoint extends AbstractEndpoint {
         return new DataSharingAgreementLogic().getLinkedDataSets(uuid);
     }
 
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.DsaEndpoint.addDocument")
+    @Path("/addDocument")
+    @ApiOperation(value = "Post the uploaded document")
+    public Response getDescription(@Context SecurityContext sc,
+                                   @HeaderParam("userProjectId") String userProjectId,
+                                   @ApiParam(value = "uuid") @QueryParam("uuid") String uuid,
+                                   @ApiParam(value = "Document object") JsonDocumentation document) throws Exception {
+
+        super.setLogbackMarkers(sc);
+        return new DataSharingAgreementLogic().addDocument(uuid, document, userProjectId);
+    }
 }

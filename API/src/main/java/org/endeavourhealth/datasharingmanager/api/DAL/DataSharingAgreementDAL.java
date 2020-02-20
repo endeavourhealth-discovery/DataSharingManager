@@ -1,9 +1,13 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.lang3.SerializationUtils;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataSharingAgreementEntity;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DocumentationEntity;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDSA;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
 import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
 import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
@@ -18,7 +22,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class DataSharingAgreementDAL {
 
@@ -181,5 +187,49 @@ public class DataSharingAgreementDAL {
         } finally {
             _entityManager.close();
         }
+    }
+
+    public void addDocument(String uuid, JsonDocumentation document, String userProjectId) throws Exception {
+        DataSharingAgreementEntity oldDSAEntity = DataSharingAgreementCache.getDSADetails(uuid);
+        oldDSAEntity.setMappingsFromDAL();
+
+        try {
+            _entityManager.getTransaction().begin();
+
+            JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data Sharing Agreement edited", oldDSAEntity, oldDSAEntity);
+
+            List<JsonDocumentation> documents = new ArrayList();
+            JsonDocumentation docJSon = null;
+            DocumentationEntity docEntity = null;
+            for (String doc : oldDSAEntity.getDocumentations()) {
+                if (doc != null) {
+                    docEntity = new DocumentationDAL(_entityManager).getDocument(doc);
+                    docJSon = new JsonDocumentation();
+                    docJSon.setFilename(docEntity.getFilename());
+                    docJSon.setFileData(docEntity.getFileData());
+                    docJSon.setTitle(docEntity.getTitle());
+                    docJSon.setUuid(docEntity.getUuid());
+                    documents.add(docJSon);
+                }
+            }
+
+            JsonDSA dsa = new JsonDSA();
+            documents.add(document);
+            dsa.setUuid(uuid);
+            dsa.setDocumentations(documents);
+
+            _masterMappingDAL.updateDataSharingAgreementMappings(dsa, oldDSAEntity, auditJson);
+
+            _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.EDIT, ItemType.DSA, auditJson);
+
+            _entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            _entityManager.getTransaction().rollback();
+            throw e;
+        } finally {
+            _entityManager.close();
+        }
+
+        clearDSACache(uuid);
     }
 }

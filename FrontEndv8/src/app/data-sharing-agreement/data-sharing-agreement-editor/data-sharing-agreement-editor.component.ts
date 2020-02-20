@@ -674,11 +674,17 @@ export class DataSharingAgreementEditorComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.documentations.push(result);
-        this.clearMappings();
-        this.dsa.documentations = [];
-        this.dsa.documentations = this.documentations;
-        this.updateMappings('Documents');
+        this.dsaService.addDocument(this.dsa.uuid, result)
+          .subscribe(saved => {
+              this.dsa.uuid = saved;
+              this.log.success('Documents updated successfully.');
+              this.getAssociatedDocumentation();
+            },
+            error => {
+              this.log.error('The sharing agreement could not be saved. Please try again.');
+              this.getAssociatedDocumentation();
+            }
+          );
       }
     });
   }
@@ -837,11 +843,11 @@ export class DataSharingAgreementEditorComponent implements OnInit {
       this.getSubscribers();
       this.getSubscriberMarkers();
     } else if (type == 'Documents') {
-      this.getAssociatedDocumentation()
+      this.getAssociatedDocumentation();
     } else if (type == 'Cohorts') {
-      this.getLinkedCohorts()
+      this.getLinkedCohorts();
     } else if (type == 'DataSets') {
-      this.getLinkedDataSets()
+      this.getLinkedDataSets();
     }
   }
 

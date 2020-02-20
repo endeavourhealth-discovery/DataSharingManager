@@ -235,4 +235,14 @@ public class DataProcessingAgreementLogic {
                 .entity(matchingDpa)
                 .build();
     }*/
+
+    public Response addDocument(String uuid, JsonDocumentation document, String userProjectID) throws Exception {
+
+        new DataProcessingAgreementDAL().addDocument(uuid, document, userProjectID);
+
+        return Response
+                .ok()
+                .entity(uuid)
+                .build();
+    }
 }

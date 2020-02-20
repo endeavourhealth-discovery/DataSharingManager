@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonCohort;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDPA;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
@@ -15,7 +14,6 @@ import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.AddressDAL;
-import org.endeavourhealth.datasharingmanager.api.DAL.CohortDAL;
 import org.endeavourhealth.datasharingmanager.api.DAL.DataProcessingAgreementDAL;
 import org.endeavourhealth.datasharingmanager.api.Logic.DataProcessingAgreementLogic;
 import org.slf4j.Logger;
@@ -342,5 +340,20 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "Region Id", uuid);
 
         return new AddressDAL().getOrganisationMarkers(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType());
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.DpaEndpoint.addDocument")
+    @Path("/addDocument")
+    @ApiOperation(value = "Post the uploaded document")
+    public Response getDescription(@Context SecurityContext sc,
+                                   @HeaderParam("userProjectId") String userProjectId,
+                                   @ApiParam(value = "uuid") @QueryParam("uuid") String uuid,
+                                   @ApiParam(value = "Document object") JsonDocumentation document) throws Exception {
+
+        super.setLogbackMarkers(sc);
+        return new DataProcessingAgreementLogic().addDocument(uuid, document, userProjectId);
     }
 }

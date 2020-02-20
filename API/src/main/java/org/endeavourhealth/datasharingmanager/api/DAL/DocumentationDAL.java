@@ -47,4 +47,9 @@ public class DocumentationDAL {
         DocumentationEntity documentationEntity = _entityManager.find(DocumentationEntity.class, uuid);
         _entityManager.remove(documentationEntity);
     }
+
+    public DocumentationEntity getDocument(String uuid) throws Exception {
+        DocumentationEntity documentationEntity = _entityManager.find(DocumentationEntity.class, uuid);
+        return documentationEntity;
+    }
 }

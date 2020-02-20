@@ -598,11 +598,17 @@ export class ProjectEditorComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.documentations.push(result);
-        this.clearMappings();
-        this.project.documentations = [];
-        this.project.documentations = this.documentations;
-        this.updateMappings('Documents');
+        this.projectService.addDocument(this.project.uuid, result)
+          .subscribe(saved => {
+              this.project.uuid = saved;
+              this.log.success('Documents updated successfully.');
+              this.getDocumentations();
+            },
+            error => {
+              this.log.error('The project could not be saved. Please try again.');
+              this.getDocumentations();
+            }
+          );
       }
     });
   }

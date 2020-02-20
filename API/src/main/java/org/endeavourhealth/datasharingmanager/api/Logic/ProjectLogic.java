@@ -1,10 +1,9 @@
 package org.endeavourhealth.datasharingmanager.api.Logic;
 
-import org.apache.commons.lang3.StringUtils;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectScheduleDAL;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
+import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonExtractTechnicalDetails;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
 import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProjectSchedule;
@@ -175,6 +174,16 @@ public class ProjectLogic {
         return Response
                 .ok()
                 .entity(ret)
+                .build();
+    }
+
+    public Response addDocument(String uuid, JsonDocumentation document, String userProjectID) throws Exception {
+
+        new ProjectDAL().addDocument(uuid, document, userProjectID);
+
+        return Response
+                .ok()
+                .entity(uuid)
                 .build();
     }
 }

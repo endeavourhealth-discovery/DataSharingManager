@@ -9,6 +9,7 @@ import {Organisation} from '../organisation/models/Organisation';
 import {Marker} from '../region/models/Marker';
 import {Region} from "../region/models/Region";
 import { Purpose } from "src/app/models/Purpose";
+import {Documentation} from "../documentation/models/Documentation";
 
 @Injectable()
 export class DataProcessingAgreementService {
@@ -123,4 +124,10 @@ export class DataProcessingAgreementService {
     return this.makeAPICall(uuid, 'api/dpa/benefits');
   }
 
+  addDocument(uuid: string, document: Documentation) {
+    const url = 'api/dpa/addDocument';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    return this.http.post(url, document, { params, responseType: 'text' });
+  }
 }
