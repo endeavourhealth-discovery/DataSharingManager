@@ -101,20 +101,23 @@ export class RegionComponent implements OnInit {
       .subscribe(
         (result) => {
           if(result) {
+            let ids = [];
             for (var i = 0; i < this.regionsTable.selection.selected.length; i++) {
               let region = this.regionsTable.selection.selected[i];
               this.regions.forEach( (item, index) => {
                 if(item === region) {
-                  this.regionService.deleteRegion(region.uuid).subscribe(
-                    () => {
-                      this.regions.splice(index,1);
-                      this.regionsTable.updateRows();
-                    }
-                  );
+                  this.regions.splice(index,1);
+                  this.regionsTable.updateRows();
+                  ids.push(item.uuid);
                 }
               });
             }
-            this.log.success('Delete successful.');
+            console.log(ids);
+            this.regionService.deleteRegion(ids).subscribe(
+              () => {
+                this.log.success('Delete successful.');
+              }
+            );
           } else {
             this.log.success('Delete cancelled.')
           }

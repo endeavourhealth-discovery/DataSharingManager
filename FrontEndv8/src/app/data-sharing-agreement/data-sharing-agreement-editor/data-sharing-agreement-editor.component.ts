@@ -468,9 +468,10 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   }
 
   addRegion() {
+    console.log(this.activeProject.userId);
     const dialogRef = this.dialog.open(RegionPickerComponent, {
       minWidth: '50vw',
-      data: { uuid: '', limit: 0, userId : '', existing: this.regions }
+      data: { uuid: '', limit: 0, userId : this.activeProject.userId, existing: this.regions }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {

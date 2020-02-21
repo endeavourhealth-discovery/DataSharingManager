@@ -67,10 +67,11 @@ export class RegionService {
     return this.http.post('api/region', region, { responseType: 'text' });
   }
 
-  deleteRegion(uuid: string): Observable<any> {
-
+  deleteRegion(uuid: string[]): Observable<any> {
     let params = new HttpParams();
-    if (uuid) params = params.append('uuid', uuid);
+    for (let ix in uuid) {
+      params = params.append('uuids', uuid[ix]);
+    }
     return this.http.delete<any>('api/region', { params });
   }
 
