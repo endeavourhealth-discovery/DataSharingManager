@@ -273,7 +273,7 @@ export class RegionEditorComponent implements OnInit {
     }
     const dialogRef = this.dialog.open(RegionPickerComponent, {
       minWidth: '50vw',
-      data: {uuid: '', limit: 0, userId: this.activeProject.userId, type: type, existing: existingRegions}
+      data: {uuid: '', limit: 0, userId: '', type: type, existing: existingRegions}
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
