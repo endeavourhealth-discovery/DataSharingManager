@@ -37,7 +37,7 @@ public class RegionLogic {
     private Response getRegionListFilterOnRegion(String userId) throws Exception {
 
         UserRegionEntity userRegion = UserCache.getUserRegion(userId);
-
+        System.out.println("region:"+userRegion.getRegionId());
         List<RegionEntity> dpas = RegionCache.getAllChildRegionsForRegion(userRegion.getRegionId());
 
         return Response
