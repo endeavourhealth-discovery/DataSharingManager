@@ -1,10 +1,10 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.CohortEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonCohort;
-import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.CohortCache;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonCohort;
+import org.endeavourhealth.core.database.dal.usermanager.caching.CohortCache;
+import org.endeavourhealth.core.database.rdbms.ConnectionManager;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.CohortEntity;
 import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
 import org.endeavourhealth.uiaudit.enums.AuditAction;
 import org.endeavourhealth.uiaudit.enums.ItemType;

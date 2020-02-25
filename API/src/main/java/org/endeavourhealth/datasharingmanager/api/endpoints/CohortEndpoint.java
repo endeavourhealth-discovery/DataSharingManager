@@ -6,20 +6,21 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.CohortEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataProcessingAgreementEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataSharingAgreementEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.ProjectEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonCohort;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.CohortCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.ProjectCache;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
+import org.endeavourhealth.core.database.dal.DalProvider;
+import org.endeavourhealth.core.database.dal.datasharingmanager.MasterMappingDalI;
+import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonCohort;
+import org.endeavourhealth.core.database.dal.usermanager.caching.CohortCache;
+import org.endeavourhealth.core.database.dal.usermanager.caching.DataProcessingAgreementCache;
+import org.endeavourhealth.core.database.dal.usermanager.caching.DataSharingAgreementCache;
+import org.endeavourhealth.core.database.dal.usermanager.caching.ProjectCache;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.CohortEntity;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataProcessingAgreementEntity;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataSharingAgreementEntity;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.ProjectEntity;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.CohortDAL;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
     private static final String COHORT = "Cohort";
 
     private static final UserAuditRepository userAudit = new UserAuditRepository(AuditModule.EdsUiModule.Organisation);
+    private static MasterMappingDalI masterMappingRepository = DalProvider.factoryDSMMasterMappingDal();
 
 
     @GET
@@ -247,7 +249,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
 
     private Response getLinkedDpas(String cohortUuid) throws Exception {
 
-        List<String> dpaUuids = new SecurityMasterMappingDAL().getParentMappings(cohortUuid, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        List<String> dpaUuids = masterMappingRepository.getParentMappings(cohortUuid, MapType.COHORT.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
 
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
@@ -263,7 +265,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
 
     private Response getLinkedDsas(String cohortUuid) throws Exception {
 
-        List<String> dsaUuids = new SecurityMasterMappingDAL().getParentMappings(cohortUuid, MapType.COHORT.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+        List<String> dsaUuids = masterMappingRepository.getParentMappings(cohortUuid, MapType.COHORT.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
 
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
@@ -279,7 +281,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
 
     private Response getLinkedProjects(String cohortUuid) throws Exception {
 
-        List<String> dsaUuids = new SecurityMasterMappingDAL().getParentMappings(cohortUuid, MapType.COHORT.getMapType(), MapType.PROJECT.getMapType());
+        List<String> dsaUuids = masterMappingRepository.getParentMappings(cohortUuid, MapType.COHORT.getMapType(), MapType.PROJECT.getMapType());
 
         List<ProjectEntity> ret = new ArrayList<>();
 

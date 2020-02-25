@@ -1,16 +1,17 @@
 package org.endeavourhealth.datasharingmanager.api.Logic;
 
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDocumentation;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonExtractTechnicalDetails;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProjectSchedule;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.ProjectCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.UserCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
-import org.endeavourhealth.common.security.usermanagermodel.models.json.JsonUser;
+import org.endeavourhealth.core.database.dal.DalProvider;
+import org.endeavourhealth.core.database.dal.datasharingmanager.ProjectDalI;
+import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonDocumentation;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonExtractTechnicalDetails;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonProject;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonProjectSchedule;
+import org.endeavourhealth.core.database.dal.usermanager.caching.ProjectCache;
+import org.endeavourhealth.core.database.dal.usermanager.caching.UserCache;
+import org.endeavourhealth.core.database.dal.usermanager.models.JsonUser;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.*;
+import org.endeavourhealth.core.database.rdbms.usermanager.models.UserRegionEntity;
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 
 import javax.ws.rs.core.Response;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class ProjectLogic {
+    private static ProjectDalI projectRepository = DalProvider.factoryDSMProjectDal();
 
     public Response getProjects(String uuid, String searchData, String userId) throws Exception {
 
@@ -109,7 +111,7 @@ public class ProjectLogic {
 
     public Response getLinkedDsas(String projectId) throws Exception {
 
-        List<DataSharingAgreementEntity> ret = new SecurityProjectDAL().getLinkedDsas(projectId);
+        List<DataSharingAgreementEntity> ret = projectRepository.getLinkedDsas(projectId);
 
         return Response
                 .ok()
@@ -120,11 +122,11 @@ public class ProjectLogic {
     public Response getLinkedSchedule(String projectId) throws Exception {
 
         ProjectScheduleEntity scheduleEntity =
-                new SecurityProjectDAL().getLinkedSchedule(projectId, MapType.SCHEDULE.getMapType());
+                projectRepository.getLinkedSchedule(projectId, MapType.SCHEDULE.getMapType());
 
         JsonProjectSchedule schedule = null;
         if (scheduleEntity != null) {
-            schedule = SecurityProjectDAL.setJsonProjectSchedule(scheduleEntity);
+            schedule = projectRepository.setJsonProjectSchedule(scheduleEntity);
         }
         return Response
                 .ok()
@@ -135,11 +137,11 @@ public class ProjectLogic {
     public Response getLinkedExtractTechnicalDetails(String projectId) throws Exception {
 
         ExtractTechnicalDetailsEntity detailsEntity =
-                new SecurityProjectDAL().getLinkedExtractTechnicalDetails(projectId, MapType.EXTRACTTECHNICALDETAILS.getMapType());
+                projectRepository.getLinkedExtractTechnicalDetails(projectId, MapType.EXTRACTTECHNICALDETAILS.getMapType());
 
         JsonExtractTechnicalDetails details = null;
         if (detailsEntity != null) {
-            details = SecurityProjectDAL.setJsonExtractTechnicalDetails(detailsEntity);
+            details = projectRepository.setJsonExtractTechnicalDetails(detailsEntity);
         }
         return Response
                 .ok()
@@ -149,7 +151,7 @@ public class ProjectLogic {
 
     public Response getBasePopulations(String projectId) throws Exception {
 
-        List<CohortEntity> ret = new SecurityProjectDAL().getBasePopulations(projectId);
+        List<CohortEntity> ret = projectRepository.getBasePopulations(projectId);
 
         return Response
                 .ok()
@@ -159,7 +161,7 @@ public class ProjectLogic {
 
     public Response getDataSets(String projectId) throws Exception {
 
-        List<DatasetEntity> ret = new SecurityProjectDAL().getDataSets(projectId);
+        List<DataSetEntity> ret = projectRepository.getDataSets(projectId);
 
         return Response
                 .ok()
@@ -169,7 +171,7 @@ public class ProjectLogic {
 
     public Response getLinkedOrganisations(String projectId, Short mapType) throws Exception {
 
-        List<OrganisationEntity> ret = new SecurityProjectDAL().getLinkedOrganisations(projectId, mapType);
+        List<OrganisationEntity> ret = projectRepository.getLinkedOrganisations(projectId, mapType);
 
         return Response
                 .ok()

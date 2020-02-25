@@ -1,6 +1,6 @@
 package org.endeavourhealth.datasharingmanager.api.framework.exceptions;
 
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonServerException;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonServerException;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.coreui.framework.exceptions.MappedException;
 import org.slf4j.Logger;

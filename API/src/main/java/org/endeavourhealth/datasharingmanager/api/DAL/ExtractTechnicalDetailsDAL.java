@@ -1,25 +1,12 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.ExtractTechnicalDetailsEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonExtractTechnicalDetails;
-import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonExtractTechnicalDetails;
+import org.endeavourhealth.core.database.rdbms.ConnectionManager;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.ExtractTechnicalDetailsEntity;
 
 import javax.persistence.EntityManager;
 
 public class ExtractTechnicalDetailsDAL {
-
-    public ExtractTechnicalDetailsEntity getExtractTechnicalDetails(String uuid) throws Exception {
-        EntityManager entityManager = ConnectionManager.getDsmEntityManager();
-
-        try {
-            ExtractTechnicalDetailsEntity ret = entityManager.find(ExtractTechnicalDetailsEntity.class, uuid);
-
-            return ret;
-        } finally {
-            entityManager.close();
-        }
-
-    }
 
     public void saveExtractTechnicalDetails(JsonExtractTechnicalDetails extractTechnicalDetails) throws Exception {
         EntityManager entityManager = ConnectionManager.getDsmEntityManager();

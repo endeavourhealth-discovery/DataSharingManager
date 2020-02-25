@@ -3,10 +3,11 @@ package org.endeavourhealth.datasharingmanager.api.DAL;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectScheduleDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.*;
+import org.endeavourhealth.core.database.dal.DalProvider;
+import org.endeavourhealth.core.database.dal.datasharingmanager.ProjectScheduleDalI;
+import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.*;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.*;
 import org.endeavourhealth.uiaudit.logic.AuditCompareLogic;
 
 import javax.persistence.EntityManager;
@@ -15,12 +16,13 @@ import java.util.*;
 public class MasterMappingDAL {
     
     private EntityManager _entityManager;
+    private static ProjectScheduleDalI projectScheduleRepository = DalProvider.factoryDSMProjectScheduleDal();
 
     public MasterMappingDAL(EntityManager entityManager) {
         _entityManager = entityManager;
     }
 
-    void updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson) throws Exception {
+    void updateDataSetMappings(JsonDataSet updatedDataSet, DataSetEntity oldDataset, JsonNode auditJson) throws Exception {
         String uuid = (updatedDataSet != null? updatedDataSet.getUuid(): oldDataset.getUuid());
         Short thisMapTypeID = MapType.DATASET.getMapType();
 
@@ -468,14 +470,12 @@ public class MasterMappingDAL {
             }
         }
 
-        SecurityProjectScheduleDAL securityProjectScheduleDAL = new SecurityProjectScheduleDAL();
-
         Short thisMapTypeId = MapType.PROJECT.getMapType();
         Short otherMapTypeId = MapType.SCHEDULE.getMapType();
 
         // Now apply changes
         if (removedSchedule != null) {
-            securityProjectScheduleDAL.delete(removedSchedule.getUuid());
+            projectScheduleRepository.delete(removedSchedule.getUuid());
 
             List<String> removedScheduleUuids = new ArrayList<>(Arrays.asList(removedSchedule.getUuid()));
             deleteMappings(false, thisItem, removedScheduleUuids, thisMapTypeId, otherMapTypeId);
@@ -489,7 +489,7 @@ public class MasterMappingDAL {
                 addedSchedule.setUuid(UUID.randomUUID().toString());
             }
 
-            securityProjectScheduleDAL.save(addedSchedule);
+            projectScheduleRepository.save(addedSchedule);
 
             List<String> addedScheduleUuids = new ArrayList<>(Arrays.asList(addedSchedule.getUuid()));
             saveMappings(false, thisItem, addedScheduleUuids, thisMapTypeId, otherMapTypeId);
@@ -499,7 +499,7 @@ public class MasterMappingDAL {
         }
 
         if (changedSchedule != null) {
-            securityProjectScheduleDAL.update(changedSchedule);
+            projectScheduleRepository.update(changedSchedule);
 
             ((ObjectNode) auditJson).put(buildChangeDescription(false, false, true, thisMapTypeId, otherMapTypeId),
                     buildBeforeAfter(oldSchedule.getCronDescription(), changedSchedule.getCronDescription()));

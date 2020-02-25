@@ -1,17 +1,19 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectApplicationPolicyDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.ProjectApplicationPolicyEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProjectApplicationPolicy;
-import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.core.database.dal.DalProvider;
+import org.endeavourhealth.core.database.dal.datasharingmanager.ProjectApplicationPolicyDalI;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonProjectApplicationPolicy;
+import org.endeavourhealth.core.database.rdbms.ConnectionManager;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.ProjectApplicationPolicyEntity;
 
 import javax.persistence.EntityManager;
 
 public class ProjectApplicationPolicyDAL {
+    private static ProjectApplicationPolicyDalI projectApplicationRepository = DalProvider.factoryDSMProjectApplicationPolicyDal();
 
     public void saveProjectApplicationPolicyId(JsonProjectApplicationPolicy projectApplicationPolicy) throws Exception {
 
-        ProjectApplicationPolicyEntity oldPolicy = new SecurityProjectApplicationPolicyDAL().getProjectApplicationPolicyId(projectApplicationPolicy.getProjectUuid());
+        ProjectApplicationPolicyEntity oldPolicy = projectApplicationRepository.getProjectApplicationPolicyId(projectApplicationPolicy.getProjectUuid());
 
         if (oldPolicy != null) {
             if (oldPolicy.getApplicationPolicyId().equals(projectApplicationPolicy.getApplicationPolicyId())) {

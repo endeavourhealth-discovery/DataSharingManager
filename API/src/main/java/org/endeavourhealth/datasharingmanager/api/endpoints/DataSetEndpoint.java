@@ -6,20 +6,21 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataProcessingAgreementEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataSharingAgreementEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DatasetEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.ProjectEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDataSet;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSetCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.ProjectCache;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
+import org.endeavourhealth.core.database.dal.DalProvider;
+import org.endeavourhealth.core.database.dal.datasharingmanager.MasterMappingDalI;
+import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonDataSet;
+import org.endeavourhealth.core.database.dal.usermanager.caching.DataProcessingAgreementCache;
+import org.endeavourhealth.core.database.dal.usermanager.caching.DataSetCache;
+import org.endeavourhealth.core.database.dal.usermanager.caching.DataSharingAgreementCache;
+import org.endeavourhealth.core.database.dal.usermanager.caching.ProjectCache;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataProcessingAgreementEntity;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataSetEntity;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataSharingAgreementEntity;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.ProjectEntity;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.DatasetDAL;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
     private static final String DATASET_ID = "Cohort Id";
 
     private static final UserAuditRepository userAudit = new UserAuditRepository(AuditModule.EdsUiModule.Organisation);
+    private static MasterMappingDalI masterMappingRepository = DalProvider.factoryDSMMasterMappingDal();
 
 
     @GET
@@ -215,7 +217,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
 
     private Response getDataSetList() throws Exception {
 
-        List<DatasetEntity> dataSets = new DatasetDAL().getAllDataSets();
+        List<DataSetEntity> dataSets = new DatasetDAL().getAllDataSets();
 
         clearLogbackMarkers();
         return Response
@@ -225,7 +227,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
     }
 
     private Response getSingleDataSet(String uuid) throws Exception {
-        DatasetEntity dataSet = DataSetCache.getDataSetDetails(uuid);
+        DataSetEntity dataSet = DataSetCache.getDataSetDetails(uuid);
 
         return Response
                 .ok()
@@ -235,7 +237,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
     }
 
     private Response search(String searchData) throws Exception {
-        Iterable<DatasetEntity> dataSets = new DatasetDAL().search(searchData);
+        Iterable<DataSetEntity> dataSets = new DatasetDAL().search(searchData);
 
         clearLogbackMarkers();
         return Response
@@ -246,12 +248,12 @@ public final class DataSetEndpoint extends AbstractEndpoint {
 
     private Response getLinkedDpas(String datasetUuid) throws Exception {
 
-        List<String> dpaUuids = new SecurityMasterMappingDAL().getParentMappings(datasetUuid, MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        List<String> dpaUuids = masterMappingRepository.getParentMappings(datasetUuid, MapType.DATASET.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
 
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!dpaUuids.isEmpty())
-            ret = new DataProcessingAgreementCache().getDPADetails(dpaUuids);
+            ret = DataProcessingAgreementCache.getDPADetails(dpaUuids);
 
         clearLogbackMarkers();
         return Response
@@ -262,7 +264,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
 
     private Response getLinkedDsas(String datasetUuid) throws Exception {
 
-        List<String> dsaUuids = new SecurityMasterMappingDAL().getParentMappings(datasetUuid, MapType.DATASET.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+        List<String> dsaUuids = masterMappingRepository.getParentMappings(datasetUuid, MapType.DATASET.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
 
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
@@ -278,7 +280,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
 
     private Response getLinkedProjects(String datasetUuid) throws Exception {
 
-        List<String> dsaUuids = new SecurityMasterMappingDAL().getParentMappings(datasetUuid, MapType.DATASET.getMapType(), MapType.PROJECT.getMapType());
+        List<String> dsaUuids = masterMappingRepository.getParentMappings(datasetUuid, MapType.DATASET.getMapType(), MapType.PROJECT.getMapType());
 
         List<ProjectEntity> ret = new ArrayList<>();
 

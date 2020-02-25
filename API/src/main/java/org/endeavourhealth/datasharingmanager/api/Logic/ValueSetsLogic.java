@@ -1,18 +1,12 @@
 package org.endeavourhealth.datasharingmanager.api.Logic;
-
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityValueSetsDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.ValueSetsCodesEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.ValueSetsEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonValueSetCodes;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonValueSets;
-
+import org.endeavourhealth.core.database.dal.DalProvider;
+import org.endeavourhealth.core.database.dal.datasharingmanager.ValueSetsDalI;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonValueSets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class ValueSetsLogic {
 
@@ -20,6 +14,8 @@ public class ValueSetsLogic {
     private Integer defaultPageSize = 20;
     private String defaultOrderColumn = "name";
     private String defaultSearchData = "";
+
+    private static ValueSetsDalI valueSetsRepository = DalProvider.factoryDSMValueSetsDal();
 
     private static final Logger LOG = LoggerFactory.getLogger(ValueSetsLogic.class);
 
@@ -38,11 +34,11 @@ public class ValueSetsLogic {
         if (searchData == null)
             searchData = defaultSearchData;
 
-        return new SecurityValueSetsDAL().getAllValueSets(searchData, pageNumber, pageSize, orderColumn, descending);
+        return valueSetsRepository.getAllValueSets(searchData, pageNumber, pageSize, orderColumn, descending);
     }
 
     public Response getTotalNumber(String expression) throws Exception {
-        Long count = new SecurityValueSetsDAL().getTotalNumber(expression);
+        Long count = valueSetsRepository.getTotalNumber(expression);
         return Response
                 .ok()
                 .entity(count)

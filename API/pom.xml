@@ -32,6 +32,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.endeavourhealth.common</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.endeavourhealth.UI-AuditTrail</groupId>
             <artifactId>API</artifactId>
         </dependency>

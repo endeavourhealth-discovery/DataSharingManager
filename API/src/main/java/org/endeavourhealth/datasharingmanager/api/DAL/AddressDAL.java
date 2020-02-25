@@ -7,10 +7,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.lang3.StringUtils;
 import org.endeavourhealth.common.config.ConfigManager;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.AddressEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonAddress;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonMarker;
-import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonAddress;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonMarker;
+import org.endeavourhealth.core.database.rdbms.ConnectionManager;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.AddressEntity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;

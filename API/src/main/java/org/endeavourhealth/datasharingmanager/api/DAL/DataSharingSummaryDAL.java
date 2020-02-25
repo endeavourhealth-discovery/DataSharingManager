@@ -1,8 +1,8 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataSharingSummaryEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDataSharingSummary;
-import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonDataSharingSummary;
+import org.endeavourhealth.core.database.rdbms.ConnectionManager;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataSharingSummaryEntity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;

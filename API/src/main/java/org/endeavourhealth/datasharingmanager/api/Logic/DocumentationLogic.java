@@ -1,19 +1,21 @@
 package org.endeavourhealth.datasharingmanager.api.Logic;
 
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DocumentationEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.DocumentationCache;
+import org.endeavourhealth.core.database.dal.DalProvider;
+import org.endeavourhealth.core.database.dal.datasharingmanager.MasterMappingDalI;
+import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
+import org.endeavourhealth.core.database.dal.usermanager.caching.DocumentationCache;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DocumentationEntity;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DocumentationLogic {
+    private static MasterMappingDalI masterMappingRepository = DalProvider.factoryDSMMasterMappingDal();
 
     public Response getAssociatedDocuments(String parentUuid, Short parentType) throws Exception {
 
-        List<String> documentUuids = new SecurityMasterMappingDAL().getChildMappings(parentUuid, parentType, MapType.DOCUMENT.getMapType());
+        List<String> documentUuids = masterMappingRepository.getChildMappings(parentUuid, parentType, MapType.DOCUMENT.getMapType());
         List<DocumentationEntity> ret = new ArrayList<>();
 
         if (!documentUuids.isEmpty())
