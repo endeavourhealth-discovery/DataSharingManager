@@ -12,6 +12,8 @@ import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {Project} from "../../project/models/Project";
 import {DataSharingAgreementPickerComponent} from "../../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component";
 import {ProjectPickerComponent} from "../../project/project-picker/project-picker.component";
+import {Region} from "../../region/models/Region";
+import {RegionPickerComponent} from "../../region/region-picker/region-picker.component";
 
 @Component({
   selector: 'app-cohort-editor',
@@ -24,15 +26,20 @@ export class CohortEditorComponent implements OnInit {
   dpas: Dpa[] = [];
   dsas: Dsa[] = [];
   projects: Project[] = [];
+  regions: Region[] = [];
   allowEdit = false;
   public activeProject: UserProject;
   dpaDetailsToShow = new Dpa().getDisplayItems();
   dsaDetailsToShow = new Dsa().getDisplayItems();
   projectDetailsToShow = new Project().getDisplayItems();
+  regionsDetailsToShow = new Region().getDisplayItems();
+  superUser = false;
+  userId: string;
 
   @ViewChild('dpaTable', {static: false}) dpaTable: GenericTableComponent;
   @ViewChild('dsaTable', {static: false}) dsaTable: GenericTableComponent;
   @ViewChild('projectTable', {static: false}) projectTable: GenericTableComponent;
+  @ViewChild('regionsTable', { static: false }) regionsTable: GenericTableComponent;
 
   constructor(private log: LoggerService,
               private cohortService: CohortService,
@@ -50,17 +57,25 @@ export class CohortEditorComponent implements OnInit {
   }
 
   roleChanged() {
-    if (this.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+    if (this.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Super User') != null) {
       this.allowEdit = true;
+      this.superUser = true;
+      this.userId = null;
+    } else if (this.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+      this.allowEdit = true;
+      this.superUser = false;
+      this.userId = this.activeProject.userId;
     } else {
       this.allowEdit = false;
+      this.superUser = false;
+      this.userId = this.activeProject.userId;
     }
-
     this.paramSubscriber = this.route.params.subscribe(
       params => {
         this.performAction(params['mode'], params['id']);
       });
   }
+
 
   protected performAction(action: string, itemUuid: string) {
     switch (action) {
@@ -86,6 +101,7 @@ export class CohortEditorComponent implements OnInit {
           this.getLinkedDpas();
           this.getLinkedDsas();
           this.getLinkedProjects();
+          this.getRegions();
         },
         error => this.log.error('The cohort could not be loaded. Please try again.')
       );
@@ -131,6 +147,7 @@ export class CohortEditorComponent implements OnInit {
     this.cohort.dpas = null;
     this.cohort.dsas = null;
     this.cohort.projects = null;
+    this.cohort.regions = null;
   }
 
   updateMappings(type: string) {
@@ -154,6 +171,8 @@ export class CohortEditorComponent implements OnInit {
       this.getLinkedDsas()
     } else if (type == 'Projects') {
       this.getLinkedProjects()
+    } else if (type == 'Regions') {
+      this.getRegions();
     }
   }
 
@@ -190,6 +209,17 @@ export class CohortEditorComponent implements OnInit {
       );
   }
 
+  private getRegions() {
+    this.cohortService.getLinkedRegions(this.cohort.uuid, this.userId)
+      .subscribe(
+        result => {
+          this.regions = result;
+          this.regionsTable.updateRows();
+        },
+        error => this.log.error('The associated regions could not be loaded. Please try again.')
+      );
+  }
+
   dpaClicked(item: Dpa) {
     this.router.navigate(['/dpa', item.uuid, 'edit']);
   }
@@ -200,6 +230,10 @@ export class CohortEditorComponent implements OnInit {
 
   projectClicked(item: Dpa) {
     this.router.navigate(['/project', item.uuid, 'edit']);
+  }
+
+  regionClicked(item: Region) {
+    this.router.navigate(['/region', item.uuid, 'edit']);
   }
 
   deleteDPAs() {
@@ -280,6 +314,32 @@ export class CohortEditorComponent implements OnInit {
       );
   }
 
+  deleteRegions() {
+    MessageBoxDialogComponent.open(this.dialog, 'Remove regions', 'Are you sure you want to remove regions?',
+      'Remove regions', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.regionsTable.selection.selected.length; i++) {
+              let region = this.regionsTable.selection.selected[i];
+              this.regions.forEach( (item, index) => {
+                if(item === region) this.regions.splice(index,1);
+              });
+            }
+            this.clearMappings();
+            this.cohort.regions = {};
+            for (const idx in this.regions) {
+              const region: Region = this.regions[idx];
+              this.cohort.regions[region.uuid] = region.name;
+            }
+            this.updateMappings('Regions');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
+  }
+
   addDPAs() {
     const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
       minWidth: '50vw',
@@ -349,6 +409,30 @@ export class CohortEditorComponent implements OnInit {
         this.cohort.projects[project.uuid] = project.name;
       }
       this.updateMappings('Projects');
+    })
+  }
+
+  addRegion() {
+    const dialogRef = this.dialog.open(RegionPickerComponent, {
+      minWidth: '50vw',
+      data: { uuid: '', limit: 0, userId : this.activeProject.userId, existing: this.regions }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+      for (let region of result) {
+        if (!this.regions.some(x => x.uuid === region.uuid)) {
+          this.regions.push(region);
+        }
+      }
+      this.clearMappings();
+      this.cohort.regions = {};
+      for (const idx in this.regions) {
+        const region: Region = this.regions[idx];
+        this.cohort.regions[region.uuid] = region.name;
+      }
+      this.updateMappings('Regions');
     })
   }
 }

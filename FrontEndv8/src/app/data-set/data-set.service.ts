@@ -5,6 +5,7 @@ import {DataSet} from './models/Dataset';
 import {Dpa} from '../data-processing-agreement/models/Dpa';
 import {Dsa} from "../data-sharing-agreement/models/Dsa";
 import {Project} from "../project/models/Project";
+import {Region} from "../region/models/Region";
 
 @Injectable()
 export class DataSetService {
@@ -63,6 +64,16 @@ export class DataSetService {
     let params = new HttpParams();
     if (uuid) params = params.append('uuid', uuid);
     return this.http.get<Project[]>(url, {params});
+  }
+
+  getLinkedRegions(uuid: string, userId: string):  Observable<Region[]> {
+    const url = 'api/dataSet/regions';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    if (userId != null) {
+      if (userId) params = params.append('userId', userId);
+    }
+    return this.http.get<Region[]>(url,{params});
   }
 
   updateMappings(dataset: DataSet): Observable<any> {

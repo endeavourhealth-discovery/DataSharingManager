@@ -7,6 +7,7 @@ export class Cohort {
     dpas : { [key:string]:string; };
     dsas : { [key:string]:string; };
     projects : { [key:string]:string; };
+    regions : { [key:string]:string; };
 
     getDisplayItems() :any[] {
         return [

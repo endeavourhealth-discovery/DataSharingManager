@@ -12,6 +12,8 @@ import {Project} from "../../project/models/Project";
 import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {DataSharingAgreementPickerComponent} from "../../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component";
 import {ProjectPickerComponent} from "../../project/project-picker/project-picker.component";
+import {Region} from "../../region/models/Region";
+import {RegionPickerComponent} from "../../region/region-picker/region-picker.component";
 
 @Component({
   selector: 'app-data-set-editor',
@@ -23,14 +25,17 @@ export class DataSetEditorComponent implements OnInit {
   @ViewChild('dpaTable', { static: false }) dpaTable: GenericTableComponent;
   @ViewChild('dsaTable', {static: false}) dsaTable: GenericTableComponent;
   @ViewChild('projectTable', {static: false}) projectTable: GenericTableComponent;
+  @ViewChild('regionsTable', { static: false }) regionsTable: GenericTableComponent;
 
   dataset: DataSet;
   processingAgreements: Dpa[] = [];
   dsas: Dsa[] = [];
   projects: Project[] = [];
+  regions: Region[] = [];
   processingAgreementsDetailsToShow = new Dpa().getDisplayItems();
   dsaDetailsToShow = new Dsa().getDisplayItems();
   projectDetailsToShow = new Project().getDisplayItems();
+  regionsDetailsToShow = new Region().getDisplayItems();
   public activeProject: UserProject;
   private paramSubscriber: any;
   allowEdit = false;
@@ -96,6 +101,7 @@ export class DataSetEditorComponent implements OnInit {
           this.getProcessingAgreements();
           this.getLinkedDsas();
           this.getLinkedProjects();
+          this.getRegions();
         },
         error => this.log.error('The data set could not be loaded. Please try again.')
       );
@@ -133,6 +139,17 @@ export class DataSetEditorComponent implements OnInit {
       );
   }
 
+  private getRegions() {
+    this.dataSetService.getLinkedRegions(this.dataset.uuid, this.userId)
+      .subscribe(
+        result => {
+          this.regions = result;
+          this.regionsTable.updateRows();
+        },
+        error => this.log.error('The associated regions could not be loaded. Please try again.')
+      );
+  }
+
   processingAgreementClicked(item: Dpa) {
     this.router.navigate(['/dpa', item.uuid, 'edit']);
   }
@@ -143,6 +160,10 @@ export class DataSetEditorComponent implements OnInit {
 
   projectClicked(item: Dpa) {
     this.router.navigate(['/project', item.uuid, 'edit']);
+  }
+
+  regionClicked(item: Region) {
+    this.router.navigate(['/region', item.uuid, 'edit']);
   }
 
   deleteDPAs() {
@@ -223,6 +244,32 @@ export class DataSetEditorComponent implements OnInit {
       );
   }
 
+  deleteRegions() {
+    MessageBoxDialogComponent.open(this.dialog, 'Remove regions', 'Are you sure you want to remove regions?',
+      'Remove regions', 'Cancel')
+      .subscribe(
+        (result) => {
+          if(result) {
+            for (var i = 0; i < this.regionsTable.selection.selected.length; i++) {
+              let region = this.regionsTable.selection.selected[i];
+              this.regions.forEach( (item, index) => {
+                if(item === region) this.regions.splice(index,1);
+              });
+            }
+            this.clearMappings();
+            this.dataset.regions = {};
+            for (const idx in this.regions) {
+              const region: Region = this.regions[idx];
+              this.dataset.regions[region.uuid] = region.name;
+            }
+            this.updateMappings('Regions');
+          } else {
+            this.log.success('Remove cancelled.')
+          }
+        },
+      );
+  }
+
   addDPAs() {
     const dialogRef = this.dialog.open(DataProcessingAgreementPickerComponent, {
       minWidth: '50vw',
@@ -295,10 +342,35 @@ export class DataSetEditorComponent implements OnInit {
     })
   }
 
+  addRegion() {
+    const dialogRef = this.dialog.open(RegionPickerComponent, {
+      minWidth: '50vw',
+      data: { uuid: '', limit: 0, userId : this.activeProject.userId, existing: this.regions }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+      for (let region of result) {
+        if (!this.regions.some(x => x.uuid === region.uuid)) {
+          this.regions.push(region);
+        }
+      }
+      this.clearMappings();
+      this.dataset.regions = {};
+      for (const idx in this.regions) {
+        const region: Region = this.regions[idx];
+        this.dataset.regions[region.uuid] = region.name;
+      }
+      this.updateMappings('Regions');
+    })
+  }
+
   clearMappings() {
     this.dataset.dpas = null;
     this.dataset.dsas = null;
     this.dataset.projects = null;
+    this.dataset.regions = null;
   }
 
   updateMappings(type: string) {
@@ -322,6 +394,8 @@ export class DataSetEditorComponent implements OnInit {
       this.getLinkedDsas()
     } else if (type == 'Projects') {
       this.getLinkedProjects()
+    } else if (type == 'Regions') {
+      this.getRegions();
     }
   }
 

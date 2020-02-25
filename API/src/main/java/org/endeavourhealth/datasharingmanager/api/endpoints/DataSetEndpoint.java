@@ -13,16 +13,12 @@ import org.endeavourhealth.core.database.dal.DalProvider;
 import org.endeavourhealth.core.database.dal.datasharingmanager.MasterMappingDalI;
 import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
 import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonDataSet;
-import org.endeavourhealth.core.database.dal.usermanager.caching.DataProcessingAgreementCache;
-import org.endeavourhealth.core.database.dal.usermanager.caching.DataSetCache;
-import org.endeavourhealth.core.database.dal.usermanager.caching.DataSharingAgreementCache;
-import org.endeavourhealth.core.database.dal.usermanager.caching.ProjectCache;
-import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataProcessingAgreementEntity;
-import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataSetEntity;
-import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataSharingAgreementEntity;
-import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.ProjectEntity;
+import org.endeavourhealth.core.database.dal.usermanager.caching.*;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.RdbmsCoreMasterMappingDal;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.*;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.DatasetDAL;
+import org.endeavourhealth.datasharingmanager.api.Logic.RegionLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +35,7 @@ import java.util.UUID;
 @Api(description = "API endpoint related to the DataSets")
 public final class DataSetEndpoint extends AbstractEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(DataSetEndpoint.class);
-    private static final String DATASET_ID = "Cohort Id";
+    private static final String DATASET_ID = "Data Set Id";
 
     private static final UserAuditRepository userAudit = new UserAuditRepository(AuditModule.EdsUiModule.Organisation);
     private static MasterMappingDalI masterMappingRepository = DalProvider.factoryDSMMasterMappingDal();
@@ -182,12 +178,12 @@ public final class DataSetEndpoint extends AbstractEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Timed(absolute = true, name="DataSharingManager.CohortEndpoint.GetDataSharingAgreements")
+    @Timed(absolute = true, name="DataSharingManager.DataSetEndpoint.GetDataSharingAgreements")
     @Path("/dsas")
     @ApiOperation(value = "Returns a list of Json representations of Data Sharing Agreements that are linked " +
-            "to the cohort.  Accepts a UUID of a cohort.")
-    public Response getDsaForCohort(@Context SecurityContext sc,
-                                    @ApiParam(value = "UUID of cohort") @QueryParam("uuid") String uuid
+            "to the data set.  Accepts a UUID of a data set.")
+    public Response getDsaForDataSet(@Context SecurityContext sc,
+                                    @ApiParam(value = "UUID of data set") @QueryParam("uuid") String uuid
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
@@ -200,12 +196,12 @@ public final class DataSetEndpoint extends AbstractEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Timed(absolute = true, name="DataSharingManager.CohortEndpoint.GetDataSharingAgreements")
+    @Timed(absolute = true, name="DataSharingManager.DataSetEndpoint.GetProjects")
     @Path("/projects")
     @ApiOperation(value = "Returns a list of Json representations of Data Sharing Agreements that are linked " +
-            "to the cohort.  Accepts a UUID of a cohort.")
-    public Response getProjectsForCohort(@Context SecurityContext sc,
-                                         @ApiParam(value = "UUID of cohort") @QueryParam("uuid") String uuid
+            "to the data set.  Accepts a UUID of a data set.")
+    public Response getProjectsForDataSet(@Context SecurityContext sc,
+                                         @ApiParam(value = "UUID of data set") @QueryParam("uuid") String uuid
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
@@ -213,6 +209,25 @@ public final class DataSetEndpoint extends AbstractEndpoint {
                 DATASET_ID, uuid);
 
         return getLinkedProjects(uuid);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.DataSetEndpoint.GetRegions")
+    @Path("/regions")
+    @ApiOperation(value = "Returns a list of Json representations of regions that are linked " +
+            "to the data processing agreement.  Accepts a UUID of a data set.")
+    public Response getLinkedRegionsForDataSet(@Context SecurityContext sc,
+                                           @ApiParam(value = "UUID of data set") @QueryParam("uuid") String uuid,
+                                           @ApiParam(value = "Optional user Id to restrict based on region") @QueryParam("userId") String userId
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "Region(s)",
+                DATASET_ID, uuid);
+
+        return getLinkedRegions(uuid, userId);
     }
 
     private Response getDataSetList() throws Exception {
@@ -294,5 +309,23 @@ public final class DataSetEndpoint extends AbstractEndpoint {
                 .build();
     }
 
+    private Response getLinkedRegions(String dsaUuid, String userId) throws Exception {
+
+        List<String> regionUuids = masterMappingRepository.getParentMappings(dsaUuid, MapType.DATASET.getMapType(), MapType.REGION.getMapType());
+
+        if (userId != null) {
+            regionUuids = new RegionLogic().filterRegionsForUser(regionUuids, userId);
+        }
+
+        List<RegionEntity> ret = new ArrayList<>();
+
+        if (!regionUuids.isEmpty())
+            ret = RegionCache.getRegionDetails(regionUuids);
+
+        return Response
+                .ok()
+                .entity(ret)
+                .build();
+    }
 }
 

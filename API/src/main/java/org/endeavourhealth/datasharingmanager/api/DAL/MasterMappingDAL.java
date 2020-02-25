@@ -46,6 +46,12 @@ public class MasterMappingDAL {
                     (updatedDataSet == null ? null : updatedDataSet.getProjects()),
                     thisMapTypeID, MapType.PROJECT.getMapType(), auditJson);
         }
+
+        // Regions
+        if (updatedDataSet != null && updatedDataSet.getRegions() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldDataset == null ? null : oldDataset.getRegions()),
+                    (updatedDataSet == null ? null : updatedDataSet.getRegions()), thisMapTypeID, MapType.REGION.getMapType(), auditJson);
+        }
     }
 
     void updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson) throws Exception {
@@ -68,6 +74,12 @@ public class MasterMappingDAL {
         if (updatedCohort != null && updatedCohort.getProjects() != null) {
             updateMappingsAndAddToAudit(true, uuid, (oldCohort == null ? null : oldCohort.getProjects()),
                     (updatedCohort == null ? null : updatedCohort.getProjects()), thisMapTypeID, MapType.PROJECT.getMapType(), auditJson);
+        }
+
+        // Regions
+        if (updatedCohort != null && updatedCohort.getRegions() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldCohort == null ? null : oldCohort.getRegions()),
+                    (updatedCohort == null ? null : updatedCohort.getRegions()), thisMapTypeID, MapType.REGION.getMapType(), auditJson);
         }
     }
 

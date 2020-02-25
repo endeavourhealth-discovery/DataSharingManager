@@ -298,7 +298,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
       );
   }
 
-
   private getLinkedCohorts() {
     this.dpaService.getLinkedCohorts(this.dpa.uuid)
       .subscribe(

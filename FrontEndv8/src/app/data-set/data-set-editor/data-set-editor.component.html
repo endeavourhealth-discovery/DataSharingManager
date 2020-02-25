@@ -81,6 +81,19 @@
           <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addProjects()"><mat-icon>add</mat-icon></button>
         </app-generic-table>
       </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{regions?.length}}" matBadgeOverlap="false" [matBadgeHidden]="regions?.length < 1">Regions</span>
+        </ng-template>
+        <app-generic-table #regionsTable
+                           [items]="regions"
+                           [detailsToShow]="regionsDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="regionClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteRegions()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addRegion()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
     </mat-tab-group>
   </mat-card-content>
 </mat-card>

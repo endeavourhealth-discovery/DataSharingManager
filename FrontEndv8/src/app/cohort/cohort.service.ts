@@ -5,6 +5,7 @@ import {Cohort} from './models/Cohort';
 import {Dpa} from '../data-processing-agreement/models/Dpa';
 import {Project} from "../project/models/Project";
 import {Dsa} from "../data-sharing-agreement/models/Dsa";
+import {Region} from "../region/models/Region";
 
 @Injectable()
 export class CohortService {
@@ -70,4 +71,13 @@ export class CohortService {
     return this.http.get<Project[]>(url, {params});
   }
 
+  getLinkedRegions(uuid: string, userId: string):  Observable<Region[]> {
+    const url = 'api/cohort/regions';
+    let params = new HttpParams();
+    if (uuid) params = params.append('uuid', uuid);
+    if (userId != null) {
+      if (userId) params = params.append('userId', userId);
+    }
+    return this.http.get<Region[]>(url,{params});
+  }
 }

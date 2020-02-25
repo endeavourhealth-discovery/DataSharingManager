@@ -13,16 +13,11 @@ import org.endeavourhealth.core.database.dal.DalProvider;
 import org.endeavourhealth.core.database.dal.datasharingmanager.MasterMappingDalI;
 import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
 import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonCohort;
-import org.endeavourhealth.core.database.dal.usermanager.caching.CohortCache;
-import org.endeavourhealth.core.database.dal.usermanager.caching.DataProcessingAgreementCache;
-import org.endeavourhealth.core.database.dal.usermanager.caching.DataSharingAgreementCache;
-import org.endeavourhealth.core.database.dal.usermanager.caching.ProjectCache;
-import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.CohortEntity;
-import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataProcessingAgreementEntity;
-import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataSharingAgreementEntity;
-import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.ProjectEntity;
+import org.endeavourhealth.core.database.dal.usermanager.caching.*;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.*;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.CohortDAL;
+import org.endeavourhealth.datasharingmanager.api.Logic.RegionLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -201,7 +196,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Timed(absolute = true, name="DataSharingManager.CohortEndpoint.GetDataSharingAgreements")
+    @Timed(absolute = true, name="DataSharingManager.CohortEndpoint.GetProjects")
     @Path("/projects")
     @ApiOperation(value = "Returns a list of Json representations of Data Sharing Agreements that are linked " +
             "to the cohort.  Accepts a UUID of a cohort.")
@@ -214,6 +209,25 @@ public final class CohortEndpoint extends AbstractEndpoint {
                 COHORT_ID, uuid);
 
         return getLinkedProjects(uuid);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.CohortEndpoint.GetRegions")
+    @Path("/regions")
+    @ApiOperation(value = "Returns a list of Json representations of regions that are linked " +
+            "to the data processing agreement.  Accepts a UUID of a cohort.")
+    public Response getLinkedRegionsForDataSet(@Context SecurityContext sc,
+                                               @ApiParam(value = "UUID of cohort") @QueryParam("uuid") String uuid,
+                                               @ApiParam(value = "Optional user Id to restrict based on region") @QueryParam("userId") String userId
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "Region(s)",
+                COHORT_ID, uuid);
+
+        return getLinkedRegions(uuid, userId);
     }
 
     private Response getCohortList() throws Exception {
@@ -295,5 +309,23 @@ public final class CohortEndpoint extends AbstractEndpoint {
                 .build();
     }
 
+    private Response getLinkedRegions(String dsaUuid, String userId) throws Exception {
+
+        List<String> regionUuids = masterMappingRepository.getParentMappings(dsaUuid, MapType.COHORT.getMapType(), MapType.REGION.getMapType());
+
+        if (userId != null) {
+            regionUuids = new RegionLogic().filterRegionsForUser(regionUuids, userId);
+        }
+
+        List<RegionEntity> ret = new ArrayList<>();
+
+        if (!regionUuids.isEmpty())
+            ret = RegionCache.getRegionDetails(regionUuids);
+
+        return Response
+                .ok()
+                .entity(ret)
+                .build();
+    }
 }
 
