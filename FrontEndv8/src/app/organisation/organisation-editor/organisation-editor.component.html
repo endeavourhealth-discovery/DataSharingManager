@@ -8,7 +8,7 @@
     <mat-card-subtitle *ngIf="organisation.name">{{organisation.name}}</mat-card-subtitle>
     <mat-card-subtitle *ngIf="!organisation.name">New {{orgType}}</mat-card-subtitle>
     <div fxFlex></div>
-    <div fxLayoutAlign="center" class="mat-action" matRipple (click)="editOrganisation()">
+    <div *ngIf="superUser" fxLayoutAlign="center" class="mat-action" matRipple (click)="editOrganisation()">
       <i class="fas fa-fw fa-pencil"></i>
     </div>
     <div *ngIf="(organisation.isService === 0) && (organisation.uuid) && (allowEdit)" fxLayoutAlign="center" class="mat-action" matRipple (click)="createServiceFromOrg()">

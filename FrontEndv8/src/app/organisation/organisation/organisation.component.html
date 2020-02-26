@@ -20,8 +20,8 @@
       (onPageChange)="pageChange($event)"
       (onOrderChange)="onOrderChange($event)"
       (search)="onSearch($event)">
-      <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="delete()"><mat-icon>delete</mat-icon></button>
-      <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="add()"><mat-icon>add</mat-icon></button>
+      <button role="selectionOnly" *ngIf="superUser" mat-icon-button color="warn" (click)="delete()"><mat-icon>delete</mat-icon></button>
+      <button *ngIf="superUser" mat-icon-button color="primary" (click)="add()"><mat-icon>add</mat-icon></button>
     </app-generic-table-ssp>
   </mat-card-content>
 </mat-card>
