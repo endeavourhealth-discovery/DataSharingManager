@@ -28,6 +28,8 @@ export class OrganisationComponent implements OnInit {
   orderColumn = 'name';
   descending = false;
   allowEdit = false;
+  superUser = false;
+  userId: string;
   orgDetailsToShow = new Organisation().getDisplayItems();
   loadingComplete = false;
 
@@ -41,12 +43,18 @@ export class OrganisationComponent implements OnInit {
   }
 
   roleChanged() {
-
-
-    if (this.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+    if (this.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Super User') != null) {
       this.allowEdit = true;
+      this.superUser = true;
+      this.userId = null;
+    } else if (this.activeProject.applicationPolicyAttributes.find(x => x.applicationAccessProfileName == 'Admin') != null) {
+      this.allowEdit = true;
+      this.superUser = false;
+      this.userId = this.activeProject.userId;
     } else {
       this.allowEdit = false;
+      this.superUser = false;
+      this.userId = this.activeProject.userId;
     }
 
     this.paramSubscriber = this.route.params.subscribe(
