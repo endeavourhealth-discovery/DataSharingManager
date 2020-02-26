@@ -8,6 +8,7 @@ import {Dsa} from "../data-sharing-agreement/models/Dsa";
 import {Address} from "./models/Address";
 import {FileUpload} from "./models/FileUpload";
 import {OrganisationType} from "./models/OrganisationType";
+import {Project} from "../project/models/Project";
 
 @Injectable()
 export class OrganisationService  {
@@ -81,6 +82,14 @@ export class OrganisationService  {
       params = params.append('uuids', uuid[ix]);
     }
     return this.http.get<Dpa[]>('api/organisation/dpasPublishingFromList', {params});
+  }
+
+  getProjectsPublishingFromList(uuid: string[]):  Observable<Project[]> {
+    let params = new HttpParams();
+    for (let ix in uuid) {
+      params = params.append('uuids', uuid[ix]);
+    }
+    return this.http.get<Project[]>('api/organisation/projectsPublishingFromList', {params});
   }
 
   getDSAPublishing(uuid: string):  Observable<Dsa[]> {

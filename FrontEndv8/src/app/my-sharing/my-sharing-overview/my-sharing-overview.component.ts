@@ -5,6 +5,7 @@ import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {LoggerService, UserManagerService} from "dds-angular8";
+import {Project} from "../../project/models/Project";
 
 @Component({
   selector: 'app-my-sharing-overview',
@@ -14,9 +15,11 @@ import {LoggerService, UserManagerService} from "dds-angular8";
 export class MySharingOverviewComponent implements OnInit {
   userOrgs : string[] = [];
   dpaPublishing: Dpa[];
+  projectPublishing: Project[];
   dsaPublishing: Dsa[];
   dsaSubscribing: Dsa[];
   dsaPubLoadingComplete = false;
+  projectsPubLoadingComplete = false;
   dsaSubLoadingComplete = false;
   dpaPubLoadingComplete = false;
   allowEdit = false;
@@ -25,6 +28,7 @@ export class MySharingOverviewComponent implements OnInit {
 
   dpaDetailsToShow = new Dpa().getDisplayItems();
   dsaDetailsToShow = new Dsa().getDisplayItems();
+  projectDetailsToShow = new Project().getDisplayItems();
 
   constructor(private organisationService: OrganisationService,
               private log: LoggerService,
@@ -52,6 +56,7 @@ export class MySharingOverviewComponent implements OnInit {
     this.getDPAsPublishingTo(this.userOrgs);
     this.getDSAsPublishingTo(this.userOrgs);
     this.getDSAsSubscribingTo(this.userOrgs);
+    this.getProjectsPublishingTo(this.userOrgs);
 
   }
 
@@ -66,6 +71,22 @@ export class MySharingOverviewComponent implements OnInit {
           },
         error => {
           this.log.error('The associated publishing data processing agreements could not be loaded. Please try again.');
+          this.dpaPubLoadingComplete = true;
+        }
+      );
+  }
+
+  private getProjectsPublishingTo(orgs: string[]) {
+
+    this.projectsPubLoadingComplete = false;
+    this.organisationService.getProjectsPublishingFromList(orgs)
+      .subscribe(
+        result => {
+          this.projectPublishing = result;
+          this.projectsPubLoadingComplete = true;
+        },
+        error => {
+          this.log.error('The associated publishing projects could not be loaded. Please try again.');
           this.dpaPubLoadingComplete = true;
         }
       );
@@ -109,5 +130,9 @@ export class MySharingOverviewComponent implements OnInit {
 
   dpaClicked(dpa: Dpa) {
     this.router.navigate(['/dpa', dpa.uuid, 'edit']);
+  }
+
+  projectClicked(project: Project) {
+    this.router.navigate(['/project', project.uuid, 'edit']);
   }
 }

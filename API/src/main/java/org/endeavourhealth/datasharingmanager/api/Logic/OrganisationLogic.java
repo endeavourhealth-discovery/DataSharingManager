@@ -9,10 +9,7 @@ import org.endeavourhealth.core.database.dal.datasharingmanager.enums.Organisati
 import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonFileUpload;
 import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonOrganisation;
 import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonStatistics;
-import org.endeavourhealth.core.database.dal.usermanager.caching.DataProcessingAgreementCache;
-import org.endeavourhealth.core.database.dal.usermanager.caching.DataSharingAgreementCache;
-import org.endeavourhealth.core.database.dal.usermanager.caching.OrganisationCache;
-import org.endeavourhealth.core.database.dal.usermanager.caching.RegionCache;
+import org.endeavourhealth.core.database.dal.usermanager.caching.*;
 import org.endeavourhealth.core.database.rdbms.ConnectionManager;
 import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.*;
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
@@ -205,7 +202,21 @@ public class OrganisationLogic {
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!dpaUUIDs.isEmpty())
-            ret = new DataProcessingAgreementCache().getDPADetails(dpaUUIDs);
+            ret = DataProcessingAgreementCache.getDPADetails(dpaUUIDs);
+
+        return Response
+                .ok()
+                .entity(ret)
+                .build();
+    }
+
+    public Response getProjectsOrganisationPublishingToFromList(List<String> organisationUuids) throws Exception {
+
+        List<String> projectUUIDs = masterMappingRepository.getParentMappings(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.PROJECT.getMapType());
+        List<ProjectEntity> ret = new ArrayList<>();
+
+        if (!projectUUIDs.isEmpty())
+            ret = ProjectCache.getProjectDetails(projectUUIDs);
 
         return Response
                 .ok()

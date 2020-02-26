@@ -243,6 +243,24 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.OrganisationEndpoint.getProjectsOrganisationPublishingFromList")
+    @Path("/projectsPublishingFromList")
+    @ApiOperation(value = "Returns a list of Json representations of projects that " +
+            "the organisation is publishing to.  Accepts a UUID of an organisation.")
+    public Response getProjectsOrganisationPublishingFromList(@Context SecurityContext sc,
+                                                          @ApiParam(value = "UUID of organisation") @QueryParam("uuids") List<String > uuids
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "DPA(s)",
+                "Organisation Id", uuids);
+
+        return new OrganisationLogic().getProjectsOrganisationPublishingToFromList(uuids);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.OrganisationEndpoint.getDSAsOrganisationPublishing")
     @Path("/dsasPublishing")
     @ApiOperation(value = "Returns a list of Json representations of DSAs that " +

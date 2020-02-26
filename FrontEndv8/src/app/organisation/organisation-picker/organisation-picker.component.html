@@ -60,14 +60,16 @@
       </mat-tab>
     </mat-tab-group>
     <div *ngIf="listSearch">
-      <app-generic-table #listPicker
-                         [items]="availableOrgs"
-                         [detailsToShow]="orgDetailsToShow"
-                         [allowSearch]="false"
-                         [allowSelect]="true"
-                         [pageSize]="20">
+      <div class="scroll-box-400">
+        <app-generic-table #listPicker
+                           [items]="availableOrgs"
+                           [detailsToShow]="orgDetailsToShow"
+                           [allowSearch]="false"
+                           [allowSelect]="true"
+                           [pageSize]="20">
 
-      </app-generic-table>
+        </app-generic-table>
+      </div>
     </div>
 </div>
 <div mat-dialog-actions align="end">
