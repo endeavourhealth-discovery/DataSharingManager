@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
@@ -15,6 +16,7 @@ import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
 import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonCohort;
 import org.endeavourhealth.core.database.dal.usermanager.caching.*;
 import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.*;
+import org.endeavourhealth.core.database.rdbms.usermanager.models.UserRegionEntity;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.CohortDAL;
 import org.endeavourhealth.datasharingmanager.api.Logic.RegionLogic;
@@ -51,6 +53,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
             "Returns a JSON representation of the matching set of cohorts")
     public Response getCohort(@Context SecurityContext sc,
                               @ApiParam(value = "Optional uuid") @QueryParam("uuid") String uuid,
+                              @ApiParam(value = "Optional userId") @QueryParam("userId") String userId,
                               @ApiParam(value = "Optional search term") @QueryParam("searchData") String searchData
     ) throws Exception {
         super.setLogbackMarkers(sc);
@@ -63,7 +66,7 @@ public final class CohortEndpoint extends AbstractEndpoint {
         if (uuid == null && searchData == null) {
             LOG.trace("getCohort - list");
 
-            return getCohortList();
+            return getCohortList(userId);
         } else if (uuid != null){
             LOG.trace("getCohort - single - {}", uuid);
             return getSingleCohort(uuid);
@@ -230,9 +233,21 @@ public final class CohortEndpoint extends AbstractEndpoint {
         return getLinkedRegions(uuid, userId);
     }
 
-    private Response getCohortList() throws Exception {
+    private Response getCohortList(String userId) throws Exception {
 
         List<CohortEntity> cohorts = new CohortDAL().getAllCohorts();
+        List<CohortEntity> cohortsBasedOnRegion = new ArrayList<>();
+        if (StringUtils.isNotEmpty(userId)) {
+            for (CohortEntity cohort : cohorts) {
+                List<String> regionUuids = masterMappingRepository.getParentMappings(cohort.getUuid(),
+                        MapType.COHORT.getMapType(), MapType.REGION.getMapType());
+                UserRegionEntity userRegion = UserCache.getUserRegion(userId);
+                if (regionUuids.contains(userRegion.getRegionId())) {
+                    cohortsBasedOnRegion.add(cohort);
+                }
+            }
+            cohorts = cohortsBasedOnRegion;
+        }
 
         clearLogbackMarkers();
         return Response
@@ -309,9 +324,9 @@ public final class CohortEndpoint extends AbstractEndpoint {
                 .build();
     }
 
-    private Response getLinkedRegions(String dsaUuid, String userId) throws Exception {
+    private Response getLinkedRegions(String cohortUid, String userId) throws Exception {
 
-        List<String> regionUuids = masterMappingRepository.getParentMappings(dsaUuid, MapType.COHORT.getMapType(), MapType.REGION.getMapType());
+        List<String> regionUuids = masterMappingRepository.getParentMappings(cohortUid, MapType.COHORT.getMapType(), MapType.REGION.getMapType());
 
         if (userId != null) {
             regionUuids = new RegionLogic().filterRegionsForUser(regionUuids, userId);

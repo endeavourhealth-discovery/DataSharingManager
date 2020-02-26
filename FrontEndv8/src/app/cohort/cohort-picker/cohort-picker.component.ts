@@ -46,12 +46,21 @@ export class CohortPickerComponent implements OnInit {
   }
 
   searchAll() {
-    this.cohortService.getAllCohorts()
-      .subscribe(
-        result => {
-          this.searchResults = this.filterResults(result);
-        }
-      );
+    if (this.data.userId == null) {
+      this.cohortService.getAllCohorts()
+        .subscribe(
+          result => {
+            this.searchResults = this.filterResults(result);
+          }
+        );
+    } else {
+      this.cohortService.getCohortsBasedOnRegion(this.data.userId)
+        .subscribe(
+          result => {
+            this.searchResults = this.filterResults(result);
+          }
+        );
+    }
   }
 
   filterResults(results: Cohort[]) {

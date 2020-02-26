@@ -17,6 +17,13 @@ export class DataSetService {
     return this.http.get<DataSet[]>(url);
   }
 
+  getDataSetsBasedOnRegion(userId: string): Observable<DataSet[]> {
+    const url = 'api/dataSet';
+    let params = new HttpParams();
+    if (userId) params = params.append('userId', userId);
+    return this.http.get<DataSet[]>(url, {params});
+  }
+
   getDataSet(uuid: string): Observable<DataSet> {
     const url = 'api/dataSet';
     let params = new HttpParams();

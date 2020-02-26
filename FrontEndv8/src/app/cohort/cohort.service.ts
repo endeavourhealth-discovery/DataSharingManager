@@ -17,6 +17,13 @@ export class CohortService {
     return this.http.get<Cohort[]>(url);
   }
 
+  getCohortsBasedOnRegion(userId: string): Observable<Cohort[]> {
+    const url = 'api/cohort';
+    let params = new HttpParams();
+    if (userId) params = params.append('userId', userId);
+    return this.http.get<Cohort[]>(url, {params});
+  }
+
   getCohort(uuid: string): Observable<Cohort> {
     const url = 'api/cohort';
     let params = new HttpParams();

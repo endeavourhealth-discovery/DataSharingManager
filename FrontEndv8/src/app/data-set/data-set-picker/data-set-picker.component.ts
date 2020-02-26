@@ -58,12 +58,22 @@ export class DataSetPickerComponent implements OnInit {
   }
 
   searchAll() {
-    this.dataSetService.getAllDataSets()
-      .subscribe(
-        result => {
-          this.searchResults = this.filterResults(result);
-        }
-      );
+    console.log(this.data.userId);
+    if (this.data.userId == null) {
+      this.dataSetService.getAllDataSets()
+        .subscribe(
+          result => {
+            this.searchResults = this.filterResults(result);
+          }
+        );
+    } else {
+      this.dataSetService.getDataSetsBasedOnRegion(this.data.userId)
+        .subscribe(
+          result => {
+            this.searchResults = this.filterResults(result);
+          }
+        );
+    }
   }
 
   ok() {

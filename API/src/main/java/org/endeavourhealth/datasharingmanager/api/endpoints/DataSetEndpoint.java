@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
@@ -14,8 +15,8 @@ import org.endeavourhealth.core.database.dal.datasharingmanager.MasterMappingDal
 import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
 import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonDataSet;
 import org.endeavourhealth.core.database.dal.usermanager.caching.*;
-import org.endeavourhealth.core.database.rdbms.datasharingmanager.RdbmsCoreMasterMappingDal;
 import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.*;
+import org.endeavourhealth.core.database.rdbms.usermanager.models.UserRegionEntity;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.DatasetDAL;
 import org.endeavourhealth.datasharingmanager.api.Logic.RegionLogic;
@@ -51,6 +52,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
             "Returns a JSON representation of the matching set of data sets")
     public Response getDataSet(@Context SecurityContext sc,
                               @ApiParam(value = "Optional uuid") @QueryParam("uuid") String uuid,
+                               @ApiParam(value = "Optional userId") @QueryParam("userId") String userId,
                               @ApiParam(value = "Optional search term") @QueryParam("searchData") String searchData
     ) throws Exception {
         super.setLogbackMarkers(sc);
@@ -63,7 +65,7 @@ public final class DataSetEndpoint extends AbstractEndpoint {
         if (uuid == null && searchData == null) {
             LOG.trace("getDataSet - list");
 
-            return getDataSetList();
+            return getDataSetList(userId);
         } else if (uuid != null){
             LOG.trace("getDataSet - single - " + uuid);
             return getSingleDataSet(uuid);
@@ -230,9 +232,21 @@ public final class DataSetEndpoint extends AbstractEndpoint {
         return getLinkedRegions(uuid, userId);
     }
 
-    private Response getDataSetList() throws Exception {
+    private Response getDataSetList(String userId) throws Exception {
 
         List<DataSetEntity> dataSets = new DatasetDAL().getAllDataSets();
+        List<DataSetEntity> dataSetsBasedOnRegion = new ArrayList<>();
+        if (StringUtils.isNotEmpty(userId)) {
+            for (DataSetEntity dataset : dataSets) {
+                List<String> regionUuids = masterMappingRepository.getParentMappings(dataset.getUuid(),
+                        MapType.DATASET.getMapType(), MapType.REGION.getMapType());
+                UserRegionEntity userRegion = UserCache.getUserRegion(userId);
+                if (regionUuids.contains(userRegion.getRegionId())) {
+                    dataSetsBasedOnRegion.add(dataset);
+                }
+            }
+            dataSets = dataSetsBasedOnRegion;
+        }
 
         clearLogbackMarkers();
         return Response
