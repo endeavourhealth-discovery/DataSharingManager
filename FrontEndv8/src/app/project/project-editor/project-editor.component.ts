@@ -709,7 +709,7 @@ export class ProjectEditorComponent implements OnInit {
               const dataSet: DataSet = this.dataSets[idx];
               this.project.dataSets[dataSet.uuid] = dataSet.name;
             }
-            this.updateMappings('DataSets');
+            this.updateMappings('Data sets');
           } else {
             this.log.success('Remove cancelled.')
           }
@@ -734,7 +734,7 @@ export class ProjectEditorComponent implements OnInit {
           const dataSet: DataSet = this.dataSets[idx];
           this.project.dataSets[dataSet.uuid] = dataSet.name;
         }
-        this.updateMappings('DataSets');
+        this.updateMappings('Data sets');
       }
     });
   }
