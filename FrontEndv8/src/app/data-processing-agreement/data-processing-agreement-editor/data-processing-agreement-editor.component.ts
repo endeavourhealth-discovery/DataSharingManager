@@ -105,9 +105,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
       this.superUser = false;
       this.userId = this.activeProject.userId;
     }
-    console.log(this.allowEdit);
-    console.log(this.superUser);
-    console.log(this.userId);
     this.paramSubscriber = this.route.params.subscribe(
       params => {
         this.performAction(params['mode'], params['id']);
@@ -440,7 +437,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   addCohorts() {
     const dialogRef = this.dialog.open(CohortPickerComponent, {
       minWidth: '50vw',
-      data: {userId: this.userId, existing: this.cohorts}
+      data: {userId: this.activeProject.userId, existing: this.cohorts}
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
@@ -464,7 +461,7 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   addDataSets() {
     const dialogRef = this.dialog.open(DataSetPickerComponent, {
       minWidth: '50vw',
-      data: {userId: this.userId, existing: this.dataSets},
+      data: {userId: this.activeProject.userId, existing: this.dataSets},
     })
     dialogRef.afterClosed().subscribe(result => {
       if (!result) {
