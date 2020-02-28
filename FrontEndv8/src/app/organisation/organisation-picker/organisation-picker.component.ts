@@ -24,6 +24,7 @@ export class OrganisationPickerComponent implements OnInit {
   odsCodes: string = '';
   listSearch = true;
   orgDetailsToShow = new Organisation().getDisplayItems();
+  searchType: string = 'organisations';
 
   @ViewChild('orgPicker', { static: false }) orgPicker: GenericTableComponent;
   @ViewChild('listPicker', { static: false }) listPicker: GenericTableComponent;
@@ -48,8 +49,10 @@ export class OrganisationPickerComponent implements OnInit {
       this.getRegionOrganisations(this.data.regionUUID);
     } else if (this.data.dsaUUID != '') {
       if (this.data.searchType == 'publisher') {
+        this.searchType = 'publishers';
         this.getDSAPublishers(this.data.dsaUUID);
       } else if (this.data.searchType == 'subscriber') {
+        this.searchType = 'subscribers';
         this.getDSASubscribers(this.data.dsaUUID);
       }
     }

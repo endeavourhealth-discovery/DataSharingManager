@@ -1,5 +1,6 @@
-<h1 *ngIf="!editMode" mat-dialog-title>Add {{type | lowercase}}s</h1>
-<h1 *ngIf="editMode" mat-dialog-title>Edit {{type | lowercase}}s</h1>
+<h1 *ngIf="!editMode" mat-dialog-title>Add {{type | lowercase}}</h1>
+<h1 *ngIf="editMode" mat-dialog-title>Edit {{type | lowercase}}</h1>
+<form #form="ngForm">
 <div mat-dialog-content>
   <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
     <mat-form-field appearance="outline" fxFlex="100" fxFill>
@@ -14,10 +15,11 @@
     <small class="required-field-note"></small>
   </div>
 </div>
+</form>
 <div mat-dialog-actions align="end">
   <button mat-button color="accent" (click)="cancel()">Cancel</button>
-  <button *ngIf="!editMode" mat-flat-button color="accent" [disabled]="title.length < 1" (click)="add()" cdkFocusInitial>Add {{type | lowercase}}</button>
+  <button *ngIf="!editMode" mat-flat-button color="accent" [disabled]="form.invalid" (click)="add()" cdkFocusInitial>Add {{type | lowercase}}</button>
   <!--button *ngIf="!editMode" mat-flat-button color="accent" (click)="addAnother()" cdkFocusInitial>Add another {{type | lowercase}}</button-->
-  <button *ngIf="editMode" mat-flat-button color="accent" [disabled]="title.length < 1" (click)="save();">Save {{type | lowercase}}</button>
+  <button *ngIf="editMode" mat-flat-button color="accent" [disabled]="form.invalid" (click)="save();">Save {{type | lowercase}}</button>
   <!--button *ngIf="editMode" mat-flat-button color="accent" (click)="saveAndAddAnother();">Save and add another {{type | lowercase}}</button-->
 </div>

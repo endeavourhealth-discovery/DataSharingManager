@@ -1,4 +1,5 @@
 <h1 mat-dialog-title>Project details</h1>
+<form #form="ngForm">
 <div mat-dialog-content *ngIf="project">
   <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
@@ -57,7 +58,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Application policy</mat-label>
-      <mat-select matInput [(ngModel)]="selectedApplicationPolicy" name="selectedApplicationPolicy" (selectionChange)="changeUserApplicationPolicy(selectedApplicationPolicy.id)">
+      <mat-select required matInput [(ngModel)]="selectedApplicationPolicy" name="selectedApplicationPolicy" (selectionChange)="changeUserApplicationPolicy(selectedApplicationPolicy.id)">
         <mat-option *ngFor="let pol of availablePolicies" [value]="pol">{{pol.name}}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -78,7 +79,8 @@
     <small class="required-field-note"></small>
   </div>
 </div>
+</form>
 <div mat-dialog-actions align="end">
   <button mat-button color="accent" (click)="cancel()">Cancel</button>
-  <button mat-flat-button color="accent" [disabled]="((!project) || (!project.name) || (project.name.length < 1))" (click)="ok()">Save project</button>
+  <button mat-flat-button color="accent" [disabled]="form.invalid" (click)="ok()">Save project</button>
 </div>

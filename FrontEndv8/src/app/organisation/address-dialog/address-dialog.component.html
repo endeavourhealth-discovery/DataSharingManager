@@ -1,4 +1,5 @@
 <h1 mat-dialog-title>Address details</h1>
+<form #form="ngForm">
 <div mat-dialog-content>
   <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
     <mat-form-field appearance="outline" fxFlex="33" fxFill>
@@ -28,7 +29,8 @@
     <small class="required-field-note"></small>
   </div>
 </div>
+</form>
 <div mat-dialog-actions align="end">
   <button mat-button color="accent" (click)="cancel()">Cancel</button>
-  <button mat-flat-button color="accent" [disabled]="address.buildingName.length < 1" (click)="ok()">Save address</button>
+  <button mat-flat-button color="accent" [disabled]="form.invalid" (click)="ok()">Save address</button>
 </div>

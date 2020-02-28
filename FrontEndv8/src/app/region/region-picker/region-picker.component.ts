@@ -4,6 +4,7 @@ import {Region} from "../models/Region";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 import {StandardPickerData} from "../../models/StandardPickerData";
 import {GenericTableComponent, LoggerService} from "dds-angular8";
+import {Organisation} from "../../organisation/models/Organisation";
 
 @Component({
   selector: 'app-region-picker',
@@ -42,10 +43,15 @@ export class RegionPickerComponent implements OnInit {
   }
 
   search() {
+    let filterResults: Region[];
     const regionUUID = this.data.uuid;
+    const existing = this.data.existing;
     this.regionService.getAllRegions(this.data.userId)
       .subscribe(
-        (result) => this.searchResults = result.filter(function(x) {return x.uuid != regionUUID; }),
+        (result) => {
+          filterResults = result.filter((x) => !existing.filter(y => y.uuid === x.uuid).length);
+          this.searchResults = filterResults.filter(function(x) { return x.uuid != regionUUID; })
+        },
         (error) => this.log.error(error)
       );
   }
