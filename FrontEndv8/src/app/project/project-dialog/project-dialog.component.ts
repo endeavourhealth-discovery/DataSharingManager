@@ -174,7 +174,9 @@ export class ProjectDialogComponent implements OnInit {
     this.projectService.saveProject(this.project)
       .subscribe(saved => {
           this.project.uuid = saved;
-          this.saveApplicationPolicy();
+          if (this.mode == 'edit') {
+            this.saveApplicationPolicy();
+          }
           this.dialogRef.close(this.project);
         },
         error => this.log.error('The project could not be saved. Please try again.')

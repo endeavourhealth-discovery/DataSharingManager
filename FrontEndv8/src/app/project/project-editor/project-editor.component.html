@@ -56,10 +56,6 @@
             <input matInput [(ngModel)]="projectTypeId" placeholder="Project type" name="projectTypeId" readonly>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
-            <mat-label>Application policy</mat-label>
-            <input matInput [(ngModel)]="selectedApplicationPolicyValue" placeholder="Application policy" name="selectedApplicationPolicy" readonly>
-          </mat-form-field>
-          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Status</mat-label>
             <input matInput [(ngModel)]="projectStatusId" placeholder="Status" name="projectStatusId" readonly>
           </mat-form-field>
@@ -70,6 +66,10 @@
           <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>End date</mat-label>
             <input matInput type="date" [(ngModel)]="project.endDate" placeholder="End date" name="endDate" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
+            <mat-label>Application policy</mat-label>
+            <input matInput [(ngModel)]="selectedApplicationPolicyValue" placeholder="Application policy" name="selectedApplicationPolicy" readonly>
           </mat-form-field>
         </div>
         <br>

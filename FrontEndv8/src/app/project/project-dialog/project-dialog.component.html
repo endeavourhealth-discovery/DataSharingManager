@@ -57,12 +57,6 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
-      <mat-label>Application policy</mat-label>
-      <mat-select required matInput [(ngModel)]="selectedApplicationPolicy" name="selectedApplicationPolicy" (selectionChange)="changeUserApplicationPolicy(selectedApplicationPolicy.id)">
-        <mat-option *ngFor="let pol of availablePolicies" [value]="pol">{{pol.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Status</mat-label>
       <mat-select matInput [disabled]="disableStatus" [(ngModel)]="project.projectStatusId" name="projectStatusId">
         <mat-option *ngFor="let stat of status" [value]="stat.num">{{stat.name}}</mat-option>
@@ -76,6 +70,13 @@
       <mat-label>End date</mat-label>
       <input matInput type="date" [(ngModel)]="project.endDate" placeholder="End date" name="endDate">
     </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill *ngIf="mode == 'edit'">
+      <mat-label>Application policy</mat-label>
+      <mat-select required matInput [(ngModel)]="selectedApplicationPolicy" name="selectedApplicationPolicy" (selectionChange)="changeUserApplicationPolicy(selectedApplicationPolicy.id)">
+        <mat-option *ngFor="let pol of availablePolicies" [value]="pol">{{pol.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div fxFlex="25" fxFill *ngIf="mode == 'add'"></div>
     <small class="required-field-note"></small>
   </div>
 </div>
