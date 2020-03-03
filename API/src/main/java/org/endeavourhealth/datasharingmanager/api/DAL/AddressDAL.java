@@ -87,7 +87,7 @@ public class AddressDAL {
         List<String> additionLog = new ArrayList<>();
         List<String> updateLog = new ArrayList<>();
 
-        if (updatedAddresses != null) {
+        if (updatedAddresses != null && updatedAddresses.size() > 0) {
             for (JsonAddress updatedAddress : updatedAddresses) {
                 updatedAddress.setUuidsIfRequired(organisationUuid);
                 setGeolocation(updatedAddress);
@@ -123,6 +123,13 @@ public class AddressDAL {
                 if (added) {
                     additionLog.add(updatedAddress.toString());
                     entityManager.persist(new AddressEntity(updatedAddress));
+                }
+            }
+        } else {
+            if (oldAddresses.size() > 0) {
+                for (AddressEntity oldAddress : oldAddresses) {
+                    removalLog.add(oldAddress.toString());
+                    entityManager.remove(entityManager.merge(oldAddress));
                 }
             }
         }

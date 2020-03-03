@@ -223,7 +223,7 @@ public class MasterMappingDAL {
 
     void updateOrganisationMappings(JsonOrganisation updatedOrganisation, OrganisationEntity oldOrganisation, JsonNode auditJson) throws Exception {
         String uuid = (updatedOrganisation != null ? updatedOrganisation.getUuid() : oldOrganisation.getUuid());
-        Short thisMapTypeID = MapType.ORGANISATION.getMapType();
+        Short thisMapTypeID = Short.parseShort(updatedOrganisation.getIsService());
 
         // Regions
         if (updatedOrganisation != null && updatedOrganisation.getRegions() != null) {
@@ -233,7 +233,7 @@ public class MasterMappingDAL {
         // Parent Organisations
         if (updatedOrganisation != null && updatedOrganisation.getParentOrganisations() != null) {
             updateMappingsAndAddToAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getParentOrganisations()),
-                    (updatedOrganisation == null ? null : updatedOrganisation.getParentOrganisations()), thisMapTypeID, thisMapTypeID, auditJson);
+                    (updatedOrganisation == null ? null : updatedOrganisation.getParentOrganisations()), thisMapTypeID, MapType.ORGANISATION.getMapType(), auditJson);
         }
         // Child Organisations
         if (updatedOrganisation != null && updatedOrganisation.getChildOrganisations() != null) {
