@@ -8,7 +8,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Description</mat-label>
-      <input required matInput maxlength="10000" [(ngModel)]="dsa.description" placeholder="Description" name="description">
+      <input matInput maxlength="10000" [(ngModel)]="dsa.description" placeholder="Description" name="description">
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Status</mat-label>
@@ -18,7 +18,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
       <mat-label>Consent model</mat-label>
-      <mat-select matInput name="consentModel" [(ngModel)]="dsa.consentModelId" name="consentModel">
+      <mat-select required matInput name="consentModel" [(ngModel)]="dsa.consentModelId" name="consentModel">
         <mat-option *ngFor="let cons of consents" [value]="cons.num">{{cons.name}}</mat-option>
       </mat-select>
     </mat-form-field>

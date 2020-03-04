@@ -138,8 +138,8 @@ public class OrganisationDAL {
 
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode(organisationEntity.organisationOrService() + " created", null, organisationEntity);
 
-            _addressDAL.updateAddressesAndAddToAudit(organisation.getAddresses(), null, organisation.getUuid(), auditJson, _entityManager);
-            _masterMappingDAL.updateOrganisationMappings(organisation, null, auditJson);
+            //_addressDAL.updateAddressesAndAddToAudit(organisation.getAddresses(), null, organisation.getUuid(), auditJson, _entityManager);
+            //_masterMappingDAL.updateOrganisationMappings(organisation, null, auditJson);
 
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.ADD, (organisationEntity.getIsService() == 1 ? ItemType.SERVICE : ItemType.ORGANISATION), auditJson);
 

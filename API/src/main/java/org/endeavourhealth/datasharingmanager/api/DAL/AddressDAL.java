@@ -126,7 +126,7 @@ public class AddressDAL {
                 }
             }
         } else {
-            if (oldAddresses.size() > 0) {
+            if (oldAddresses != null && oldAddresses.size() > 0) {
                 for (AddressEntity oldAddress : oldAddresses) {
                     removalLog.add(oldAddress.toString());
                     entityManager.remove(entityManager.merge(oldAddress));
