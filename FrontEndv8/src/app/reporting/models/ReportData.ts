@@ -5,9 +5,9 @@ export class ReportData {
   referenceAgreement: string;
   lastReceived: string;
   inError: string;
-  systemSupplierType: number;
+  systemSupplierType: string;
   systemSupplierReference: string;
-  sharingActivated: number;
+  sharingActivated: string;
 
   getDisplayItems(): any[] {
     return [

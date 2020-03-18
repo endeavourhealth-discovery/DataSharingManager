@@ -24,13 +24,27 @@ export class ReportsComponent implements OnInit {
   projectLoadingComplete = false;
   reportComplete = true;
   reportData: ReportData[];
+  activityReportData: any[];
   sortReverse = true;
   sortField = 'practiceName';
   reportName: string;
   public activeProject: UserProject;
+  parentType: number = 5;
+  childType: number = 8;
+  days: number = 2;
+  totalOrgs: number;
+  supplierCount: any[] = [];
+  activatedCount: number;
+
+  mapTypes = this.itemLinkageService.mapTypes;
 
   dpaDetailsToShow = [{label: 'Name', property: 'name'}];
   reportDetailsToShow = new ReportData().getDisplayItems();
+
+  activityReportDetailsToShow = [
+    {label: 'Parent', property: 'parentUuid'},
+    {label: 'Child', property: 'childUuid'},
+  ];
 
   @ViewChild('dpaTable', { static: false }) dpaTable: GenericTableComponent;
   @ViewChild('dsaTable', { static: false }) dsaTable: GenericTableComponent;
@@ -212,11 +226,14 @@ export class ReportsComponent implements OnInit {
       this.log.error('The selected report has no organisations associated with it.');
       return;
     }
+    this.reportData = [];
+    this.supplierCount = [];
     this.reportingService.getPublisherReport(orgs, agreementName)
       .subscribe(
         result => {
           this.reportData = result;
           this.getLinkedItemsForDPAReport();
+          this.getStatisticsForPublisherReport();
           this.reportComplete = true;
         },
         error => {
@@ -226,11 +243,39 @@ export class ReportsComponent implements OnInit {
       )
   }
 
+  getStatisticsForPublisherReport() {
+
+    this.totalOrgs = this.reportData.length;
+    var orgsBySystemType = this.groupBy(this.reportData, (data) => data.systemSupplierType);
+
+    for(let type of orgsBySystemType) {
+      this.supplierCount.push(type[0].systemSupplierType + ' : ' + type.length);
+    }
+
+    this.activatedCount = this.reportData.filter((org) => org.sharingActivated === 'Yes').length;
+
+
+  }
+
+  groupBy<T, K>(list: T[], getKey: (item: T) => K) {
+    const map = new Map<K, T[]>();
+    list.forEach((item) => {
+      const key = getKey(item);
+      const collection = map.get(key);
+      if (!collection) {
+        map.set(key, [item]);
+      } else {
+        collection.push(item);
+      }
+    });
+    return Array.from(map.values());
+  }
+
   getLinkedItemsForDPAReport() {
     for (let rep of this.reportData) {
       for (let det of this.reportDetailsToShow) {
         if (det.link) {
-          if (rep && rep[det.property]) {
+          if (rep && rep[det.property] != null) {
             rep[det.property] = this.itemLinkageService.getLinkedItem(+rep[det.property], det.link);
           }
         }
@@ -240,6 +285,25 @@ export class ReportsComponent implements OnInit {
 
   exportToCSV() {
     new ngxCsv(this.reportData, 'generated', this.options);
+  }
+
+  runActivityReport() {
+    this.getRecentActivityReport(this.parentType, this.childType, this.days);
+  }
+
+  getRecentActivityReport(parentMapTypeId: number, childMapTypeId: number, days: number) {
+
+    this.reportingService.getActivityReport(parentMapTypeId, childMapTypeId, days)
+      .subscribe(
+        result => {
+          this.activityReportData = result;
+          console.log(result);
+        },
+        error => {
+          this.log.error('The report could not be run. Please try again.');
+          this.reportComplete = true;
+        }
+      )
   }
 }
 

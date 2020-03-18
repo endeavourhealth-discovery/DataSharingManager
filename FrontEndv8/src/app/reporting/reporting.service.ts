@@ -19,4 +19,13 @@ export class ReportingService {
     return this.http.get<ReportData[]>('api/report/getPublisherReport', { params });
   }
 
+  getActivityReport(parentMapTypeId: number, childMapTypeId: number, days: number): Observable<any[]> {
+
+    let params = new HttpParams();
+    params = params.append('parentMapTypeId', parentMapTypeId.toString());
+    params = params.append('childMapTypeId', childMapTypeId.toString());
+    params = params.append('days', days.toString());
+    return this.http.get<any[]>('api/report/recentActivityReport', { params });
+  }
+
 }
