@@ -61,7 +61,7 @@ export class ReportsComponent implements OnInit {
     showLabels: true,
     headers: ['Practice Name', 'ODS Code', 'CCG', 'Agreement', 'Last Received', 'In Error'],
     showTitle: false,
-    title: 'Publisher Report',
+    title: 'Publisher report',
     useTextFile: false,
     useBom: false,
   };
@@ -189,7 +189,7 @@ export class ReportsComponent implements OnInit {
     this.clearProjectSelection();
 
     this.reportComplete = false;
-    this.reportName = dsa.name + ' : Publisher Report';
+    this.reportName = dsa.name + ' : Publisher report';
     this.dsaService.getPublishers(dsa.uuid)
       .subscribe(
         result => {
