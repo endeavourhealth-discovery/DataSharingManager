@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {CommonModule, DatePipe} from '@angular/common';
 import { ReportsComponent } from './reports/reports.component';
 import {ReportingService} from "./reporting.service";
 import {FormsModule} from "@angular/forms";
@@ -52,7 +52,8 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
   ],
   declarations: [ReportsComponent],
   providers: [
-    ReportingService
+    ReportingService,
+    DatePipe
   ]
 })
 export class ReportingModule { }

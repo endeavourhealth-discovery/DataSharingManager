@@ -11,6 +11,7 @@ import {ProjectService} from "../../project/project.service";
 import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableComponent, ItemLinkageService, LoggerService, UserManagerService} from "dds-angular8";
 import {ngxCsv} from "ngx-csv";
+import {DatePipe} from "@angular/common";
 
 @Component({
   selector: 'app-reports',
@@ -44,6 +45,7 @@ export class ReportsComponent implements OnInit {
   activityReportDetailsToShow = [
     {label: 'Parent', property: 'parentUuid'},
     {label: 'Child', property: 'childUuid'},
+    {label: 'Date inserted', property: 'insertedAt'}
   ];
 
   @ViewChild('dpaTable', { static: false }) dpaTable: GenericTableComponent;
@@ -59,9 +61,21 @@ export class ReportsComponent implements OnInit {
     quoteStrings: '"',
     decimalseparator: '.',
     showLabels: true,
-    headers: ['Practice Name', 'ODS Code', 'CCG', 'Agreement', 'Last Received', 'In Error'],
+    headers: ['Practice name', 'ODS code', 'CCG', 'Agreement', 'Last received', 'In error'],
     showTitle: false,
     title: 'Publisher report',
+    useTextFile: false,
+    useBom: false,
+  };
+
+  activityReportOptions = {
+    fieldSeparator: ',',
+    quoteStrings: '"',
+    decimalseparator: '.',
+    showLabels: true,
+    headers: ['Parent name', 'Child name', 'Date inserted'],
+    showTitle: false,
+    title: 'Activity report',
     useTextFile: false,
     useBom: false,
   };
@@ -72,7 +86,8 @@ export class ReportsComponent implements OnInit {
               private dsaService: DataSharingAgreementService,
               private projectService: ProjectService,
               private log: LoggerService,
-              private itemLinkageService: ItemLinkageService) { }
+              private itemLinkageService: ItemLinkageService,
+              private datePipe: DatePipe) { }
 
   ngOnInit() {
     this.userManagerService.onProjectChange.subscribe(active => {
@@ -284,7 +299,11 @@ export class ReportsComponent implements OnInit {
   }
 
   exportToCSV() {
-    new ngxCsv(this.reportData, 'generated', this.options);
+    new ngxCsv(this.reportData, 'Publisher report', this.options);
+  }
+
+  exportActivityReportToCSV() {
+    new ngxCsv(this.activityReportData, 'Activity report', this.activityReportOptions);
   }
 
   runActivityReport() {
@@ -296,14 +315,21 @@ export class ReportsComponent implements OnInit {
     this.reportingService.getActivityReport(parentMapTypeId, childMapTypeId, days)
       .subscribe(
         result => {
-          this.activityReportData = result;
-          console.log(result);
+          this.processActivityReportData(result);
         },
         error => {
           this.log.error('The report could not be run. Please try again.');
           this.reportComplete = true;
         }
       )
+  }
+
+  processActivityReportData(activityData: any[]) {
+    this.activityReportData = activityData.map(ad => ({
+      childUuid: ad.childUuid,
+      parentUuid: ad.parentUuid,
+      insertedAt: this.datePipe.transform(ad.insertedAt, 'yyyy-dd-MM HH:mm:SS')
+    }));
   }
 }
 
