@@ -1,0 +1,27 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar>
+      <i *ngIf="modeType==='Organisation'" class="fad fa-hospital"></i>
+      <i *ngIf="modeType==='Service'" class="fad fa-clinic-medical"></i>
+    </div>
+    <mat-card-title> {{modeType}}s</mat-card-title>
+    <mat-card-subtitle> {{subtitle}}</mat-card-subtitle>
+    <div fxFlex></div>
+  </mat-card-header>
+  <mat-card-content>
+    <app-generic-table-ssp #organisationsTable
+      [items]="organisations"
+      [totalItems]="totalItems"
+      [detailsToShow]="orgDetailsToShow"
+      [pageSize]="20"
+      [allowSelect]="allowEdit"
+      (deleted)="delete()"
+      (clicked)="itemClicked($event)"
+      (onPageChange)="pageChange($event)"
+      (onOrderChange)="onOrderChange($event)"
+      (search)="onSearch($event)">
+      <button role="selectionOnly" *ngIf="superUser" mat-icon-button color="warn" (click)="delete()"><mat-icon>delete</mat-icon></button>
+      <button *ngIf="superUser" mat-icon-button color="primary" (click)="add()"><mat-icon>add</mat-icon></button>
+    </app-generic-table-ssp>
+  </mat-card-content>
+</mat-card>

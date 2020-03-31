@@ -1,0 +1,140 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar>
+      <i class="fad fa-analytics"></i></div>
+    <mat-card-title>Reporting</mat-card-title>
+    <mat-card-subtitle>Run reports on agreements within the Data Sharing Manager</mat-card-subtitle>
+    <div fxFlex></div>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-tab-group>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          Publisher Report
+        </ng-template>
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+          <div fxFlex="30" style="height:50vh;overflow-y:auto;">
+            <h3>Data processing agreements</h3>
+            <app-generic-table #dpaTable
+                               [items]="dpas"
+                               [detailsToShow]="dpaDetailsToShow"
+                               [allowSelect]="false"
+                               (clicked)="runDPAPublisherReport($event)">
+            </app-generic-table>
+          </div>
+          <div fxFlex="2"></div>
+          <div fxFlex="30" style="height:50vh;overflow-y:auto;">
+            <h3>Data sharing agreements</h3>
+            <app-generic-table #dsaTable
+                               [items]="dsas"
+                               [detailsToShow]="dpaDetailsToShow"
+                               [allowSelect]="false"
+                               (clicked)="runDSAPublisherReport($event)">
+            </app-generic-table>
+          </div>
+          <div fxFlex="2"></div>
+          <div fxFlex="30" style="height:50vh;overflow-y:auto;">
+            <h3>Projects</h3>
+            <app-generic-table #projectTable
+                               [items]="projects"
+                               [detailsToShow]="dpaDetailsToShow"
+                               [allowSelect]="false"
+                               (clicked)="runProjectPublisherReport($event)">
+            </app-generic-table>
+          </div>
+        </div>
+        <br>
+        <br>
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+          <div *ngIf="reportData" fxFlex="100">
+            <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+              <div fxFlex="100">
+                <h3>{{reportName}}</h3>
+              </div>
+              <div fxFlex="100">
+                <mat-card class="example-card">
+                  <mat-card-header>
+                    <mat-card-title>Statistics</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <p>Total number of organisations : {{totalOrgs}}</p>
+                    <p>Total number of organisations with sharing activated : {{activatedCount}}</p>
+                    <p><b>Supplier breakdown</b></p>
+                    <p *ngFor="let stat of supplierCount">{{stat}}</p>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+              <div fxFlex="100">
+                <div style="font-size:350%;text-align:right">
+                  <i class="fas fa-file-csv" (click)="exportToCSV()"></i>
+                </div>
+              </div>
+              <br>
+
+              <div fxFlex="100">
+                <app-generic-table #dsaPubTable
+                                   [items]="reportData"
+                                   [detailsToShow]="reportDetailsToShow"
+                                   [allowSelect]="false">
+                </app-generic-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          Activity Report
+        </ng-template>
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+
+          <br/>
+          <mat-form-field appearance="outline" fxFlex="30" fxFill>
+            <mat-label>Parent Type</mat-label>
+            <mat-select matInput [(ngModel)]="parentType" name="parentType">
+              <mat-option *ngFor="let pmap of mapTypes" [value]="pmap.num">{{pmap.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" fxFlex="30" fxFill>
+            <mat-label>Child Type</mat-label>
+            <mat-select matInput [(ngModel)]="childType" name="childType">
+              <mat-option *ngFor="let cmap of mapTypes" [value]="cmap.num">{{cmap.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" fxFlex="15" fxFill>
+            <mat-label>Number of Days</mat-label>
+            <input type="number" value="1" matInput [(ngModel)]="days" name="days">
+          </mat-form-field>
+
+          <button mat-icon-button matTooltip="Filter the results" (click)="runActivityReport()">
+            <i class="far fa-fw fa-search"></i>
+          </button>
+
+          <br/>
+          <br/>
+          <div *ngIf="activityReportData" fxFlex="100">
+            <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+              <div fxFlex="50">
+              </div>
+              <div fxFlex="50">
+                <div style="font-size:350%;text-align:right">
+                  <i class="fas fa-file-csv" (click)="exportActivityReportToCSV()"></i>
+                </div>
+              </div>
+              <br>
+              <div fxFlex="100">
+                <app-generic-table [items]="activityReportData"
+                                   [detailsToShow]="activityReportDetailsToShow"
+                                   [allowSelect]="false">
+                </app-generic-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

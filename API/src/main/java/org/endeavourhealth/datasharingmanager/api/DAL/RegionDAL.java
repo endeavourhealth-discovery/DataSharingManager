@@ -1,11 +1,10 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataSharingAgreementEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.RegionEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonRegion;
-import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.RegionCache;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonRegion;
+import org.endeavourhealth.core.database.dal.usermanager.caching.RegionCache;
+import org.endeavourhealth.core.database.rdbms.ConnectionManager;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.RegionEntity;
 import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
 import org.endeavourhealth.uiaudit.enums.AuditAction;
 import org.endeavourhealth.uiaudit.enums.ItemType;
@@ -37,7 +36,7 @@ public class RegionDAL {
         RegionCache.clearRegionCache(regionID);
     }
 
-    public void updateRegion(JsonRegion region, String userProjectId) throws Exception {
+    public void updateRegion(JsonRegion region, String userProjectId, boolean withMappings) throws Exception {
         RegionEntity oldRegionEntity = _entityManager.find(RegionEntity.class, region.getUuid());
         oldRegionEntity.setMappingsFromDAL();
 
@@ -47,7 +46,9 @@ public class RegionDAL {
             RegionEntity newRegion = new RegionEntity(region);
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Region edited", oldRegionEntity, newRegion);
 
-            _masterMappingDAL.updateRegionMappings(region, oldRegionEntity, auditJson);
+            if (withMappings) {
+                _masterMappingDAL.updateRegionMappings(region, oldRegionEntity, auditJson);
+            }
 
             oldRegionEntity.updateFromJson(region);
 
@@ -109,25 +110,6 @@ public class RegionDAL {
         }
 
         clearRegionCache(uuid);
-    }
-
-    public List<RegionEntity> getRegionsFromList(List<String> regions) throws Exception {
-        try {
-            CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
-            CriteriaQuery<RegionEntity> cq = cb.createQuery(RegionEntity.class);
-            Root<RegionEntity> rootEntry = cq.from(RegionEntity.class);
-
-            Predicate predicate = rootEntry.get("uuid").in(regions);
-
-            cq.where(predicate);
-            TypedQuery<RegionEntity> query = _entityManager.createQuery(cq);
-
-            List<RegionEntity> ret = query.getResultList();
-
-            return ret;
-        } finally {
-            _entityManager.close();
-        }
     }
 
     public List<RegionEntity> search(String expression) throws Exception {

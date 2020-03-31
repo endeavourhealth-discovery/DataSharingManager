@@ -3,10 +3,11 @@ package org.endeavourhealth.datasharingmanager.api.DAL;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectScheduleDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.*;
+import org.endeavourhealth.core.database.dal.DalProvider;
+import org.endeavourhealth.core.database.dal.datasharingmanager.ProjectScheduleDalI;
+import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.*;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.*;
 import org.endeavourhealth.uiaudit.logic.AuditCompareLogic;
 
 import javax.persistence.EntityManager;
@@ -15,19 +16,42 @@ import java.util.*;
 public class MasterMappingDAL {
     
     private EntityManager _entityManager;
+    private static ProjectScheduleDalI projectScheduleRepository = DalProvider.factoryDSMProjectScheduleDal();
 
     public MasterMappingDAL(EntityManager entityManager) {
         _entityManager = entityManager;
     }
 
-    void updateDataSetMappings(JsonDataSet updatedDataSet, DatasetEntity oldDataset, JsonNode auditJson) throws Exception {
+    void updateDataSetMappings(JsonDataSet updatedDataSet, DataSetEntity oldDataset, JsonNode auditJson) throws Exception {
         String uuid = (updatedDataSet != null? updatedDataSet.getUuid(): oldDataset.getUuid());
         Short thisMapTypeID = MapType.DATASET.getMapType();
 
         // DPAs
-        updateMappingsAndAddToAudit(true, uuid, (oldDataset == null ? null : oldDataset.getDpas()),
-                (updatedDataSet == null ? null : updatedDataSet.getDpas()),
-                thisMapTypeID, MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
+        if (updatedDataSet != null && updatedDataSet.getDpas() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldDataset == null ? null : oldDataset.getDpas()),
+                    (updatedDataSet == null ? null : updatedDataSet.getDpas()),
+                    thisMapTypeID, MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
+        }
+
+        // DSAs
+        if (updatedDataSet != null && updatedDataSet.getDsas() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldDataset == null ? null : oldDataset.getDsas()),
+                    (updatedDataSet == null ? null : updatedDataSet.getDsas()),
+                    thisMapTypeID, MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
+        }
+
+        // PROJECTS
+        if (updatedDataSet != null && updatedDataSet.getProjects() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldDataset == null ? null : oldDataset.getProjects()),
+                    (updatedDataSet == null ? null : updatedDataSet.getProjects()),
+                    thisMapTypeID, MapType.PROJECT.getMapType(), auditJson);
+        }
+
+        // Regions
+        if (updatedDataSet != null && updatedDataSet.getRegions() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldDataset == null ? null : oldDataset.getRegions()),
+                    (updatedDataSet == null ? null : updatedDataSet.getRegions()), thisMapTypeID, MapType.REGION.getMapType(), auditJson);
+        }
     }
 
     void updateCohortMappings(JsonCohort updatedCohort, CohortEntity oldCohort, JsonNode auditJson) throws Exception {
@@ -35,8 +59,28 @@ public class MasterMappingDAL {
         Short thisMapTypeID = MapType.COHORT.getMapType();
 
         // DPAs
-        updateMappingsAndAddToAudit(true, uuid, (oldCohort == null ? null : oldCohort.getDpas()),
-                (updatedCohort == null ? null : updatedCohort.getDpas()), thisMapTypeID, MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
+        if (updatedCohort != null && updatedCohort.getDpas() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldCohort == null ? null : oldCohort.getDpas()),
+                    (updatedCohort == null ? null : updatedCohort.getDpas()), thisMapTypeID, MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
+        }
+
+        // DSAs
+        if (updatedCohort != null && updatedCohort.getDsas() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldCohort == null ? null : oldCohort.getDsas()),
+                    (updatedCohort == null ? null : updatedCohort.getDsas()), thisMapTypeID, MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
+        }
+
+        // PROJECTS
+        if (updatedCohort != null && updatedCohort.getProjects() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldCohort == null ? null : oldCohort.getProjects()),
+                    (updatedCohort == null ? null : updatedCohort.getProjects()), thisMapTypeID, MapType.PROJECT.getMapType(), auditJson);
+        }
+
+        // Regions
+        if (updatedCohort != null && updatedCohort.getRegions() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldCohort == null ? null : oldCohort.getRegions()),
+                    (updatedCohort == null ? null : updatedCohort.getRegions()), thisMapTypeID, MapType.REGION.getMapType(), auditJson);
+        }
     }
 
     void updateDataProcessingAgreementMappings(JsonDPA updatedDPA, DataProcessingAgreementEntity oldDPA, JsonNode auditJson) throws Exception {
@@ -44,24 +88,46 @@ public class MasterMappingDAL {
         Short thisMapTypeID = MapType.DATAPROCESSINGAGREEMENT.getMapType();
 
         // Purposes
-        updatePurposesAndAddToAudit(uuid, (oldDPA == null ? null : oldDPA.getPurposes()),
-                (updatedDPA == null ? null : updatedDPA.getPurposes()), thisMapTypeID, MapType.PURPOSE.getMapType(), auditJson);
+        if (updatedDPA != null && updatedDPA.getPurposes() != null) {
+            updatePurposesAndAddToAudit(uuid, (oldDPA == null ? null : oldDPA.getPurposes()),
+                    (updatedDPA == null ? null : updatedDPA.getPurposes()), thisMapTypeID, MapType.PURPOSE.getMapType(), auditJson);
+        }
 
         // Benefits
-        updatePurposesAndAddToAudit(uuid, (oldDPA == null ? null : oldDPA.getBenefits()),
-                (updatedDPA == null ? null : updatedDPA.getBenefits()), thisMapTypeID, MapType.BENEFIT.getMapType(), auditJson);
+        if (updatedDPA != null && updatedDPA.getBenefits() != null) {
+            updatePurposesAndAddToAudit(uuid, (oldDPA == null ? null : oldDPA.getBenefits()),
+                    (updatedDPA == null ? null : updatedDPA.getBenefits()), thisMapTypeID, MapType.BENEFIT.getMapType(), auditJson);
+        }
 
         // Regions
-        updateMappingsAndAddToAudit(true, uuid, (oldDPA == null ? null : oldDPA.getRegions()),
-                (updatedDPA == null ? null : updatedDPA.getRegions()), thisMapTypeID, MapType.REGION.getMapType(), auditJson);
+        if (updatedDPA != null && updatedDPA.getRegions() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldDPA == null ? null : oldDPA.getRegions()),
+                    (updatedDPA == null ? null : updatedDPA.getRegions()), thisMapTypeID, MapType.REGION.getMapType(), auditJson);
+        }
 
         // Publishers
-        updateMappingsAndAddToAudit(false, uuid, (oldDPA == null ? null : oldDPA.getPublishers()),
-                (updatedDPA == null ? null : updatedDPA.getPublishers()), thisMapTypeID, MapType.PUBLISHER.getMapType(), auditJson);
+        if (updatedDPA != null && updatedDPA.getPublishers() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldDPA == null ? null : oldDPA.getPublishers()),
+                    (updatedDPA == null ? null : updatedDPA.getPublishers()), thisMapTypeID, MapType.PUBLISHER.getMapType(), auditJson);
+        }
 
         // Documentation
-        updateDocumentsAndAddToAudit(uuid, (oldDPA == null ? null : oldDPA.getDocumentations()),
-                (updatedDPA == null ? null : updatedDPA.getDocumentations()), thisMapTypeID, auditJson);
+        if (updatedDPA != null && updatedDPA.getDocumentations() != null) {
+            updateDocumentsAndAddToAudit(uuid, (oldDPA == null ? null : oldDPA.getDocumentations()),
+                    (updatedDPA == null ? null : updatedDPA.getDocumentations()), thisMapTypeID, auditJson);
+        }
+
+        // Cohorts
+        if (updatedDPA != null && updatedDPA.getCohorts() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldDPA == null ? null : oldDPA.getCohorts()),
+                    (updatedDPA == null ? null : updatedDPA.getCohorts()), thisMapTypeID, MapType.COHORT.getMapType(), auditJson);
+        }
+
+        // data sets
+        if (updatedDPA != null && updatedDPA.getDataSets() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldDPA == null ? null : oldDPA.getDataSets()),
+                    (updatedDPA == null ? null : updatedDPA.getDataSets()), thisMapTypeID, MapType.DATASET.getMapType(), auditJson);
+        }
     }
 
 
@@ -70,32 +136,58 @@ public class MasterMappingDAL {
         Short thisMapTypeID = MapType.DATASHARINGAGREEMENT.getMapType();
 
         // Purposes
-        updatePurposesAndAddToAudit(uuid, (oldDSA == null ? null : oldDSA.getPurposes()),
-                (updatedDSA == null ? null : updatedDSA.getPurposes()), thisMapTypeID, MapType.PURPOSE.getMapType(), auditJson);
+        if (updatedDSA != null && updatedDSA.getPurposes() != null) {
+            updatePurposesAndAddToAudit(uuid, (oldDSA == null ? null : oldDSA.getPurposes()),
+                    (updatedDSA == null ? null : updatedDSA.getPurposes()), thisMapTypeID, MapType.PURPOSE.getMapType(), auditJson);
+        }
 
         // Benefits
-        updatePurposesAndAddToAudit(uuid, (oldDSA == null ? null : oldDSA.getBenefits()),
-                (updatedDSA == null ? null : updatedDSA.getBenefits()), thisMapTypeID, MapType.BENEFIT.getMapType(), auditJson);
+        if (updatedDSA != null && updatedDSA.getBenefits() != null) {
+            updatePurposesAndAddToAudit(uuid, (oldDSA == null ? null : oldDSA.getBenefits()),
+                    (updatedDSA == null ? null : updatedDSA.getBenefits()), thisMapTypeID, MapType.BENEFIT.getMapType(), auditJson);
+        }
 
         // Regions
-        updateMappingsAndAddToAudit(true, uuid, (oldDSA == null ? null : oldDSA.getRegions()),
-                (updatedDSA == null ? null : updatedDSA.getRegions()), thisMapTypeID, MapType.REGION.getMapType(), auditJson);
+        if (updatedDSA != null && updatedDSA.getRegions() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldDSA == null ? null : oldDSA.getRegions()),
+                    (updatedDSA == null ? null : updatedDSA.getRegions()), thisMapTypeID, MapType.REGION.getMapType(), auditJson);
+        }
 
         // Projects
-        updateMappingsAndAddToAudit(false, uuid, (oldDSA == null ? null : oldDSA.getProjects()),
-                (updatedDSA == null ? null : updatedDSA.getProjects()), thisMapTypeID, MapType.PROJECT.getMapType(), auditJson);
+        if (updatedDSA != null && updatedDSA.getProjects() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldDSA == null ? null : oldDSA.getProjects()),
+                    (updatedDSA == null ? null : updatedDSA.getProjects()), thisMapTypeID, MapType.PROJECT.getMapType(), auditJson);
+        }
 
         // Publishers
-        updateMappingsAndAddToAudit(false, uuid, (oldDSA == null ? null : oldDSA.getPublishers()),
-                (updatedDSA == null ? null : updatedDSA.getPublishers()), thisMapTypeID, MapType.PUBLISHER.getMapType(), auditJson);
+        if (updatedDSA != null && updatedDSA.getPublishers() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldDSA == null ? null : oldDSA.getPublishers()),
+                    (updatedDSA == null ? null : updatedDSA.getPublishers()), thisMapTypeID, MapType.PUBLISHER.getMapType(), auditJson);
+        }
 
         // Subscribers
-        updateMappingsAndAddToAudit(false, uuid, (oldDSA == null ? null : oldDSA.getSubscribers()),
-                (updatedDSA == null ? null : updatedDSA.getSubscribers()), thisMapTypeID, MapType.SUBSCRIBER.getMapType(), auditJson);
+        if (updatedDSA != null && updatedDSA.getSubscribers() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldDSA == null ? null : oldDSA.getSubscribers()),
+                    (updatedDSA == null ? null : updatedDSA.getSubscribers()), thisMapTypeID, MapType.SUBSCRIBER.getMapType(), auditJson);
+        }
 
         // Documentation
-        updateDocumentsAndAddToAudit(uuid, (oldDSA == null ? null : oldDSA.getDocumentations()),
-                (updatedDSA == null ? null : updatedDSA.getDocumentations()), thisMapTypeID, auditJson);
+        if (updatedDSA != null && updatedDSA.getDocumentations() != null) {
+            updateDocumentsAndAddToAudit(uuid, (oldDSA == null ? null : oldDSA.getDocumentations()),
+                    (updatedDSA == null ? null : updatedDSA.getDocumentations()), thisMapTypeID, auditJson);
+        }
+
+        // Cohorts
+        if (updatedDSA != null && updatedDSA.getCohorts() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldDSA == null ? null : oldDSA.getCohorts()),
+                    (updatedDSA == null ? null : updatedDSA.getCohorts()), thisMapTypeID, MapType.COHORT.getMapType(), auditJson);
+        }
+
+        // data sets
+        if (updatedDSA != null && updatedDSA.getDataSets() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldDSA == null ? null : oldDSA.getDataSets()),
+                    (updatedDSA == null ? null : updatedDSA.getDataSets()), thisMapTypeID, MapType.DATASET.getMapType(), auditJson);
+        }
     }
 
     void updateRegionMappings(JsonRegion updatedRegion, RegionEntity oldRegion, JsonNode auditJson) throws Exception {
@@ -103,57 +195,71 @@ public class MasterMappingDAL {
         Short thisMapTypeID = MapType.REGION.getMapType();
 
         // DSAs
-        updateMappingsAndAddToAudit(false, uuid, (oldRegion == null ? null : oldRegion.getSharingAgreements()),
-                (updatedRegion == null ? null : updatedRegion.getSharingAgreements()), thisMapTypeID, MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
-
+        if (updatedRegion != null && updatedRegion.getSharingAgreements() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldRegion == null ? null : oldRegion.getSharingAgreements()),
+                    (updatedRegion == null ? null : updatedRegion.getSharingAgreements()), thisMapTypeID, MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
+        }
         // DPAs
-        updateMappingsAndAddToAudit(false, uuid, (oldRegion == null ? null : oldRegion.getProcessingAgreements()),
-                (updatedRegion == null ? null : updatedRegion.getProcessingAgreements()), thisMapTypeID, MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
-
+        if (updatedRegion != null && updatedRegion.getProcessingAgreements() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldRegion == null ? null : oldRegion.getProcessingAgreements()),
+                    (updatedRegion == null ? null : updatedRegion.getProcessingAgreements()), thisMapTypeID, MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
+        }
         // Parent Regions
-        updateMappingsAndAddToAudit(true, uuid, (oldRegion == null ? null : oldRegion.getParentRegions()),
-                (updatedRegion == null ? null : updatedRegion.getParentRegions()), thisMapTypeID, thisMapTypeID, auditJson);
-
+        if (updatedRegion != null && updatedRegion.getParentRegions() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldRegion == null ? null : oldRegion.getParentRegions()),
+                    (updatedRegion == null ? null : updatedRegion.getParentRegions()), thisMapTypeID, thisMapTypeID, auditJson);
+        }
         // Child Regions
-        updateMappingsAndAddToAudit(false, uuid, (oldRegion == null ? null : oldRegion.getChildRegions()),
-                (updatedRegion == null ? null : updatedRegion.getChildRegions()), thisMapTypeID, thisMapTypeID, auditJson);
-
+        if (updatedRegion != null && updatedRegion.getChildRegions() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldRegion == null ? null : oldRegion.getChildRegions()),
+                    (updatedRegion == null ? null : updatedRegion.getChildRegions()), thisMapTypeID, thisMapTypeID, auditJson);
+        }
         // Organisations
-        updateMappingsAndAddToAudit(false, uuid, (oldRegion == null ? null : oldRegion.getOrganisations()),
-                (updatedRegion == null ? null : updatedRegion.getOrganisations()), thisMapTypeID, MapType.ORGANISATION.getMapType(), auditJson);
+        if (updatedRegion != null && updatedRegion.getOrganisations() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldRegion == null ? null : oldRegion.getOrganisations()),
+                    (updatedRegion == null ? null : updatedRegion.getOrganisations()), thisMapTypeID, MapType.ORGANISATION.getMapType(), auditJson);
+        }
     }
 
     void updateOrganisationMappings(JsonOrganisation updatedOrganisation, OrganisationEntity oldOrganisation, JsonNode auditJson) throws Exception {
         String uuid = (updatedOrganisation != null ? updatedOrganisation.getUuid() : oldOrganisation.getUuid());
-        Short thisMapTypeID = MapType.ORGANISATION.getMapType();
+        Short thisMapTypeID = (updatedOrganisation != null ? Short.valueOf(updatedOrganisation.getIsService()) : (short) oldOrganisation.getIsService());
 
         // Regions
-        updateMappingsAndAddToAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getRegions()),
-                (updatedOrganisation == null ? null : updatedOrganisation.getRegions()), thisMapTypeID, MapType.REGION.getMapType(), auditJson);
-
+        if (updatedOrganisation != null && updatedOrganisation.getRegions() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getRegions()),
+                    (updatedOrganisation == null ? null : updatedOrganisation.getRegions()), thisMapTypeID, MapType.REGION.getMapType(), auditJson);
+        }
         // Parent Organisations
-        updateMappingsAndAddToAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getParentOrganisations()),
-                (updatedOrganisation == null ? null : updatedOrganisation.getParentOrganisations()), thisMapTypeID, thisMapTypeID, auditJson);
-
+        if (updatedOrganisation != null && updatedOrganisation.getParentOrganisations() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getParentOrganisations()),
+                    (updatedOrganisation == null ? null : updatedOrganisation.getParentOrganisations()), thisMapTypeID, MapType.ORGANISATION.getMapType(), auditJson);
+        }
         // Child Organisations
-        updateMappingsAndAddToAudit(false, uuid, (oldOrganisation == null ? null : oldOrganisation.getChildOrganisations()),
-                (updatedOrganisation == null ? null : updatedOrganisation.getChildOrganisations()), thisMapTypeID, thisMapTypeID, auditJson);
-
+        if (updatedOrganisation != null && updatedOrganisation.getChildOrganisations() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldOrganisation == null ? null : oldOrganisation.getChildOrganisations()),
+                    (updatedOrganisation == null ? null : updatedOrganisation.getChildOrganisations()), thisMapTypeID, thisMapTypeID, auditJson);
+        }
         // Services
-        updateMappingsAndAddToAudit(false, uuid, (oldOrganisation == null ? null : oldOrganisation.getServices()),
-                (updatedOrganisation == null ? null : updatedOrganisation.getServices()), thisMapTypeID, MapType.SERVICE.getMapType(), auditJson);
-
+        if (updatedOrganisation != null && updatedOrganisation.getServices() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldOrganisation == null ? null : oldOrganisation.getServices()),
+                    (updatedOrganisation == null ? null : updatedOrganisation.getServices()), thisMapTypeID, MapType.SERVICE.getMapType(), auditJson);
+        }
         // Publishing DPA
-        updateMappingsAndAddToAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getDpaPublishing()),
-                (updatedOrganisation == null ? null : updatedOrganisation.getDpaPublishing()), MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
-
+        if (updatedOrganisation != null && updatedOrganisation.getDpaPublishing() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getDpaPublishing()),
+                    (updatedOrganisation == null ? null : updatedOrganisation.getDpaPublishing()), MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType(), auditJson);
+        }
         // Publishing DSA
-        updateMappingsAndAddToAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getDsaPublishing()),
-                (updatedOrganisation == null ? null : updatedOrganisation.getDsaPublishing()), MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
-
+        if (updatedOrganisation != null && updatedOrganisation.getDsaPublishing() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getDsaPublishing()),
+                    (updatedOrganisation == null ? null : updatedOrganisation.getDsaPublishing()), MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
+        }
         // Subscribing DSA
-        updateMappingsAndAddToAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getDsaSubscribing()),
-                (updatedOrganisation == null ? null : updatedOrganisation.getDsaSubscribing()), MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
+        if (updatedOrganisation != null && updatedOrganisation.getDsaSubscribing() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldOrganisation == null ? null : oldOrganisation.getDsaSubscribing()),
+                    (updatedOrganisation == null ? null : updatedOrganisation.getDsaSubscribing()), MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
+        }
     }
 
     void updateProjectMappings(JsonProject updatedProject, ProjectEntity oldProject, JsonNode auditJson) throws Exception {
@@ -161,29 +267,35 @@ public class MasterMappingDAL {
         Short thisMapTypeID = MapType.PROJECT.getMapType();
 
         // Publishers
-        updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getPublishers()),
-                (updatedProject == null ? null : updatedProject.getPublishers()), thisMapTypeID, MapType.PUBLISHER.getMapType(), auditJson);
-
+        if (updatedProject != null && updatedProject.getPublishers() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getPublishers()),
+                    (updatedProject == null ? null : updatedProject.getPublishers()), thisMapTypeID, MapType.PUBLISHER.getMapType(), auditJson);
+        }
         // Subscriber
-        updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getSubscribers()),
-                (updatedProject == null ? null : updatedProject.getSubscribers()), thisMapTypeID, MapType.SUBSCRIBER.getMapType(), auditJson);
-
+        if (updatedProject != null && updatedProject.getSubscribers() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getSubscribers()),
+                    (updatedProject == null ? null : updatedProject.getSubscribers()), thisMapTypeID, MapType.SUBSCRIBER.getMapType(), auditJson);
+        }
         // Cohorts
-        updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getCohorts()),
-                (updatedProject == null ? null : updatedProject.getCohorts()), thisMapTypeID, MapType.COHORT.getMapType(), auditJson);
-
+        if (updatedProject != null && updatedProject.getCohorts() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getCohorts()),
+                    (updatedProject == null ? null : updatedProject.getCohorts()), thisMapTypeID, MapType.COHORT.getMapType(), auditJson);
+        }
         // DataSets
-        updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getDataSets()),
-                (updatedProject == null ? null : updatedProject.getDataSets()), thisMapTypeID, MapType.DATASET.getMapType(), auditJson);
-
+        if (updatedProject != null && updatedProject.getDataSets() != null) {
+            updateMappingsAndAddToAudit(false, uuid, (oldProject == null ? null : oldProject.getDataSets()),
+                    (updatedProject == null ? null : updatedProject.getDataSets()), thisMapTypeID, MapType.DATASET.getMapType(), auditJson);
+        }
         // DSA
-        updateMappingsAndAddToAudit(true, uuid, (oldProject == null ? null : oldProject.getDsas()),
-                (updatedProject == null ? null : updatedProject.getDsas()), thisMapTypeID, MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
-
+        if (updatedProject != null && updatedProject.getDsas() != null) {
+            updateMappingsAndAddToAudit(true, uuid, (oldProject == null ? null : oldProject.getDsas()),
+                    (updatedProject == null ? null : updatedProject.getDsas()), thisMapTypeID, MapType.DATASHARINGAGREEMENT.getMapType(), auditJson);
+        }
         // Documents
-        updateDocumentsAndAddToAudit(uuid, (oldProject == null ? null : oldProject.getDocumentations()),
-                (updatedProject == null ? null : updatedProject.getDocumentations()), thisMapTypeID, auditJson);
-
+        if (updatedProject != null && updatedProject.getDocumentations() != null) {
+            updateDocumentsAndAddToAudit(uuid, (oldProject == null ? null : oldProject.getDocumentations()),
+                    (updatedProject == null ? null : updatedProject.getDocumentations()), thisMapTypeID, auditJson);
+        }
         // Extract Technical Details
         updateExtractTechnicalDetailsAndAddToAudit(uuid, (oldProject == null ? null : oldProject.getExtractTechnicalDetails()),
                 (updatedProject == null ? null : updatedProject.getExtractTechnicalDetails()), auditJson);
@@ -193,7 +305,7 @@ public class MasterMappingDAL {
                 (updatedProject == null ? null : updatedProject.getSchedule()), auditJson);
     }
 
-    private void updateDocumentsAndAddToAudit(String thisItem, List<String> oldDocuments, List<JsonDocumentation> updatedDocuments,
+    public void updateDocumentsAndAddToAudit(String thisItem, List<String> oldDocuments, List<JsonDocumentation> updatedDocuments,
                                               Short thisMapTypeId, JsonNode auditJson) throws Exception {
 
         List<String> updatedMappings = new ArrayList<>();
@@ -370,14 +482,12 @@ public class MasterMappingDAL {
             }
         }
 
-        SecurityProjectScheduleDAL securityProjectScheduleDAL = new SecurityProjectScheduleDAL();
-
         Short thisMapTypeId = MapType.PROJECT.getMapType();
         Short otherMapTypeId = MapType.SCHEDULE.getMapType();
 
         // Now apply changes
         if (removedSchedule != null) {
-            securityProjectScheduleDAL.delete(removedSchedule.getUuid());
+            projectScheduleRepository.delete(removedSchedule.getUuid());
 
             List<String> removedScheduleUuids = new ArrayList<>(Arrays.asList(removedSchedule.getUuid()));
             deleteMappings(false, thisItem, removedScheduleUuids, thisMapTypeId, otherMapTypeId);
@@ -391,7 +501,7 @@ public class MasterMappingDAL {
                 addedSchedule.setUuid(UUID.randomUUID().toString());
             }
 
-            securityProjectScheduleDAL.save(addedSchedule);
+            projectScheduleRepository.save(addedSchedule);
 
             List<String> addedScheduleUuids = new ArrayList<>(Arrays.asList(addedSchedule.getUuid()));
             saveMappings(false, thisItem, addedScheduleUuids, thisMapTypeId, otherMapTypeId);
@@ -401,7 +511,7 @@ public class MasterMappingDAL {
         }
 
         if (changedSchedule != null) {
-            securityProjectScheduleDAL.update(changedSchedule);
+            projectScheduleRepository.update(changedSchedule);
 
             ((ObjectNode) auditJson).put(buildChangeDescription(false, false, true, thisMapTypeId, otherMapTypeId),
                     buildBeforeAfter(oldSchedule.getCronDescription(), changedSchedule.getCronDescription()));

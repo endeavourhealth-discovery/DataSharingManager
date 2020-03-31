@@ -1,0 +1,87 @@
+<h1 mat-dialog-title>Project details</h1>
+<form #form="ngForm">
+<div mat-dialog-content *ngIf="project">
+  <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
+      <mat-label>Project name</mat-label>
+      <input required matInput maxlength="100" [(ngModel)]="project.name" placeholder="Project name" name="name">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
+      <mat-label>Business case</mat-label>
+      <mat-select matInput maxlength="5000" [(ngModel)]="project.businessCaseStatus" name="businessCaseStatus">
+        <mat-option *ngFor="let bc of businessCaseStatuses" [value]="bc.num">{{bc.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
+      <mat-label>Summary</mat-label>
+      <textarea matInput maxlength="5000" [(ngModel)]="project.summary" placeholder="Summary" name="summary" rows="6"></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
+      <mat-label>Objectives</mat-label>
+      <textarea matInput maxlength="5000" [(ngModel)]="project.objectives" placeholder="Objectives" name="objectives" rows="6"></textarea>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
+      <mat-label>Project lead</mat-label>
+      <mat-select matInput [(ngModel)]="project.leadUser" name="leadUser">
+        <mat-option *ngFor="let leadUser of userList" [value]="leadUser.uuid">{{leadUser.forename}} {{leadUser.surname}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
+      <mat-label>Project technical lead</mat-label>
+      <mat-select matInput [(ngModel)]="project.technicalLeadUser" name="technicalLeadUser">
+        <mat-option *ngFor="let techUser of userList" [value]="techUser.uuid">{{techUser.forename}} {{techUser.surname}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+      <mat-label>Storage protocol</mat-label>
+      <mat-select matInput [(ngModel)]="project.storageProtocolId" name="storageProtocolId">
+        <mat-option *ngFor="let sps of storageProtocols" [value]="sps.num">{{sps.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+      <mat-label>Patient consent model</mat-label>
+      <mat-select matInput [(ngModel)]="project.consentModelId" name="consentModel">
+        <mat-option *ngFor="let con of consents" [value]="con.num">{{con.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+      <mat-label>De-identification level</mat-label>
+      <mat-select matInput [(ngModel)]="project.deidentificationLevel" name="deIdentificationLevel">
+        <mat-option *ngFor="let did of deidentificationLevel" [value]="did.num">{{did.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+      <mat-label>Project type</mat-label>
+      <mat-select matInput [(ngModel)]="project.projectTypeId" name="projectTypeId">
+        <mat-option *ngFor="let proj of projectTypes" [value]="proj.num">{{proj.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+      <mat-label>Status</mat-label>
+      <mat-select matInput [disabled]="disableStatus" [(ngModel)]="project.projectStatusId" name="projectStatusId">
+        <mat-option *ngFor="let stat of status" [value]="stat.num">{{stat.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+      <mat-label>Start date</mat-label>
+      <input matInput type="date" [(ngModel)]="project.startDate" placeholder="Start date" name="startDate">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+      <mat-label>End date</mat-label>
+      <input matInput type="date" [(ngModel)]="project.endDate" placeholder="End date" name="endDate">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill *ngIf="mode == 'edit'">
+      <mat-label>Application policy</mat-label>
+      <mat-select required matInput [(ngModel)]="selectedApplicationPolicy" name="selectedApplicationPolicy" (selectionChange)="changeUserApplicationPolicy(selectedApplicationPolicy.id)">
+        <mat-option *ngFor="let pol of availablePolicies" [value]="pol">{{pol.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div fxFlex="25" fxFill *ngIf="mode == 'add'"></div>
+    <small class="required-field-note"></small>
+  </div>
+</div>
+</form>
+<div mat-dialog-actions align="end">
+  <button mat-button color="accent" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="accent" [disabled]="form.invalid" (click)="ok()">Save project</button>
+</div>

@@ -49,4 +49,27 @@ public class ReportEndpoint extends AbstractEndpoint {
 
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.ReportEndpoint.getPublisherReport")
+    @Path("/recentActivityReport")
+    @ApiOperation(value = "Returns the data for the publisher report")
+    public Response recentActivityReport(@Context SecurityContext sc,
+                                       @ApiParam(value = "Parent map type") @QueryParam("parentMapTypeId") Short parentMapType,
+                                         @ApiParam(value = "Child map type") @QueryParam("childMapTypeId") Short childMapType,
+                                         @ApiParam(value = "Number of days") @QueryParam("days") int days
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "Organisation(s)",
+                "parentMapType", parentMapType,
+                "childMapType", childMapType,
+                "numberOfDays", days);
+
+        clearLogbackMarkers();
+        return new ReportLogic().getActivityReport(parentMapType, childMapType, days);
+
+    }
+
 }

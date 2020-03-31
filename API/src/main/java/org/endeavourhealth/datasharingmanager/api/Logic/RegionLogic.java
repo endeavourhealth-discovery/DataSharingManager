@@ -1,14 +1,15 @@
 package org.endeavourhealth.datasharingmanager.api.Logic;
 
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataProcessingAgreementEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataSharingAgreementEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.OrganisationEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.RegionEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonRegion;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.*;
-import org.endeavourhealth.common.security.usermanagermodel.models.database.UserRegionEntity;
+import org.endeavourhealth.core.database.dal.DalProvider;
+import org.endeavourhealth.core.database.dal.datasharingmanager.MasterMappingDalI;
+import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonRegion;
+import org.endeavourhealth.core.database.dal.usermanager.caching.*;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataProcessingAgreementEntity;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataSharingAgreementEntity;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.OrganisationEntity;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.RegionEntity;
+import org.endeavourhealth.core.database.rdbms.usermanager.models.UserRegionEntity;
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 
 import javax.ws.rs.core.Response;
@@ -19,6 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class RegionLogic {
+    private static MasterMappingDalI masterMappingRepository = DalProvider.factoryDSMMasterMappingDal();
 
     public Response getRegion(String uuid, String searchData, String userId) throws Exception {
 
@@ -36,7 +38,7 @@ public class RegionLogic {
     private Response getRegionListFilterOnRegion(String userId) throws Exception {
 
         UserRegionEntity userRegion = UserCache.getUserRegion(userId);
-
+        System.out.println("region:"+userRegion.getRegionId());
         List<RegionEntity> dpas = RegionCache.getAllChildRegionsForRegion(userRegion.getRegionId());
 
         return Response
@@ -48,11 +50,21 @@ public class RegionLogic {
     public Response postRegion(JsonRegion region, String userProjectID) throws Exception {
 
         if (region.getUuid() != null) {
-            new RegionDAL().updateRegion(region, userProjectID);
+            new RegionDAL().updateRegion(region, userProjectID, false);
         } else {
             region.setUuid(UUID.randomUUID().toString());
             new RegionDAL().saveRegion(region, userProjectID);
         }
+
+        return Response
+                .ok()
+                .entity(region.getUuid())
+                .build();
+    }
+
+    public Response updateMappings(JsonRegion region, String userProjectID) throws Exception {
+
+        new RegionDAL().updateRegion(region, userProjectID, true);
 
         return Response
                 .ok()
@@ -91,7 +103,7 @@ public class RegionLogic {
 
     public Response getRegionOrganisations(String regionUUID) throws Exception {
 
-        List<String> organisationUuids = new SecurityMasterMappingDAL().getChildMappings(regionUUID, MapType.REGION.getMapType(), MapType.ORGANISATION.getMapType());
+        List<String> organisationUuids = masterMappingRepository.getChildMappings(regionUUID, MapType.REGION.getMapType(), MapType.ORGANISATION.getMapType());
         List<OrganisationEntity> ret = new ArrayList<>();
 
         if (!organisationUuids.isEmpty())
@@ -122,7 +134,7 @@ public class RegionLogic {
 
     public Response getParentRegions(String regionUuid, String userId) throws Exception {
 
-        List<String> regionUuids = new SecurityMasterMappingDAL().getParentMappings(regionUuid, MapType.REGION.getMapType(), MapType.REGION.getMapType());
+        List<String> regionUuids = masterMappingRepository.getParentMappings(regionUuid, MapType.REGION.getMapType(), MapType.REGION.getMapType());
         List<RegionEntity> ret = new ArrayList<>();
 
         if (userId != null) {
@@ -130,7 +142,7 @@ public class RegionLogic {
         }
 
         if (!regionUuids.isEmpty())
-            ret = new RegionDAL().getRegionsFromList(regionUuids);
+            ret = RegionCache.getRegionDetails(regionUuids);
 
         return Response
                 .ok()
@@ -140,11 +152,11 @@ public class RegionLogic {
 
     public Response getChildRegions(String regionUuid) throws Exception {
 
-        List<String> regionUuids = new SecurityMasterMappingDAL().getChildMappings(regionUuid, MapType.REGION.getMapType(), MapType.REGION.getMapType());
+        List<String> regionUuids = masterMappingRepository.getChildMappings(regionUuid, MapType.REGION.getMapType(), MapType.REGION.getMapType());
         List<RegionEntity> ret = new ArrayList<>();
 
         if (!regionUuids.isEmpty())
-            ret = new RegionDAL().getRegionsFromList(regionUuids);
+            ret = RegionCache.getRegionDetails(regionUuids);
 
         return Response
                 .ok()
@@ -154,7 +166,7 @@ public class RegionLogic {
 
     public Response getSharingAgreements(String regionUuid) throws Exception {
 
-        List<String> sharingAgreementUuids = new SecurityMasterMappingDAL().getChildMappings(regionUuid, MapType.REGION.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+        List<String> sharingAgreementUuids = masterMappingRepository.getChildMappings(regionUuid, MapType.REGION.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
         if (!sharingAgreementUuids.isEmpty())
@@ -168,7 +180,7 @@ public class RegionLogic {
 
     public Response getProcessingAgreements(String regionUuid) throws Exception {
 
-        List<String> processingAgreementUuids = new SecurityMasterMappingDAL().getChildMappings(regionUuid, MapType.REGION.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        List<String> processingAgreementUuids = masterMappingRepository.getChildMappings(regionUuid, MapType.REGION.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!processingAgreementUuids.isEmpty())

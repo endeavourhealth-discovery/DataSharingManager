@@ -1,0 +1,21 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar>
+      <i class="fad fa-folders"></i>
+    </div>
+    <mat-card-title>Projects</mat-card-title>
+    <mat-card-subtitle>The detailed configuration of a specific use case of a data sharing agreement</mat-card-subtitle>
+    <div fxFlex></div>
+  </mat-card-header>
+  <mat-card-content>
+    <app-generic-table #projectsTable
+                       [items]="projects"
+                       [detailsToShow]="projectDetailsToShow"
+                       [pageSize]="20"
+                       [allowSelect]="allowEdit"
+                       (clicked)="itemClicked($event)">
+      <button role="selectionOnly" *ngIf="superUser" mat-icon-button color="warn" (click)="delete()"><mat-icon>delete</mat-icon></button>
+      <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="add()"><mat-icon>add</mat-icon></button>
+    </app-generic-table>
+  </mat-card-content>
+</mat-card>

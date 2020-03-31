@@ -6,11 +6,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDSA;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
+import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonDSA;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonDocumentation;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 import org.endeavourhealth.datasharingmanager.api.Logic.DataSharingAgreementLogic;
@@ -27,10 +28,9 @@ import java.util.List;
 @Path("/dsa")
 @Api(description = "API endpoint related to the data sharing agreements")
 public final class DsaEndpoint extends AbstractEndpoint {
+
     private static final Logger LOG = LoggerFactory.getLogger(DsaEndpoint.class);
-
     private static final UserAuditRepository userAudit = new UserAuditRepository(AuditModule.EdsUiModule.Organisation);
-
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -78,6 +78,32 @@ public final class DsaEndpoint extends AbstractEndpoint {
         return new DataSharingAgreementLogic().postDSA(dsa, userProjectId);
     }
 
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.DsaEndpoint.Post")
+    @Path("/updateMappings")
+    @ApiOperation(value = "Updates the mappings.  Accepts a JSON representation of a DSA.")
+    @RequiresAdmin
+    public Response updateMappings(@Context SecurityContext sc,
+                                   @HeaderParam("userProjectId") String userProjectId,
+                                   @ApiParam(value = "Json representation of dsa to update") JsonDSA dsa
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
+                "DSA",
+                "DSA", dsa);
+
+        new DataSharingAgreementLogic().updateMappings(dsa, userProjectId);
+
+        clearLogbackMarkers();
+
+        return Response
+                .ok()
+                .entity(dsa.getUuid())
+                .build();
+    }
+
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -87,14 +113,16 @@ public final class DsaEndpoint extends AbstractEndpoint {
     @RequiresAdmin
     public Response deleteDSA(@Context SecurityContext sc,
                               @HeaderParam("userProjectId") String userProjectId,
-                              @ApiParam(value = "UUID of the data sharing agreement to be deleted") @QueryParam("uuid") String uuid
+                              @ApiParam(value = "UUID of the data sharing agreements to be deleted") @QueryParam("uuids") List<String> uuids
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "DSA",
-                "DSA Id", uuid);
+                "DSA Id", uuids);
 
-        new DataSharingAgreementDAL().deleteDSA(uuid, userProjectId);
+        for (String uuid : uuids) {
+            new DataSharingAgreementDAL().deleteDSA(uuid, userProjectId);
+        }
 
         clearLogbackMarkers();
         return Response
@@ -247,7 +275,7 @@ public final class DsaEndpoint extends AbstractEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Timed(absolute = true, name="DataSharingManager.DpaEndpoint.checkOrganisationIsPartOfAgreement")
+    @Timed(absolute = true, name="DataSharingManager.DsaEndpoint.checkOrganisationIsPartOfAgreement")
     @Path("/checkOrganisationIsPartOfAgreement")
     @ApiOperation(value = "Checks whether an organisation and system is part of a data processing agreement. " +
             "Returns a list of data processing agreements")
@@ -268,4 +296,54 @@ public final class DsaEndpoint extends AbstractEndpoint {
                 .build();
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.DsaEndpoint.GetCohorts")
+    @Path("/cohorts")
+    @ApiOperation(value = "Returns a list of Json representations of cohorts that are linked " +
+            "to the dsa.  Accepts a UUID of a dsa.")
+    public Response getCohortsForDSA(@Context SecurityContext sc,
+                                    @ApiParam(value = "UUID of dsa") @QueryParam("uuid") String uuid
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "get cohorts",
+                "Data Sharing Agreement", uuid);
+
+        return new DataSharingAgreementLogic().getLinkedCohorts(uuid);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.CohortEndpoint.GetdataSets")
+    @Path("/dataSets")
+    @ApiOperation(value = "Returns a list of Json representations of dataSets that are linked " +
+            "to the dsa.  Accepts a UUID of a cohort.")
+    public Response getLinkedDataSets(@Context SecurityContext sc,
+                                         @ApiParam(value = "UUID of dsa") @QueryParam("uuid") String uuid
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "dataSet(s)",
+                "Data sharing agreement", uuid);
+
+        return new DataSharingAgreementLogic().getLinkedDataSets(uuid);
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.DsaEndpoint.addDocument")
+    @Path("/addDocument")
+    @ApiOperation(value = "Post the uploaded document")
+    public Response getDescription(@Context SecurityContext sc,
+                                   @HeaderParam("userProjectId") String userProjectId,
+                                   @ApiParam(value = "uuid") @QueryParam("uuid") String uuid,
+                                   @ApiParam(value = "Document object") JsonDocumentation document) throws Exception {
+
+        super.setLogbackMarkers(sc);
+        return new DataSharingAgreementLogic().addDocument(uuid, document, userProjectId);
+    }
 }

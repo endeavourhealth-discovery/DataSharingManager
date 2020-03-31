@@ -6,17 +6,20 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectApplicationPolicyDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.ProjectApplicationPolicyEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonAuthorityToShare;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProject;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonProjectApplicationPolicy;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.ApplicationPolicyCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.database.ApplicationPolicyEntity;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
+import org.endeavourhealth.core.database.dal.DalProvider;
+import org.endeavourhealth.core.database.dal.datasharingmanager.ProjectApplicationPolicyDalI;
+import org.endeavourhealth.core.database.dal.datasharingmanager.ProjectDalI;
+import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonAuthorityToShare;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonDocumentation;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonProject;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonProjectApplicationPolicy;
+import org.endeavourhealth.core.database.dal.usermanager.caching.ApplicationPolicyCache;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.ProjectApplicationPolicyEntity;
+import org.endeavourhealth.core.database.rdbms.usermanager.models.ApplicationPolicyEntity;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.ProjectApplicationPolicyDAL;
 import org.endeavourhealth.datasharingmanager.api.DAL.ProjectDAL;
@@ -39,6 +42,8 @@ public class ProjectEndpoint extends AbstractEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(ProjectEndpoint.class);
 
     private static final UserAuditRepository userAudit = new UserAuditRepository(AuditModule.EdsUiModule.Organisation);
+    private static ProjectDalI projectRepository = DalProvider.factoryDSMProjectDal();
+    private static ProjectApplicationPolicyDalI projectApplicationRepository = DalProvider.factoryDSMProjectApplicationPolicyDal();
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -84,6 +89,28 @@ public class ProjectEndpoint extends AbstractEndpoint {
         return new ProjectLogic().postProject(project, userProjectId);
     }
 
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.ProjectEndpoint.updateMappings")
+    @Path("/updateMappings")
+    @ApiOperation(value = "Save a new project or update an existing one.  Accepts a JSON representation " +
+            "of a project.")
+    @RequiresAdmin
+    public Response updateMappings(@Context SecurityContext sc,
+                                @HeaderParam("userProjectId") String userProjectId,
+                                @ApiParam(value = "Json representation of project to save or update") JsonProject project
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
+                "Project",
+                "Project", project);
+
+        clearLogbackMarkers();
+
+        return new ProjectLogic().updateMappings(project, userProjectId);
+    }
+
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -93,14 +120,16 @@ public class ProjectEndpoint extends AbstractEndpoint {
     @RequiresAdmin
     public Response deleteProject(@Context SecurityContext sc,
                                   @HeaderParam("userProjectId") String userProjectId,
-                                   @ApiParam(value = "UUID of the project to be deleted") @QueryParam("uuid") String uuid
+                                  @ApiParam(value = "UUID of the projects to be deleted") @QueryParam("uuids") List<String> uuids
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "Project",
-                "Project UUID", uuid);
+                "Project UUID", uuids);
 
-        new ProjectDAL().deleteProject(uuid, userProjectId);
+        for (String uuid : uuids) {
+            new ProjectDAL().deleteProject(uuid, userProjectId);
+        }
 
         clearLogbackMarkers();
         return Response
@@ -240,7 +269,7 @@ public class ProjectEndpoint extends AbstractEndpoint {
 
         LOG.trace("getUser");
 
-        ProjectApplicationPolicyEntity projectPolicy = new SecurityProjectApplicationPolicyDAL().getProjectApplicationPolicyId(projectUuid);
+        ProjectApplicationPolicyEntity projectPolicy = projectApplicationRepository.getProjectApplicationPolicyId(projectUuid);
         if (projectPolicy == null) {
             projectPolicy = new ProjectApplicationPolicyEntity();
         }
@@ -323,11 +352,26 @@ public class ProjectEndpoint extends AbstractEndpoint {
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
                 "Users assigned to project");
 
-        List<JsonAuthorityToShare> authorities = new org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityProjectDAL().getUsersAssignedToProject(projectUuid);
+        List<JsonAuthorityToShare> authorities = projectRepository.getUsersAssignedToProject(projectUuid);
 
         return Response
                 .ok()
                 .entity(authorities)
                 .build();
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.ProjectEndpoint.addDocument")
+    @Path("/addDocument")
+    @ApiOperation(value = "Post the uploaded document")
+    public Response getDescription(@Context SecurityContext sc,
+                                   @HeaderParam("userProjectId") String userProjectId,
+                                   @ApiParam(value = "uuid") @QueryParam("uuid") String uuid,
+                                   @ApiParam(value = "Document object") JsonDocumentation document) throws Exception {
+
+        super.setLogbackMarkers(sc);
+        return new ProjectLogic().addDocument(uuid, document, userProjectId);
     }
 }

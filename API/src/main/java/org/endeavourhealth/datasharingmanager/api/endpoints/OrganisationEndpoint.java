@@ -6,13 +6,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.OrganisationEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonFileUpload;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonOrganisation;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
+import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonFileUpload;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonOrganisation;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.OrganisationEntity;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.OrganisationDAL;
 import org.endeavourhealth.datasharingmanager.api.Logic.OrganisationLogic;
@@ -82,6 +82,27 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
         return new OrganisationLogic().postOrganisation(organisation, userProjectId);
     }
 
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.OrganisationEndpoint.Post")
+    @Path("/updateMappings")
+    @ApiOperation(value = "Save a new organisation or update an existing one.  Accepts a JSON representation " +
+            "of a organisation.")
+    @RequiresAdmin
+    public Response updateMappings(@Context SecurityContext sc,
+                                     @HeaderParam("userProjectId") String userProjectId,
+                                     @ApiParam(value = "Json representation of organisation to save or update") JsonOrganisation organisation
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
+                "Organisation",
+                "Organisation", organisation);
+
+        clearLogbackMarkers();
+        return new OrganisationLogic().updateMappings(organisation, userProjectId);
+    }
+
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -91,14 +112,14 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
     @RequiresAdmin
     public Response deleteOrganisation(@Context SecurityContext sc,
                                        @HeaderParam("userProjectId") String userProjectId,
-                                       @ApiParam(value = "UUID of the organisation to be deleted") @QueryParam("uuid") String uuid
+                                       @ApiParam(value = "UUID of the organisations to be deleted") @QueryParam("uuids") List<String> uuids
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "Organisation",
-                "Organisation Id", uuid);
+                "Organisation Id", uuids);
 
-        new OrganisationDAL().deleteOrganisation(uuid, userProjectId);
+        new OrganisationLogic().deleteOrganisation(uuids, userProjectId, SecurityUtils.getCurrentUserId(sc));
 
         clearLogbackMarkers();
         return Response
@@ -217,6 +238,24 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
                 "Organisation Id", uuids);
 
         return new OrganisationLogic().getDPAsOrganisationPublishingToFromList(uuids);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.OrganisationEndpoint.getProjectsOrganisationPublishingFromList")
+    @Path("/projectsPublishingFromList")
+    @ApiOperation(value = "Returns a list of Json representations of projects that " +
+            "the organisation is publishing to.  Accepts a UUID of an organisation.")
+    public Response getProjectsOrganisationPublishingFromList(@Context SecurityContext sc,
+                                                          @ApiParam(value = "UUID of organisation") @QueryParam("uuids") List<String > uuids
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "DPA(s)",
+                "Organisation Id", uuids);
+
+        return new OrganisationLogic().getProjectsOrganisationPublishingToFromList(uuids);
     }
 
     @GET

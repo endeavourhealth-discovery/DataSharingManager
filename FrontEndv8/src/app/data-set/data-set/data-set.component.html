@@ -1,0 +1,21 @@
+<mat-card>
+  <mat-card-header>
+    <div mat-card-avatar>
+      <i class="fad fa-layer-group"></i>
+    </div>
+    <mat-card-title>Data sets</mat-card-title>
+    <mat-card-subtitle>A definition of what data is used in a project</mat-card-subtitle>
+    <div fxFlex></div>
+  </mat-card-header>
+  <mat-card-content>
+    <app-generic-table #datasetsTable
+                       [items]="datasets"
+                       [detailsToShow]="datasetDetailsToShow"
+                       [pageSize]="20"
+                       [allowSelect]="allowEdit"
+                       (clicked)="itemClicked($event)">
+      <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="delete()"><mat-icon>delete</mat-icon></button>
+      <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="add()"><mat-icon>add</mat-icon></button>
+    </app-generic-table>
+  </mat-card-content>
+</mat-card>

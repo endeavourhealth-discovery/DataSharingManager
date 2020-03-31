@@ -1,0 +1,20 @@
+<h1 mat-dialog-title>Region details</h1>
+<form #form="ngForm">
+<div mat-dialog-content *ngIf="region">
+  <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
+      <mat-label>Region name</mat-label>
+      <input required matInput [(ngModel)]="region.name" placeholder="Region name" name="name">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
+      <mat-label>Description</mat-label>
+      <input matInput [(ngModel)]="region.description" placeholder="Description" name="description">
+    </mat-form-field>
+    <small class="required-field-note"></small>
+  </div>
+</div>
+</form>
+<div mat-dialog-actions align="end">
+  <button mat-button color="accent" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="accent" [disabled]="form.invalid" (click)="ok()">Save region</button>
+</div>

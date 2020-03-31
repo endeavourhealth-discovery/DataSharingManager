@@ -1,0 +1,38 @@
+<h1 mat-dialog-title>Data processing agreement details</h1>
+<form #form="ngForm">
+<div mat-dialog-content *ngIf="dpa">
+  <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
+      <mat-label>Data processing agreement name</mat-label>
+      <input required matInput maxlength="100" [(ngModel)]="dpa.name" placeholder="Name" name="name">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="50" fxFill>
+      <mat-label>Description</mat-label>
+      <input matInput maxlength="10000" [(ngModel)]="dpa.description" placeholder="Description" name="description">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+      <mat-label>Status</mat-label>
+      <mat-select required matInput name="status" [disabled]="disableStatus" [(ngModel)]="dpa.dsaStatusId" name="status">
+        <mat-option *ngFor="let stat of status" [value]="stat.num">{{stat.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
+      <mat-label>Data processor</mat-label>
+      <input required matInput maxlength="100" [(ngModel)]="processor" placeholder="Data processor" name="processor" readonly>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+      <mat-label>Start date</mat-label>
+      <input matInput type="date" [(ngModel)]="dpa.startDate" placeholder="Start date" name="startDate">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+      <mat-label>End date</mat-label>
+      <input matInput type="date" [(ngModel)]="dpa.endDate" placeholder="End date" name="endDate">
+    </mat-form-field>
+    <small class="required-field-note"></small>
+  </div>
+</div>
+</form>
+<div mat-dialog-actions align="end">
+  <button mat-button color="accent" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="accent" [disabled]="form.invalid" (click)="ok()">Save agreement</button>
+</div>

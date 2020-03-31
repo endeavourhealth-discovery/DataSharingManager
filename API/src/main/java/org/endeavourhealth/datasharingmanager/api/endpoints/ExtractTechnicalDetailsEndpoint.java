@@ -6,10 +6,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.ExtractTechnicalDetailsEntity;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
+import org.endeavourhealth.core.database.dal.DalProvider;
+import org.endeavourhealth.core.database.dal.datasharingmanager.ExtractTechnicalDetailsDalI;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.ExtractTechnicalDetailsEntity;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.ExtractTechnicalDetailsDAL;
 import org.endeavourhealth.datasharingmanager.api.Logic.ExtractTechnicalDetailsLogic;
@@ -26,6 +28,7 @@ import javax.ws.rs.core.SecurityContext;
 @Path("/extractTechnicalDetails")
 @Api(description = "API endpoint related to associated Extract Technical Details")
 public final class ExtractTechnicalDetailsEndpoint extends AbstractEndpoint {
+    private static ExtractTechnicalDetailsDalI extractRepository = DalProvider.factoryDSMExtractTechnicalDetailsDal();
 
     private static final Logger LOG = LoggerFactory.getLogger(ExtractTechnicalDetailsEndpoint.class);
     private static final UserAuditRepository userAudit = new UserAuditRepository(AuditModule.EdsUiModule.Organisation);
@@ -45,7 +48,7 @@ public final class ExtractTechnicalDetailsEndpoint extends AbstractEndpoint {
                 "Extract Technical Details",
                 "Extract Technical Details Id", uuid);
 
-        ExtractTechnicalDetailsEntity extractTechnicalDetailsEntity = new ExtractTechnicalDetailsDAL().getExtractTechnicalDetails(uuid);
+        ExtractTechnicalDetailsEntity extractTechnicalDetailsEntity = extractRepository.getExtractTechnicalDetails(uuid);
 
         return Response
                 .ok()

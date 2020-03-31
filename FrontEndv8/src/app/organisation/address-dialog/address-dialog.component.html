@@ -1,0 +1,36 @@
+<h1 mat-dialog-title>Address details</h1>
+<form #form="ngForm">
+<div mat-dialog-content>
+  <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>Building name</mat-label>
+      <input required matInput maxlength="100" [(ngModel)]="address.buildingName" placeholder="Building name" name="buildingName">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>Number and street</mat-label>
+      <input matInput maxlength="100" [(ngModel)]="address.numberAndStreet" placeholder="Number and street" name="numberAndStreet">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>Locality</mat-label>
+      <input matInput maxlength="100" [(ngModel)]="address.locality" placeholder="Locality" name="locality">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>City</mat-label>
+      <input matInput maxlength="100" [(ngModel)]="address.city" placeholder="City" name="city">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>County</mat-label>
+      <input matInput maxlength="100" [(ngModel)]="address.county" placeholder="County" name="county">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>Postcode</mat-label>
+      <input matInput maxlength="100" [(ngModel)]="address.postcode" placeholder="Postcode" name="postcode">
+    </mat-form-field>
+    <small class="required-field-note"></small>
+  </div>
+</div>
+</form>
+<div mat-dialog-actions align="end">
+  <button mat-button color="accent" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="accent" [disabled]="form.invalid" (click)="ok()">Save address</button>
+</div>

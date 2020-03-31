@@ -6,11 +6,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDPA;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
+import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonDPA;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonDocumentation;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.AddressDAL;
 import org.endeavourhealth.datasharingmanager.api.DAL.DataProcessingAgreementDAL;
@@ -23,7 +24,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Path("/dpa")
@@ -43,9 +44,10 @@ public final class DpaEndpoint extends AbstractEndpoint {
             "data processing agreements using a UUID or a search term. Search matches on name or description of data processing agreement. " +
             "Returns a JSON representation of the matching set of Data processing agreement")
     public Response getDPA(@Context SecurityContext sc,
-                        @ApiParam(value = "Optional uuid") @QueryParam("uuid") String uuid,
-                        @ApiParam(value = "Optional search term") @QueryParam("searchData") String searchData,
-                        @ApiParam(value = "Optional user Id to restrict based on region") @QueryParam("userId") String userId
+                           @ApiParam(value = "Optional uuid") @QueryParam("uuid") String uuid,
+                           @ApiParam(value = "Optional search term") @QueryParam("searchData") String searchData,
+                           @ApiParam(value = "Optional user Id to restrict based on region") @QueryParam("userId") String userId,
+                           @ApiParam(value = "Optional from region indicator") @QueryParam("fromRegion") String fromRegion
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
@@ -54,6 +56,10 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "SearchData", searchData);
 
         clearLogbackMarkers();
+        if ("true".equals(fromRegion)) {
+            return new DataProcessingAgreementLogic().getRegionlessDPAList();
+        }
+
         return new DataProcessingAgreementLogic().getDPA(uuid, searchData, userId);
     }
 
@@ -74,7 +80,6 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 "DPA", dpa);
 
         clearLogbackMarkers();
-
         if (dpa.getPublishers() != null) {
             CompletableFuture.runAsync(() -> {
                 try {
@@ -84,8 +89,33 @@ public final class DpaEndpoint extends AbstractEndpoint {
                 }
             });
         }
-
         return new DataProcessingAgreementLogic().postDPA(dpa, userProjectId);
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.DpaEndpoint.Post")
+    @Path("/updateMappings")
+    @ApiOperation(value = "Updates the mappings.  Accepts a JSON representation of a DPA.")
+    @RequiresAdmin
+    public Response updateMappings(@Context SecurityContext sc,
+                                   @HeaderParam("userProjectId") String userProjectId,
+                                   @ApiParam(value = "Json representation of dpa to update") JsonDPA dpa
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
+                "DPA",
+                "DPA", dpa);
+
+        new DataProcessingAgreementLogic().updateMappings(dpa, userProjectId);
+
+        clearLogbackMarkers();
+
+        return Response
+                .ok()
+                .entity(dpa.getUuid())
+                .build();
     }
 
     @DELETE
@@ -97,14 +127,16 @@ public final class DpaEndpoint extends AbstractEndpoint {
     @RequiresAdmin
     public Response deleteDPA(@Context SecurityContext sc,
                               @HeaderParam("userProjectId") String userProjectId,
-                              @ApiParam(value = "UUID of the data processing agreement to be deleted") @QueryParam("uuid") String uuid
+                              @ApiParam(value = "UUID of the data processing agreements to be deleted") @QueryParam("uuids") List<String> uuids
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "DPA",
-                "DPA Id", uuid);
+                "DPA Id", uuids);
 
-        new DataProcessingAgreementDAL().deleteDPA(uuid, userProjectId);
+        for (String uuid : uuids) {
+            new DataProcessingAgreementDAL().deleteDPA(uuid, userProjectId);
+        }
 
         clearLogbackMarkers();
         return Response
@@ -310,4 +342,18 @@ public final class DpaEndpoint extends AbstractEndpoint {
         return new AddressDAL().getOrganisationMarkers(uuid, MapType.DATAPROCESSINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType());
     }
 
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.DpaEndpoint.addDocument")
+    @Path("/addDocument")
+    @ApiOperation(value = "Post the uploaded document")
+    public Response getDescription(@Context SecurityContext sc,
+                                   @HeaderParam("userProjectId") String userProjectId,
+                                   @ApiParam(value = "uuid") @QueryParam("uuid") String uuid,
+                                   @ApiParam(value = "Document object") JsonDocumentation document) throws Exception {
+
+        super.setLogbackMarkers(sc);
+        return new DataProcessingAgreementLogic().addDocument(uuid, document, userProjectId);
+    }
 }

@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Add cohorts</h1>
+<div mat-dialog-content>
+  <div class="scroll-box-400">
+    <app-generic-table #picker
+                       [items]="searchResults"
+                       [detailsToShow]="cohortDetailsToShow"
+                       [allowSelect]="true">
+    </app-generic-table>
+  </div>
+  <br>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button color="accent" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="accent" [disabled]="picker.selection.selected.length < 1" (click)="ok()">OK</button>
+</div>

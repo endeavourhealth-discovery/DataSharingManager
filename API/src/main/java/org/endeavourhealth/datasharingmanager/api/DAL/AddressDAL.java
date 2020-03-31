@@ -7,10 +7,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.lang3.StringUtils;
 import org.endeavourhealth.common.config.ConfigManager;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.AddressEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonAddress;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonMarker;
-import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonAddress;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonMarker;
+import org.endeavourhealth.core.database.rdbms.ConnectionManager;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.AddressEntity;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -87,7 +87,7 @@ public class AddressDAL {
         List<String> additionLog = new ArrayList<>();
         List<String> updateLog = new ArrayList<>();
 
-        if (updatedAddresses != null) {
+        if (updatedAddresses != null && updatedAddresses.size() > 0) {
             for (JsonAddress updatedAddress : updatedAddresses) {
                 updatedAddress.setUuidsIfRequired(organisationUuid);
                 setGeolocation(updatedAddress);
@@ -123,6 +123,13 @@ public class AddressDAL {
                 if (added) {
                     additionLog.add(updatedAddress.toString());
                     entityManager.persist(new AddressEntity(updatedAddress));
+                }
+            }
+        } else {
+            if (oldAddresses != null && oldAddresses.size() > 0) {
+                for (AddressEntity oldAddress : oldAddresses) {
+                    removalLog.add(oldAddress.toString());
+                    entityManager.remove(entityManager.merge(oldAddress));
                 }
             }
         }

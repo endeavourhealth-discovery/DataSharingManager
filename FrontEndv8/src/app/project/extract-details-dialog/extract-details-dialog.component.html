@@ -1,0 +1,99 @@
+<h1 mat-dialog-title>Extract technical details</h1>
+<form #form="ngForm">
+<div mat-dialog-content *ngIf="extractTechnicalDetail">
+  <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
+    <mat-form-field appearance="outline" fxFlex="100" fxFill>
+      <mat-label>Name</mat-label>
+      <input required matInput maxlength="200" [(ngModel)]="extractTechnicalDetail.name" placeholder="Name" name="extractTechnicalDetailsName">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>Output format</mat-label>
+      <mat-select matInput [(ngModel)]="extractTechnicalDetail.outputFormat" name="outputFormat">
+        <mat-option *ngFor="let of of outputFormat" [value]="of.num">{{of.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>Security infrastructure</mat-label>
+      <mat-select matInput [(ngModel)]="extractTechnicalDetail.securityInfrastructure" name="securityInfrastructure">
+        <mat-option *ngFor="let sec of securityInfrastructures" [value]="sec.num">{{sec.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="34" fxFill>
+      <mat-label>Security architecture</mat-label>
+      <mat-select matInput [(ngModel)]="extractTechnicalDetail.securityArchitecture" name="securityArchitecture">
+        <mat-option *ngFor="let arc of securityArchitectures" [value]="arc.num">{{arc.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>SFTP host name</mat-label>
+      <input required matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.sftpHostName" placeholder="SFTP host name" name="sftpHostName">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="67" fxFill>
+      <mat-label>SFTP host directory</mat-label>
+      <input required matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.sftpHostDirectory" placeholder="SFTP host directory, typically /ftp/" name="sftpHostDirectory">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>SFTP host port</mat-label>
+      <input required matInput maxlength="10" [(ngModel)]="extractTechnicalDetail.sftpHostPort" placeholder="SFTP host port" name="sftpHostPort">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="33" fxFill>
+      <mat-label>SFTP client username</mat-label>
+      <input required matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.sftpClientUsername" placeholder="SFTP client username" name="sftpClientUsername">
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="34" fxFill>
+      <mat-label>SFTP client private key password</mat-label>
+      <input matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.sftpClientPrivateKeyPassword" placeholder="SFTP client private key password, rarely used" name="sftpClientPrivateKeyPassword">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+      <mat-label>SFTP client private key (.ppk)</mat-label>
+      <input readonly matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.sftpClientPrivateKeyFilename" placeholder="SFTP client private key" name="sftpClientPrivateKeyFilename">
+      <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="file2.click();">
+        <mat-icon>cloud_upload</mat-icon>
+      </button>
+      <button mat-button matSuffix mat-stroked-button aria-label="clear" (click)="clearExtraTechDetails(2)">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+      <mat-label>SFTP host public key (.pub)</mat-label>
+      <input readonly matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.sftpHostPublicKeyFilename" placeholder="SFTP host public key, rarely used" name="sftpHostPublicKeyFilename">
+      <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="file1.click()">
+        <mat-icon>cloud_upload</mat-icon>
+      </button>
+      <button mat-button matSuffix mat-stroked-button aria-label="clear" (click)="clearExtraTechDetails(1)">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+      <mat-label>Customer public key (.cer)</mat-label>
+      <input readonly matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.pgpCustomerPublicKeyFilename" placeholder="Customer public key" name="pgpCustomerPublicKeyFilename">
+      <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="file3.click()">
+        <mat-icon>cloud_upload</mat-icon>
+      </button>
+      <button mat-button matSuffix mat-stroked-button aria-label="clear" (click)="clearExtraTechDetails(3)">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-form-field appearance="outline" fxFlex="25" fxFill>
+      <mat-label>Internal public key (.cer)</mat-label>
+      <input readonly matInput maxlength="100" [(ngModel)]="extractTechnicalDetail.pgpInternalPublicKeyFilename" placeholder="Internal public key" name="pgpInternalPublicKeyFilename">
+      <button mat-button matSuffix mat-stroked-button aria-label="upload" (click)="file4.click()">
+        <mat-icon>cloud_upload</mat-icon>
+      </button>
+      <button mat-button matSuffix mat-stroked-button aria-label="clear" (click)="clearExtraTechDetails(4)">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </mat-form-field>
+    <input #file1 type="file" (click)="file1.value = null" (change)="file1Change($event)" accept="*" placeholder="File" name="file" style="display: none">
+    <input #file2 type="file" (click)="file2.value = null" (change)="file2Change($event)" accept="*" placeholder="File" name="file" style="display: none">
+    <input #file3 type="file" (click)="file3.value = null" (change)="file3Change($event)" accept="*" placeholder="File" name="file" style="display: none">
+    <input #file4 type="file" (click)="file4.value = null" (change)="file4Change($event)" accept="*" placeholder="File" name="file" style="display: none">
+    <small class="required-field-note"></small>
+  </div>
+</div>
+</form>
+<div mat-dialog-actions align="end">
+  <button mat-button color="accent" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="accent" [disabled]="form.invalid" (click)="ok()">Save details</button>
+</div>

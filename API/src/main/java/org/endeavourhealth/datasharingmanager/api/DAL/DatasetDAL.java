@@ -1,10 +1,10 @@
 package org.endeavourhealth.datasharingmanager.api.DAL;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DatasetEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDataSet;
-import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSetCache;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonDataSet;
+import org.endeavourhealth.core.database.dal.usermanager.caching.DataSetCache;
+import org.endeavourhealth.core.database.rdbms.ConnectionManager;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataSetEntity;
 import org.endeavourhealth.uiaudit.dal.UIAuditJDBCDAL;
 import org.endeavourhealth.uiaudit.enums.AuditAction;
 import org.endeavourhealth.uiaudit.enums.ItemType;
@@ -36,15 +36,15 @@ public class DatasetDAL {
         DataSetCache.clearDataSetCache(dataSetId);
     }
 
-    public List<DatasetEntity> getAllDataSets() throws Exception {
+    public List<DataSetEntity> getAllDataSets() throws Exception {
         try {
             CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
-            CriteriaQuery<DatasetEntity> cq = cb.createQuery(DatasetEntity.class);
-            Root<DatasetEntity> rootEntry = cq.from(DatasetEntity.class);
-            CriteriaQuery<DatasetEntity> all = cq.select(rootEntry);
-            TypedQuery<DatasetEntity> allQuery = _entityManager.createQuery(all);
+            CriteriaQuery<DataSetEntity> cq = cb.createQuery(DataSetEntity.class);
+            Root<DataSetEntity> rootEntry = cq.from(DataSetEntity.class);
+            CriteriaQuery<DataSetEntity> all = cq.select(rootEntry);
+            TypedQuery<DataSetEntity> allQuery = _entityManager.createQuery(all);
 
-            List<DatasetEntity> ret = allQuery.getResultList();
+            List<DataSetEntity> ret = allQuery.getResultList();
 
             return ret;
         } finally {
@@ -53,17 +53,19 @@ public class DatasetDAL {
 
     }
 
-    public void updateDataSet(JsonDataSet dataset, String userProjectId) throws Exception {
-        DatasetEntity oldDataSetEntity = _entityManager.find(DatasetEntity.class, dataset.getUuid());
+    public void updateDataSet(JsonDataSet dataset, String userProjectId, boolean withMapping) throws Exception {
+        DataSetEntity oldDataSetEntity = _entityManager.find(DataSetEntity.class, dataset.getUuid());
         oldDataSetEntity.setMappingsFromDAL();
 
         try {
             _entityManager.getTransaction().begin();
 
-            DatasetEntity newDataSet = new DatasetEntity(dataset);
+            DataSetEntity newDataSet = new DataSetEntity(dataset);
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data set edited", oldDataSetEntity, newDataSet);
 
-            _masterMappingDAL.updateDataSetMappings(dataset, oldDataSetEntity, auditJson);
+            if (withMapping) {
+                _masterMappingDAL.updateDataSetMappings(dataset, oldDataSetEntity, auditJson);
+            }
 
             oldDataSetEntity.updateFromJson(dataset);
 
@@ -81,7 +83,7 @@ public class DatasetDAL {
     }
 
     public void saveDataSet(JsonDataSet dataset, String userProjectId) throws Exception {
-        DatasetEntity dataSetEntity = new DatasetEntity(dataset);
+        DataSetEntity dataSetEntity = new DataSetEntity(dataset);
 
         try {
             _entityManager.getTransaction().begin();
@@ -89,7 +91,7 @@ public class DatasetDAL {
 
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data set created", null, dataSetEntity);
 
-            _masterMappingDAL.updateDataSetMappings(dataset, null, auditJson);
+            //_masterMappingDAL.updateDataSetMappings(dataset, null, auditJson);
 
             _uiAuditJDBCDAL.addToAuditTrail(userProjectId, AuditAction.ADD, ItemType.DATASET, auditJson);
 
@@ -109,7 +111,7 @@ public class DatasetDAL {
         try {
             _entityManager.getTransaction().begin();
 
-            DatasetEntity oldDataSetEntity = _entityManager.find(DatasetEntity.class, uuid);
+            DataSetEntity oldDataSetEntity = _entityManager.find(DataSetEntity.class, uuid);
             oldDataSetEntity.setMappingsFromDAL();
 
             JsonNode auditJson = _auditCompareLogic.getAuditJsonNode("Data set deleted", oldDataSetEntity, null);
@@ -129,17 +131,17 @@ public class DatasetDAL {
         clearDataSetCache(uuid);
     }
 
-    public List<DatasetEntity> search(String expression) throws Exception {
+    public List<DataSetEntity> search(String expression) throws Exception {
         try {
             CriteriaBuilder cb = _entityManager.getCriteriaBuilder();
-            CriteriaQuery<DatasetEntity> cq = cb.createQuery(DatasetEntity.class);
-            Root<DatasetEntity> rootEntry = cq.from(DatasetEntity.class);
+            CriteriaQuery<DataSetEntity> cq = cb.createQuery(DataSetEntity.class);
+            Root<DataSetEntity> rootEntry = cq.from(DataSetEntity.class);
 
             Predicate predicate = cb.like(cb.upper(rootEntry.get("name")), "%" + expression.toUpperCase() + "%");
 
             cq.where(predicate);
-            TypedQuery<DatasetEntity> query = _entityManager.createQuery(cq);
-            List<DatasetEntity> ret = query.getResultList();
+            TypedQuery<DataSetEntity> query = _entityManager.createQuery(cq);
+            List<DataSetEntity> ret = query.getResultList();
 
             return ret;
         } finally {

@@ -1,20 +1,17 @@
 package org.endeavourhealth.datasharingmanager.api.Logic;
 
 import com.google.common.base.Strings;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityMasterMappingDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.DAL.SecurityOrganisationDAL;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.*;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.OrganisationType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonAddress;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonFileUpload;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonOrganisation;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonStatistics;
-import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataProcessingAgreementCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.DataSharingAgreementCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.OrganisationCache;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.RegionCache;
+import org.endeavourhealth.core.database.dal.DalProvider;
+import org.endeavourhealth.core.database.dal.datasharingmanager.MasterMappingDalI;
+import org.endeavourhealth.core.database.dal.datasharingmanager.OrganisationDalI;
+import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
+import org.endeavourhealth.core.database.dal.datasharingmanager.enums.OrganisationType;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonFileUpload;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonOrganisation;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonStatistics;
+import org.endeavourhealth.core.database.dal.usermanager.caching.*;
+import org.endeavourhealth.core.database.rdbms.ConnectionManager;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.*;
 import org.endeavourhealth.datasharingmanager.api.DAL.*;
 import org.endeavourhealth.datasharingmanager.api.utility.CsvHelper;
 
@@ -39,6 +36,9 @@ public class OrganisationLogic {
 
     private EntityManager _entityManager;
     private MasterMappingDAL _masterMappingDAL;
+
+    private static MasterMappingDalI masterMappingRepository = DalProvider.factoryDSMMasterMappingDal();
+    private static OrganisationDalI organisationRepository = DalProvider.factoryDSMOrganisationDal();
 
     public OrganisationLogic() throws Exception {
         _entityManager = ConnectionManager.getDsmEntityManager();
@@ -76,7 +76,7 @@ public class OrganisationLogic {
 
 
         if (organisation.getUuid() != null) {
-            new OrganisationDAL().updateOrganisation(organisation, userProjectId);
+            new OrganisationDAL().updateOrganisation(organisation, userProjectId, false);
         } else {
             String hashString = organisation.getName() + organisation.getOdsCode();
             if (organisation.getIsService().equals("1")) {
@@ -91,6 +91,14 @@ public class OrganisationLogic {
                 .entity(organisation.getUuid())
                 .build();
 
+    }
+
+    public Response updateMappings(JsonOrganisation organisation, String userProjectId) throws Exception {
+        new OrganisationDAL().updateOrganisation(organisation, userProjectId, true);
+        return Response
+                .ok()
+                .entity(organisation.getUuid())
+                .build();
     }
 
     public Response getOrganisationsByType(byte type) throws Exception {
@@ -147,7 +155,7 @@ public class OrganisationLogic {
                                          Integer pageNumber, Integer pageSize,
                                          String orderColumn, boolean descending, UUID userId) throws Exception {
 
-        List<OrganisationEntity> organisations = new SecurityOrganisationDAL().searchOrganisations(searchData, searchServices,
+        List<OrganisationEntity> organisations = organisationRepository.searchOrganisations(searchData, searchServices,
                 organisationType, pageNumber, pageSize, orderColumn, descending, userId);
 
         return Response
@@ -158,7 +166,7 @@ public class OrganisationLogic {
 
     public Response getRegionsForOrganisation(String organisationUuid, String userId) throws Exception {
 
-        List<String> regionUuids = new SecurityMasterMappingDAL().getParentMappings(organisationUuid, MapType.ORGANISATION.getMapType(), MapType.REGION.getMapType());
+        List<String> regionUuids = masterMappingRepository.getParentMappings(organisationUuid, MapType.ORGANISATION.getMapType(), MapType.REGION.getMapType());
         List<RegionEntity> ret = new ArrayList<>();
 
         if (userId != null) {
@@ -166,7 +174,7 @@ public class OrganisationLogic {
         }
 
         if (!regionUuids.isEmpty())
-            ret = new RegionDAL().getRegionsFromList(regionUuids);
+            ret = RegionCache.getRegionDetails(regionUuids);
 
         return Response
                 .ok()
@@ -176,11 +184,11 @@ public class OrganisationLogic {
 
     public Response getDPAsOrganisationPublishingTo(String organisationUuid) throws Exception {
 
-        List<String> dpaUUIDs = new SecurityMasterMappingDAL().getParentMappings(organisationUuid, MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        List<String> dpaUUIDs = masterMappingRepository.getParentMappings(organisationUuid, MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!dpaUUIDs.isEmpty())
-            ret = new DataProcessingAgreementCache().getDPADetails(dpaUUIDs);
+            ret = DataProcessingAgreementCache.getDPADetails(dpaUUIDs);
 
         return Response
                 .ok()
@@ -190,11 +198,25 @@ public class OrganisationLogic {
 
     public Response getDPAsOrganisationPublishingToFromList(List<String> organisationUuids) throws Exception {
 
-        List<String> dpaUUIDs = new SecurityMasterMappingDAL().getParentMappings(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
+        List<String> dpaUUIDs = masterMappingRepository.getParentMappings(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATAPROCESSINGAGREEMENT.getMapType());
         List<DataProcessingAgreementEntity> ret = new ArrayList<>();
 
         if (!dpaUUIDs.isEmpty())
-            ret = new DataProcessingAgreementCache().getDPADetails(dpaUUIDs);
+            ret = DataProcessingAgreementCache.getDPADetails(dpaUUIDs);
+
+        return Response
+                .ok()
+                .entity(ret)
+                .build();
+    }
+
+    public Response getProjectsOrganisationPublishingToFromList(List<String> organisationUuids) throws Exception {
+
+        List<String> projectUUIDs = masterMappingRepository.getParentMappings(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.PROJECT.getMapType());
+        List<ProjectEntity> ret = new ArrayList<>();
+
+        if (!projectUUIDs.isEmpty())
+            ret = ProjectCache.getProjectDetails(projectUUIDs);
 
         return Response
                 .ok()
@@ -204,7 +226,7 @@ public class OrganisationLogic {
 
     public Response getDSAsOrganisationSubscribingTo(String organisationUuid) throws Exception {
 
-        List<String> dsaUuids = new SecurityMasterMappingDAL().getParentMappings(organisationUuid, MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+        List<String> dsaUuids = masterMappingRepository.getParentMappings(organisationUuid, MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
         if (!dsaUuids.isEmpty())
@@ -218,7 +240,7 @@ public class OrganisationLogic {
 
     public Response getDSAsOrganisationSubscribingToFromList(List<String> organisationUuids) throws Exception {
 
-        List<String> dsaUuids = new SecurityMasterMappingDAL().getParentMappings(organisationUuids, MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+        List<String> dsaUuids = masterMappingRepository.getParentMappings(organisationUuids, MapType.SUBSCRIBER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
         if (!dsaUuids.isEmpty())
@@ -232,7 +254,7 @@ public class OrganisationLogic {
 
     public Response getDSAsOrganisationPublishingTo(String organisationUuid) throws Exception {
 
-        List<String> dsaUUIds = new SecurityMasterMappingDAL().getParentMappings(organisationUuid, MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+        List<String> dsaUUIds = masterMappingRepository.getParentMappings(organisationUuid, MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
         if (!dsaUUIds.isEmpty())
@@ -246,7 +268,7 @@ public class OrganisationLogic {
 
     public Response getDSAsOrganisationPublishingToFromList(List<String> organisationUuids) throws Exception {
 
-        List<String> dsaUUIds = new SecurityMasterMappingDAL().getParentMappings(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
+        List<String> dsaUUIds = masterMappingRepository.getParentMappings(organisationUuids, MapType.PUBLISHER.getMapType(), MapType.DATASHARINGAGREEMENT.getMapType());
         List<DataSharingAgreementEntity> ret = new ArrayList<>();
 
         if (!dsaUUIds.isEmpty())
@@ -279,7 +301,7 @@ public class OrganisationLogic {
 
     public Response getChildOrganisations(String organisationUuid, Short organisationType) throws Exception {
 
-        List<String> organisationUuids = new SecurityMasterMappingDAL().getChildMappings(organisationUuid, MapType.ORGANISATION.getMapType(), organisationType);
+        List<String> organisationUuids = masterMappingRepository.getChildMappings(organisationUuid, MapType.ORGANISATION.getMapType(), organisationType);
         List<OrganisationEntity> ret = new ArrayList<>();
 
         if (!organisationUuids.isEmpty())
@@ -293,7 +315,7 @@ public class OrganisationLogic {
 
     public Response getParentOrganisations(String organisationUuid, Short orgType) throws Exception {
 
-        List<String> organisationUuids = new SecurityMasterMappingDAL().getParentMappings(organisationUuid, orgType, MapType.ORGANISATION.getMapType());
+        List<String> organisationUuids = masterMappingRepository.getParentMappings(organisationUuid, orgType, MapType.ORGANISATION.getMapType());
         List<OrganisationEntity> ret = new ArrayList<>();
 
         if (!organisationUuids.isEmpty())
@@ -363,7 +385,7 @@ public class OrganisationLogic {
 
     public Response searchPublishersInDSA(String dsaUUID, String searchTerm, List<String> odsCodes) throws Exception {
 
-        List<String> organisationUuids =  new SecurityMasterMappingDAL().getChildMappings(dsaUUID, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType());
+        List<String> organisationUuids =  masterMappingRepository.getChildMappings(dsaUUID, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType());
 
         List<OrganisationEntity> baseOrgs = new ArrayList<>();
         if (!organisationUuids.isEmpty())
@@ -377,7 +399,7 @@ public class OrganisationLogic {
     }
 
     public Response searchSubscribersInDSA(String dsaUUID, String searchTerm, List<String> odsCodes) throws Exception {
-        List<String> organisationUuids =  new SecurityMasterMappingDAL().getChildMappings(dsaUUID, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.SUBSCRIBER.getMapType());
+        List<String> organisationUuids =  masterMappingRepository.getChildMappings(dsaUUID, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.SUBSCRIBER.getMapType());
 
         List<OrganisationEntity> baseOrgs = new ArrayList<>();
         if (!organisationUuids.isEmpty())
@@ -774,5 +796,15 @@ public class OrganisationLogic {
         addressEntity.setPostcode(org.get(9));
 
         return addressEntity;
+    }
+
+    public void deleteOrganisation(List<String> uuids, String userProjectId, UUID userId) throws Exception {
+        for (String uuid : uuids) {
+            new OrganisationDAL().deleteOrganisation(uuid, userProjectId);
+        }
+        Map<UUID, String> cache = organisationRepository.getCachedSearchTerm();
+        if (cache != null && cache.containsKey(userId)) {
+            cache.remove(userId);
+        }
     }
 }

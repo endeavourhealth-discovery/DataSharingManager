@@ -1,0 +1,72 @@
+
+    <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+
+      <div fxFlex="50">
+
+        <mat-card>
+          <mat-card-header>
+            <div mat-card-avatar><i class="fad fa-handshake-alt"></i></div>
+            <mat-card-title>Processing agreements</mat-card-title>
+            <mat-card-subtitle>&nbsp;</mat-card-subtitle>
+            <div fxFlex></div>
+          </mat-card-header>
+          <mat-card-content>
+
+            <h3>Publishing to</h3>
+            <app-generic-table #dpaPubTable
+                               [items]="dpaPublishing"
+                               [detailsToShow]="dpaDetailsToShow"
+                               [allowSelect]="false"
+                               (clicked)="dpaClicked($event)">
+            </app-generic-table>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-header>
+            <div mat-card-avatar><i class="fad fa-handshake-alt"></i></div>
+            <mat-card-title>Projects</mat-card-title>
+            <mat-card-subtitle>&nbsp;</mat-card-subtitle>
+            <div fxFlex></div>
+          </mat-card-header>
+          <mat-card-content>
+
+            <h3>Publishing to</h3>
+            <app-generic-table #dpaPubTable
+                               [items]="projectPublishing"
+                               [detailsToShow]="projectDetailsToShow"
+                               [allowSelect]="false"
+                               (clicked)="projectClicked($event)">
+            </app-generic-table>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div fxFlex="50">
+        <mat-card>
+          <mat-card-header>
+            <div mat-card-avatar><i class="fad fa-handshake-alt"></i></div>
+            <mat-card-title>Sharing agreements</mat-card-title>
+            <mat-card-subtitle>&nbsp;</mat-card-subtitle>
+            <div fxFlex></div>
+          </mat-card-header>
+          <mat-card-content>
+            <h3>Publishing to</h3>
+            <app-generic-table #dsaPubTable
+                               [items]="dsaPublishing"
+                               [detailsToShow]="dsaDetailsToShow"
+                               [allowSelect]="false"
+                               (clicked)="dsaClicked($event)">
+            </app-generic-table>
+
+            <h3>Subscribing to</h3>
+            <app-generic-table #dsaSubTable
+                               [items]="dsaSubscribing"
+                               [detailsToShow]="dsaDetailsToShow"
+                               [allowSelect]="false"
+                               (clicked)="dsaClicked($event)">
+            </app-generic-table>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>

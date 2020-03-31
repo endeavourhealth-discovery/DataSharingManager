@@ -6,12 +6,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DocumentationEntity;
-import org.endeavourhealth.common.security.usermanagermodel.models.ConnectionManager;
-import org.endeavourhealth.common.security.usermanagermodel.models.caching.DocumentationCache;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
+import org.endeavourhealth.core.database.dal.usermanager.caching.DocumentationCache;
+import org.endeavourhealth.core.database.rdbms.ConnectionManager;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DocumentationEntity;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.DocumentationDAL;
 import org.endeavourhealth.datasharingmanager.api.Logic.DocumentationLogic;
@@ -23,6 +23,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.List;
 
 @Path("/documentation")
 @Api(description = "API endpoint related to associated Documentation")
@@ -82,14 +83,16 @@ public final class DocumentEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Delete a document based on UUID that is passed to the API.  Warning! This is permanent.")
     @RequiresAdmin
     public Response deleteDocument(@Context SecurityContext sc,
-                                   @ApiParam(value = "UUID of the document to be deleted") @QueryParam("uuid") String uuid
+                                   @ApiParam(value = "UUID of the documents to be deleted") @QueryParam("uuids") List<String> uuids
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "Document",
-                "Document Id", uuid);
+                "Document Id", uuids);
 
-        new DocumentationDAL(ConnectionManager.getDsmEntityManager()).deleteDocument(uuid);
+        for (String uuid : uuids) {
+            new DocumentationDAL(ConnectionManager.getDsmEntityManager()).deleteDocument(uuid);
+        }
 
         clearLogbackMarkers();
         return Response

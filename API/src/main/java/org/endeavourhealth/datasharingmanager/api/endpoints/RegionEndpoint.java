@@ -8,11 +8,11 @@ import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.config.ConfigManager;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.enums.MapType;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonRegion;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
+import org.endeavourhealth.core.database.dal.datasharingmanager.enums.MapType;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonRegion;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.AddressDAL;
 import org.endeavourhealth.datasharingmanager.api.DAL.RegionDAL;
@@ -25,6 +25,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.List;
 
 @Path("/region")
 @Api(description = "API endpoint related to the regions")
@@ -77,6 +78,32 @@ public final class RegionEndpoint extends AbstractEndpoint {
         return new RegionLogic().postRegion(region, userProjectId);
     }
 
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.RegionEndpoint.Post")
+    @Path("/updateMappings")
+    @ApiOperation(value = "Updates the mappings.  Accepts a JSON representation of a region.")
+    @RequiresAdmin
+    public Response updateMappings(@Context SecurityContext sc,
+                                   @HeaderParam("userProjectId") String userProjectId,
+                                   @ApiParam(value = "Json representation of dsa to update") JsonRegion region
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Save,
+                "Region",
+                "Region", region);
+
+        new RegionLogic().updateMappings(region, userProjectId);
+
+        clearLogbackMarkers();
+
+        return Response
+                .ok()
+                .entity(region.getUuid())
+                .build();
+    }
+
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -86,14 +113,16 @@ public final class RegionEndpoint extends AbstractEndpoint {
     @RequiresAdmin
     public Response deleteRegion(@Context SecurityContext sc,
                                  @HeaderParam("userProjectId") String userProjectId,
-                                 @ApiParam(value = "UUID of the region to be deleted") @QueryParam("uuid") String uuid
+                                 @ApiParam(value = "UUID of the regions to be deleted") @QueryParam("uuids") List<String> uuids
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "Region",
-                "Region Id", uuid);
+                "Region Id", uuids);
 
-        new RegionDAL().deleteRegion(uuid, userProjectId);
+        for (String uuid : uuids) {
+            new RegionDAL().deleteRegion(uuid, userProjectId);
+        }
 
         clearLogbackMarkers();
         return Response

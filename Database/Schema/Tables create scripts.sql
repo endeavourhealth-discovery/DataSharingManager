@@ -213,8 +213,12 @@ create table data_sharing_manager.organisation (
     bulk_imported boolean not null comment 'Flag to determine if the organisation has been bulk imported',
     bulk_item_updated boolean not null comment 'Flag to determine if the organisation has been updated since the bulk import',
     bulk_conflicted_with char(36) null comment 'If organisation has been updated, this holds the duplicate organisation UUID to allow the conflicts to be resolved',
+    system_supplier_system_id smallint(6) null comment 'The id of the system supplier system for the organisation',
+    system_supplier_reference varchar(50) null comment 'The system supplier reference for the organisation',
+    system_supplier_sharing_activated tinyint(1) null comment 'Whether or not the system supplier has activated sharing for the organisation',
         
     constraint data_sharing_manager_organisation_uuid_pk primary key (uuid),
+    foreign key data_sharing_manager_organisation_system_supplier_system_id_fk (system_supplier_system_id) references data_sharing_manager.system_supplier_system(id),
     index data_sharing_manager_organisation_name_idx (name),
     index data_sharing_manager_organisation_ods_code_idx (ods_code),
     index data_sharing_manager_organisation_name_ods_code_idx (name, ods_code),
@@ -467,7 +471,7 @@ CREATE TABLE data_sharing_manager.project_application_policy
 	application_policy_id varchar(36) NOT NULL,
 
 	CONSTRAINT pk_id PRIMARY KEY (project_uuid)
-)comment 'An application policy which is assigned to a project to determine access to applications';
+) comment 'An application policy which is assigned to a project to determine access to applications';
 
 
 create table data_sharing_manager.extract_technical_details (
@@ -489,3 +493,12 @@ create table data_sharing_manager.extract_technical_details (
 
     primary key data_sharing_manager_extract_technical_details_uuid (uuid)
 ) comment 'Hold extract technical details';
+
+
+create table data_sharing_manager.system_supplier_system (
+    id SMALLINT(6) NOT NULL COMMENT 'Unique identifier for the system supplier system',
+    system_supplier_system VARCHAR(100) NOT NULL COMMENT 'The system supplier system',
+    system_supplier VARCHAR(100) NOT NULL COMMENT 'The system supplier',
+
+    PRIMARY KEY data_sharing_manager_system_supplier_system_id (id)
+) COMMENT 'Hold system supplier systems';

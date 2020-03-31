@@ -1,0 +1,204 @@
+<mat-card *ngIf="project">
+  <mat-card-header>
+    <div mat-card-avatar>
+      <i class="fad fa-folders"></i>
+    </div>
+    <mat-card-title>Project details</mat-card-title>
+    <mat-card-subtitle *ngIf="project.name">{{project.name}}</mat-card-subtitle>
+    <mat-card-subtitle *ngIf="!project.name">New Project</mat-card-subtitle>
+    <div fxFlex></div>
+    <div fxLayoutAlign="center" class="mat-action" matRipple (click)="editProject()">
+      <i class="fas fa-fw fa-pencil"></i>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <form class="form" #f="ngForm" novalidate>
+      <div class="form-group" #fgName="ngModelGroup" ngModelGroup="dpa" [class.has-error]="!fgName.valid">
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
+            <mat-label>Project name</mat-label>
+            <input matInput [(ngModel)]="project.name" placeholder="Project name" name="name" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
+            <mat-label>Business case</mat-label>
+            <input matInput [(ngModel)]="businessCaseStatus" placeholder="Business case" name="businessCaseStatus" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
+            <mat-label>Summary</mat-label>
+            <textarea matInput [(ngModel)]="project.summary" placeholder="Summary" name="summary" rows="6" readonly></textarea>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
+            <mat-label>Objectives</mat-label>
+            <textarea matInput [(ngModel)]="project.objectives" placeholder="Objectives" name="objectives" rows="6" readonly></textarea>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
+            <mat-label>Project lead</mat-label>
+            <input matInput [(ngModel)]="leadUser" placeholder="Project lead" name="leadUser" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
+            <mat-label>Project technical lead</mat-label>
+            <input matInput [(ngModel)]="technicalLeadUser" placeholder="Project technical lead" name="technicalLeadUser" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
+            <mat-label>Storage protocol</mat-label>
+            <input matInput [(ngModel)]="storageProtocolId" placeholder="Storage protocol" name="storageProtocolId" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
+            <mat-label>Patient consent model</mat-label>
+            <input matInput [(ngModel)]="consentModelId" placeholder="Patient consent model" name="consentModel" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
+            <mat-label>De-identification level</mat-label>
+            <input matInput [(ngModel)]="deidentificationLevelValue" placeholder="De-identification level" name="deIdentificationLevel" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
+            <mat-label>Project type</mat-label>
+            <input matInput [(ngModel)]="projectTypeId" placeholder="Project type" name="projectTypeId" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
+            <mat-label>Status</mat-label>
+            <input matInput [(ngModel)]="projectStatusId" placeholder="Status" name="projectStatusId" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
+            <mat-label>Start date</mat-label>
+            <input matInput type="date" [(ngModel)]="project.startDate" placeholder="Start date" name="startDate" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
+            <mat-label>End date</mat-label>
+            <input matInput type="date" [(ngModel)]="project.endDate" placeholder="End date" name="endDate" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
+            <mat-label>Application policy</mat-label>
+            <input matInput [(ngModel)]="selectedApplicationPolicyValue" placeholder="Application policy" name="selectedApplicationPolicy" readonly>
+          </mat-form-field>
+        </div>
+        <br>
+      </div>
+    </form>
+    <mat-tab-group dynamicHeight>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{dsas?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dsas?.length < 1">Sharing agreements</span>
+        </ng-template>
+        <app-generic-table #dsasTable
+                           [items]="dsas"
+                           [detailsToShow]="dsasDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="dsaClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDsas()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit && dsas?.length < 1" mat-icon-button color="primary" (click)="addDsas()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{publishers?.length}}" matBadgeOverlap="false" [matBadgeHidden]="publishers?.length < 1">Publishers</span>
+        </ng-template>
+        <app-generic-table #publishersTable
+                           [items]="publishers"
+                           [detailsToShow]="publishersDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="publisherClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deletePublishers()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addPublishers()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{subscribers?.length}}" matBadgeOverlap="false" [matBadgeHidden]="subscribers?.length < 1">Subscribers</span>
+        </ng-template>
+        <app-generic-table #subscribersTable
+                           [items]="subscribers"
+                           [detailsToShow]="publishersDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="publisherClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteSubscribers()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addSubscribers()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{documentations?.length}}" matBadgeOverlap="false" [matBadgeHidden]="documentations?.length < 1">Documents</span>
+        </ng-template>
+        <app-generic-table #documentationsTable
+                           [items]="documentations"
+                           [detailsToShow]="documentationsDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="documentationClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDocumentations()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addDocumentation()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{cohorts?.length}}" matBadgeOverlap="false" [matBadgeHidden]="cohorts?.length < 1">Cohorts</span>
+        </ng-template>
+        <app-generic-table #cohortsTable
+                           [items]="cohorts"
+                           [detailsToShow]="cohortsDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="cohortClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteCohorts()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addCohorts()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{dataSets?.length}}" matBadgeOverlap="false" [matBadgeHidden]="dataSets?.length < 1">Data sets</span>
+        </ng-template>
+        <app-generic-table #dataSetsTable
+                           [items]="dataSets"
+                           [detailsToShow]="dataSetsDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="dataSetClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteDataSets()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit" mat-icon-button color="primary" (click)="addDataSets()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{authToShare?.length}}" matBadgeOverlap="false" [matBadgeHidden]="authToShare?.length < 1">Authority to share</span>
+        </ng-template>
+        <br>
+        <br>
+        <mat-tab-group dynamicHeight>
+          <mat-tab *ngFor="let org of authToShare">
+            <ng-template mat-tab-label>
+              <span matBadge="{{org.users?.length}}" matBadgeOverlap="false" [matBadgeHidden]="org.users?.length < 1">{{org.organisationName}}</span>
+            </ng-template>
+            <mat-list>
+              <mat-list-item *ngFor="let user of org.users">
+                {{user.forename}} {{user.surname}} ({{user.username}})
+              </mat-list-item>
+            </mat-list>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{extractTechnicalDetails?.length}}" matBadgeOverlap="false" [matBadgeHidden]="extractTechnicalDetails?.length < 1">Extract technical details</span>
+        </ng-template>
+        <app-generic-table #extractTechnicalDetailsTable
+                           [items]="extractTechnicalDetails"
+                           [detailsToShow]="extractTechnicalDetailToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="extractTechnicalDetailClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteExtractTechnicalDetail()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit && extractTechnicalDetails?.length < 1" mat-icon-button color="primary" (click)="addExtractTechnicalDetail()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span matBadge="{{schedules?.length}}" matBadgeOverlap="false" [matBadgeHidden]="schedules?.length < 1">Scheduler</span>
+        </ng-template>
+        <app-generic-table #schedulesTable
+                           [items]="schedules"
+                           [detailsToShow]="schedulesDetailsToShow"
+                           [allowSelect]="allowEdit"
+                           (clicked)="scheduleClicked($event)">
+          <button role="selectionOnly" *ngIf="allowEdit" mat-icon-button color="warn" (click)="deleteSchedules()"><mat-icon>delete</mat-icon></button>
+          <button *ngIf="allowEdit && schedules?.length < 1" mat-icon-button color="primary" (click)="addSchedule()"><mat-icon>add</mat-icon></button>
+        </app-generic-table>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

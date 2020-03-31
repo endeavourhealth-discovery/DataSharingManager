@@ -6,11 +6,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.endeavourhealth.common.security.SecurityUtils;
 import org.endeavourhealth.common.security.annotations.RequiresAdmin;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.database.DataSharingSummaryEntity;
-import org.endeavourhealth.common.security.datasharingmanagermodel.models.json.JsonDataSharingSummary;
 import org.endeavourhealth.core.data.audit.UserAuditRepository;
 import org.endeavourhealth.core.data.audit.models.AuditAction;
 import org.endeavourhealth.core.data.audit.models.AuditModule;
+import org.endeavourhealth.core.database.dal.datasharingmanager.models.JsonDataSharingSummary;
+import org.endeavourhealth.core.database.rdbms.datasharingmanager.models.DataSharingSummaryEntity;
 import org.endeavourhealth.coreui.endpoints.AbstractEndpoint;
 import org.endeavourhealth.datasharingmanager.api.DAL.DataSharingSummaryDAL;
 import org.slf4j.Logger;
@@ -103,14 +103,17 @@ public final class DataSharingSummaryEndpoint extends AbstractEndpoint {
     @ApiOperation(value = "Delete a data flow based on UUID that is passed to the API.  Warning! This is permanent.")
     @RequiresAdmin
     public Response deleteDataSharingSummary(@Context SecurityContext sc,
-                           @ApiParam(value = "UUID of the data sharing summary to be deleted") @QueryParam("uuid") String uuid
+                                             @ApiParam(value = "UUID of the data sharing summaries to be deleted") @QueryParam("uuids") List<String> uuids
+
     ) throws Exception {
         super.setLogbackMarkers(sc);
         userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Delete,
                 "Data Sharing Summary",
-                "Data Sharing Summary Id", uuid);
+                "Data Sharing Summary Id", uuids);
 
-        new DataSharingSummaryDAL().deleteDataSharingSummary(uuid);
+        for (String uuid : uuids) {
+            new DataSharingSummaryDAL().deleteDataSharingSummary(uuid);
+        }
 
         clearLogbackMarkers();
         return Response

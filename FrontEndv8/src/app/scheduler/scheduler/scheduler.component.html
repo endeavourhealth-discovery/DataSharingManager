@@ -1,0 +1,323 @@
+<h1 mat-dialog-title>Scheduler</h1>
+<div mat-dialog-content>
+  <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+    <mat-tab-group (selectedTabChange)="setTab($event)" [selectedIndex]="selectedTab">
+      <mat-tab label="Minutes" *ngIf="allowTime">
+        <br>
+        <mat-form-field appearance="outline" class="regular">
+          <mat-label>every minute(s)</mat-label>
+          <mat-select [(value)]="everyMinuteMinuteTab" (selectionChange)="setMinutesTabCron()">
+            <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="regular">
+          <mat-label>at second(s)</mat-label>
+          <mat-select [(value)]="everySecondMinuteTab" (selectionChange)="setMinutesTabCron()">
+            <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+      </mat-tab>
+      <mat-tab label="Hourly" *ngIf="allowTime">
+        <br>
+        <mat-form-field appearance="outline" class="regular">
+          <mat-label>every hour(s)</mat-label>
+          <mat-select [(value)]="everyHourHourlyTab" (selectionChange)="setHourlyTabCron()">
+            <mat-option *ngFor="let item of zeroTo23" value="{{item.value}}">{{item.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="regular">
+          <mat-label>at minute(s)</mat-label>
+          <mat-select [(value)]="everyMinuteHourlyTab" (selectionChange)="setHourlyTabCron()">
+            <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="regular">
+          <mat-label>at second(s)</mat-label>
+          <mat-select [(value)]="everySecondHourlyTab" (selectionChange)="setHourlyTabCron()">
+            <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+      </mat-tab>
+      <mat-tab label="Daily">
+        <br>
+        <mat-radio-group [(ngModel)]="dailyRadio" (change)="toggleDaily()">
+          <mat-label>&nbsp;&nbsp;&nbsp;</mat-label>
+          <mat-radio-button [value]="rows[0]" [checked]="dailyRadio=='1'"></mat-radio-button>
+          <mat-form-field appearance="outline" class="regular">
+            <mat-label>every day(s)</mat-label>
+            <mat-select [(value)]="everyDayDailyTab" [disabled]="dailyRow1" (selectionChange)="setDailyTabCron()">
+              <mat-option *ngFor="let item of oneTo31" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>hh</mat-label>
+            <mat-select [(value)]="everyHour1DailyTab" [disabled]="dailyRow1" (selectionChange)="setDailyTabCron()">
+              <mat-option *ngFor="let item of zeroTo23" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>mm</mat-label>
+            <mat-select [(value)]="everyMinute1DailyTab" [disabled]="dailyRow1" (selectionChange)="setDailyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>ss</mat-label>
+            <mat-select [(value)]="everySecond1DailyTab" [disabled]="dailyRow1" (selectionChange)="setDailyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br>
+          <mat-label>&nbsp;&nbsp;&nbsp;</mat-label>
+          <mat-radio-button [value]="rows[1]"></mat-radio-button>
+          <mat-label>&nbsp;Every working day&nbsp;&nbsp;</mat-label>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>hh</mat-label>
+            <mat-select [(value)]="everyHour2DailyTab" [disabled]="dailyRow2" (selectionChange)="setDailyTabCron()" >
+              <mat-option *ngFor="let item of zeroTo23" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>mm</mat-label>
+            <mat-select [(value)]="everyMinute2DailyTab" [disabled]="dailyRow2" (selectionChange)="setDailyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>ss</mat-label>
+            <mat-select [(value)]="everySecond2DailyTab" [disabled]="dailyRow2" (selectionChange)="setDailyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-radio-group>
+        <br *ngIf="!allowTime">
+        <br *ngIf="!allowTime">
+        <br *ngIf="!allowTime">
+        <br *ngIf="!allowTime">
+      </mat-tab>
+      <mat-tab label="Weekly">
+        <section class="days-section">
+          <mat-checkbox class="days-margin" [(ngModel)]="monday" (change)="setWeeklyTabCron()">MON</mat-checkbox>
+          <mat-checkbox class="days-margin" [(ngModel)]="tuesday" (change)="setWeeklyTabCron()">TUE</mat-checkbox>
+          <mat-checkbox class="days-margin" [(ngModel)]="wednesday" (change)="setWeeklyTabCron()">WED</mat-checkbox>
+          <mat-checkbox class="days-margin" [(ngModel)]="thursday" (change)="setWeeklyTabCron()">THU</mat-checkbox>
+          <mat-checkbox class="days-margin" [(ngModel)]="friday" (change)="setWeeklyTabCron()">FRI</mat-checkbox>
+          <mat-checkbox class="days-margin" [(ngModel)]="saturday" (change)="setWeeklyTabCron()">SAT</mat-checkbox>
+          <mat-checkbox class="days-margin" [(ngModel)]="sunday" (change)="setWeeklyTabCron()">SUN</mat-checkbox>
+        </section>
+        <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+          <mat-label>hh</mat-label>
+          <mat-select [(value)]="everyHourWeeklyTab" (selectionChange)="setWeeklyTabCron()" >
+            <mat-option *ngFor="let item of zeroTo23" value="{{item.value}}">{{item.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+          <mat-label>mm</mat-label>
+          <mat-select [(value)]="everyMinuteWeeklyTab" (selectionChange)="setWeeklyTabCron()">
+            <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+          <mat-label>ss</mat-label>
+          <mat-select [(value)]="everySecondWeeklyTab" (selectionChange)="setWeeklyTabCron()">
+            <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br>
+        <br>
+        <br>
+        <br *ngIf="!allowTime">
+        <br *ngIf="!allowTime">
+        <br *ngIf="!allowTime">
+      </mat-tab>
+      <mat-tab label="Monthly">
+        <br>
+        <mat-radio-group [(ngModel)]="monthlyRadio" (change)="toggleMonthly()">
+          <mat-label>&nbsp;&nbsp;&nbsp;</mat-label>
+          <mat-radio-button [value]="rows[0]"></mat-radio-button>
+          <mat-form-field appearance="outline" class="regular">
+            <mat-label>on the</mat-label>
+            <mat-select [(value)]="everyDay1MonthlyTab" [disabled]="monthlyRow1" (selectionChange)="setMonthlyTabCron()">
+              <mat-option *ngFor="let item of days" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="regular">
+            <mat-label>every month(s)</mat-label>
+            <mat-select [(value)]="everyMonth1MonthlyTab" [disabled]="monthlyRow1" (selectionChange)="setMonthlyTabCron()">
+              <mat-option *ngFor="let item of months" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>hh</mat-label>
+            <mat-select [(value)]="everyHour1MonthlyTab" [disabled]="monthlyRow1" (selectionChange)="setMonthlyTabCron()" >
+              <mat-option *ngFor="let item of zeroTo23" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>mm</mat-label>
+            <mat-select [(value)]="everyMinute1MonthlyTab" [disabled]="monthlyRow1" (selectionChange)="setMonthlyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>ss</mat-label>
+            <mat-select [(value)]="everySecond1MonthlyTab" [disabled]="monthlyRow1" (selectionChange)="setMonthlyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br>
+          <mat-label>&nbsp;&nbsp;&nbsp;</mat-label>
+          <mat-radio-button [value]="rows[1]"></mat-radio-button>
+          <mat-form-field appearance="outline" class="regular">
+            <mat-label>on the</mat-label>
+            <mat-select [(value)]="everyWeekMonthlyTab" [disabled]="monthlyRow2" (selectionChange)="setMonthlyTabCron()">
+              <mat-option *ngFor="let item of week" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="regular">
+            <mat-label>day</mat-label>
+            <mat-select [(value)]="everyDayMonthlyTab" [disabled]="monthlyRow2" (selectionChange)="setMonthlyTabCron()">
+              <mat-option *ngFor="let item of weekdays" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="regular">
+            <mat-label>every month(s)</mat-label>
+            <mat-select [(value)]="everyMonthMonthlyTab" [disabled]="monthlyRow2" (selectionChange)="setMonthlyTabCron()">
+              <mat-option *ngFor="let item of months" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>hh</mat-label>
+            <mat-select [(value)]="everyHour2MonthlyTab" [disabled]="monthlyRow2" (selectionChange)="setMonthlyTabCron()" >
+              <mat-option *ngFor="let item of zeroTo23" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>mm</mat-label>
+            <mat-select [(value)]="everyMinute2MonthlyTab" [disabled]="monthlyRow2" (selectionChange)="setMonthlyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>ss</mat-label>
+            <mat-select [(value)]="everySecond2MonthlyTab" [disabled]="monthlyRow2" (selectionChange)="setMonthlyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-radio-group>
+      </mat-tab>
+      <mat-tab label="Yearly">
+        <br>
+        <mat-radio-group [(ngModel)]="yearlyRadio" (change)="toggleYearly()">
+          <mat-label>&nbsp;&nbsp;&nbsp;</mat-label>
+          <mat-radio-button [value]="rows[0]"></mat-radio-button>
+          <mat-form-field appearance="outline" class="regular">
+            <mat-label>only in</mat-label>
+            <mat-select [(value)]="everyMonth1YearlyTab" [disabled]="yearlyRow1" (selectionChange)="setYearlyTabCron()">
+              <mat-option *ngFor="let item of monthsLabelled" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="regular">
+            <mat-label>of the month</mat-label>
+            <mat-select [(value)]="everyDay1YearlyTab" [disabled]="yearlyRow1" (selectionChange)="setYearlyTabCron()">
+              <mat-option *ngFor="let item of days" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>hh</mat-label>
+            <mat-select [(value)]="everyHour1YearlyTab" [disabled]="yearlyRow1" (selectionChange)="setYearlyTabCron()" >
+              <mat-option *ngFor="let item of zeroTo23" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>mm</mat-label>
+            <mat-select [(value)]="everyMinute1YearlyTab" [disabled]="yearlyRow1" (selectionChange)="setYearlyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>ss</mat-label>
+            <mat-select [(value)]="everySecond1YearlyTab" [disabled]="yearlyRow1" (selectionChange)="setYearlyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <br>
+          <mat-label>&nbsp;&nbsp;&nbsp;</mat-label>
+          <mat-radio-button [value]="rows[1]"></mat-radio-button>
+          <mat-form-field appearance="outline" class="regular">
+            <mat-label>on the</mat-label>
+            <mat-select [(value)]="everyWeekYearlyTab" [disabled]="yearlyRow2" (selectionChange)="setYearlyTabCron()">
+              <mat-option *ngFor="let item of week" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="regular">
+            <mat-label>of the month</mat-label>
+            <mat-select [(value)]="everyDayYearlyTab" [disabled]="yearlyRow2" (selectionChange)="setYearlyTabCron()">
+              <mat-option *ngFor="let item of weekdays" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="regular">
+            <mat-label>only in</mat-label>
+            <mat-select [(value)]="everyMonthYearlyTab" [disabled]="yearlyRow2" (selectionChange)="setYearlyTabCron()">
+              <mat-option *ngFor="let item of monthsLabelled" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>hh</mat-label>
+            <mat-select [(value)]="everyHour2YearlyTab" [disabled]="yearlyRow2" (selectionChange)="setYearlyTabCron()" >
+              <mat-option *ngFor="let item of zeroTo23" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>mm</mat-label>
+            <mat-select [(value)]="everyMinute2YearlyTab" [disabled]="yearlyRow2" (selectionChange)="setYearlyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="time" *ngIf="allowTime">
+            <mat-label>ss</mat-label>
+            <mat-select [(value)]="everySecond2YearlyTab" [disabled]="yearlyRow2" (selectionChange)="setYearlyTabCron()">
+              <mat-option *ngFor="let item of zeroTo59" value="{{item.value}}">{{item.display}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-radio-group>
+      </mat-tab>
+      <mat-tab label="Advanced">
+        <br>
+        <mat-form-field appearance="outline">
+          <mat-label>manual cron expression</mat-label>
+          <input matInput placeholder="Cron expression" [(ngModel)]="cronManual" (change)="setAdvancedTabCron()">
+        </mat-form-field>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+      </mat-tab>
+    </mat-tab-group>
+    <div class="full">
+      <mat-form-field appearance="outline">
+        <mat-label>Cron expression</mat-label>
+        <input matInput class="cron" placeholder="Cron expression" [(ngModel)]="cron" readonly>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Cron description</mat-label>
+        <input matInput class="description" placeholder="Cron description" [(ngModel)]="cronDescription" readonly>
+      </mat-form-field>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button color="accent" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="accent" [disabled]="formIsInvalid" [mat-dialog-close]="schedule">Set schedule</button>
+</div>

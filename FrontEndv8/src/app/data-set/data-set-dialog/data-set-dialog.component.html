@@ -1,0 +1,34 @@
+<h1 mat-dialog-title>Data set details</h1>
+<form #form="ngForm">
+<div mat-dialog-content>
+  <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
+    <div fxFlex="50" fxFill>
+      <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+        <mat-form-field appearance="outline" fxFlex="100" fxFill>
+          <mat-label>Data set name</mat-label>
+          <input required matInput maxlength="100" [(ngModel)]="dataset.name" placeholder="Data set name" name="name">
+        </mat-form-field>
+        <mat-form-field appearance="outline" fxFlex="100" fxFill>
+          <mat-label>Description</mat-label>
+          <textarea matInput rows="15" maxlength="10000" [(ngModel)]="dataset.description" placeholder="Data set description"
+                    name="description"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxFlex="50" fxFill>
+      <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+        <mat-form-field appearance="outline" fxFlex="100" fxFill>
+          <mat-label>Technical definition</mat-label>
+          <textarea matInput style="height:300px" [(ngModel)]="dataset.technicalDefinition"
+                    placeholder="Data set technical definition" name="technicalDefinition"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+    <small class="required-field-note"></small>
+  </div>
+</div>
+</form>
+<div mat-dialog-actions align="end">
+  <button mat-button color="accent" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="accent" [disabled]="form.invalid" (click)="ok()">Save data set</button>
+</div>

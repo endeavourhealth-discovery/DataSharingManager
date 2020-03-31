@@ -1,0 +1,19 @@
+<h1 mat-dialog-title>Upload document</h1>
+<div mat-dialog-content>
+  <div>
+    <input #fileUploader type="file" (click)="fileUploader.value = null" (change)="fileChange($event)" accept="*" placeholder="File" name="file" style="display: none">
+    <button mat-flat-button color="flat" for="fileUpload" id="fileUpload" (click)="fileUploader.click()">Select files</button>
+  </div>
+  <br>
+  <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+    <mat-form-field appearance="outline" fxFlex="100" fxFill>
+      <mat-label>File</mat-label>
+      <input matInput *ngIf="!file" value="No files selected." placeholder="File" name="file">
+      <input matInput *ngIf="file" [value]="file.name" placeholder="File" name="file">
+    </mat-form-field>
+  </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button color="accent" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="accent" [disabled]="!file" (click)="ok()">Upload document</button>
+</div>

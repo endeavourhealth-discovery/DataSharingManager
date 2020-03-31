@@ -1,0 +1,78 @@
+<h1 mat-dialog-title>Add {{searchType}}</h1>
+<div mat-dialog-content>
+    <mat-tab-group *ngIf="!listSearch" dynamicHeight (selectedTabChange)="onTabChange($event)">
+      <mat-tab label="Add individual" id="individual">
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+          <mat-form-field appearance="outline" fxFlex="100">
+            <mat-label>Search</mat-label>
+            <input matInput [(ngModel)]="searchData" (keyup.enter)="search()" placeholder="Search">
+            <button mat-button *ngIf="searchData" matSuffix mat-icon-button aria-label="Clear" (click)="clear()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+        <br>
+        <div class="scroll-box-400">
+          <app-generic-table #orgPicker
+                             [items]="searchResults"
+                             [detailsToShow]="orgDetailsToShow"
+                             [allowSearch]="false"
+                             [allowSelect]="true"
+                             [pageSize]="20">
+          </app-generic-table>
+        </div>
+        <br>
+      </mat-tab>
+      <mat-tab label="Add multiple" id="multiple">
+        <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+          <mat-form-field appearance="outline" fxFlex="100" fxFill>
+            <mat-label>Search</mat-label>
+            <input matInput placeholder="Add ODS codes here on separate lines or separated by a comma" [(ngModel)]="odsCodes" name="odsCodes"
+                   (keyup.enter)="searchMultiple()" (paste)="replaceLineBreaks($event)">
+            <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="searchMultiple()">
+              <mat-icon>search</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+        <div class="scroll-box-400">
+          <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+            <app-generic-table fxFlex="100" #multiple
+                               [items]="multipleSearchResults"
+                               [detailsToShow]="orgDetailsToShow"
+                               [allowSearch]="false"
+                               [allowSelect]="true"
+                               [pageSize]="20">
+            </app-generic-table>
+          </div>
+
+          <br/>
+          <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
+            <mat-form-field *ngIf="multipleSearchMissing" appearance="outline" fxFlex="100" fxFill mat-readonly>
+              <mat-label>ODS codes not found ( {{multipleSearchMissing.length}} / {{odsCodes.split(',').length}} )</mat-label>
+              <input matInput [(ngModel)]="multipleSearchMissing" name="multipleSearchMissing" readonly>
+              <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="copyToClipboard()">
+                <i class="fal fa-fw fa-copy"></i>
+              </button>
+            </mat-form-field>
+          </div>
+        </div>
+
+      </mat-tab>
+    </mat-tab-group>
+    <div *ngIf="listSearch">
+      <div class="scroll-box-400">
+        <app-generic-table #listPicker
+                           [items]="availableOrgs"
+                           [detailsToShow]="orgDetailsToShow"
+                           [allowSearch]="false"
+                           [allowSelect]="true"
+                           [pageSize]="20">
+
+        </app-generic-table>
+      </div>
+    </div>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button color="accent" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="accent" (click)="ok()">Add selected</button>
+</div>

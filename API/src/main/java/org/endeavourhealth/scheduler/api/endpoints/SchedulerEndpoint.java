@@ -27,7 +27,7 @@ public class SchedulerEndpoint extends AbstractEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.SchedulerEndpoint.getDescription")
     @Path("/description")
-    @ApiOperation(value = "Returns the descriptive Quartz Cron definition of the cron expression")
+    @ApiOperation(value = "Returns the the Scheduler object with the description.")
     public Response getDescription(@Context SecurityContext sc,
                                    @ApiParam(value = "Scheduler object") JsonSchedule schedule) throws Exception {
 

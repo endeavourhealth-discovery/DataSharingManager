@@ -1,0 +1,37 @@
+.full {
+  display: flex;
+  flex-direction: column;
+}
+
+.full > * {
+  width: 100%;
+}
+
+.cron {
+  font-size: 26px;
+  text-align: center;
+}
+
+.description {
+  font-size: 13px;
+  text-align: center;
+}
+
+.regular {
+  width: 180px;
+}
+
+.time {
+  width: 75px;
+}
+
+.days-section {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  height: 60px;
+}
+
+.days-margin {
+  margin: 0 10px;
+}

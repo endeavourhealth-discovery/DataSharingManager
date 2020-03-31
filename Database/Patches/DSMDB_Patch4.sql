@@ -1,4 +1,4 @@
--- DSMDB_Patch3
+-- DSMDB_Patch4
 -- CHANGE THE PATCH NUMBER TO THE NEXT NEW ONE AFTER THOSE STORED IN DSM REPO
 
 USE data_sharing_manager;
@@ -30,7 +30,7 @@ CREATE PROCEDURE CreateValueSetsTables()
 
 		BEGIN
 			-- (ADD WHAT YOU WANT TO DO FOR YOUR PATCH PROCEDURE HERE)
-			CREATE TABLE IF NOT EXISTS `prCREATE TABLE data_sharing_manager.value_sets
+			CREATE TABLE IF NOT EXISTS `value_sets`
 		(
 		   uuid    VARCHAR(36)
 					 CHARACTER SET latin1
