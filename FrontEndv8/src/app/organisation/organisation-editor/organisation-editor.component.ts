@@ -580,7 +580,7 @@ export class OrganisationEditorComponent implements OnInit {
         result => {
           this.organisationTypes = result;
           this.organisationType = '';
-          if (this.organisation && this.organisation.type) {
+          if (this.organisation && this.organisation.type != null) {
             this.organisationType = this.organisationTypes[this.organisation.type].organisationType;
           }
         },
