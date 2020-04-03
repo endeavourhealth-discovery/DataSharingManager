@@ -36,6 +36,8 @@ export class ReportsComponent implements OnInit {
   totalOrgs: number;
   supplierCount: any[] = [];
   activatedCount: number;
+  errorCount: number;
+  noErrorCount: number;
 
   mapTypes = this.itemLinkageService.mapTypes;
 
@@ -266,6 +268,10 @@ export class ReportsComponent implements OnInit {
     for(let type of orgsBySystemType) {
       this.supplierCount.push(type[0].systemSupplierType + ' : ' + type.length);
     }
+
+    this.errorCount = this.reportData.filter((org) => org.inError).length;
+
+    this.noErrorCount = this.reportData.filter((org) => !org.inError).length;
 
     this.activatedCount = this.reportData.filter((org) => org.sharingActivated === 'Yes').length;
 

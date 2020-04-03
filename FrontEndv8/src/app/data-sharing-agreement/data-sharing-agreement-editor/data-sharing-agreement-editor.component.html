@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card *ngIf="dsa">
   <mat-card-header>
     <div mat-card-avatar>
       <i class="fad fa-file-export"></i>
@@ -25,11 +25,11 @@
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Status</mat-label>
-            <input matInput (ngModel)="statuses[dsa?.dsaStatusId].name" placeholder="Status" name="status" readonly>
+            <input matInput [ngModel]="statuses[dsa?.dsaStatusId].name" placeholder="Status" name="status" readonly>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Consent model</mat-label>
-            <input matInput (ngModel)="consents[dsa?.consentModelId].name" placeholder="Consent model" name="consentModel" readonly>
+            <input matInput [ngModel]="consents[dsa?.consentModelId].name" placeholder="Consent model" name="consentModel" readonly>
           </mat-form-field>
           <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Start date</mat-label>

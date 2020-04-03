@@ -59,6 +59,8 @@
                   <mat-card-content>
                     <p>Total number of organisations : {{totalOrgs}}</p>
                     <p>Total number of organisations with sharing activated : {{activatedCount}}</p>
+                    <p>Total number of organisations in Error : {{errorCount}}</p>
+                    <p>Total number of organisations not in Error : {{noErrorCount}}</p>
                     <p><b>Supplier breakdown</b></p>
                     <p *ngFor="let stat of supplierCount">{{stat}}</p>
                   </mat-card-content>
