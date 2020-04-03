@@ -183,7 +183,7 @@ export class ProjectEditorComponent implements OnInit {
 
   editProject() {
     const dialogRef = this.dialog.open(ProjectDialogComponent, {
-      data: {mode: 'edit', uuid: this.project.uuid},
+      data: {mode: 'edit', uuid: this.project.uuid, project: this.project},
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

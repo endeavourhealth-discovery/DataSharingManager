@@ -12,6 +12,7 @@ import {ProjectApplicationPolicy} from "../models/ProjectApplicationPolicy";
 export interface DialogData {
   mode: string;
   uuid: string;
+  project: Project;
 }
 
 @Component({
@@ -62,6 +63,7 @@ export class ProjectDialogComponent implements OnInit {
               private linkageService: ItemLinkageService) {
     this.uuid = data.uuid;
     this.mode = data.mode;
+    this.project = data.project;
   }
 
   ngOnInit() {
