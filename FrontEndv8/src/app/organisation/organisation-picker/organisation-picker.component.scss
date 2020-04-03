@@ -1,4 +1,5 @@
 .scroll-box-400 {
   overflow-x: hidden;
-  overflow-y: auto;
+  max-height: 400px;
+  overflow-y: scroll;
 }

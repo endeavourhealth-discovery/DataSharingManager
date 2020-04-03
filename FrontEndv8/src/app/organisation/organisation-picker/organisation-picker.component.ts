@@ -149,7 +149,7 @@ export class OrganisationPickerComponent implements OnInit {
   }
 
   getRegionOrganisations(regionUUID: string) {
-    this.regionService.getRegionOrganisations(regionUUID)
+    this.organisationService.getAllOrganisationsInRegionAndChildRegion(regionUUID)
       .subscribe(
         result => {
           this.availableOrgs = this.filterResults(result);

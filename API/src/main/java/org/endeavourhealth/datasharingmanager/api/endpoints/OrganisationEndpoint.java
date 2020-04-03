@@ -616,6 +616,24 @@ public final class OrganisationEndpoint extends AbstractEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @Timed(absolute = true, name="DataSharingManager.OrganisationEndpoint.getAllOrganisationInAllChildRegions")
+    @Path("/getAllOrganisationInAllChildRegions")
+    @ApiOperation(value = "Returns a list of Json representations of Organisations based on" +
+            "a search term. Only searches in subscribers that are part of the DSA.")
+    public Response getAllOrganisationInAllChildRegions(@Context SecurityContext sc,
+                                           @ApiParam(value = "region UUID") @QueryParam("regionUUID") String regionUUID
+    ) throws Exception {
+        super.setLogbackMarkers(sc);
+        userAudit.save(SecurityUtils.getCurrentUserId(sc), getOrganisationUuidFromToken(sc), AuditAction.Load,
+                "regionUUID",
+                "regionUUID", regionUUID);
+
+        return new OrganisationLogic().getAllOrganisationsInRegionAndChildRegions(regionUUID);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Timed(absolute = true, name="DataSharingManager.OrganisationEndpoint.searchOrganisationsInParentRegionWithOdsList")
     @Path("/searchOrganisationsInParentRegionWithOdsList")
     @ApiOperation(value = "Returns a list of Json representations of Organisations based on" +

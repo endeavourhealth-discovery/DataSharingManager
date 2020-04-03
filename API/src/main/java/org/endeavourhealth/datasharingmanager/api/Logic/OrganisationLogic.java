@@ -383,6 +383,17 @@ public class OrganisationLogic {
 
     }
 
+    public Response getAllOrganisationsInRegionAndChildRegions(String regionUUID) throws Exception {
+
+        List<OrganisationEntity> orgsInAllChildRegions = RegionCache.getAllOrganisationsForAllChildRegions(regionUUID);
+
+        return Response
+                .ok()
+                .entity(orgsInAllChildRegions)
+                .build();
+
+    }
+
     public Response searchPublishersInDSA(String dsaUUID, String searchTerm, List<String> odsCodes) throws Exception {
 
         List<String> organisationUuids =  masterMappingRepository.getChildMappings(dsaUUID, MapType.DATASHARINGAGREEMENT.getMapType(), MapType.PUBLISHER.getMapType());

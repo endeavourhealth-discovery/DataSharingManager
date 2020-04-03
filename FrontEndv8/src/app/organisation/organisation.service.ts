@@ -197,6 +197,12 @@ export class OrganisationService  {
     return this.http.get<Organisation[]>('api/organisation/searchOrganisationsInParentRegion', {params});
   }
 
+  getAllOrganisationsInRegionAndChildRegion(regionUUID: string):  Observable<Organisation[]> {
+    let params = new HttpParams();
+    if (regionUUID) params = params.append('regionUUID', regionUUID);
+    return this.http.get<Organisation[]>('api/organisation/getAllOrganisationInAllChildRegions', {params});
+  }
+
   searchPublishersInDSA(dsaUuid: string, searchTerm: string):  Observable<Organisation[]> {
     let params = new HttpParams();
     if (dsaUuid) params = params.append('dsaUUID', dsaUuid);
