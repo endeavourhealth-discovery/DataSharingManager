@@ -6,7 +6,6 @@ import {Organisation} from "../../organisation/models/Organisation";
 import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {Marker} from "../models/Marker";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {DataSharingAgreementPickerComponent} from "../../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component";
 import {MatDialog} from "@angular/material/dialog";
@@ -15,6 +14,7 @@ import {RegionPickerComponent} from "../region-picker/region-picker.component";
 import {OrganisationPickerComponent} from "../../organisation/organisation-picker/organisation-picker.component";
 import {RegionDialogComponent} from "../region-dialog/region-dialog.component";
 import {GoogleMapsDialogComponent} from "../../google-maps-viewer/google-maps-dialog/google-maps-dialog.component";
+import {UserProject} from "dds-angular8/user-manager";
 
 @Component({
   selector: 'app-region-editor',

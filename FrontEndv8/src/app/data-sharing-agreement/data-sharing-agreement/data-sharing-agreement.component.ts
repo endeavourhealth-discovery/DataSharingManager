@@ -2,10 +2,10 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {Dsa} from '../models/Dsa';
 import {DataSharingAgreementService} from '../data-sharing-agreement.service';
 import {Router} from '@angular/router';
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {MatDialog} from "@angular/material/dialog";
 import {DataSharingAgreementDialogComponent} from "../data-sharing-agreement-dialog/data-sharing-agreement-dialog.component";
+import {UserProject} from "dds-angular8/user-manager";
 
 @Component({
   selector: 'app-data-sharing-agreement',

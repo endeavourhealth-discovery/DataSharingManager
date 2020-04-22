@@ -6,7 +6,6 @@ import {Region} from "../../region/models/Region";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {OrganisationType} from "../models/OrganisationType";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {
   GenericTableComponent,
   ItemLinkageService,
@@ -23,6 +22,7 @@ import {OrganisationDialogComponent} from "../organisation-dialog/organisation-d
 import {AddressDialogComponent} from "../address-dialog/address-dialog.component";
 import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
 import {DataSharingAgreementPickerComponent} from "../../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component";
+import {UserProject} from "dds-angular8/user-manager";
 
 @Component({
   selector: 'app-organisation-editor',

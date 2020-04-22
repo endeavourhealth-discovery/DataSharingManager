@@ -1,7 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {Organisation} from "../models/Organisation";
 import {OrganisationType} from "../models/OrganisationType";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {ItemLinkageService, LoggerService, UserManagerService} from "dds-angular8";
 import {OrganisationService} from "../organisation.service";
@@ -10,6 +9,7 @@ import {Region} from "../../region/models/Region";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {Address} from "../models/Address";
+import {UserProject} from "dds-angular8/user-manager";
 
 export interface DialogData {
   mode: string;

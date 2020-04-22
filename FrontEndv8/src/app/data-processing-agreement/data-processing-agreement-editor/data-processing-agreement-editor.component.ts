@@ -1,6 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Dpa} from "../models/Dpa";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Organisation} from "../../organisation/models/Organisation";
 import {Documentation} from "../../documentation/models/Documentation";
 import {
@@ -28,6 +27,7 @@ import {Cohort} from "../../cohort/models/Cohort";
 import {DataSet} from "../../data-set/models/Dataset";
 import {DataSetPickerComponent} from "../../data-set/data-set-picker/data-set-picker.component";
 import {CohortPickerComponent} from "../../cohort/cohort-picker/cohort-picker.component";
+import {UserProject} from "dds-angular8/user-manager";
 
 @Component({
   selector: 'app-data-processing-agreement-editor',
@@ -43,7 +43,6 @@ export class DataProcessingAgreementEditorComponent implements OnInit {
   @ViewChild('documentationsTable', { static: false }) documentationsTable: GenericTableComponent;
   @ViewChild('cohortTable', {static: false}) cohortTable: GenericTableComponent;
   @ViewChild('dataSetTable', {static: false}) dataSetTable: GenericTableComponent;
-
 
   dpa: Dpa;
   public activeProject: UserProject;

@@ -8,10 +8,10 @@ import {Dsa} from "../../data-sharing-agreement/models/Dsa";
 import {Project} from "../../project/models/Project";
 import {DataSharingAgreementService} from "../../data-sharing-agreement/data-sharing-agreement.service";
 import {ProjectService} from "../../project/project.service";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableComponent, ItemLinkageService, LoggerService, UserManagerService} from "dds-angular8";
 import {ngxCsv} from "ngx-csv";
 import {DatePipe} from "@angular/common";
+import {UserProject} from "dds-angular8/user-manager";
 
 @Component({
   selector: 'app-reports',
@@ -63,7 +63,8 @@ export class ReportsComponent implements OnInit {
     quoteStrings: '"',
     decimalseparator: '.',
     showLabels: true,
-    headers: ['Practice name', 'ODS code', 'CCG', 'Agreement', 'Last received', 'In error'],
+    headers: ['Practice name', 'ODS code', 'CCG', 'Agreement', 'Last received', 'In error',
+      'System supplier', 'Supplier reference', 'Sharing activated'],
     showTitle: false,
     title: 'Publisher report',
     useTextFile: false,

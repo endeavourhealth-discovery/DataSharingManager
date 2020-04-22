@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
-import {LoggerService, UserManagerService} from "dds-angular8";
+import {UserProject} from "dds-angular8/user-manager/models/UserProject";
+import {LoggerService} from "dds-angular8/logger";
+import {UserManagerService} from "dds-angular8/user-manager";
 
 @Component({
   selector: 'app-audit',

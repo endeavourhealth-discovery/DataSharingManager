@@ -3,7 +3,7 @@ import {DataSet} from "../models/Dataset";
 import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DataSetService} from "../data-set.service";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
+import {UserProject} from "dds-angular8/user-manager/models/UserProject";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
 import {MatDialog} from "@angular/material/dialog";

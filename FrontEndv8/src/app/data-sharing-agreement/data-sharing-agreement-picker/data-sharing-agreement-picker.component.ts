@@ -1,9 +1,9 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Dsa} from "../models/Dsa";
 import {DataSharingAgreementService} from "../data-sharing-agreement.service";
+import {UserProject} from "dds-angular8/user-manager";
 
 export interface DialogData {
   allowMultiple: boolean;

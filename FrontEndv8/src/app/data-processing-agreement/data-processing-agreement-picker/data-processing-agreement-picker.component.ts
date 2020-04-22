@@ -3,7 +3,7 @@ import {Dpa} from "../models/Dpa";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
 import {DataProcessingAgreementService} from "../data-processing-agreement.service";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
+import {UserProject} from "dds-angular8/user-manager";
 
 export interface DialogData {
   fromRegion: boolean;

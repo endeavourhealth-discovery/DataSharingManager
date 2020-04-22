@@ -3,11 +3,11 @@ import {ItemLinkageService, LoggerService, UserManagerService} from "dds-angular
 import {ProjectService} from "../project.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {Project} from "../models/Project";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {DatePipe} from "@angular/common";
 import {User} from "../models/User";
 import {ApplicationPolicy} from "../models/ApplicationPolicy";
 import {ProjectApplicationPolicy} from "../models/ProjectApplicationPolicy";
+import {UserProject} from "dds-angular8/user-manager";
 
 export interface DialogData {
   mode: string;

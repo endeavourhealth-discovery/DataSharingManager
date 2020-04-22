@@ -1,11 +1,11 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Project} from "../models/Project";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Router} from "@angular/router";
 import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {ProjectService} from "../project.service";
 import {MatDialog} from "@angular/material/dialog";
 import {ProjectDialogComponent} from "../project-dialog/project-dialog.component";
+import {UserProject} from "dds-angular8/user-manager";
 
 @Component({
   selector: 'app-project',

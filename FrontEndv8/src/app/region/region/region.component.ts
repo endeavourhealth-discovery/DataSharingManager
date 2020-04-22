@@ -3,10 +3,10 @@ import {RegionService} from '../region.service';
 import {Router} from '@angular/router';
 import {Region} from "../models/Region";
 import {Organisation} from "../../organisation/models/Organisation";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {MatDialog} from "@angular/material/dialog";
 import {RegionDialogComponent} from "../region-dialog/region-dialog.component";
+import {UserProject} from "dds-angular8/user-manager";
 
 @Component({
   selector: 'app-region',

@@ -2,13 +2,11 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {Cohort} from '../models/Cohort';
 import {CohortService} from '../cohort.service';
 import {Router} from '@angular/router';
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {GenericTableComponent} from "../../generic-table/generic-table/generic-table.component";
 import {MatDialog} from "@angular/material/dialog";
-import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
-import {SchedulerComponent} from "../../scheduler/scheduler/scheduler.component";
 import {CohortDialogComponent} from "../cohort-dialog/cohort-dialog.component";
+import {UserProject} from "dds-angular8/user-manager";
 
 @Component({
   selector: 'app-cohort',

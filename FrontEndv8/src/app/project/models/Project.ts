@@ -23,6 +23,7 @@ export class Project {
   projectStatusId: number;
   startDate: string;
   endDate: string;
+  configName: string;
   publishers: { [key: string]: string; };
   subscribers: { [key: string]: string; };
   cohorts: { [key: string]: string; };

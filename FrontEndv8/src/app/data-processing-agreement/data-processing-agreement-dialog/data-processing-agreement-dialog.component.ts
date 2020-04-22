@@ -1,10 +1,10 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {Dpa} from "../models/Dpa";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {ItemLinkageService, LoggerService, UserManagerService} from "dds-angular8";
 import {DataProcessingAgreementService} from "../data-processing-agreement.service";
 import {DatePipe} from "@angular/common";
+import {UserProject} from "dds-angular8/user-manager";
 
 export interface DialogData {
   mode: string;

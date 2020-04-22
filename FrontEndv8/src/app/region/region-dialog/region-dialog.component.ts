@@ -1,9 +1,9 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Region} from "../models/Region";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
 import {LoggerService, UserManagerService} from "dds-angular8";
 import {RegionService} from "../region.service";
+import {UserProject} from "dds-angular8/user-manager";
 
 export interface DialogData {
   mode: string;

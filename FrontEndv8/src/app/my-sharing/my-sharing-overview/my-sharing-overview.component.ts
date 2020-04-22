@@ -3,9 +3,9 @@ import {OrganisationService} from "../../organisation/organisation.service";
 import {Router} from "@angular/router";
 import {Dpa} from "../../data-processing-agreement/models/Dpa";
 import {Dsa} from "../../data-sharing-agreement/models/Dsa";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {LoggerService, UserManagerService} from "dds-angular8";
 import {Project} from "../../project/models/Project";
+import {UserProject} from "dds-angular8/user-manager";
 
 @Component({
   selector: 'app-my-sharing-overview',

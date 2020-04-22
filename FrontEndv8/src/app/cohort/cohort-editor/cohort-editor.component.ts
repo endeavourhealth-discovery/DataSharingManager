@@ -1,10 +1,9 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Cohort} from "../models/Cohort";
 import {CohortService} from '../cohort.service';
-import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {ActivatedRoute, Router} from '@angular/router';
 import {Dpa} from '../../data-processing-agreement/models/Dpa';
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
+import {UserProject} from "dds-angular8/user-manager/models/UserProject";
 import {DataProcessingAgreementPickerComponent} from "../../data-processing-agreement/data-processing-agreement-picker/data-processing-agreement-picker.component";
 import {MatDialog} from "@angular/material/dialog";
 import {CohortDialogComponent} from "../cohort-dialog/cohort-dialog.component";
@@ -14,6 +13,7 @@ import {DataSharingAgreementPickerComponent} from "../../data-sharing-agreement/
 import {ProjectPickerComponent} from "../../project/project-picker/project-picker.component";
 import {Region} from "../../region/models/Region";
 import {RegionPickerComponent} from "../../region/region-picker/region-picker.component";
+import {GenericTableComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 
 @Component({
   selector: 'app-cohort-editor',

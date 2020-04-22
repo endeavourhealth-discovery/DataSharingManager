@@ -2,10 +2,10 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {Organisation} from '../models/Organisation';
 import {OrganisationService} from '../organisation.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableSspComponent, LoggerService, MessageBoxDialogComponent, UserManagerService} from "dds-angular8";
 import {MatDialog} from "@angular/material/dialog";
 import {OrganisationDialogComponent} from "../organisation-dialog/organisation-dialog.component";
+import {UserProject} from "dds-angular8/user-manager";
 
 @Component({
   selector: 'app-organisation',

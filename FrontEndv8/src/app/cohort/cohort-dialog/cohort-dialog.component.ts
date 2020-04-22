@@ -3,7 +3,7 @@ import {Cohort} from "../models/Cohort";
 import {LoggerService, UserManagerService} from "dds-angular8";
 import {CohortService} from "../cohort.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
+import {UserProject} from "dds-angular8/user-manager";
 
 export interface DialogData {
   mode: string;

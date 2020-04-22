@@ -10,7 +10,8 @@ export class User {
 	title:string;
 	forename:string;
 	surname:string;
-	username:string;	// email
+	username:string;
+	email:string;
 	isSuperUser:boolean;
 	clientAccess:Map <String, Access>;
 	permissions:string[];

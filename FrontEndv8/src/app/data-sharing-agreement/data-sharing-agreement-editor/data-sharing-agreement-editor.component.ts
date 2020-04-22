@@ -9,7 +9,6 @@ import {
   MessageBoxDialogComponent,
   UserManagerService
 } from "dds-angular8";
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Dsa} from '../models/Dsa';
 import {DataSharingAgreementService} from '../data-sharing-agreement.service';
 import {Purpose} from '../../models/Purpose';
@@ -30,6 +29,7 @@ import {Cohort} from "../../cohort/models/Cohort";
 import {DataSet} from "../../data-set/models/Dataset";
 import {CohortPickerComponent} from "../../cohort/cohort-picker/cohort-picker.component";
 import {DataSetPickerComponent} from "../../data-set/data-set-picker/data-set-picker.component";
+import {UserProject} from "dds-angular8/user-manager";
 
 @Component({
   selector: 'app-data-sharing-agreement-editor',
@@ -63,6 +63,7 @@ export class DataSharingAgreementEditorComponent implements OnInit {
   model = 1;
 
   public activeProject: UserProject;
+
 
   statuses = this.linkageService.status;
 

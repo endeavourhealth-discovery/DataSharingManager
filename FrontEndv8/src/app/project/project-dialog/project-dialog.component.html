@@ -14,22 +14,22 @@
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Summary</mat-label>
-      <textarea matInput maxlength="5000" [(ngModel)]="project.summary" placeholder="Summary" name="summary" rows="6"></textarea>
+      <textarea matInput maxlength="5000" [(ngModel)]="project.summary" placeholder="Summary" name="summary" rows="5"></textarea>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Objectives</mat-label>
-      <textarea matInput maxlength="5000" [(ngModel)]="project.objectives" placeholder="Objectives" name="objectives" rows="6"></textarea>
+      <textarea matInput maxlength="5000" [(ngModel)]="project.objectives" placeholder="Objectives" name="objectives" rows="5"></textarea>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Project lead</mat-label>
       <mat-select matInput [(ngModel)]="project.leadUser" name="leadUser">
-        <mat-option *ngFor="let leadUser of userList" [value]="leadUser.uuid">{{leadUser.forename}} {{leadUser.surname}}</mat-option>
+        <mat-option *ngFor="let leadUser of userList" [value]="leadUser.uuid">{{leadUser.forename}} {{leadUser.surname}} ({{leadUser.email}})</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="50" fxFill>
       <mat-label>Project technical lead</mat-label>
       <mat-select matInput [(ngModel)]="project.technicalLeadUser" name="technicalLeadUser">
-        <mat-option *ngFor="let techUser of userList" [value]="techUser.uuid">{{techUser.forename}} {{techUser.surname}}</mat-option>
+        <mat-option *ngFor="let techUser of userList" [value]="techUser.uuid">{{techUser.forename}} {{techUser.surname}} ({{techUser.email}})</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field appearance="outline" fxFlex="25" fxFill>
@@ -76,7 +76,14 @@
         <mat-option *ngFor="let pol of availablePolicies" [value]="pol">{{pol.name}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <div fxFlex="25" fxFill *ngIf="mode == 'add'"></div>
+    <mat-form-field *ngIf="project.projectTypeId === 4" appearance="outline" fxFlex="25" fxFill>
+      <mat-label>Config name</mat-label>
+      <input matInput [(ngModel)]="project.configName" placeholder="Config name" name="configName">
+    </mat-form-field>
+    <!--<div fxFlex="25" fxFill *ngIf="mode == 'add'"></div>-->
+  </div>
+
+  <div class="flex" fxLayout="row wrap" fxLayoutGap="16px grid" fxLayoutAlign="start">
     <small class="required-field-note"></small>
   </div>
 </div>

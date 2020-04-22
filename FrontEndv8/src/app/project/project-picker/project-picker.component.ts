@@ -1,10 +1,10 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {GenericTableComponent, LoggerService, UserManagerService} from "dds-angular8";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Project} from "../models/Project";
 import {ProjectService} from "../project.service";
 import {StandardPickerData} from "../../models/StandardPickerData";
+import {UserProject} from "dds-angular8/user-manager";
 
 @Component({
   selector: 'app-project-picker',

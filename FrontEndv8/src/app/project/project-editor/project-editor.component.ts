@@ -1,5 +1,4 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {UserProject} from "dds-angular8/lib/user-manager/models/UserProject";
 import {Project} from "src/app/project/models/Project";
 import {
   GenericTableComponent,
@@ -32,6 +31,7 @@ import {SchedulerComponent} from "../../scheduler/scheduler/scheduler.component"
 import {DataSharingAgreementPickerComponent} from "../../data-sharing-agreement/data-sharing-agreement-picker/data-sharing-agreement-picker.component";
 import {ProjectDialogComponent} from "../project-dialog/project-dialog.component";
 import {ExtractDetailsDialogComponent} from "../extract-details-dialog/extract-details-dialog.component";
+import {UserProject} from "dds-angular8/user-manager";
 
 @Component({
   selector: 'app-project-editor',
@@ -318,9 +318,9 @@ export class ProjectEditorComponent implements OnInit {
           this.userList = result;
           for (let user of this.userList) {
             if (user.uuid == this.project.leadUser) {
-              this.leadUser = user.forename + ' ' + user.surname;
+              this.leadUser = user.forename + ' ' + user.surname + ' (' + user.email + ')';
             } else if (user.uuid == this.project.technicalLeadUser) {
-              this.technicalLeadUser = user.forename + ' ' + user.surname;
+              this.technicalLeadUser = user.forename + ' ' + user.surname + ' (' + user.email + ')';
             }
           }
         },
