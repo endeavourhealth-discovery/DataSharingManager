@@ -12,6 +12,7 @@ import {GenericTableComponent, ItemLinkageService, LoggerService, UserManagerSer
 import {ngxCsv} from "ngx-csv";
 import {DatePipe} from "@angular/common";
 import {UserProject} from "dds-angular8/user-manager";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-reports',
@@ -90,7 +91,8 @@ export class ReportsComponent implements OnInit {
               private projectService: ProjectService,
               private log: LoggerService,
               private itemLinkageService: ItemLinkageService,
-              private datePipe: DatePipe) { }
+              private datePipe: DatePipe,
+              private router: Router,) { }
 
   ngOnInit() {
     this.userManagerService.onProjectChange.subscribe(active => {
@@ -218,6 +220,10 @@ export class ReportsComponent implements OnInit {
           this.reportComplete = true;
         }
       );
+  }
+
+  organisationClicked(repData: ReportData) {
+    window.open('#/organisation/' + repData.orgUUID + '/edit');
   }
 
   runProjectPublisherReport(project: Project) {

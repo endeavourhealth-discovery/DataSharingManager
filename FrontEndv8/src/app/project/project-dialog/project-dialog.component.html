@@ -80,6 +80,8 @@
       <mat-label>Config name</mat-label>
       <input matInput [(ngModel)]="project.configName" placeholder="Config name" name="configName">
     </mat-form-field>
+
+    <mat-checkbox [checked]="project.authorisedBy" (change)="authorisationChanged($event)">Authorised?</mat-checkbox>
     <!--<div fxFlex="25" fxFill *ngIf="mode == 'add'"></div>-->
   </div>
 

@@ -1,6 +1,7 @@
 export class ReportData {
   practiceName: string;
   odsCode: string;
+  orgUUID: string;
   ccg: string;
   referenceAgreement: string;
   lastReceived: string;

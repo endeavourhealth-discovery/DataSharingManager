@@ -77,7 +77,8 @@
                 <app-generic-table #dsaPubTable
                                    [items]="reportData"
                                    [detailsToShow]="reportDetailsToShow"
-                                   [allowSelect]="false">
+                                   [allowSelect]="false"
+                                   (clicked)="organisationClicked($event)">
                 </app-generic-table>
               </div>
             </div>

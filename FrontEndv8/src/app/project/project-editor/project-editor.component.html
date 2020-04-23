@@ -71,6 +71,14 @@
             <mat-label>Application policy</mat-label>
             <input matInput [(ngModel)]="selectedApplicationPolicyValue" placeholder="Application policy" name="selectedApplicationPolicy" readonly>
           </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="50" fxFill mat-readonly>
+            <mat-label>Authorised by</mat-label>
+            <input matInput [(ngModel)]="authorisedBy" placeholder="Authorised by" name="authorisedBy" readonly>
+          </mat-form-field>
+          <mat-form-field appearance="outline" fxFlex="25" fxFill mat-readonly>
+            <mat-label>Date authorised</mat-label>
+            <input matInput [(ngModel)]="project.authorisedDate" placeholder="Date authorised" name="authorisedDate" readonly>
+          </mat-form-field>
           <mat-form-field *ngIf="project.projectTypeId === 4" appearance="outline" fxFlex="25" fxFill mat-readonly>
             <mat-label>Config name</mat-label>
             <input matInput [(ngModel)]="project.configName" placeholder="Config name" name="configName" readonly>

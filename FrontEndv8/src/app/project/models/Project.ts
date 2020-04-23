@@ -24,6 +24,8 @@ export class Project {
   startDate: string;
   endDate: string;
   configName: string;
+  authorisedBy: string;
+  authorisedDate: string;
   publishers: { [key: string]: string; };
   subscribers: { [key: string]: string; };
   cohorts: { [key: string]: string; };

@@ -8,6 +8,7 @@ import {User} from "../models/User";
 import {ApplicationPolicy} from "../models/ApplicationPolicy";
 import {ProjectApplicationPolicy} from "../models/ProjectApplicationPolicy";
 import {UserProject} from "dds-angular8/user-manager";
+import {MatCheckboxChange} from "@angular/material";
 
 export interface DialogData {
   mode: string;
@@ -100,6 +101,7 @@ export class ProjectDialogComponent implements OnInit {
           this.project = result;
           this.project.startDate = this.datePipe.transform(this.project.startDate,"yyyy-MM-dd");
           this.project.endDate = this.datePipe.transform(this.project.endDate,"yyyy-MM-dd");
+          this.project.authorisedDate = this.datePipe.transform(this.project.authorisedDate,"yyyy/MM/dd HH:mm:ss");
           this.checkEndDate();
           this.getProjectApplicationPolicy();
           this.getUserList();
@@ -173,6 +175,7 @@ export class ProjectDialogComponent implements OnInit {
   }
 
   ok() {
+    console.log(this.project);
     this.projectService.saveProject(this.project)
       .subscribe(saved => {
           this.project.uuid = saved;
@@ -187,5 +190,17 @@ export class ProjectDialogComponent implements OnInit {
 
   cancel() {
     this.dialogRef.close();
+  }
+
+  authorisationChanged(event: MatCheckboxChange) {
+    if (event.checked) {
+      this.project.authorisedBy = this.activeProject.userId;
+
+      this.project.authorisedDate = this.datePipe.transform(new Date(),"yyyy/MM/dd HH:mm:ss");
+      // this.project.authorisedDate = new Date().toString();
+    } else {
+      this.project.authorisedBy = null;
+      this.project.authorisedDate = null;
+    }
   }
 }

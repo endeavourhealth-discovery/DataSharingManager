@@ -15,7 +15,7 @@ export class ReportingService {
     for (let ix in orgs) {
       params = params.append('odsCodes', orgs[ix].odsCode);
     }
-    params.set('agreementName', agreementName);
+    params = params.append('agreementName', agreementName);
     return this.http.get<ReportData[]>('api/report/getPublisherReport', { params });
   }
 

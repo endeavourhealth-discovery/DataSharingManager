@@ -101,6 +101,7 @@ export class ProjectEditorComponent implements OnInit {
   businessCaseStatus: string;
   leadUser: string;
   technicalLeadUser: string;
+  authorisedBy: string;
   storageProtocolId: string;
   consentModelId: string;
   deidentificationLevelValue: string;
@@ -188,6 +189,7 @@ export class ProjectEditorComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.project = result;
+        this.formatDatesInProject();
         this.log.success('Project saved');
         this.updateLinkValues();
       }
@@ -289,12 +291,19 @@ export class ProjectEditorComponent implements OnInit {
       );
   }
 
+  formatDatesInProject() {
+
+    this.project.startDate = this.datePipe.transform(this.project.startDate,"yyyy-MM-dd");
+    this.project.endDate = this.datePipe.transform(this.project.endDate,"yyyy-MM-dd");
+    this.project.authorisedDate = this.datePipe.transform(this.project.authorisedDate,"yyyy/MM/dd HH:mm:ss");
+  }
+
   load(uuid: string) {
     this.projectService.getProject(uuid)
       .subscribe(result =>  {
           this.project = result;
-          this.project.startDate = this.datePipe.transform(this.project.startDate,"yyyy-MM-dd");
-          this.project.endDate = this.datePipe.transform(this.project.endDate,"yyyy-MM-dd");
+          this.formatDatesInProject();
+          this.updateLinkValues();
           this.checkEndDate();
           this.getDsas();
           this.getPublishers();
@@ -305,13 +314,15 @@ export class ProjectEditorComponent implements OnInit {
           this.getAuthToShare();
           this.getAssociatedExtractTechnicalDetails();
           this.getSchedule();
-          this.updateLinkValues();
         },
         error => this.log.error('The project could not be loaded. Please try again.')
       );
   }
 
   getUserList() {
+    this.leadUser = null;
+    this.technicalLeadUser = null;
+    this.authorisedBy = null;
     this.projectService.getUsers()
       .subscribe(
         (result) => {
@@ -319,8 +330,12 @@ export class ProjectEditorComponent implements OnInit {
           for (let user of this.userList) {
             if (user.uuid == this.project.leadUser) {
               this.leadUser = user.forename + ' ' + user.surname + ' (' + user.email + ')';
-            } else if (user.uuid == this.project.technicalLeadUser) {
+            }
+            if (user.uuid == this.project.technicalLeadUser) {
               this.technicalLeadUser = user.forename + ' ' + user.surname + ' (' + user.email + ')';
+            }
+            if (user.uuid == this.project.authorisedBy) {
+              this.authorisedBy = user.forename + ' ' + user.surname + ' (' + user.email + ')';
             }
           }
         },
