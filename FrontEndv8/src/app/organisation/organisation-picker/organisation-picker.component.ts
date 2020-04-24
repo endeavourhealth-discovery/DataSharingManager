@@ -28,6 +28,7 @@ export class OrganisationPickerComponent implements OnInit {
 
   @ViewChild('orgPicker', { static: false }) orgPicker: GenericTableComponent;
   @ViewChild('listPicker', { static: false }) listPicker: GenericTableComponent;
+  @ViewChild('multiplePicker', { static: false }) multiplePicker: GenericTableComponent;
 
   constructor(
     public dialogRef: MatDialogRef<OrganisationPickerComponent>,

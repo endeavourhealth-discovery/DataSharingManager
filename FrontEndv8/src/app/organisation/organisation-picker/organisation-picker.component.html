@@ -36,7 +36,7 @@
         </div>
         <div class="scroll-box-400">
           <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-            <app-generic-table fxFlex="100" #multiple
+            <app-generic-table fxFlex="100" #multiplePicker
                                [items]="multipleSearchResults"
                                [detailsToShow]="orgDetailsToShow"
                                [allowSearch]="false"
@@ -74,5 +74,8 @@
 </div>
 <div mat-dialog-actions align="end">
   <button mat-button color="accent" (click)="cancel()">Cancel</button>
-  <button mat-flat-button color="accent" (click)="ok()">Add selected</button>
+  <button mat-flat-button color="accent"
+          [disabled]="listPicker?.selection.selected.length < 1
+            && orgPicker?.selection.selected.length < 1
+            && multiplePicker?.selection.selected.length < 1" (click)="ok()">Add selected</button>
 </div>
