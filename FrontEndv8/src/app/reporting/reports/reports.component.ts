@@ -312,7 +312,12 @@ export class ReportsComponent implements OnInit {
   }
 
   exportToCSV() {
-    new ngxCsv(this.reportData, 'Publisher report', this.options);
+
+    // create a new object removing UUID as that doesn't need to be extracted
+    var exportData = this.reportData.map(({practiceName, odsCode, ccg, referenceAgreement, lastReceived, inError, systemSupplierType, systemSupplierReference, sharingActivated}) =>
+      ({practiceName, odsCode, ccg, referenceAgreement, lastReceived, inError, systemSupplierType, systemSupplierReference, sharingActivated}));// JSON.parse(JSON.stringify(this.reportData));
+
+    new ngxCsv(exportData, 'Publisher report', this.options);
   }
 
   exportActivityReportToCSV() {
