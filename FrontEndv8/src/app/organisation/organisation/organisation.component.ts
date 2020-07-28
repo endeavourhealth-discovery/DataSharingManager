@@ -72,7 +72,7 @@ export class OrganisationComponent implements OnInit {
   }
 
   protected performAction(mode: string) {
-    switch (mode) {
+    switch (mode.toLowerCase()) {
       case 'organisations':
         this.modeType = 'Organisation';
         this.searchType = 'organisation';
