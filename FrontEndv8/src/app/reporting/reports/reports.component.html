@@ -46,7 +46,7 @@
         <br>
         <br>
         <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
-          <div *ngIf="reportData" fxFlex="100">
+          <div *ngIf="filteredReportData" fxFlex="100">
             <div class="flex" fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap="16px grid" fxLayoutAlign="start">
               <div fxFlex="100">
                 <h3>{{reportName}}</h3>
@@ -57,12 +57,19 @@
                     <mat-card-title>Statistics</mat-card-title>
                   </mat-card-header>
                   <mat-card-content>
-                    <p>Total number of organisations : {{totalOrgs}}</p>
-                    <p>Total number of organisations with sharing activated : {{activatedCount}}</p>
-                    <p>Total number of organisations in error : {{errorCount}}</p>
-                    <p>Total number of organisations not in error : {{noErrorCount}}</p>
-                    <p><b>Supplier breakdown</b></p>
-                    <p *ngFor="let stat of supplierCount">{{stat}}</p>
+                    <div fxFlex="50">
+                      <p><a [routerLink]="" (click)="filterReport('all')">Total number of organisations : {{totalOrgs}}</a></p>
+                      <p><a [routerLink]="" (click)="filterReport('activated')">Organisations with sharing activated : {{activatedCount}}</a></p>
+                      <p><a [routerLink]="" (click)="filterReport('notActivated')">Organisations with sharing not activated : {{notActivatedCount}}</a></p>
+                      <p><a [routerLink]="" (click)="filterReport('error')">Organisations in error : {{errorCount}}</a></p>
+                      <p><a [routerLink]="" (click)="filterReport('ok')">Organisations not in error : {{noErrorCount}}</a></p>
+                      <p><a [routerLink]="" (click)="filterReport('notRecent')">Organisations not received data in last 24 hours : {{notReceivedRecently}}</a></p>
+                      <p><a [routerLink]="" (click)="filterReport('recent')">Organisations that received data in last 24 hours : {{receivedRecently}}</a></p>
+                    </div>
+                    <div fxFlex="50">
+                      <p><b>Supplier breakdown</b></p>
+                      <p *ngFor="let stat of supplierCount"><a [routerLink]="" (click)="filterReport(stat.supplierType)">{{stat.supplierType}} : {{stat.count}}</a></p>
+                    </div>
                   </mat-card-content>
                 </mat-card>
               </div>
@@ -75,7 +82,7 @@
 
               <div fxFlex="100">
                 <app-generic-table #dsaPubTable
-                                   [items]="reportData"
+                                   [items]="filteredReportData"
                                    [detailsToShow]="reportDetailsToShow"
                                    [allowSelect]="false"
                                    (clicked)="organisationClicked($event)">

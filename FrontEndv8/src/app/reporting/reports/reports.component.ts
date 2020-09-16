@@ -13,6 +13,7 @@ import {ngxCsv} from "ngx-csv";
 import {DatePipe} from "@angular/common";
 import {UserProject} from "dds-angular8/user-manager";
 import {Router} from "@angular/router";
+import {SupplierTypeStatistic} from "../models/SupplierTypeStatistic";
 
 @Component({
   selector: 'app-reports',
@@ -26,19 +27,23 @@ export class ReportsComponent implements OnInit {
   projectLoadingComplete = false;
   reportComplete = true;
   reportData: ReportData[];
+  filteredReportData: ReportData[];
   activityReportData: any[];
-  sortReverse = true;
-  sortField = 'practiceName';
   reportName: string;
   public activeProject: UserProject;
   parentType: number = 5;
   childType: number = 8;
   days: number = 2;
   totalOrgs: number;
-  supplierCount: any[] = [];
+  supplierCount: SupplierTypeStatistic[] = [];
   activatedCount: number;
+  notActivatedCount: number;
   errorCount: number;
   noErrorCount: number;
+  notReceivedRecently: number;
+  receivedRecently: number;
+
+  compareDate: Date = new Date();
 
   mapTypes = this.itemLinkageService.mapTypes;
 
@@ -54,6 +59,7 @@ export class ReportsComponent implements OnInit {
   @ViewChild('dpaTable', { static: false }) dpaTable: GenericTableComponent;
   @ViewChild('dsaTable', { static: false }) dsaTable: GenericTableComponent;
   @ViewChild('projectTable', { static: false }) projectTable: GenericTableComponent;
+  @ViewChild('dsaPubTable', { static: false }) dsaPubTable: GenericTableComponent;
 
   dpas: Dpa[];
   dsas: Dsa[];
@@ -95,6 +101,9 @@ export class ReportsComponent implements OnInit {
               private router: Router,) { }
 
   ngOnInit() {
+
+    this.compareDate.setHours(this.compareDate.getHours() - 24);
+
     this.userManagerService.onProjectChange.subscribe(active => {
       this.activeProject = active;
       this.roleChanged();
@@ -171,16 +180,19 @@ export class ReportsComponent implements OnInit {
 
   clearDPASelection() {
     this.reportData = null;
+    this.filteredReportData = null;
     this.dpaTable.clearHighlights();
   }
 
   clearDSASelection() {
     this.reportData = null;
+    this.filteredReportData = null;
     this.dsaTable.clearHighlights();
   }
 
   clearProjectSelection() {
     this.reportData = null;
+    this.filteredReportData = null;
     this.projectTable.clearHighlights();
   }
 
@@ -257,6 +269,7 @@ export class ReportsComponent implements OnInit {
         result => {
           this.reportData = result;
           this.getLinkedItemsForDPAReport();
+          this.filteredReportData = this.reportData;
           this.getStatisticsForPublisherReport();
           this.reportComplete = true;
         },
@@ -273,7 +286,7 @@ export class ReportsComponent implements OnInit {
     var orgsBySystemType = this.groupBy(this.reportData, (data) => data.systemSupplierType);
 
     for(let type of orgsBySystemType) {
-      this.supplierCount.push(type[0].systemSupplierType + ' : ' + type.length);
+      this.supplierCount.push(new SupplierTypeStatistic(type[0].systemSupplierType, type.length));
     }
 
     this.errorCount = this.reportData.filter((org) => org.inError).length;
@@ -282,7 +295,17 @@ export class ReportsComponent implements OnInit {
 
     this.activatedCount = this.reportData.filter((org) => org.sharingActivated === 'Yes').length;
 
+    this.notActivatedCount = this.reportData.filter((org) => org.sharingActivated != 'Yes').length;
 
+    console.log(this.compareDate);
+
+    for (let org of this.reportData) {
+      console.log(Date.parse(org.lastReceived));
+    }
+
+    this.notReceivedRecently = this.reportData.filter((org) => (new Date(org.lastReceived)) < this.compareDate).length;
+
+    this.receivedRecently = this.reportData.filter((org) => (new Date(org.lastReceived)) >= this.compareDate).length;
   }
 
   groupBy<T, K>(list: T[], getKey: (item: T) => K) {
@@ -314,8 +337,8 @@ export class ReportsComponent implements OnInit {
   exportToCSV() {
 
     // create a new object removing UUID as that doesn't need to be extracted
-    var exportData = this.reportData.map(({practiceName, odsCode, ccg, referenceAgreement, lastReceived, inError, systemSupplierType, systemSupplierReference, sharingActivated}) =>
-      ({practiceName, odsCode, ccg, referenceAgreement, lastReceived, inError, systemSupplierType, systemSupplierReference, sharingActivated}));// JSON.parse(JSON.stringify(this.reportData));
+    var exportData = this.filteredReportData.map(({practiceName, odsCode, ccg, referenceAgreement, lastReceived, inError, systemSupplierType, systemSupplierReference, sharingActivated}) =>
+      ({practiceName, odsCode, ccg, referenceAgreement, lastReceived, inError, systemSupplierType, systemSupplierReference, sharingActivated}));
 
     new ngxCsv(exportData, 'Publisher report', this.options);
   }
@@ -348,6 +371,51 @@ export class ReportsComponent implements OnInit {
       parentUuid: ad.parentUuid,
       insertedAt: this.datePipe.transform(ad.insertedAt, 'yyyy-dd-MM HH:mm:SS')
     }));
+  }
+
+  filterReport(type: string) {
+    switch (type) {
+      case 'all': {
+        this.filteredReportData = this.reportData;
+        this.dsaPubTable.updateRows();
+        break;
+      }
+      case 'activated': {
+        this.filteredReportData = this.reportData.filter((org) => org.sharingActivated === 'Yes');
+        this.dsaPubTable.updateRows();
+        break;
+      }
+      case 'notActivated': {
+        this.filteredReportData = this.reportData.filter((org) => org.sharingActivated != 'Yes');
+        this.dsaPubTable.updateRows();
+        break;
+      }
+      case 'error': {
+        this.filteredReportData = this.reportData.filter((org) => org.inError);
+        this.dsaPubTable.updateRows();
+        break;
+      }
+      case 'ok': {
+        this.filteredReportData = this.reportData.filter((org) => !org.inError);
+        this.dsaPubTable.updateRows();
+        break;
+      }
+      case 'notRecent': {
+        this.filteredReportData = this.reportData.filter((org) => (new Date(org.lastReceived)) < this.compareDate);
+        this.dsaPubTable.updateRows();
+        break;
+      }
+      case 'recent': {
+        this.filteredReportData = this.reportData.filter((org) => (new Date(org.lastReceived)) >= this.compareDate);
+        this.dsaPubTable.updateRows();
+        break;
+      }
+      default : {
+        this.filteredReportData = this.reportData.filter((org) => org.systemSupplierType === type);
+        this.dsaPubTable.updateRows();
+        break;
+      }
+    }
   }
 }
 
