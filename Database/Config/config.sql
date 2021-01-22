@@ -32,3 +32,12 @@ values ('data-sharing-manager','keycloak',
   "public-client": true
 }'
 );
+
+insert into config (app_id, config_id, config_data)
+values ('data-sharing-manager','keycloak_proxy',
+      '{
+   "user" : "eds-ui",
+   "pass" : "bd285adbc36842d7a27088e93c36c13e29ed69fa63a6",
+   "url" : "https://devauth.endeavourhealth.net/auth"
+  }'
+);
