@@ -55,6 +55,27 @@ BEGIN
 
     insert into data_sharing_manager.project_type (id, project_type)
     values (4, 'Distribution');
+
+    IF NOT EXISTS(SELECT * FROM data_sharing_manager.project_type WHERE id = 5
+                                                                    AND project_type = 'Query – view down to practice level')
+    THEN
+
+        insert into data_sharing_manager.project_type (id, project_type)
+        values (5, 'Query – view down to practice level');
+
+        IF NOT EXISTS(SELECT * FROM data_sharing_manager.project_type WHERE id = 6
+                                                                        AND project_type = 'Query – view down to CCG/Borough level')
+        THEN
+
+            insert into data_sharing_manager.project_type (id, project_type)
+            values (6, 'Query – view down to CCG/Borough level');
+
+            IF NOT EXISTS(SELECT * FROM data_sharing_manager.project_type WHERE id = 7
+                                                                            AND project_type = 'Query – view down to STP level')
+            THEN
+
+                insert into data_sharing_manager.project_type (id, project_type)
+                values (7, 'Query – view down to STP level');
     
     END IF;
     
