@@ -73,7 +73,7 @@
     </snapshotRepository>
   </distributionManagement>
 
-    <build>
+    <!--<build>
         <plugins>
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
@@ -81,7 +81,7 @@
                 <version>${maven-sonar-plugin.version}</version>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
 
 
 </project>
